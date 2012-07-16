@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6737987079" secret="b515451dce" server="7033" farm="8" dateuploaded="1327179013" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="6eb68428a7" originalformat="jpg" views="187"
+           media="photo">
+        <owner nsid="67847534@N03" username="Ben_in_london" realname="Ben" location="LONDON, United Kingdom"
+               iconserver="6173" iconfarm="7"/>
+        <title>Ferrari FF red</title>
+        <description>First test with my tripod</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1327179013" taken="2012-01-20 21:44:44" takengranularity="0" lastupdate="1327430209"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>8</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="67824480-6737987079-623" author="67847534@N03" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="67824480-6737987079-595" author="67847534@N03" raw="london" machine_tag="0">london</tag>
+            <tag id="67824480-6737987079-123219" author="67847534@N03" raw="supercars" machine_tag="0">supercars</tag>
+            <tag id="67824480-6737987079-53450" author="67847534@N03" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="67824480-6737987079-264541" author="67847534@N03" raw="streetcars" machine_tag="0">streetcars</tag>
+            <tag id="67824480-6737987079-112745" author="67847534@N03" raw="sportscars" machine_tag="0">sportscars</tag>
+            <tag id="67824480-6737987079-8505504" author="67847534@N03" raw="Worldcars" machine_tag="0">worldcars</tag>
+            <tag id="67824480-6737987079-9505" author="67847534@N03" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="67824480-6737987079-50581" author="67847534@N03" raw="FF" machine_tag="0">ff</tag>
+            <tag id="67824480-6737987079-227" author="67847534@N03" raw="Red" machine_tag="0">red</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/streetcarl/6737987079/</url>
+        </urls>
+    </photo>
+</rsp>
+

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4608953767" secret="0f2f054c87" server="1203" farm="2" dateuploaded="1273946611" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="392a7c5be3" originalformat="jpg" views="133"
+           media="photo">
+        <owner nsid="25393258@N07" username="Rex Gray" realname="Rex Gray" location="Southern California"
+               iconserver="4090" iconfarm="5"/>
+        <title>1962 Ferrari 250 GT Berlinetta - yellow - rvr</title>
+        <description>Greystone Mansion Inaugural Concours d'Elegance, April 11, 2010</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1273946611" taken="2010-04-11 10:49:20" takengranularity="0" lastupdate="1310169439"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>0</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="25371928-4608953767-153663" author="25393258@N07" raw="Concours d'Elegance" machine_tag="0">
+                concoursdelegance
+            </tag>
+            <tag id="25371928-4608953767-2963620" author="25393258@N07" raw="Greystone Mansion" machine_tag="0">
+                greystonemansion
+            </tag>
+            <tag id="25371928-4608953767-9505" author="25393258@N07" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="25371928-4608953767-528271" author="25393258@N07" raw="Italian cars" machine_tag="0">italiancars
+            </tag>
+            <tag id="25371928-4608953767-93178" author="7561041@N06" raw="yellowferrari" machine_tag="0">yellowferrari
+            </tag>
+        </tags>
+        <location latitude="34.093446" longitude="-118.401385" accuracy="16" context="0" place_id="xkwezZFTUbwttBex"
+                  woeid="2363796">
+            <locality place_id="xkwezZFTUbwttBex" woeid="2363796">Beverly Hills</locality>
+            <county place_id=".D8LiGdQUL_LN4aBcw" woeid="12587688">Los Angeles</county>
+            <region place_id="NsbUWfBTUb4mbyVu" woeid="2347563">California</region>
+            <country place_id="nz.gsghTUb4c2WAecA" woeid="23424977">United States</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/rexgray/4608953767/</url>
+        </urls>
+    </photo>
+</rsp>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2934717590" secret="490a5aeac9" server="3191" farm="4" dateuploaded="1223821749" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="f3b9005640" originalformat="jpg" views="532"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Yellow Fezza</title>
+        <description>Too beautiful.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1223821749" taken="2008-08-20 12:00:13" takengranularity="0" lastupdate="1289553947"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2934717590-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2934717590-116028" author="29231008@N05" raw="F430" machine_tag="0">f430</tag>
+            <tag id="29225668-2934717590-147353" author="29231008@N05" raw="430" machine_tag="0">430</tag>
+            <tag id="29225668-2934717590-2249" author="29231008@N05" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="29225668-2934717590-987" author="29231008@N05" raw="Yellow" machine_tag="0">yellow</tag>
+            <tag id="29225668-2934717590-57237" author="29231008@N05" raw="Beaulieu" machine_tag="0">beaulieu</tag>
+            <tag id="29225668-2934717590-972" author="29231008@N05" raw="St." machine_tag="0">st</tag>
+            <tag id="29225668-2934717590-4201" author="29231008@N05" raw="Jean" machine_tag="0">jean</tag>
+            <tag id="29225668-2934717590-13430" author="29231008@N05" raw="Cap" machine_tag="0">cap</tag>
+            <tag id="29225668-2934717590-98410" author="29231008@N05" raw="Ferrat" machine_tag="0">ferrat</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2934717590/</url>
+        </urls>
+    </photo>
+</rsp>
+

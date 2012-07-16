@@ -1,0 +1,45 @@
+<project name="Lire-Nightly-Builds" default="nightly" basedir=".">
+    <description>
+        This buildfile is used to create a nightly build of Lire.
+
+        - Mathias Lux, Klagenfurt 2012-03-19
+        http://www.SemanticMetadata.net
+    </description>
+
+    <property name="build" value="nightly"/>
+
+    <target name="init">
+        <tstamp>
+            <format property="touch.time" pattern="dd.MM.yyyy hh:mm aa"/>
+            <format property="build.time" pattern="yyyy-MM-dd"/>
+        </tstamp>
+        <delete dir="${build}"/>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${build}/tmp"/>
+    </target>
+
+    <target name="nightly" depends="init">
+        <!-- download & unzip -->
+        <get src="http://caliph-emir.svn.sourceforge.net/viewvc/caliph-emir/lire/?view=tar"
+             dest="${build}/tmp/lire.tar.gz"/>
+        <gunzip src="${build}/tmp/lire.tar.gz" dest="${build}/tmp/lire.tar"/>
+        <untar dest="${build}/tmp" src="${build}/tmp/lire.tar"/>
+        <!-- build -->
+        <ant antfile="build.xml" dir="${build}/tmp/lire/" target="dist"/>
+        <ant antfile="build.xml" dir="${build}/tmp/lire/" target="javadoc"/>
+        <!-- package -->
+        <zip destfile="${build}/lire.zip">
+            <fileset dir="${build}/tmp/lire/dist">
+                <include name="lib/**"/>
+                <include name="lire.jar"/>
+            </fileset>
+        </zip>
+        <move todir="${build}">
+            <fileset dir="${build}/tmp/lire/dist/docs">
+                <include name="api/**"/>
+            </fileset>
+        </move>
+        <!-- clean up -->
+        <delete dir="${build}/tmp/"/>
+    </target>
+</project>

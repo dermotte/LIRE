@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4135901965" secret="35cf61cef4" server="2681" farm="3" dateuploaded="1259261415" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="f37ee81912" originalformat="jpg" views="665"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>Gotham City.</title>
+        <description>Sick F430 from Cali cruising on West Broadway. This car also did Gumball this year.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1259261415" taken="2009-11-22 16:28:38" takengranularity="0" lastupdate="1314949073"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>13</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4135901965-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4135901965-116028" author="26977717@N02" raw="F430" machine_tag="0">f430</tag>
+            <tag id="26957369-4135901965-49172" author="26977717@N02" raw="Coupe" machine_tag="0">coupe</tag>
+            <tag id="26957369-4135901965-987" author="26977717@N02" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="26957369-4135901965-2871" author="26977717@N02" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="26957369-4135901965-786" author="26977717@N02" raw="sports" machine_tag="0">sports</tag>
+            <tag id="26957369-4135901965-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-4135901965-524" author="26977717@N02" raw="West" machine_tag="0">west</tag>
+            <tag id="26957369-4135901965-7282" author="26977717@N02" raw="Broadway" machine_tag="0">broadway</tag>
+            <tag id="26957369-4135901965-106" author="26977717@N02" raw="NYC" machine_tag="0">nyc</tag>
+            <tag id="26957369-4135901965-5392" author="26977717@N02" raw="Manhattan" machine_tag="0">manhattan</tag>
+            <tag id="26957369-4135901965-95" author="26977717@N02" raw="New" machine_tag="0">new</tag>
+            <tag id="26957369-4135901965-98" author="26977717@N02" raw="York" machine_tag="0">york</tag>
+            <tag id="26957369-4135901965-103" author="26977717@N02" raw="City" machine_tag="0">city</tag>
+            <tag id="26957369-4135901965-558325" author="26977717@N02" raw="17mm" machine_tag="0">17mm</tag>
+            <tag id="26957369-4135901965-1382" author="26977717@N02" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="26957369-4135901965-4445507" author="26977717@N02" raw="40D" machine_tag="0">40d</tag>
+            <tag id="26957369-4135901965-6727" author="26977717@N02" raw="wheels" machine_tag="0">wheels</tag>
+            <tag id="26957369-4135901965-7376" author="26977717@N02" raw="tan" machine_tag="0">tan</tag>
+            <tag id="26957369-4135901965-5596" author="26977717@N02" raw="interior" machine_tag="0">interior</tag>
+            <tag id="26957369-4135901965-146951" author="26977717@N02" raw="prancing" machine_tag="0">prancing</tag>
+            <tag id="26957369-4135901965-325" author="26977717@N02" raw="horse" machine_tag="0">horse</tag>
+            <tag id="26957369-4135901965-54163" author="26977717@N02" raw="challenge" machine_tag="0">challenge</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4135901965/</url>
+        </urls>
+    </photo>
+</rsp>
+

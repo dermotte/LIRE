@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3858731907" secret="ddb22cb07a" server="3481" farm="4" dateuploaded="1251301250" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="74a2a21825" originalformat="jpg" views="294"
+           media="photo">
+        <owner nsid="31674926@N02" username="Damors" realname="Morten Schwend" location="Berlin, Deutschland"
+               iconserver="4051" iconfarm="5"/>
+        <title>Ferrari 330GT</title>
+        <description>&lt;a href="http://www.flickr.com/photos/schwend/sets/72157622646846088/"&gt;my Ferrari set&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1251301250" taken="2009-08-22 17:50:00" takengranularity="0" lastupdate="1309893249"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>1</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31654578-3858731907-557" author="31674926@N02" raw="berlin" machine_tag="0">berlin</tag>
+            <tag id="31654578-3858731907-12608" author="31674926@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="31654578-3858731907-31387762" author="31674926@N02" raw="exoticsonroad" machine_tag="0">
+                exoticsonroad
+            </tag>
+            <tag id="31654578-3858731907-537688" author="31674926@N02" raw="klassik" machine_tag="0">klassik</tag>
+            <tag id="31654578-3858731907-622" author="31674926@N02" raw="classic" machine_tag="0">classic</tag>
+            <tag id="31654578-3858731907-33" author="31674926@N02" raw="auto" machine_tag="0">auto</tag>
+            <tag id="31654578-3858731907-6508" author="31674926@N02" raw="rally" machine_tag="0">rally</tag>
+            <tag id="31654578-3858731907-79605" author="31674926@N02" raw="rallye" machine_tag="0">rallye</tag>
+            <tag id="31654578-3858731907-3770904" author="31674926@N02" raw="hamburg-berlin" machine_tag="0">
+                hamburgberlin
+            </tag>
+            <tag id="31654578-3858731907-1854807" author="31674926@N02" raw="autobild" machine_tag="0">autobild</tag>
+            <tag id="31654578-3858731907-9505" author="31674926@N02" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31654578-3858731907-10708" author="31674926@N02" raw="330" machine_tag="0">330</tag>
+            <tag id="31654578-3858731907-4031432" author="31674926@N02" raw="330gt" machine_tag="0">330gt</tag>
+            <tag id="31654578-3858731907-2095" author="31674926@N02" raw="2+2" machine_tag="0">22</tag>
+            <tag id="31654578-3858731907-227" author="31674926@N02" raw="red" machine_tag="0">red</tag>
+            <tag id="31654578-3858731907-592" author="31674926@N02" raw="rot" machine_tag="0">rot</tag>
+            <tag id="31654578-3858731907-4275" author="31674926@N02" raw="czech" machine_tag="0">czech</tag>
+            <tag id="31654578-3858731907-923" author="31674926@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="31654578-3858731907-56637" author="31674926@N02" raw="morten" machine_tag="0">morten</tag>
+            <tag id="31654578-3858731907-46467712" author="31674926@N02" raw="schwend" machine_tag="0">schwend</tag>
+            <tag id="31654578-3858731907-67224" author="31674926@N02" raw="kk" machine_tag="0">kk</tag>
+            <tag id="31654578-3858731907-7671" author="31674926@N02" raw="royal" machine_tag="0">royal</tag>
+            <tag id="31654578-3858731907-7259" author="31674926@N02" raw="basement" machine_tag="0">basement</tag>
+            <tag id="31654578-3858731907-15876" author="31674926@N02" raw="tc" machine_tag="0">tc</tag>
+            <tag id="31654578-3858731907-159443" author="31674926@N02" raw="concepts" machine_tag="0">concepts</tag>
+            <tag id="31654578-3858731907-1343849" author="52124449@N07" raw="transaxle" machine_tag="0">transaxle</tag>
+        </tags>
+        <location latitude="52.507308" longitude="13.398374" accuracy="16" context="0" place_id="zot2ouJXUbKOJRM"
+                  woeid="638242">
+            <locality place_id="zot2ouJXUbKOJRM" woeid="638242">Berlin</locality>
+            <county place_id="BPfoJmlQUL8JcHDn4Q" woeid="12596838">Stadtkreis Berlin</county>
+            <region place_id="uxEOtndTUb4nLR9E" woeid="2345496">Berlin</region>
+            <country place_id="h7eZVDlTUb50Btij9Q" woeid="23424829">Germany</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/schwend/3858731907/</url>
+        </urls>
+    </photo>
+</rsp>
+

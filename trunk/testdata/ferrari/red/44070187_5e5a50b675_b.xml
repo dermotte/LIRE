@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="44070187" secret="5e5a50b675" server="32" farm="1" dateuploaded="1126980258" isfavorite="0" license="4"
+           safety_level="0" rotation="0" originalsecret="5e5a50b675" originalformat="jpg" views="5031" media="photo">
+        <owner nsid="94571281@N00" username="jonrawlinson" realname="Jon Rawlinson" location="" iconserver="1"
+               iconfarm="1"/>
+        <title>$650,000 ride! Enzo, Ferrari</title>
+        <description>ahhh, only in Italy! The incredible Enzo Ferrari!</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1126980258" taken="2005-09-17 22:49:09" takengranularity="0" lastupdate="1303625900"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>12</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="104308-44070187-2411732" author="94571281@N00" raw="jonrawlinson" machine_tag="0">jonrawlinson
+            </tag>
+            <tag id="104308-44070187-121" author="94571281@N00" raw="travel" machine_tag="0">travel</tag>
+            <tag id="104308-44070187-4835592" author="94571281@N00" raw="radblog" machine_tag="0">radblog</tag>
+            <tag id="104308-44070187-292353" author="94571281@N00" raw="rawlinson" machine_tag="0">rawlinson</tag>
+            <tag id="104308-44070187-4771215" author="94571281@N00" raw="theradblog" machine_tag="0">theradblog</tag>
+            <tag id="104308-44070187-1178648" author="94571281@N00" raw="enzoferrari" machine_tag="0">enzoferrari</tag>
+            <tag id="104308-44070187-16596" author="94571281@N00" raw="enzo" machine_tag="0">enzo</tag>
+            <tag id="104308-44070187-9505" author="94571281@N00" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="104308-44070187-227" author="94571281@N00" raw="red" machine_tag="0">red</tag>
+            <tag id="104308-44070187-501" author="94571281@N00" raw="hot" machine_tag="0">hot</tag>
+            <tag id="104308-44070187-525" author="94571281@N00" raw="rome" machine_tag="0">rome</tag>
+            <tag id="104308-44070187-297" author="94571281@N00" raw="italy" machine_tag="0">italy</tag>
+            <tag id="104308-44070187-733200" author="94571281@N00" raw="650000" machine_tag="0">650000</tag>
+            <tag id="104308-44070187-4009" author="94571281@N00" raw="ride" machine_tag="0">ride</tag>
+            <tag id="104308-44070187-16971" author="94571281@N00" raw="whip" machine_tag="0">whip</tag>
+            <tag id="104308-44070187-49721" author="94571281@N00" raw="smokin" machine_tag="0">smokin</tag>
+            <tag id="104308-44070187-8117" author="94571281@N00" raw="fast" machine_tag="0">fast</tag>
+            <tag id="104308-44070187-53450" author="94571281@N00" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="104308-44070187-37194751" author="94571281@N00" raw="jonrawlinson.com" machine_tag="0">
+                jonrawlinsoncom
+            </tag>
+            <tag id="104308-44070187-41629469" author="94571281@N00" raw="theradblog.com" machine_tag="0">
+                theradblogcom
+            </tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/london/44070187/</url>
+        </urls>
+    </photo>
+</rsp>
+

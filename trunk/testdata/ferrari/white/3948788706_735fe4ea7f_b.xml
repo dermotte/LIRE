@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3948788706" secret="735fe4ea7f" server="3514" farm="4" dateuploaded="1253737364" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="e7e603731e" originalformat="jpg" views="353"
+           media="photo">
+        <owner nsid="31674926@N02" username="Damors" realname="Morten Schwend" location="Berlin, Deutschland"
+               iconserver="4051" iconfarm="5"/>
+        <title>F430 Combo</title>
+        <description>&lt;a href="http://www.flickr.com/photos/schwend/sets/72157622646846088/"&gt;my Ferrari set&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1253737364" taken="2008-10-03 11:45:22" takengranularity="0" lastupdate="1309892176"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>4</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31654578-3948788706-9505" author="31674926@N02" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31654578-3948788706-9862" author="31674926@N02" raw="racing" machine_tag="0">racing</tag>
+            <tag id="31654578-3948788706-10176" author="31674926@N02" raw="days" machine_tag="0">days</tag>
+            <tag id="31654578-3948788706-48795" author="31674926@N02" raw="2009" machine_tag="0">2009</tag>
+            <tag id="31654578-3948788706-281138" author="31674926@N02" raw="nürburgring" machine_tag="0">nürburgring
+            </tag>
+            <tag id="31654578-3948788706-264517" author="31674926@N02" raw="nordschleife" machine_tag="0">nordschleife
+            </tag>
+            <tag id="31654578-3948788706-12608" author="31674926@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="31654578-3948788706-31387762" author="31674926@N02" raw="exoticsonroad" machine_tag="0">
+                exoticsonroad
+            </tag>
+            <tag id="31654578-3948788706-116028" author="31674926@N02" raw="f430" machine_tag="0">f430</tag>
+            <tag id="31654578-3948788706-49172" author="31674926@N02" raw="coupe" machine_tag="0">coupe</tag>
+            <tag id="31654578-3948788706-1281531" author="31674926@N02" raw="weißt" machine_tag="0">weist</tag>
+            <tag id="31654578-3948788706-395" author="31674926@N02" raw="white" machine_tag="0">white</tag>
+            <tag id="31654578-3948788706-5665" author="31674926@N02" raw="stripes" machine_tag="0">stripes</tag>
+            <tag id="31654578-3948788706-144461" author="31674926@N02" raw="streifen" machine_tag="0">streifen</tag>
+            <tag id="31654578-3948788706-12354" author="31674926@N02" raw="pi" machine_tag="0">pi</tag>
+            <tag id="31654578-3948788706-49217" author="31674926@N02" raw="scuderia" machine_tag="0">scuderia</tag>
+            <tag id="31654578-3948788706-147182" author="31674926@N02" raw="pinneberg" machine_tag="0">pinneberg</tag>
+            <tag id="31654578-3948788706-923" author="31674926@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="31654578-3948788706-56637" author="31674926@N02" raw="morten" machine_tag="0">morten</tag>
+            <tag id="31654578-3948788706-46467712" author="31674926@N02" raw="schwend" machine_tag="0">schwend</tag>
+            <tag id="31654578-3948788706-67224" author="31674926@N02" raw="kk" machine_tag="0">kk</tag>
+            <tag id="31654578-3948788706-7671" author="31674926@N02" raw="royal" machine_tag="0">royal</tag>
+            <tag id="31654578-3948788706-7259" author="31674926@N02" raw="basement" machine_tag="0">basement</tag>
+            <tag id="31654578-3948788706-15876" author="31674926@N02" raw="tc" machine_tag="0">tc</tag>
+            <tag id="31654578-3948788706-159443" author="31674926@N02" raw="concepts" machine_tag="0">concepts</tag>
+        </tags>
+        <location latitude="50.346853" longitude="6.965664" accuracy="16" context="0" place_id="Hqf.1hpQULxEu795BA"
+                  woeid="12627836">
+            <locality place_id="Hqf.1hpQULxEu795BA" woeid="12627836">Gemeinde Meuspath</locality>
+            <county place_id="CG.KeVNQUL9mm9eGNA" woeid="12596824">Landkreis Ahrweiler</county>
+            <region place_id="IwrrQd1TUb4V9Wa6" woeid="2345488">Rhineland-Palatinate</region>
+            <country place_id="h7eZVDlTUb50Btij9Q" woeid="23424829">Germany</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/schwend/3948788706/</url>
+        </urls>
+    </photo>
+</rsp>
+

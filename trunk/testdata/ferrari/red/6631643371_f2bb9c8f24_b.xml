@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6631643371" secret="f2bb9c8f24" server="7022" farm="8" dateuploaded="1325639123" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="a37cf45efd" originalformat="jpg" views="1405"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 288 GTO</title>
+        <description>It needs no introduction. One of just 272, this legendary Ferrari was spotted in the heart of
+            Belgravia. The bottom section of the turbocharged V8 sits proudly on show.
+
+            Thanks to @shmee150 for the heads-up!
+
+            For more automotive goodness, follow @torquespeak on Twitter.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1325639123" taken="2012-01-03 22:19:24" takengranularity="0" lastupdate="1329186822"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>26</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6631643371-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6631643371-142592" author="31797562@N04" raw="288" machine_tag="0">288</tag>
+            <tag id="31765423-6631643371-22413" author="31797562@N04" raw="GTO" machine_tag="0">gto</tag>
+            <tag id="31765423-6631643371-1284" author="31797562@N04" raw="race" machine_tag="0">race</tag>
+            <tag id="31765423-6631643371-923" author="31797562@N04" raw="car" machine_tag="0">car</tag>
+            <tag id="31765423-6631643371-61" author="31797562@N04" raw="road" machine_tag="0">road</tag>
+            <tag id="31765423-6631643371-21965" author="31797562@N04" raw="parked" machine_tag="0">parked</tag>
+            <tag id="31765423-6631643371-1213" author="31797562@N04" raw="night" machine_tag="0">night</tag>
+            <tag id="31765423-6631643371-3297" author="31797562@N04" raw="long" machine_tag="0">long</tag>
+            <tag id="31765423-6631643371-3298" author="31797562@N04" raw="exposure" machine_tag="0">exposure</tag>
+            <tag id="31765423-6631643371-1492" author="31797562@N04" raw="dark" machine_tag="0">dark</tag>
+            <tag id="31765423-6631643371-1268" author="31797562@N04" raw="contrast" machine_tag="0">contrast</tag>
+            <tag id="31765423-6631643371-42383" author="31797562@N04" raw="rosso" machine_tag="0">rosso</tag>
+            <tag id="31765423-6631643371-120840" author="31797562@N04" raw="corsa" machine_tag="0">corsa</tag>
+            <tag id="31765423-6631643371-39230" author="31797562@N04" raw="legend" machine_tag="0">legend</tag>
+            <tag id="31765423-6631643371-5442839" author="31797562@N04" raw="2.9l" machine_tag="0">29l</tag>
+            <tag id="31765423-6631643371-12722" author="31797562@N04" raw="turbo" machine_tag="0">turbo</tag>
+            <tag id="31765423-6631643371-125231" author="31797562@N04" raw="turbocharged" machine_tag="0">turbocharged
+            </tag>
+            <tag id="31765423-6631643371-58663" author="31797562@N04" raw="V8" machine_tag="0">v8</tag>
+            <tag id="31765423-6631643371-2051216" author="31797562@N04" raw="homologation" machine_tag="0">
+                homologation
+            </tag>
+            <tag id="31765423-6631643371-295330" author="31797562@N04" raw="272" machine_tag="0">272</tag>
+            <tag id="31765423-6631643371-47566" author="31797562@N04" raw="rare" machine_tag="0">rare</tag>
+            <tag id="31765423-6631643371-12608" author="31797562@N04" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="31765423-6631643371-146951" author="31797562@N04" raw="prancing" machine_tag="0">prancing</tag>
+            <tag id="31765423-6631643371-325" author="31797562@N04" raw="horse" machine_tag="0">horse</tag>
+            <tag id="31765423-6631643371-227" author="31797562@N04" raw="red" machine_tag="0">red</tag>
+            <tag id="31765423-6631643371-7560" author="31797562@N04" raw="engine" machine_tag="0">engine</tag>
+            <tag id="31765423-6631643371-39602" author="31797562@N04" raw="showing" machine_tag="0">showing</tag>
+            <tag id="31765423-6631643371-595" author="31797562@N04" raw="London" machine_tag="0">london</tag>
+            <tag id="31765423-6631643371-7328" author="31797562@N04" raw="january" machine_tag="0">january</tag>
+            <tag id="31765423-6631643371-101887" author="31797562@N04" raw="2012" machine_tag="0">2012</tag>
+        </tags>
+        <location latitude="51.495378" longitude="-0.149838" accuracy="15" context="0" place_id="WtIk2PdVUbjLeQ"
+                  woeid="43242">
+            <neighbourhood place_id="WtIk2PdVUbjLeQ" woeid="43242">Belgravia</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6631643371/</url>
+        </urls>
+    </photo>
+</rsp>
+

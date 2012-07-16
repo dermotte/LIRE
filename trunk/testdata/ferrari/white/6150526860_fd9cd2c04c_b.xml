@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6150526860" secret="fd9cd2c04c" server="6066" farm="7" dateuploaded="1316102548" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="121c445856" originalformat="jpg" views="310"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari California</title>
+        <description>Pretty nice catch with the flag in the foreground I reckon.
+
+            For more automotive goodness, follow @torquespeak on Twitter.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1316102548" taken="2011-09-07 15:53:33" takengranularity="0" lastupdate="1329146783"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6150526860-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6150526860-50" author="31797562@N04" raw="California" machine_tag="0">california</tag>
+            <tag id="31765423-6150526860-395" author="31797562@N04" raw="white" machine_tag="0">white</tag>
+            <tag id="31765423-6150526860-1668" author="31797562@N04" raw="French" machine_tag="0">french</tag>
+            <tag id="31765423-6150526860-10171" author="31797562@N04" raw="Monaco" machine_tag="0">monaco</tag>
+            <tag id="31765423-6150526860-25273" author="31797562@N04" raw="Monte" machine_tag="0">monte</tag>
+            <tag id="31765423-6150526860-23369" author="31797562@N04" raw="Carlo" machine_tag="0">carlo</tag>
+            <tag id="31765423-6150526860-2871" author="31797562@N04" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="31765423-6150526860-5818" author="31797562@N04" raw="flag" machine_tag="0">flag</tag>
+            <tag id="31765423-6150526860-95700" author="31797562@N04" raw="foreground" machine_tag="0">foreground</tag>
+            <tag id="31765423-6150526860-244077" author="31797562@N04" raw="context" machine_tag="0">context</tag>
+            <tag id="31765423-6150526860-8117" author="31797562@N04" raw="fast" machine_tag="0">fast</tag>
+            <tag id="31765423-6150526860-37509" author="31797562@N04" raw="panning" machine_tag="0">panning</tag>
+            <tag id="31765423-6150526860-8575" author="31797562@N04" raw="convertible" machine_tag="0">convertible</tag>
+        </tags>
+        <location latitude="43.740541" longitude="7.430351" accuracy="16" context="0" place_id="x6kb7VtVWrnGxUk"
+                  woeid="483298">
+            <neighbourhood place_id="x6kb7VtVWrnGxUk" woeid="483298">Condamine</neighbourhood>
+            <locality place_id="dlDqly9VWrkRkvw" woeid="483301">Monaco-Ville</locality>
+            <region place_id="_TLtmoFTVr9e2WuCow" woeid="24549797">La Condamine</region>
+            <country place_id="P47fNClTUb7iklTKJw" woeid="23424892">Monaco</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6150526860/</url>
+        </urls>
+    </photo>
+</rsp>
+

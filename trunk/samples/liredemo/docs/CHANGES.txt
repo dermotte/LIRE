@@ -1,0 +1,67 @@
+CHANGES for LIREDemo
+====================
+
+2010-09-28
+==========
+  - Added option to try BoVW
+  - Some additional synchronization in ParallelIndexer
+  - Added SIFT Extraction to default DocumentBuilder in Demo
+
+2009-05-14
+==========
+General:
+  - Added indexing of tags based on a WhitespaceAnalyzer
+  - Changed initial state of "add to existing index" to "checked"
+  - Added menu item for approximate search index
+
+2008-07-08
+==========
+General:
+  - Added options button in search results
+  - Added options item in view menu
+  - Added accelerators in view menu
+
+2008-07-07
+==========
+Indexing:
+  - Fixed bug in IndexingThread (THX to Klaus Schoeffmann)
+  - added ability to index PNGs
+
+2008-07-04
+==========
+CBIR:
+  - Added FCTH to indexing & search
+  - Added Gabor to indexing & search
+   
+2008-07-03
+==========
+Indexing:
+  - Added indexing of tags to Flickr downloader.
+
+2008-06-10
+==========
+Indexing:
+  - Fixed bug in indexing of local files.
+
+Mosaic:
+  - Change options, default now CEDD
+  
+2008-06-10
+==========
+General:
+  - Added FlickrPhotoGrabber (multithreaded), used if
+    no directory to index is given.
+  - Re-organized IndexingThread for parallel use.
+  - Added icon image for Frame.
+
+2008-05-26
+==========
+General:
+  - Added changes file
+  - Changed image preview in results to EXIF thumbnail if available
+    resulting in a major speedup.
+  - Drag and drop in search panel
+
+CBIR:
+  - Added CEDD descriptor
+  - Added RGB Color Histogram descriptor

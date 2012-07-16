@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2991213583" secret="a1a410b149" server="3037" farm="4" dateuploaded="1225549791" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="5c4f37f132" originalformat="jpg" views="566"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Place Vendome</title>
+        <description>Aargh! Hate those stupid poles.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1225549791" taken="2008-08-11 12:22:46" takengranularity="0" lastupdate="1283203969"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2991213583-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2991213583-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-2991213583-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-2991213583-663459" author="29231008@N05" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="29225668-2991213583-987" author="29231008@N05" raw="Yellow" machine_tag="0">yellow</tag>
+            <tag id="29225668-2991213583-19528" author="29231008@N05" raw="Ritz" machine_tag="0">ritz</tag>
+            <tag id="29225668-2991213583-4006" author="29231008@N05" raw="Place" machine_tag="0">place</tag>
+            <tag id="29225668-2991213583-148504" author="29231008@N05" raw="Vendome" machine_tag="0">vendome</tag>
+            <tag id="29225668-2991213583-9281018" author="29231008@N05" raw="CarSpotter" machine_tag="0">carspotter
+            </tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2991213583/</url>
+        </urls>
+    </photo>
+</rsp>
+

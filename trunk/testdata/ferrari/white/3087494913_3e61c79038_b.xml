@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3087494913" secret="3e61c79038" server="3121" farm="4" dateuploaded="1228610838" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="d0b0e6731b" originalformat="jpg" views="1241"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>599</title>
+        <description>So gorgeous. Could be the best pic I've ever taken. I really should get a tripod though.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1228610838" taken="2008-12-06 19:33:05" takengranularity="0" lastupdate="1288762586"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>18</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-3087494913-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-3087494913-2509269" author="29231008@N05" raw="Fezza" machine_tag="0">fezza</tag>
+            <tag id="29225668-3087494913-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-3087494913-5060485" author="29231008@N05" raw="F599" machine_tag="0">f599</tag>
+            <tag id="29225668-3087494913-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-3087494913-119234" author="29231008@N05" raw="GTB" machine_tag="0">gtb</tag>
+            <tag id="29225668-3087494913-47566" author="29231008@N05" raw="Rare" machine_tag="0">rare</tag>
+            <tag id="29225668-3087494913-395" author="29231008@N05" raw="White" machine_tag="">white</tag>
+            <tag id="29225668-3087494913-1213" author="29231008@N05" raw="Night" machine_tag="0">night</tag>
+            <tag id="29225668-3087494913-95" author="29231008@N05" raw="New" machine_tag="">new</tag>
+            <tag id="29225668-3087494913-98" author="29231008@N05" raw="York" machine_tag="">york</tag>
+            <tag id="29225668-3087494913-106" author="29231008@N05" raw="NYC" machine_tag="">nyc</tag>
+            <tag id="29225668-3087494913-2871" author="29231008@N05" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="29225668-3087494913-12608" author="29231008@N05" raw="Exotic" machine_tag="0">exotic</tag>
+            <tag id="29225668-3087494913-14319" author="29231008@N05" raw="2.5" machine_tag="0">25</tag>
+            <tag id="29225668-3087494913-17915" author="29231008@N05" raw="Second" machine_tag="0">second</tag>
+            <tag id="29225668-3087494913-16582" author="29231008@N05" raw="Shutter" machine_tag="">shutter</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/3087494913/</url>
+        </urls>
+    </photo>
+</rsp>
+

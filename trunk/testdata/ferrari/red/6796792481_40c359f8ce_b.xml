@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6796792481" secret="40c359f8ce" server="7147" farm="8" dateuploaded="1328224414" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="62b4806bd9" originalformat="jpg" views="692"
+           media="photo">
+        <owner nsid="53371251@N08" username="Tom Wolf | Photography" realname="Tom Hipster" location="Hamburg, Germany"
+               iconserver="6077" iconfarm="7"/>
+        <title>Jungle Trekking</title>
+        <description>&lt;i&gt;Seems like this Ferrari 599 GTO was a guest at the &lt;b&gt;Cavallino Classic&lt;/b&gt;
+            but didn't find the right way.&lt;/i&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1328224414" taken="2012-01-21 17:56:39" takengranularity="0" lastupdate="1330026226"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>50</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="53278438-6796792481-55052883" author="53371251@N08" raw="Ferrari 599 GTO" machine_tag="0">
+                ferrari599gto
+            </tag>
+            <tag id="53278438-6796792481-4496450" author="53371251@N08" raw="Ferrari 599" machine_tag="0">ferrari599
+            </tag>
+            <tag id="53278438-6796792481-22413" author="53371251@N08" raw="GTO" machine_tag="0">gto</tag>
+            <tag id="53278438-6796792481-9505" author="53371251@N08" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="53278438-6796792481-515196" author="53371251@N08" raw="599" machine_tag="0">599</tag>
+            <tag id="53278438-6796792481-42058" author="53371251@N08" raw="Palm Beach" machine_tag="0">palmbeach</tag>
+            <tag id="53278438-6796792481-34875" author="53371251@N08" raw="Miami Beach" machine_tag="0">miamibeach</tag>
+            <tag id="53278438-6796792481-4861" author="53371251@N08" raw="Miami" machine_tag="0">miami</tag>
+            <tag id="53278438-6796792481-4536" author="53371251@N08" raw="Florida" machine_tag="0">florida</tag>
+            <tag id="53278438-6796792481-6112" author="53371251@N08" raw="United" machine_tag="0">united</tag>
+            <tag id="53278438-6796792481-23587" author="53371251@N08" raw="States" machine_tag="0">states</tag>
+            <tag id="53278438-6796792481-1299" author="53371251@N08" raw="America" machine_tag="0">america</tag>
+            <tag id="53278438-6796792481-227" author="53371251@N08" raw="red" machine_tag="0">red</tag>
+            <tag id="53278438-6796792481-472" author="53371251@N08" raw="black" machine_tag="0">black</tag>
+            <tag id="53278438-6796792481-15585" author="53371251@N08" raw="golf course" machine_tag="0">golfcourse</tag>
+            <tag id="53278438-6796792481-47566" author="53371251@N08" raw="rare" machine_tag="0">rare</tag>
+            <tag id="53278438-6796792481-52099" author="53371251@N08" raw="exclusive" machine_tag="0">exclusive</tag>
+            <tag id="53278438-6796792481-12608" author="53371251@N08" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="53278438-6796792481-47022" author="53371251@N08" raw="luxury" machine_tag="0">luxury</tag>
+            <tag id="53278438-6796792481-53450" author="53371251@N08" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="53278438-6796792481-43418" author="53371251@N08" raw="Lamborghini" machine_tag="0">lamborghini
+            </tag>
+            <tag id="53278438-6796792481-65260" author="53371251@N08" raw="Maserati" machine_tag="0">maserati</tag>
+            <tag id="53278438-6796792481-38129" author="53371251@N08" raw="Bugatti" machine_tag="0">bugatti</tag>
+            <tag id="53278438-6796792481-319282" author="53371251@N08" raw="photoshooting" machine_tag="0">
+                photoshooting
+            </tag>
+            <tag id="53278438-6796792481-496510" author="53371251@N08" raw="Cavallino Classic" machine_tag="0">
+                cavallinoclassic
+            </tag>
+            <tag id="53278438-6796792481-101887" author="53371251@N08" raw="2012" machine_tag="0">2012</tag>
+            <tag id="53278438-6796792481-433224" author="53371251@N08" raw="The Breakers" machine_tag="0">thebreakers
+            </tag>
+            <tag id="53278438-6796792481-2073" author="53371251@N08" raw="Hotel" machine_tag="0">hotel</tag>
+            <tag id="53278438-6796792481-524" author="53371251@N08" raw="West" machine_tag="0">west</tag>
+            <tag id="53278438-6796792481-10296" author="53371251@N08" raw="Palm" machine_tag="0">palm</tag>
+            <tag id="53278438-6796792481-704" author="53371251@N08" raw="Beach" machine_tag="0">beach</tag>
+            <tag id="53278438-6796792481-9218620" author="53371251@N08" raw="Tom Wolf" machine_tag="0">tomwolf</tag>
+            <tag id="53278438-6796792481-83546417" author="53371251@N08" raw="Tom Hipster" machine_tag="0">tomhipster
+            </tag>
+            <tag id="53278438-6796792481-2075401" author="53371251@N08" raw="Automotive Photography" machine_tag="0">
+                automotivephotography
+            </tag>
+            <tag id="53278438-6796792481-1935" author="53371251@N08" raw="photography" machine_tag="0">photography</tag>
+            <tag id="53278438-6796792481-9061012" author="53371251@N08" raw="Canon Eos 500D" machine_tag="0">
+                canoneos500d
+            </tag>
+            <tag id="53278438-6796792481-1382" author="53371251@N08" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="53278438-6796792481-1966" author="53371251@N08" raw="Eos" machine_tag="0">eos</tag>
+            <tag id="53278438-6796792481-3403231" author="53371251@N08" raw="18-135 mm" machine_tag="0">18135mm</tag>
+            <tag id="53278438-6796792481-8483" author="53371251@N08" raw="sunny" machine_tag="0">sunny</tag>
+            <tag id="53278438-6796792481-13995" author="53371251@N08" raw="Jungle" machine_tag="0">jungle</tag>
+            <tag id="53278438-6796792481-1374" author="53371251@N08" raw="Trekking" machine_tag="0">trekking</tag>
+        </tags>
+        <location latitude="26.711573" longitude="-80.03746" accuracy="11" context="0" place_id="jS92zbJTVrzJbYUa"
+                  woeid="2467663">
+            <locality place_id="jS92zbJTVrzJbYUa" woeid="2467663">Palm Beach</locality>
+            <county place_id="fsOLJzxQUL8OzusMTA" woeid="12587852">Palm Beach</county>
+            <region place_id="IPbJb2lTUb4Y7tKw" woeid="2347568">Florida</region>
+            <country place_id="nz.gsghTUb4c2WAecA" woeid="23424977">United States</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/bongosphotographie/6796792481/</url>
+        </urls>
+    </photo>
+</rsp>
+

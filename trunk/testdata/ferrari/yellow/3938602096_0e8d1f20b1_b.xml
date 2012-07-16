@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3938602096" secret="0e8d1f20b1" server="2487" farm="3" dateuploaded="1253476944" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="ae15422925" originalformat="jpg" views="1476"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari California</title>
+        <description>&lt;a href="http://torquespeak.wordpress.com"
+            rel="nofollow"&gt;torquespeak.wordpress.com&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1253476944" taken="2009-09-10 14:08:25" takengranularity="0" lastupdate="1302041350"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-3938602096-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-3938602096-50" author="31797562@N04" raw="California" machine_tag="0">california</tag>
+            <tag id="31765423-3938602096-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-3938602096-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+            <tag id="31765423-3938602096-39726517" author="31797562@N04" raw="SPY 500" machine_tag="0">spy500</tag>
+            <tag id="31765423-3938602096-736731" author="31797562@N04" raw="Personalised plate" machine_tag="0">
+                personalisedplate
+            </tag>
+            <tag id="31765423-3938602096-719505" author="31797562@N04" raw="Chris Evans" machine_tag="0">chrisevans
+            </tag>
+        </tags>
+        <location latitude="51.519572" longitude="-0.143122" accuracy="15" context="0" place_id="N0xeKd9TUrpkJunLqg"
+                  woeid="20094319">
+            <neighbourhood place_id="N0xeKd9TUrpkJunLqg" woeid="20094319">Fitzrovia</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/3938602096/</url>
+        </urls>
+    </photo>
+</rsp>
+

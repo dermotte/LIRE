@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2883154610" secret="6d0045fae6" server="3003" farm="4" dateuploaded="1222196989" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="047f70c4a3" originalformat="jpg" views="2427"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>In Love</title>
+        <description>I could never have imagined yellow on a Five-ninety-nine. But this was so sweet in person. I like
+            the couple looking at their picture of the car.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1222196989" taken="2008-08-11 12:20:16" takengranularity="0" lastupdate="1325720243"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>14</comments>
+        <notes>
+            <note id="72157608289810947" author="29231008@N05" authorname="CarSpotter" x="34" y="109" w="50" h="50">Love
+                this
+            </note>
+        </notes>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2883154610-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2883154610-2871" author="29231008@N05" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="29225668-2883154610-8117" author="29231008@N05" raw="Fast" machine_tag="0">fast</tag>
+            <tag id="29225668-2883154610-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-2883154610-987" author="29231008@N05" raw="Yellow" machine_tag="0">yellow</tag>
+            <tag id="29225668-2883154610-2709" author="29231008@N05" raw="Cool" machine_tag="0">cool</tag>
+            <tag id="29225668-2883154610-484" author="29231008@N05" raw="Paris" machine_tag="0">paris</tag>
+            <tag id="29225668-2883154610-91" author="29231008@N05" raw="Plaza" machine_tag="0">plaza</tag>
+            <tag id="29225668-2883154610-677383" author="29231008@N05" raw="Athenee" machine_tag="0">athenee</tag>
+            <tag id="29225668-2883154610-923" author="29231008@N05" raw="Car" machine_tag="0">car</tag>
+            <tag id="29225668-2883154610-21386" author="29231008@N05" raw="Rolls" machine_tag="0">rolls</tag>
+            <tag id="29225668-2883154610-60634" author="29231008@N05" raw="Royce" machine_tag="0">royce</tag>
+            <tag id="29225668-2883154610-30338" author="29231008@N05" raw="Phantom" machine_tag="0">phantom</tag>
+            <tag id="29225668-2883154610-1166875" author="29231008@N05" raw="Drophead" machine_tag="0">drophead</tag>
+            <tag id="29225668-2883154610-49172" author="29231008@N05" raw="Coupe" machine_tag="0">coupe</tag>
+            <tag id="29225668-2883154610-130614" author="29231008@N05" raw="Combo" machine_tag="0">combo</tag>
+            <tag id="29225668-2883154610-166759" author="29231008@N05" raw="Pininfarina" machine_tag="0">pininfarina
+            </tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2883154610/</url>
+        </urls>
+    </photo>
+</rsp>
+

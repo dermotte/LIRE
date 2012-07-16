@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4721832011" secret="3de675c983" server="1124" farm="2" dateuploaded="1277155954" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="fb9846be95" originalformat="jpg" views="315"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari F430 Spider</title>
+        <description>&lt;a href="http://www.twitter.com/torquespeak" rel="nofollow"&gt;www.twitter.com/torquespeak&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1277155954" taken="2010-06-02 18:33:03" takengranularity="0" lastupdate="1321232911"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>1</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-4721832011-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-4721832011-116028" author="31797562@N04" raw="F430" machine_tag="0">f430</tag>
+            <tag id="31765423-4721832011-2249" author="31797562@N04" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="31765423-4721832011-1298" author="31797562@N04" raw="speed" machine_tag="0">speed</tag>
+            <tag id="31765423-4721832011-42383" author="31797562@N04" raw="rosso" machine_tag="0">rosso</tag>
+            <tag id="31765423-4721832011-227" author="31797562@N04" raw="red" machine_tag="0">red</tag>
+            <tag id="31765423-4721832011-37509" author="31797562@N04" raw="panning" machine_tag="0">panning</tag>
+            <tag id="31765423-4721832011-4714" author="31797562@N04" raw="action" machine_tag="0">action</tag>
+            <tag id="31765423-4721832011-786" author="31797562@N04" raw="sports" machine_tag="0">sports</tag>
+            <tag id="31765423-4721832011-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-4721832011-8575" author="31797562@N04" raw="convertible" machine_tag="0">convertible</tag>
+            <tag id="31765423-4721832011-6158" author="31797562@N04" raw="side" machine_tag="0">side</tag>
+            <tag id="31765423-4721832011-6774" author="31797562@N04" raw="profile" machine_tag="0">profile</tag>
+            <tag id="31765423-4721832011-922" author="31797562@N04" raw="lines" machine_tag="0">lines</tag>
+            <tag id="31765423-4721832011-169" author="31797562@N04" raw="trees" machine_tag="0">trees</tag>
+            <tag id="31765423-4721832011-2129" author="31797562@N04" raw="berkeley" machine_tag="0">berkeley</tag>
+            <tag id="31765423-4721832011-595" author="31797562@N04" raw="london" machine_tag="0">london</tag>
+            <tag id="31765423-4721832011-507558" author="31797562@N04" raw="carspotting" machine_tag="0">carspotting
+            </tag>
+            <tag id="31765423-4721832011-623" author="31797562@N04" raw="cars" machine_tag="0">cars</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/4721832011/</url>
+        </urls>
+    </photo>
+</rsp>
+

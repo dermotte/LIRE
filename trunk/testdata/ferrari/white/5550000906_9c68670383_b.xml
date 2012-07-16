@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="5550000906" secret="9c68670383" server="5268" farm="6" dateuploaded="1300795581" isfavorite="0"
+           license="5" safety_level="0" rotation="0" views="403" media="photo">
+        <owner nsid="22154370@N07" username="bio84" realname="Fabio" location="roma, italy" iconserver="4099"
+               iconfarm="5"/>
+        <title/>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1300795581" taken="2011-03-20 00:00:13" takengranularity="0" lastupdate="1317771498"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>1</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="22133040-5550000906-627359" author="22154370@N07" raw="458" machine_tag="0">458</tag>
+            <tag id="22133040-5550000906-3442" author="22154370@N07" raw="italia" machine_tag="0">italia</tag>
+            <tag id="22133040-5550000906-9505" author="22154370@N07" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="22133040-5550000906-3390" author="22154370@N07" raw="track" machine_tag="0">track</tag>
+            <tag id="22133040-5550000906-3511" author="22154370@N07" raw="day" machine_tag="0">day</tag>
+            <tag id="22133040-5550000906-1284" author="22154370@N07" raw="race" machine_tag="0">race</tag>
+            <tag id="22133040-5550000906-9862" author="22154370@N07" raw="racing" machine_tag="0">racing</tag>
+            <tag id="22133040-5550000906-5981" author="22154370@N07" raw="garage" machine_tag="0">garage</tag>
+            <tag id="22133040-5550000906-205527" author="22154370@N07" raw="nismo" machine_tag="0">nismo</tag>
+            <tag id="22133040-5550000906-3820" author="22154370@N07" raw="nissan" machine_tag="0">nissan</tag>
+            <tag id="22133040-5550000906-79048" author="22154370@N07" raw="zed" machine_tag="0">zed</tag>
+            <tag id="22133040-5550000906-48862" author="22154370@N07" raw="zeta" machine_tag="0">zeta</tag>
+            <tag id="22133040-5550000906-49568" author="22154370@N07" raw="lancer" machine_tag="0">lancer</tag>
+            <tag id="22133040-5550000906-57285" author="22154370@N07" raw="mitsubishi" machine_tag="0">mitsubishi</tag>
+            <tag id="22133040-5550000906-3329" author="22154370@N07" raw="interiors" machine_tag="0">interiors</tag>
+            <tag id="22133040-5550000906-227" author="22154370@N07" raw="red" machine_tag="0">red</tag>
+            <tag id="22133040-5550000906-395" author="22154370@N07" raw="white" machine_tag="0">white</tag>
+            <tag id="22133040-5550000906-472" author="22154370@N07" raw="black" machine_tag="0">black</tag>
+            <tag id="22133040-5550000906-1994" author="22154370@N07" raw="grey" machine_tag="0">grey</tag>
+            <tag id="22133040-5550000906-294" author="22154370@N07" raw="b&amp;w" machine_tag="0">bw</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/bio84/5550000906/</url>
+        </urls>
+    </photo>
+</rsp>
+

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="5434338226" secret="eb0755f9d8" server="5255" farm="6" dateuploaded="1297364397" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="723fa8f5a0" originalformat="jpg" views="553"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 458 Italia</title>
+        <description>&lt;a href="http://twitter.com/torquespeak"
+            rel="nofollow"&gt;twitter.com/torquespeak&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1297364397" taken="2010-07-17 17:11:49" takengranularity="0" lastupdate="1326552284"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>0</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-5434338226-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-5434338226-627359" author="31797562@N04" raw="458" machine_tag="0">458</tag>
+            <tag id="31765423-5434338226-3442" author="31797562@N04" raw="Italia" machine_tag="0">italia</tag>
+            <tag id="31765423-5434338226-9656" author="31797562@N04" raw="front" machine_tag="0">front</tag>
+            <tag id="31765423-5434338226-19382" author="31797562@N04" raw="quarter" machine_tag="0">quarter</tag>
+            <tag id="31765423-5434338226-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+            <tag id="31765423-5434338226-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-5434338226-292924" author="31797562@N04" raw="Sloane" machine_tag="0">sloane</tag>
+            <tag id="31765423-5434338226-85" author="31797562@N04" raw="Street" machine_tag="0">street</tag>
+            <tag id="31765423-5434338226-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-5434338226-3551" author="31797562@N04" raw="driving" machine_tag="0">driving</tag>
+            <tag id="31765423-5434338226-4132" author="31797562@N04" raw="angle" machine_tag="0">angle</tag>
+            <tag id="31765423-5434338226-58663" author="31797562@N04" raw="V8" machine_tag="0">v8</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/5434338226/</url>
+        </urls>
+    </photo>
+</rsp>
+

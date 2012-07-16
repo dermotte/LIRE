@@ -1,0 +1,525 @@
+CHANGES for LIRE
+================
+
+2012-07-16
+==========
+  - Updated Lucene to version 3.6
+  - Cleaned up directory structure and libraries
+
+2012-02-28
+==========
+  - Liredemo: Fixed bug in ParallelIndexer.
+  - LireDemo release 0.9.1
+
+2012-02-24
+==========
+  - Added HashingUtils for simple Hashing
+
+2012-02-22
+==========
+  - Added fix for grey scale only images ready to use in ImageUtils.java
+
+2012-02-21
+==========
+  - Fixed MSER issues by implementing grey scale conversion & inversion myself.
+
+2011-11-09
+==========
+  - Optimized k-means to use float[] instead of Histogram removing unnecessary object
+    overhead and memory usage
+  - Added TopDocsImageSearcher to pre-filter based on lucene searches
+
+2011-11-08
+==========
+  - Updated to Lucene 3.4.0
+
+2011-11-04
+==========
+  - Added Method for document creation LocalFeatureHistogramBuilder to allow for queries based on
+    documents not in the index.
+  - Added TestParallelIndexer.java to LireDemo to have a simple class for indexing without GUI
+  - Added VisualWordsTest for testing new functions.
+
+2011-10-24
+==========
+  - Killed a nasty bug in SimpleResult.java, which had something to do with the hash values in Object comparison.
+
+2011-10-18
+==========
+  - Unified implementation for BoVW in package net.semanticmetadata.lire.imageanalysis.bovw;
+  - Moved SIFT, SURF and MSER implementations there
+  - Removed individual searchers for BoVW search, now all done with VisualWordsImageSearcher
+  - added SURF BoVW to LireDemo
+  - tested and fixed "indexMissing()" for BoVW
+  - Added read only flag to index readers in lire demo to speed up things a little
+  - Added progress indicator and prediction
+
+2011-10-17
+==========
+  - Parallelled histogram creation for SURF BoVWs
+
+2011-10-13
+==========
+  - Added ParallelKMeans for utilizing 4 Threads in the course of KMeans clustering
+  - Utilized ParallelKMeans in SurfFeatureHistogramBuilder
+  - Added SurfFeatureHistogramBuilder.indexMissing() for incremental index updates
+
+2011-09-07
+==========
+  - Liredemo: bugfix in ParallelIndexer.java submitted by Simon Micollier
+
+2011-08-05
+==========
+  - Added filter for LSA: LsaFilter
+  - Cleaned up libraries, removed Jama in favour of commons-math
+  - Updated commons-math and jopensurf libraries
+  - Removed ImageJ library (with according source code changes)
+  - Added test for LsaFilter
+  - Liredemo: Added menu item to try out LsaFilter
+  - Fixed RGB and HSV Quantization in SimpleColorHistogram, now it works fine.
+  - Removed QuantizationUtils
+  - Added formatting to TestWang
+  - TODO: Create index manager for BoVW and metric spaces.
+
+2011-08-04
+==========
+  - Liredemo: Changed browsing behaviour and introduced image rendering component.
+  - Liredemo: Added menu icons
+  - Liredemo: Added documentation and donate links to help menu
+  
+2011-08-03
+==========
+  - Fixed (most) deprecations coming from the switch to Lucene 3.3
+  - Added LuceneUtils as (i) a central place to configure the Lucene Version
+    employed in Lire and LireDemo and (ii) as factory for the IndexWriter objects
+  - Created filter interface and re-rank filter implementation
+  - Liredemo: integrated re-ranking filter
+  - deprecated CeddImageSearcher and CeddDocumentbuilder as they are no longer needed.
+
+2011-08-02
+==========
+  - Liredemo: new result list (grid view)
+  - Liredemo: Menu for fast switch between descriptor (Alt-1 to Alt-9)
+  - Liredemo: Re-worked set of descriptors
+  - Liredemo: Fixed catch {} in ParallelIndexer that missed specific Exceptions, killed threads, and stopped indexing.
+  - Liredemo: Fixed sync in ParallelIndexer to make it more understandable.
+  - Added byte[] serialization to ScalableColor
+  - Fixed bug in DocumentBuilderFactory
+  - Fixed bug in TestImageSearcher
+  - Fixed bug in byte[] serialization to ScalableColor
+
+2011-08-01
+==========
+  - Changed WhiteSpaceAnalyzer and SimpleAnalyzer to be constructed with version 3.3 (fix deprecation)
+  - Changed new Field(...) constructor for byte[] fields (fix deprecation with Lucene 3.3)
+  - Changed Document.getField(...) to Document.getFieldable(...) (fix deprecation with Lucene 3.3)
+  - Fixed EdgeHistogram (byte[] serialization was not implemented)
+  - Fixed: GenericDocumentBuilder.java - String representation was created either way.
+  - Updated CreateIndexTest to match the current Lire version.
+  - Updated TestImageSearcher to match the current Lire version.
+  - Updated TestWang to use the provided standard features.
+  - Bug fixes in SimpleColorHistogram
+  - Fix in GenericFastImageSearcher to make it faster (cached instance and less objects)
+
+2011-07-29
+==========
+  - Added loss less serialization to byte[] for doubles and longs
+  - Implemented byte[] representation for JpegCoefficientHistogram
+  - Added JCD feature to DocumentBuilderFactory and ImageSearcherFactory
+  - Added JpegCoefficientHistogram feature to DocumentBuilderFactory and ImageSearcherFactory
+  - Moved EdgeHistogram, ScalableColor and ColorLayout to Lire trunk, caliph-emir-cbir.jar no longer needed.
+  - Merged VisualDescriptor interface into LireFeature
+  - Edited several classes to remove the VisualDescriptor interface.
+  - Deprecated SimpleDocumentBuilder, WeightedSearch and SimpleImageSearcher. Wasn't quite a thing to use actually.
+  - Deprecated the AutoColorCorrelogram "Fast" Option in DocumentBuilderFactory and ImageSearcherFactory
+  - Added ColorLayout, ScalableColor and EdgeHistogram to DocumentBuilderFactory and ImageSearcherFactory
+  - Updated lucene-core to version 3.3.0
+
+2011-07-28
+==========
+  - Changed default extraction algorithm in AutoColorCorrelogram
+  - Changed interface LireFeature to support double histograms (for LSA and alike) and byte array representations.
+  - Changed multiple features to fit in with the new interface. Some still need some work, as they
+    just got skeletons with exceptions.
+  - Added option for byte[] representation to GenericDocumentBuilder
+  - Added GenericFastImageSearcher and GenericFastDocumentBuilder
+  - Changed DocumentBuilderFactory and ImageSearcherFactory to provide byte[] serialization (fast)
+    versions of ACC, RGB Histogram, Tamura, Gabor and FCTH.
+  - Changed all the copyrights to be consistent.
+
+2011-06-30
+==========
+  - Added BasicFeatures and BasicDocumentBuilder (from Thomas Pairitsch).
+  - Added byte[] serialization for ColorLayout and respective fields, builder and searcher.
+  - Changed the ColorLayout implementation in LireDemo to the fast one.
+  - Added CombinationTest to check the precision on a combination of selection by local features (SURF) and
+    ranking of the selection by ColorLayout
+  
+2011-05-19
+==========
+  - Bugfixes in MSER
+
+2011-05-09
+==========
+  - Bugfixes in Gabor & Tamura based on the information of Arthur Lin
+
+2011-05-09
+==========
+  - Bugfix in SimpleColorHistogram based on the information of Arthur Lin
+  
+2011-05-03
+==========
+  - Added test classes for BoVW extraction
+
+2011-05-02
+==========
+  - Added MSER + BoVW for MSER
+
+2010-09-28
+==========
+  - Changed SIFT feature serialization to byte[] (lot faster)
+  - added convenience methods to SerializationUtils
+  - added test class for SerializationUtils
+
+2010-05-20
+==========
+General:
+  - Applied tidy up patch (partially) from Dan Hanley <hanley.dan@gmail.xxx>
+
+2010-03-19
+==========
+General:
+  - Fixed index creation bug in liredemo (policies for automatic index creation
+    by the index writer were changed in Lucene 3.0, so the original ways didn't
+    work any more)
+  - Added utility methods for byte array <-> primitives conversion.
+  
+2010-03-17
+==========
+VisualWords:
+  - Added another field, now SiftFeatureHistogramBuilder also writes a
+    string of visual words into the index.
+  - Changed number of clusters for SiftFeatureHistogramBuilder to 256
+  - Changed quant value for normalization of histograms to 256
+  - Removed quantization for visual words.
+  - Test classes: Updated to reflect changes.
+
+2010-03-11
+==========
+General:
+  - Added a byte[] serialization to CEDD and implemented DocumentBuilder and searcher for it.
+    Results in a 30% faster search for 1000 images.
+
+2010-03-11
+==========
+General:
+  - Minor changes to sources to get them release ready.
+  - Release 0.8
+
+2010-03-10
+==========
+General:
+  - Checked in GeneralColorLayout and HSVColorHistogram, inferior performing features ;)
+  - added MetricsUtils, a class, where metrics are provided statically
+  - Updated sources and libs to Lucene 3.0.1
+  - Bugfixes in Tamura based on comments of shen72@users.sourceforge.net
+  - rewrite of metric spaces indexing to work with Lucene 3.0.1
+
+LireDemo:
+  - Updated sources and libs to Lucene 3.0.1
+
+2010-02-18
+==========
+General:
+  - Updated Lucene to 2.9.1
+  - Checked in LSA tests
+
+LireDemo:
+  - Fixed bug with index creation
+  - Added metadata extraction and indexing
+
+2009-05-19
+==========
+General:
+  - Fixed bug in scoring (metric spaces)
+  - Added further tests.
+
+2009-05-18
+==========
+General:
+  - Changed the "metric spaces" index strategy to modify the existing index
+  - Added "update" method to "metric spaces".
+
+2009-05-14
+==========
+General:
+  - Integrated index strategy of G. Amato (metric spaces)
+  - Created performance test class for this index strategy
+
+2009-05-12
+==========
+General:
+  - Updated Lucene to 2.4.1
+  - Started tests with index strategy of G. Amato (metric spaces)
+
+2009-02-10
+==========
+General:
+  - Changed routine for determining MAP
+  - Added error rate computation
+  - Changed normalization in color histogram
+  - Changed quantization in color histogram
+
+2008-10-23
+==========
+General:
+  - Release 0.7
+  
+2008-09-25
+==========
+Descriptors:
+  - Changed AutoColorCorrelogram to be a lot faster
+  - Changed AutoColorCorrelogram defaults to faster mode
+   
+2008-09-25
+==========
+Descriptors:
+  - Fixed bug in Autocolorcorrelogram based on creomments of
+    Rodrigo Carvalho Rezende, rcrezende <at> gmail.com
+
+2008-09-23
+==========
+Descriptors:
+  - Fixed bug in Autocolorcorrelogram based on comments of
+    Rodrigo Carvalho Rezende, rcrezende <at> gmail.com
+  - Changed normalization in Autocolorcorrelogram based on
+    comments of Rodrigo Carvalho Rezende
+  - Changed dissimilarity of AutoColorCorrelogram to Tanimoto
+  - Created a way to compute local feature histograms.
+  - Added SIFT
+
+2008-09-23
+==========
+General:
+  - Fixed Bug in ChainedDocumentBuilder (With single entry chain no
+    doc was generated)
+
+Descriptors:
+  - Changed default params of the SimpleColorHistogram based on MAP
+    tests on the Wang 1000 data set.
+  - Changed default params of ColorLayout in caliph-emir-cbir.jar
+
+Tests:
+  - Added simple benchmarking based on the Wang data set 
+
+2008-09-18
+==========
+Descriptors:
+  - Added JCD, a joint descriptor for CEDD and FCTH (from Savvas)
+
+2008-09-15
+==========
+General:
+  - Added non caching option to FastMap (use for more than 3000 objects to map)
+  - Fixed some smaller bugs based on comments of Anna-Maria Pasterk and Christoph Kofler 
+
+2008-08-27
+==========
+Descriptors
+  - Made empty constructors fro ScalableColorImpl and ColorLayoutImpl
+    public for Lire (in updated cbir-jar lib)
+  - Added HMMD color space to SimpleColorHistogram as well as an appropriate
+    quantization.
+  - Added wrappers for ScalableColor, EdgeHistogram and ColorLayout, which
+    implement the LireFeature interface.
+
+2008-08-14
+==========
+CBIR:
+  - Updated CEDD descriptor based on code patch of Savvas Chatzichristofis
+  - Updated FCTH descriptor based on code patch of Savvas Chatzichristofis
+
+2008-08-13
+==========
+General:
+  - Added option to FastMap for iterative mapping
+
+2008-07-11
+==========
+General:
+  - Made AutoColorCorrelogram a "LireFeature"
+  
+2008-07-04
+==========
+CBIR:
+  - Added FCTH implementation of Savvas Chatzichristofis
+  - Added Gabor feature based on the code of Marko Keuschnig &
+    Christian Penz to imageanalysis
+    
+2008-06-09
+==========
+General:
+  - Release 0.6
+
+2008-05-26
+==========
+CBIR:
+  - Added Tamura feature based on the code of Marko Keuschnig &
+    Christian Penz to imageanalysis
+  - Added Tamura to document and search documentBuilder factories
+  - Removed specific implementations for color histogram and CEDD
+  - Introduced LireFeature interface (for use in GenericDocumentBuilder
+    and GenericImageSearcher)
+  - Introduced GenericDocumentBuilder and GenericImageSearcher
+
+2008-05-26
+==========
+CBIR:
+  - Fixed bugs in CEDD integration & tests
+  - Changed distance function of CEDD feature 
+  - Added RGB color histogram feature to indexing and search.
+  - Added RGB color histogram feature to LireDemo
+
+2008-05-23
+==========
+General:
+  - Switched to SVN
+
+CBIR:
+  - Added CEDD feature to indexing and search.
+  - Added CEDD feature to LireDemo
+  
+2008-05-22
+==========
+CBIR:
+  - Added CEDD descriptor (thanks to Savvas Chatzichristofis) in
+    imageanalysis package. Integration in Lire indexing yet to come.
+
+2008-05-14
+==========
+CBIR:
+  - Added histogram stub to implement color histograms (HSV, RGB
+    and Luminance)
+
+2008-04-21
+==========
+General:
+  - Added FastMap Implementation (copy from Caliph)
+  - Changed Implementation to work on "double" instead of float.
+
+2007-07-06
+==========
+CBIR:
+  - New library from Caliph with updated Scalable Color Descriptor Impl
+    based on input of Fabrizio Falchi and Bastian Hoesch
+    
+2007-03-26
+==========
+CBIR:
+  - Updated EdgeHistogramImpl according to bug noticed by
+    Bastian Hoesch
+
+2007-03-23
+==========
+General:
+  - ColorOnly search did not work -> bugfix (changed to ColorLayout descriptor)
+
+2007-02-26
+==========
+  - Release 0.5.2
+
+2006-12-20
+==========
+General:
+  - Updated MAX_DISTANCE in DocumentBuilder to 16 (better subjective results,
+    but slower extraction.
+    
+2006-12-20
+==========
+General:
+  - Bugfix in AutoColorCorrelation (THX to Markus Fauster)
+  - Added ChainedDocumentBuilder
+  - Added DocumentBuilderFactory.getFullDocumentBuilder()
+
+2006-12-19
+==========
+General:
+  - General Speedup in AutoColorCorrelation
+  - Bugfix in AutoColorCorrelation
+  - Updated version number in build.xml to 0.5.2
+  - Updated Lucene to 2.1.0
+  
+2006-12-14
+==========
+General:
+  - Added image retrieval feature color correlogram
+		- Use DocumentBuilderFactory.getAutoColorCorrelationDocumentBuilder()
+		  to create documents with this feature
+		- Use ImageSearcherFactory.createCorrelogramImageSearcher(int)
+		  to search the index for them.
+		- Note that this feature is quite slow and pictures are resized to 
+		  200x200 for analysis (originals won't be touched, just in RAM)!
+
+2006-12-14
+==========
+General:
+  - Added "Search for Color" features by adding:
+        - ImageSearcherFactory.createColorOnlySearcher(...)
+        - DocumentBuilderFactory.getColorOnlyDocumentBuilder()
+        - DocumentFactory.createColorOnlyDocument(Color.red)
+  
+2006-08-04
+==========
+General:
+  - Updated Lucene to 2.0.0
+  - Bugfix in SimpleResult based on hint of Kai Jauslin: different
+    images with equal similarity were not included in results.
+  - Added new function for identifying duplicate images
+
+2006-05-19
+==========
+General:
+  - Added support for weighting of different aspects
+    of image matching.
+  - Made default number of maximum hits in ImageSearcherFactory
+    a field
+
+2006-02-28
+==========
+General:
+  - Bugfix for SimpleImageSearcher (multiple usage of the same
+    instance did not clear the result set.)
+  - normalized score
+  - updated Caliph & Emir lib to Lucene 1.9.1
+  - updated Lucene to 1.9.1
+  - updated Lire to Lucene 1.9.1
+
+2006-02-27
+==========
+General:
+  - Tests updated for testing Lucene 1.9 RC1
+  - Applied patch from Roman Kern (deleted documents)
+  - Docs updated
+
+2006-02-17
+==========
+General:
+  - Tests and Stats updated
+  - Docs updated
+  
+2006-02-17
+==========
+General:
+  - Updated Caliph & Emir CBIR Library - smaller now
+  - Stats updated
+
+2006-02-04
+==========
+General:
+  - New and faster EdgeHistogram descriptor
+  - Added "release" task to build.xml
+
+2006-02-04
+==========
+General:
+  - First alpha release version.

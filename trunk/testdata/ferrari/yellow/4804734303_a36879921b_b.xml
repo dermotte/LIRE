@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4804734303" secret="a36879921b" server="4121" farm="5" dateuploaded="1279470089" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="e6e67ec79f" originalformat="jpg" views="886"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 458 Italia</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1279470089" taken="2010-07-17 17:12:26" takengranularity="0" lastupdate="1324521385"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>7</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-4804734303-595" author="31797562@N04" raw="london" machine_tag="0">london</tag>
+            <tag id="31765423-4804734303-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-4804734303-923" author="31797562@N04" raw="car" machine_tag="0">car</tag>
+            <tag id="31765423-4804734303-8117" author="31797562@N04" raw="fast" machine_tag="0">fast</tag>
+            <tag id="31765423-4804734303-8305873" author="31797562@N04" raw="d3000" machine_tag="0">d3000</tag>
+            <tag id="31765423-4804734303-2994" author="31797562@N04" raw="nikon" machine_tag="0">nikon</tag>
+            <tag id="31765423-4804734303-9505" author="31797562@N04" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-4804734303-627359" author="31797562@N04" raw="458" machine_tag="0">458</tag>
+            <tag id="31765423-4804734303-3442" author="31797562@N04" raw="italia" machine_tag="0">italia</tag>
+            <tag id="31765423-4804734303-2509269" author="31797562@N04" raw="fezza" machine_tag="0">fezza</tag>
+            <tag id="31765423-4804734303-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-4804734303-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+            <tag id="31765423-4804734303-292924" author="31797562@N04" raw="sloane" machine_tag="0">sloane</tag>
+            <tag id="31765423-4804734303-85" author="31797562@N04" raw="street" machine_tag="0">street</tag>
+            <tag id="31765423-4804734303-37509" author="31797562@N04" raw="panning" machine_tag="0">panning</tag>
+            <tag id="31765423-4804734303-10992" author="31797562@N04" raw="sharp" machine_tag="0">sharp</tag>
+            <tag id="31765423-4804734303-17572" author="31797562@N04" raw="shops" machine_tag="0">shops</tag>
+            <tag id="31765423-4804734303-61" author="31797562@N04" raw="road" machine_tag="0">road</tag>
+            <tag id="31765423-4804734303-1994" author="31797562@N04" raw="grey" machine_tag="0">grey</tag>
+            <tag id="31765423-4804734303-2000" author="31797562@N04" raw="lights" machine_tag="0">lights</tag>
+            <tag id="31765423-4804734303-6774" author="31797562@N04" raw="profile" machine_tag="0">profile</tag>
+            <tag id="31765423-4804734303-6158" author="31797562@N04" raw="side" machine_tag="0">side</tag>
+            <tag id="31765423-4804734303-58542" author="31797562@N04" raw="alloys" machine_tag="0">alloys</tag>
+            <tag id="31765423-4804734303-15978" author="31797562@N04" raw="spinning" machine_tag="0">spinning</tag>
+            <tag id="31765423-4804734303-597832" author="31797562@N04" raw="calipers" machine_tag="0">calipers</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/4804734303/</url>
+        </urls>
+    </photo>
+</rsp>
+

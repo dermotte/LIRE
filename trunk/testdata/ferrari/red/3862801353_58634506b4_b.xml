@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3862801353" secret="58634506b4" server="2530" farm="3" dateuploaded="1251415823" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="3bd464bebf" originalformat="jpg" views="547"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title/>
+        <description>Perfect location to shoot a 360.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1251415823" taken="2009-08-16 06:26:13" takengranularity="0" lastupdate="1264353767"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-3862801353-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-3862801353-8686" author="26977717@N02" raw="360" machine_tag="0">360</tag>
+            <tag id="26957369-3862801353-29865" author="26977717@N02" raw="Modena" machine_tag="0">modena</tag>
+            <tag id="26957369-3862801353-227" author="26977717@N02" raw="Red" machine_tag="0">red</tag>
+            <tag id="26957369-3862801353-312929" author="26977717@N02" raw="Rossa" machine_tag="0">rossa</tag>
+            <tag id="26957369-3862801353-16357" author="26977717@N02" raw="fancy" machine_tag="0">fancy</tag>
+            <tag id="26957369-3862801353-2073" author="26977717@N02" raw="hotel" machine_tag="0">hotel</tag>
+            <tag id="26957369-3862801353-5221" author="26977717@N02" raw="5" machine_tag="0">5</tag>
+            <tag id="26957369-3862801353-2017" author="26977717@N02" raw="star" machine_tag="0">star</tag>
+            <tag id="26957369-3862801353-6747" author="26977717@N02" raw="rich" machine_tag="0">rich</tag>
+            <tag id="26957369-3862801353-31915" author="26977717@N02" raw="expensive" machine_tag="0">expensive</tag>
+            <tag id="26957369-3862801353-786" author="26977717@N02" raw="sports" machine_tag="0">sports</tag>
+            <tag id="26957369-3862801353-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-3862801353-2088" author="26977717@N02" raw="Austria" machine_tag="0">austria</tag>
+            <tag id="26957369-3862801353-22007" author="26977717@N02" raw="plates" machine_tag="0">plates</tag>
+            <tag id="26957369-3862801353-48298" author="26977717@N02" raw="Lugano" machine_tag="0">lugano</tag>
+            <tag id="26957369-3862801353-2110" author="26977717@N02" raw="Switzerland" machine_tag="0">switzerland</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/3862801353/</url>
+        </urls>
+    </photo>
+</rsp>
+

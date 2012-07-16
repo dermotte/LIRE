@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="5751134603" secret="33282e19e2" server="3492" farm="4" dateuploaded="1306170453" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="ecf25eaf6e" originalformat="jpg" views="292"
+           media="photo">
+        <owner nsid="53371251@N08" username="Tom Wolf | Photography" realname="Tom Hipster" location="Hamburg, Germany"
+               iconserver="6077" iconfarm="7"/>
+        <title>.599 "gto"</title>
+        <description>&lt;i&gt; Paris, 2011 &lt;/i&gt;
+
+            In the first moments i didn`t realised that this car is just a &lt;b&gt;599 GTB&lt;/b&gt;, seems like the
+            owner made a good job! How do you like the car? In my opinion it looks just amazing, especially with this
+            red Ferrari-emblem on the rims!
+
+            &lt;b&gt; Feel free to comment and vote ;-) &lt;/b&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1306170453" taken="2011-04-25 13:29:00" takengranularity="0" lastupdate="1324242820"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>19</comments>
+        <notes>
+            <note id="72157626788789764" author="45756576@N06" authorname="Max R. Photography [away!]" x="195" y="213"
+                  w="42" h="65">Insane!
+            </note>
+        </notes>
+        <people haspeople="0"/>
+        <tags/>
+        <location latitude="49.399328" longitude="0.129969" accuracy="14" context="0" place_id="1GLgj9FXUbjlqUc"
+                  woeid="632097">
+            <locality place_id="1GLgj9FXUbjlqUc" woeid="632097">Villerville</locality>
+            <county place_id="YBKM83dQUL9SKQlmBQ" woeid="12597127">Calvados</county>
+            <region place_id="Q_TRGOlWU78YU3qd" woeid="7153311">Basse-Normandie</region>
+            <country place_id="lbWye9tTUb6GOcp80w" woeid="23424819">France</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/bongosphotographie/5751134603/</url>
+        </urls>
+    </photo>
+</rsp>
+

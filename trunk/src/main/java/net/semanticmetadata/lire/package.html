@@ -1,0 +1,89 @@
+<!--
+  ~ This file is part of the LIRe project: http://www.semanticmetadata.net/lire
+  ~ LIRe is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ LIRe is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with LIRe; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ We kindly ask you to refer the following paper in any publication mentioning Lire:
+  ~
+  ~ Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+  ~ An Extensible Java CBIR Library. In proceedings of the 16th ACM International
+  ~ Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
+  ~
+  ~ http://doi.acm.org/10.1145/1459359.1459577
+  ~
+  ~ Copyright statement:
+  ~ ~~~~~~~~~~~~~~~~~~~
+  ~ (c) 2002-2011 by Mathias Lux (mathias@juggle.at)
+  ~     http://www.semanticmetadata.net/lire
+  -->
+
+<h2>General</h2>
+
+<p>The LIRE library allows the creation of a Lucene Index for
+    content based image retrieval (CBIR). Furthermore methods
+    for searching the index are provided.</p>
+
+<p>This library is part of the Caliph & Emir project and aims
+    to provide the CBIR features to other Java projects in an
+    easy and light weight way.</p>
+
+<h2>Creating an Index</h2>
+
+Use DocumentBuilderFactory to create a DocumentBuilder, which
+will create Lucene Documents from images. Add this documents to
+an index like this:
+
+<pre>
+    System.out.println(">> Indexing " + images.size() + " files.");
+    DocumentBuilder builder = DocumentBuilderFactory.getExtensiveDocumentBuilder();
+    IndexWriter iw = new IndexWriter(indexPath, new SimpleAnalyzer(LuceneUtils.LUCENE_VERSION), true);
+    int count = 0;
+    long time = System.currentTimeMillis();
+    for (String identifier : images) {
+        Document doc = builder.createDocument(new FileInputStream(identifier), identifier);
+        iw.addDocument(doc);
+        count ++;
+        if (count % 25 == 0) System.out.println(count + " files indexed.");
+    }
+    long timeTaken = (System.currentTimeMillis() - time);
+    float sec = ((float) timeTaken) / 1000f;
+
+    System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
+    iw.optimize();
+    iw.close();
+</pre>
+
+<h2>Searching in an Index</h2>
+Use the ImageSearcherFactory for creating an ImageSearcher, which will retrieve the images
+for you from the index.
+
+<pre>
+    IndexReader reader = IndexReader.open(indexPath);
+    ImageSearcher searcher = ImageSearcherFactory.createDefaultSearcher();
+    FileInputStream imageStream = new FileInputStream("image.jpg");
+    BufferedImage bimg = ImageIO.read(imageStream);
+    // searching for an image:
+    ImageSearchHits hits = null;
+    hits = searcher.search(bimg, reader);
+    for (int i = 0; i < 5; i++) {
+        System.out.println(hits.score(i) + ": " + hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+    }
+
+    // searching for a document:
+    Document document = hits.doc(0);
+    hits = searcher.search(document, reader);
+    for (int i = 0; i < 5; i++) {
+        System.out.println(hits.score(i) + ": " + hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+    }
+</pre>

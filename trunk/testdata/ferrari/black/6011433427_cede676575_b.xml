@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6011433427" secret="cede676575" server="6030" farm="7" dateuploaded="1312558364" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="d4cf128a8d" originalformat="jpg" views="191"
+           media="photo">
+        <owner nsid="59051853@N08" username="W.I.N Photography" realname="" location="" iconserver="5133" iconfarm="6"/>
+        <title>599 GTO ( EXPLORED)</title>
+        <description>Thanks for 20,000 views!
+
+            I spotted this on Rodeo Dr, and then i saw this at the show the next day!
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1312558364" taken="2011-07-30 20:41:46" takengranularity="0" lastupdate="1322943424"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>15</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="58959040-6011433427-22413" author="59051853@N08" raw="GTO" machine_tag="0">gto</tag>
+            <tag id="58959040-6011433427-515196" author="59051853@N08" raw="599" machine_tag="0">599</tag>
+            <tag id="58959040-6011433427-9505" author="59051853@N08" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="58959040-6011433427-3314" author="59051853@N08" raw="flickr" machine_tag="0">flickr</tag>
+            <tag id="58959040-6011433427-2696" author="59051853@N08" raw="amazing" machine_tag="0">amazing</tag>
+            <tag id="58959040-6011433427-472" author="59051853@N08" raw="black" machine_tag="0">black</tag>
+            <tag id="58959040-6011433427-95" author="59051853@N08" raw="new" machine_tag="0">new</tag>
+            <tag id="58959040-6011433427-2709" author="59051853@N08" raw="cool" machine_tag="0">cool</tag>
+            <tag id="58959040-6011433427-6011" author="59051853@N08" raw="awesome" machine_tag="0">awesome</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/59051853@N08/6011433427/</url>
+        </urls>
+    </photo>
+</rsp>
+

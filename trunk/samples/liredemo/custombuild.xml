@@ -1,0 +1,73 @@
+<project name="LireDemoRelease" default="release" basedir=".">
+    <!--
+/*
+ * This file is part of the LIRe project.
+ *
+ * LIRe is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * LIRe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Caliph & Emir; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Copyright statement:
+ * ********************
+ * (c) 2002-2008 by Mathias Lux (mathias@juggle.at)
+ * Palmengasse 20, 9020 Klagenfurt, Austria
+ * http://www.semanticmetadata.net
+ */
+
+
+    -->
+    <description>
+        This buildfile is used to package the LIRE Demo
+    </description>
+
+    <property name="src" value="src"/>
+    <property name="build" value="classes"/>
+    <property name="dist" value="dist"/>
+    <property name="versionstring" value="0.7"/>
+
+    <!-- define the classpath  -->
+    <path id="classpath.path">
+        <pathelement location="${build}"/>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <tstamp>
+            <format property="touch.time" pattern="dd.MM.yyyy hh:mm aa"/>
+        </tstamp>
+        <mkdir dir="${build}"/>
+    </target>
+
+
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+
+    <target name="release">
+        <!-- Make a zip file -->
+        <!--subant antfile="nbbuild.xml" target="LireDemo-impl.jar"/-->
+        <zip destfile="${dist}/LireDemo-src-${versionstring}.zip">
+            <fileset dir="${src}">
+                <patternset>
+                    <!--include name="${src}"/-->
+                    <exclude name="**/.svn"/>
+                </patternset>
+            </fileset>
+        </zip>
+    </target>
+
+</project>

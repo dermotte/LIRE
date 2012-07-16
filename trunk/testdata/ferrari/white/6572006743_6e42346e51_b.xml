@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6572006743" secret="6e42346e51" server="7162" farm="8" dateuploaded="1324861408" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="f6a2fba3b0" originalformat="jpg" views="155"
+           media="photo">
+        <owner nsid="67847534@N03" username="Ben_in_london" realname="Ben" location="LONDON, United Kingdom"
+               iconserver="6173" iconfarm="7"/>
+        <title>Ferrari 599 gto</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1324861408" taken="2011-12-25 14:16:08" takengranularity="0" lastupdate="1327828110"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="67824480-6572006743-515196" author="67847534@N03" raw="599" machine_tag="0">599</tag>
+            <tag id="67824480-6572006743-9505" author="67847534@N03" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="67824480-6572006743-112745" author="67847534@N03" raw="sportscars" machine_tag="0">sportscars</tag>
+            <tag id="67824480-6572006743-264541" author="67847534@N03" raw="streetcars" machine_tag="0">streetcars</tag>
+            <tag id="67824480-6572006743-5665" author="67847534@N03" raw="stripes" machine_tag="0">stripes</tag>
+            <tag id="67824480-6572006743-53450" author="67847534@N03" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="67824480-6572006743-123219" author="67847534@N03" raw="supercars" machine_tag="0">supercars</tag>
+            <tag id="67824480-6572006743-623" author="67847534@N03" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="67824480-6572006743-595" author="67847534@N03" raw="london" machine_tag="0">london</tag>
+            <tag id="67824480-6572006743-8505504" author="67847534@N03" raw="Worldcars" machine_tag="0">worldcars</tag>
+            <tag id="67824480-6572006743-395" author="67847534@N03" raw="white" machine_tag="0">white</tag>
+            <tag id="67824480-6572006743-472" author="67847534@N03" raw="black" machine_tag="0">black</tag>
+            <tag id="67824480-6572006743-5060485" author="67847534@N03" raw="F599" machine_tag="0">f599</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/streetcarl/6572006743/</url>
+        </urls>
+    </photo>
+</rsp>
+

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4261480774" secret="5e82ea5aab" server="4024" farm="5" dateuploaded="1263095203" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="e952a8ef88" originalformat="jpg" views="541"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>F50.</title>
+        <description>At the detailing area of Ferrari of Greenwich, only 400 miles on this beast.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1263095203" taken="2010-01-09 11:42:45" takengranularity="0" lastupdate="1322272543"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>11</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4261480774-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4261480774-171504" author="26977717@N02" raw="F50" machine_tag="0">f50</tag>
+            <tag id="26957369-4261480774-2871" author="26977717@N02" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="26957369-4261480774-53450" author="26977717@N02" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="26957369-4261480774-47566" author="26977717@N02" raw="rare" machine_tag="0">rare</tag>
+            <tag id="26957369-4261480774-227" author="26977717@N02" raw="red" machine_tag="0">red</tag>
+            <tag id="26957369-4261480774-6490" author="26977717@N02" raw="Greenwich" machine_tag="0">greenwich</tag>
+            <tag id="26957369-4261480774-1382" author="26977717@N02" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="26957369-4261480774-53657" author="26977717@N02" raw="17-40mm" machine_tag="0">1740mm</tag>
+            <tag id="26957369-4261480774-19160" author="26977717@N02" raw="L" machine_tag="0">l</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4261480774/</url>
+        </urls>
+    </photo>
+</rsp>
+

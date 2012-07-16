@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3908437070" secret="6d1173f47b" server="3497" farm="4" dateuploaded="1252629728" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="575081caf6" originalformat="jpg" views="941"
+           media="photo">
+        <owner nsid="15622795@N05" username="emrank" realname="Emran Kassim" location="Nagoya, Aichi, Japan"
+               iconserver="2254" iconfarm="3"/>
+        <title>CARdid - Ferrari</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1252629728" taken="2009-09-11 09:42:08" takengranularity="0" lastupdate="1302844864"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>36</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="15617455-3908437070-9505" author="15622795@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="15617455-3908437070-45592410" author="15622795@N05" raw="road candid" machine_tag="0">roadcandid
+            </tag>
+            <tag id="15617455-3908437070-923" author="15622795@N05" raw="car" machine_tag="0">car</tag>
+            <tag id="15617455-3908437070-94397" author="15622795@N05" raw="sportscar" machine_tag="0">sportscar</tag>
+            <tag id="15617455-3908437070-227" author="15622795@N05" raw="red" machine_tag="0">red</tag>
+            <tag id="15617455-3908437070-135870" author="15622795@N05" raw="merah" machine_tag="0">merah</tag>
+            <tag id="15617455-3908437070-550611" author="15622795@N05" raw="赤" machine_tag="0">赤</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/emrank/3908437070/</url>
+        </urls>
+    </photo>
+</rsp>
+
