@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6239294498" secret="2627932e26" server="6213" farm="7" dateuploaded="1318463884" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="90bd344ccf" originalformat="jpg" views="384"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 512 BB</title>
+        <description>Caught this beauty in the Stackhouse Street NCP. Purposefully partially obscured - think it adds
+            exclusivity to the shot.
+
+            For more automotive goodness, follow @torquespeak on Twitter.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1318463884" taken="2011-10-12 22:22:35" takengranularity="0" lastupdate="1320834092"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>8</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6239294498-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6239294498-151042" author="31797562@N04" raw="512" machine_tag="0">512</tag>
+            <tag id="31765423-6239294498-29497" author="31797562@N04" raw="BB" machine_tag="0">bb</tag>
+            <tag id="31765423-6239294498-472" author="31797562@N04" raw="black" machine_tag="0">black</tag>
+            <tag id="31765423-6239294498-923" author="31797562@N04" raw="car" machine_tag="0">car</tag>
+            <tag id="31765423-6239294498-73" author="31797562@N04" raw="park" machine_tag="0">park</tag>
+            <tag id="31765423-6239294498-21965" author="31797562@N04" raw="parked" machine_tag="0">parked</tag>
+            <tag id="31765423-6239294498-595" author="31797562@N04" raw="London" machine_tag="0">london</tag>
+            <tag id="31765423-6239294498-1144014" author="31797562@N04" raw="SW3" machine_tag="0">sw3</tag>
+            <tag id="31765423-6239294498-9784" author="31797562@N04" raw="Harrods" machine_tag="0">harrods</tag>
+            <tag id="31765423-6239294498-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-6239294498-17991" author="31797562@N04" raw="70s" machine_tag="0">70s</tag>
+            <tag id="31765423-6239294498-40258" author="31797562@N04" raw="seventies" machine_tag="0">seventies</tag>
+            <tag id="31765423-6239294498-63854" author="31797562@N04" raw="wedge" machine_tag="0">wedge</tag>
+            <tag id="31765423-6239294498-2871" author="31797562@N04" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="31765423-6239294498-33878" author="31797562@N04" raw="pillars" machine_tag="0">pillars</tag>
+            <tag id="31765423-6239294498-141" author="31797562@N04" raw="blue" machine_tag="0">blue</tag>
+            <tag id="31765423-6239294498-395" author="31797562@N04" raw="white" machine_tag="0">white</tag>
+            <tag id="31765423-6239294498-49213" author="31797562@N04" raw="nero" machine_tag="0">nero</tag>
+            <tag id="31765423-6239294498-6630" author="31797562@N04" raw="rear" machine_tag="0">rear</tag>
+            <tag id="31765423-6239294498-2000" author="31797562@N04" raw="lights" machine_tag="0">lights</tag>
+            <tag id="31765423-6239294498-1213" author="31797562@N04" raw="night" machine_tag="0">night</tag>
+            <tag id="31765423-6239294498-3297" author="31797562@N04" raw="long" machine_tag="0">long</tag>
+            <tag id="31765423-6239294498-3298" author="31797562@N04" raw="exposure" machine_tag="0">exposure</tag>
+        </tags>
+        <location latitude="51.49977" longitude="-0.16075" accuracy="16" context="0" place_id="pjYotJFTUroSWUpC1Q"
+                  woeid="20094304">
+            <neighbourhood place_id="pjYotJFTUroSWUpC1Q" woeid="20094304">Brompton</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6239294498/</url>
+        </urls>
+    </photo>
+</rsp>
+

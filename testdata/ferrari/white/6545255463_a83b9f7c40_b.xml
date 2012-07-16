@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6545255463" secret="a83b9f7c40" server="7029" farm="8" dateuploaded="1324412516" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="689a5953e8" originalformat="jpg" views="222"
+           media="photo">
+        <owner nsid="67847534@N03" username="Ben_in_london" realname="Ben" location="LONDON, United Kingdom"
+               iconserver="6173" iconfarm="7"/>
+        <title>Ferrari California</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1324412516" taken="2011-12-20 20:20:12" takengranularity="0" lastupdate="1324499209"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>3</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="67824480-6545255463-50" author="67847534@N03" raw="California" machine_tag="0">california</tag>
+            <tag id="67824480-6545255463-623" author="67847534@N03" raw="cars" machine_tag="0">cars</tag>
+            <tag id="67824480-6545255463-9505" author="67847534@N03" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="67824480-6545255463-595" author="67847534@N03" raw="London" machine_tag="0">london</tag>
+            <tag id="67824480-6545255463-112745" author="67847534@N03" raw="sportscars" machine_tag="0">sportscars</tag>
+            <tag id="67824480-6545255463-264541" author="67847534@N03" raw="streetcars" machine_tag="0">streetcars</tag>
+            <tag id="67824480-6545255463-53450" author="67847534@N03" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="67824480-6545255463-123219" author="67847534@N03" raw="supercars" machine_tag="0">supercars</tag>
+            <tag id="67824480-6545255463-395" author="67847534@N03" raw="White" machine_tag="0">white</tag>
+            <tag id="67824480-6545255463-8505504" author="67847534@N03" raw="worldcars" machine_tag="0">worldcars</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/streetcarl/6545255463/</url>
+        </urls>
+    </photo>
+</rsp>
+

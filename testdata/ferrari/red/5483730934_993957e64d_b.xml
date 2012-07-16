@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="5483730934" secret="993957e64d" server="5139" farm="6" dateuploaded="1298845832" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="21ec6436f4" originalformat="jpg" views="2775"
+           media="photo">
+        <owner nsid="46754691@N05" username="Shane's Stuff" realname="Shane K" location="Mississauga, Canada"
+               iconserver="4051" iconfarm="5"/>
+        <title>Corvette ZR1</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1298845832" taken="2011-02-26 05:53:52" takengranularity="0" lastupdate="1301933116"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="46749351-5483730934-449" author="46754691@N05" raw="Toronto" machine_tag="0">toronto</tag>
+            <tag id="46749351-5483730934-451" author="46754691@N05" raw="Canada" machine_tag="0">canada</tag>
+            <tag id="46749351-5483730934-9715" author="46754691@N05" raw="Canadian" machine_tag="0">canadian</tag>
+            <tag id="46749351-5483730934-33" author="46754691@N05" raw="Auto" machine_tag="0">auto</tag>
+            <tag id="46749351-5483730934-38" author="46754691@N05" raw="Show" machine_tag="0">show</tag>
+            <tag id="46749351-5483730934-8864" author="46754691@N05" raw="Auto Show" machine_tag="0">autoshow</tag>
+            <tag id="46749351-5483730934-623" author="46754691@N05" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="46749351-5483730934-2146519" author="46754691@N05" raw="Vechicles" machine_tag="0">vechicles</tag>
+            <tag id="46749351-5483730934-12608" author="46754691@N05" raw="Exotic" machine_tag="0">exotic</tag>
+            <tag id="46749351-5483730934-2871" author="46754691@N05" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="46749351-5483730934-13824" author="46754691@N05" raw="American" machine_tag="0">american</tag>
+            <tag id="46749351-5483730934-13796" author="46754691@N05" raw="German" machine_tag="0">german</tag>
+            <tag id="46749351-5483730934-6727" author="46754691@N05" raw="Wheels" machine_tag="0">wheels</tag>
+            <tag id="46749351-5483730934-10994" author="46754691@N05" raw="Tires" machine_tag="0">tires</tag>
+            <tag id="46749351-5483730934-22142" author="46754691@N05" raw="Headlight" machine_tag="0">headlight</tag>
+            <tag id="46749351-5483730934-33303" author="46754691@N05" raw="Rims" machine_tag="0">rims</tag>
+            <tag id="46749351-5483730934-622" author="46754691@N05" raw="Classic" machine_tag="0">classic</tag>
+            <tag id="46749351-5483730934-1180" author="46754691@N05" raw="Modern" machine_tag="0">modern</tag>
+            <tag id="46749351-5483730934-21864" author="46754691@N05" raw="Brake" machine_tag="0">brake</tag>
+            <tag id="46749351-5483730934-333764" author="46754691@N05" raw="Caliper" machine_tag="0">caliper</tag>
+            <tag id="46749351-5483730934-102043" author="46754691@N05" raw="Alloy" machine_tag="0">alloy</tag>
+            <tag id="46749351-5483730934-49086" author="46754691@N05" raw="Acura" machine_tag="0">acura</tag>
+            <tag id="46749351-5483730934-1392" author="46754691@N05" raw="Honda" machine_tag="0">honda</tag>
+            <tag id="46749351-5483730934-9505" author="46754691@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="46749351-5483730934-43418" author="46754691@N05" raw="Lamborghini" machine_tag="0">lamborghini
+            </tag>
+            <tag id="46749351-5483730934-38652" author="46754691@N05" raw="Corvette" machine_tag="0">corvette</tag>
+            <tag id="46749351-5483730934-632" author="46754691@N05" raw="Chevrolet" machine_tag="0">chevrolet</tag>
+            <tag id="46749351-5483730934-22412" author="46754691@N05" raw="Pontiac" machine_tag="0">pontiac</tag>
+            <tag id="46749351-5483730934-624" author="46754691@N05" raw="Ford" machine_tag="0">ford</tag>
+            <tag id="46749351-5483730934-3820" author="46754691@N05" raw="Nissan" machine_tag="0">nissan</tag>
+            <tag id="46749351-5483730934-35141" author="46754691@N05" raw="Hyundai" machine_tag="0">hyundai</tag>
+            <tag id="46749351-5483730934-17567" author="46754691@N05" raw="BMW" machine_tag="0">bmw</tag>
+            <tag id="46749351-5483730934-23736" author="46754691@N05" raw="Jaguar" machine_tag="0">jaguar</tag>
+            <tag id="46749351-5483730934-4535" author="46754691@N05" raw="Lotus" machine_tag="0">lotus</tag>
+            <tag id="46749351-5483730934-71487" author="46754691@N05" raw="Aston Martin" machine_tag="0">astonmartin
+            </tag>
+            <tag id="46749351-5483730934-65260" author="46754691@N05" raw="Maserati" machine_tag="0">maserati</tag>
+            <tag id="46749351-5483730934-40328" author="46754691@N05" raw="Alfa Romeo" machine_tag="0">alfaromeo</tag>
+            <tag id="46749351-5483730934-4402" author="46754691@N05" raw="Fiat" machine_tag="0">fiat</tag>
+            <tag id="46749351-5483730934-16363" author="46754691@N05" raw="Subaru" machine_tag="0">subaru</tag>
+            <tag id="46749351-5483730934-33302" author="46754691@N05" raw="Audi" machine_tag="0">audi</tag>
+            <tag id="46749351-5483730934-105317" author="46754691@N05" raw="Lexus" machine_tag="0">lexus</tag>
+            <tag id="46749351-5483730934-205439" author="46754691@N05" raw="Maybach" machine_tag="0">maybach</tag>
+            <tag id="46749351-5483730934-15436" author="46754691@N05" raw="Mercedes Benz" machine_tag="0">mercedesbenz
+            </tag>
+            <tag id="46749351-5483730934-19098" author="46754691@N05" raw="Dodge" machine_tag="0">dodge</tag>
+            <tag id="46749351-5483730934-7122826" author="46754691@N05" raw="ZRI" machine_tag="0">zri</tag>
+            <tag id="46749351-5483730934-94397" author="46754691@N05" raw="Sports Car" machine_tag="0">sportscar</tag>
+            <tag id="46749351-5483730934-53450" author="46754691@N05" raw="Supercar" machine_tag="0">supercar</tag>
+            <tag id="46749351-5483730934-24648" author="46754691@N05" raw="Concept" machine_tag="0">concept</tag>
+            <tag id="46749351-5483730934-227" author="46754691@N05" raw="Red" machine_tag="0">red</tag>
+            <tag id="46749351-5483730934-1810" author="46754691@N05" raw="Rouge" machine_tag="0">rouge</tag>
+            <tag id="46749351-5483730934-592" author="46754691@N05" raw="Rot" machine_tag="0">rot</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/shanes_stuff/5483730934/</url>
+        </urls>
+    </photo>
+</rsp>
+

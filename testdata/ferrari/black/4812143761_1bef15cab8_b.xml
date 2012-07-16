@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4812143761" secret="1bef15cab8" server="4135" farm="5" dateuploaded="1279642882" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="0b98787bd6" originalformat="jpg" views="2015"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>Matte Black F430 Spider.</title>
+        <description>One of my favorite shots from my trip to California a few months ago. I'll start putting those
+            shots up soon, I have a lot that you guys will enjoy.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1279642882" taken="2010-04-10 19:23:43" takengranularity="0" lastupdate="1315895455"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>23</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4812143761-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4812143761-116028" author="26977717@N02" raw="F430" machine_tag="0">f430</tag>
+            <tag id="26957369-4812143761-2249" author="26977717@N02" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="26957369-4812143761-2871" author="26977717@N02" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="26957369-4812143761-786" author="26977717@N02" raw="sports" machine_tag="0">sports</tag>
+            <tag id="26957369-4812143761-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-4812143761-12608" author="26977717@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="26957369-4812143761-8117" author="26977717@N02" raw="fast" machine_tag="0">fast</tag>
+            <tag id="26957369-4812143761-467" author="26977717@N02" raw="motion" machine_tag="0">motion</tag>
+            <tag id="26957369-4812143761-1298" author="26977717@N02" raw="speed" machine_tag="0">speed</tag>
+            <tag id="26957369-4812143761-73633" author="26977717@N02" raw="matte" machine_tag="0">matte</tag>
+            <tag id="26957369-4812143761-472" author="26977717@N02" raw="black" machine_tag="0">black</tag>
+            <tag id="26957369-4812143761-8383" author="26977717@N02" raw="wrap" machine_tag="0">wrap</tag>
+            <tag id="26957369-4812143761-29749" author="26977717@N02" raw="custom" machine_tag="0">custom</tag>
+            <tag id="26957369-4812143761-33303" author="26977717@N02" raw="rims" machine_tag="0">rims</tag>
+            <tag id="26957369-4812143761-68501" author="26977717@N02" raw="Gumball" machine_tag="0">gumball</tag>
+            <tag id="26957369-4812143761-42645" author="26977717@N02" raw="3000" machine_tag="0">3000</tag>
+            <tag id="26957369-4812143761-19204" author="26977717@N02" raw="Rodeo" machine_tag="0">rodeo</tag>
+            <tag id="26957369-4812143761-2069" author="26977717@N02" raw="Drive" machine_tag="0">drive</tag>
+            <tag id="26957369-4812143761-20971" author="26977717@N02" raw="Beverly" machine_tag="0">beverly</tag>
+            <tag id="26957369-4812143761-11205" author="26977717@N02" raw="Hills" machine_tag="0">hills</tag>
+            <tag id="26957369-4812143761-50" author="26977717@N02" raw="California" machine_tag="0">california</tag>
+            <tag id="26957369-4812143761-2593" author="26977717@N02" raw="Los" machine_tag="0">los</tag>
+            <tag id="26957369-4812143761-4560" author="26977717@N02" raw="Angeles" machine_tag="0">angeles</tag>
+            <tag id="26957369-4812143761-1514" author="26977717@N02" raw="palms" machine_tag="0">palms</tag>
+            <tag id="26957369-4812143761-47022" author="26977717@N02" raw="luxury" machine_tag="0">luxury</tag>
+            <tag id="26957369-4812143761-1455" author="26977717@N02" raw="shopping" machine_tag="0">shopping</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4812143761/</url>
+        </urls>
+    </photo>
+</rsp>
+

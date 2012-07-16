@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4451720072" secret="d402f28616" server="4065" farm="5" dateuploaded="1269198445" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="95dc2101c3" originalformat="jpg" views="538"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari California</title>
+        <description>&lt;a href="http://www.twitter.com/torquespeak" rel="nofollow"&gt;www.twitter.com/torquespeak&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1269198445" taken="2010-02-10 08:35:51" takengranularity="0" lastupdate="1296663666"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-4451720072-595" author="31797562@N04" raw="london" machine_tag="0">london</tag>
+            <tag id="31765423-4451720072-9505" author="31797562@N04" raw="FERRARI" machine_tag="0">ferrari</tag>
+            <tag id="31765423-4451720072-50" author="31797562@N04" raw="California" machine_tag="0">california</tag>
+            <tag id="31765423-4451720072-39806240" author="31797562@N04" raw="1 FAB" machine_tag="0">1fab</tag>
+            <tag id="31765423-4451720072-736731" author="31797562@N04" raw="personalised plate" machine_tag="0">
+                personalisedplate
+            </tag>
+            <tag id="31765423-4451720072-14473" author="31797562@N04" raw="BBC" machine_tag="0">bbc</tag>
+            <tag id="31765423-4451720072-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-4451720072-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+            <tag id="31765423-4451720072-719505" author="31797562@N04" raw="Chris Evans" machine_tag="0">chrisevans
+            </tag>
+            <tag id="31765423-4451720072-1565" author="31797562@N04" raw="private" machine_tag="0">private</tag>
+            <tag id="31765423-4451720072-8451" author="31797562@N04" raw="plate" machine_tag="0">plate</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/4451720072/</url>
+        </urls>
+    </photo>
+</rsp>
+

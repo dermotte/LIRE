@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6207978596" secret="ba2af46ac5" server="6175" farm="7" dateuploaded="1317655191" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="a863783074" originalformat="jpg" views="1114"
+           media="photo">
+        <owner nsid="53371251@N08" username="Tom Wolf | Photography" realname="Tom Hipster" location="Hamburg, Germany"
+               iconserver="6077" iconfarm="7"/>
+        <title>Welcome to Miami!</title>
+        <description>&lt;i&gt; Miami Beach, September .11 &lt;/i&gt;
+
+            I´m in Miami since one week and i can tell you - Miami is incredible!
+            I already missed a Bugatti Veyron, driven by Tom Cruise, a huge Ferrari meeting ( but i don´t care, there
+            are meetings every week ) and Paris Hilton and Leonardo Di Caprio are living just next to me.
+
+            &lt;b&gt; Stay tuned for more shots from the incredible cars of &lt;i&gt;Miami
+            Beach!&lt;/i&gt;&lt;/b&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1317655191" taken="2011-09-26 18:18:56" takengranularity="0" lastupdate="1329870282"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>36</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="53278438-6207978596-4861" author="53371251@N08" raw="Miami" machine_tag="0">miami</tag>
+            <tag id="53278438-6207978596-704" author="53371251@N08" raw="Beach" machine_tag="0">beach</tag>
+            <tag id="53278438-6207978596-19" author="53371251@N08" raw="Ocean" machine_tag="0">ocean</tag>
+            <tag id="53278438-6207978596-2069" author="53371251@N08" raw="Drive" machine_tag="0">drive</tag>
+            <tag id="53278438-6207978596-2407" author="53371251@N08" raw="Washington" machine_tag="0">washington</tag>
+            <tag id="53278438-6207978596-33102" author="53371251@N08" raw="Avenue" machine_tag="0">avenue</tag>
+            <tag id="53278438-6207978596-16888" author="53371251@N08" raw="Lincoln" machine_tag="0">lincoln</tag>
+            <tag id="53278438-6207978596-61" author="53371251@N08" raw="Road" machine_tag="0">road</tag>
+            <tag id="53278438-6207978596-1382" author="53371251@N08" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="53278438-6207978596-1966" author="53371251@N08" raw="Eos" machine_tag="0">eos</tag>
+            <tag id="53278438-6207978596-401435" author="53371251@N08" raw="500D" machine_tag="0">500d</tag>
+            <tag id="53278438-6207978596-65260" author="53371251@N08" raw="Maserati" machine_tag="0">maserati</tag>
+            <tag id="53278438-6207978596-967500" author="53371251@N08" raw="GranTourismo" machine_tag="0">grantourismo
+            </tag>
+            <tag id="53278438-6207978596-395111" author="53371251@N08" raw="GranSport" machine_tag="0">gransport</tag>
+            <tag id="53278438-6207978596-44784776" author="53371251@N08" raw="GranCabrio" machine_tag="0">grancabrio
+            </tag>
+            <tag id="53278438-6207978596-9015" author="53371251@N08" raw="S" machine_tag="0">s</tag>
+            <tag id="53278438-6207978596-11683" author="53371251@N08" raw="MC" machine_tag="0">mc</tag>
+            <tag id="53278438-6207978596-76516074" author="53371251@N08" raw="Srradale" machine_tag="0">srradale</tag>
+            <tag id="53278438-6207978596-227" author="53371251@N08" raw="red" machine_tag="0">red</tag>
+            <tag id="53278438-6207978596-472" author="53371251@N08" raw="black" machine_tag="0">black</tag>
+            <tag id="53278438-6207978596-2296" author="53371251@N08" raw="US" machine_tag="0">us</tag>
+            <tag id="53278438-6207978596-351" author="53371251@N08" raw="USA" machine_tag="0">usa</tag>
+            <tag id="53278438-6207978596-1181" author="53371251@N08" raw="Tom" machine_tag="0">tom</tag>
+            <tag id="53278438-6207978596-7332" author="53371251@N08" raw="Hipster" machine_tag="0">hipster</tag>
+            <tag id="53278438-6207978596-3175" author="53371251@N08" raw="Wolf" machine_tag="0">wolf</tag>
+            <tag id="53278438-6207978596-82099" author="53371251@N08" raw="Bongos" machine_tag="0">bongos</tag>
+            <tag id="53278438-6207978596-3740" author="53371251@N08" raw="Photographie" machine_tag="0">photographie
+            </tag>
+            <tag id="53278438-6207978596-1935" author="53371251@N08" raw="Photography" machine_tag="0">photography</tag>
+            <tag id="53278438-6207978596-8505504" author="7561041@N06" raw="worldcars" machine_tag="0">worldcars</tag>
+        </tags>
+        <location latitude="25.808024" longitude="-80.123419" accuracy="14" context="0" place_id="0zfXuENTVr_AbZgU"
+                  woeid="2450022">
+            <locality place_id="0zfXuENTVr_AbZgU" woeid="2450022">Miami</locality>
+            <county place_id="bo6KOIpQUL_MOsMimw" woeid="12587815">Miami-Dade</county>
+            <region place_id="IPbJb2lTUb4Y7tKw" woeid="2347568">Florida</region>
+            <country place_id="nz.gsghTUb4c2WAecA" woeid="23424977">United States</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/bongosphotographie/6207978596/</url>
+        </urls>
+    </photo>
+</rsp>
+

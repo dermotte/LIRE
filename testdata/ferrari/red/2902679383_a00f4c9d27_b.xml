@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2902679383" secret="a00f4c9d27" server="3029" farm="4" dateuploaded="1222821265" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="1f933d9808" originalformat="jpg" views="1049"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Very Red</title>
+        <description>It's not that I edited this pic a lot, this was just a really bright red F430. Not sure about those
+            rims though.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1222821265" taken="2008-08-16 09:15:52" takengranularity="0" lastupdate="1292628792"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2902679383-227" author="29231008@N05" raw="Red" machine_tag="0">red</tag>
+            <tag id="29225668-2902679383-10171" author="29231008@N05" raw="Monaco" machine_tag="0">monaco</tag>
+            <tag id="29225668-2902679383-704" author="29231008@N05" raw="Beach" machine_tag="0">beach</tag>
+            <tag id="29225668-2902679383-1212" author="29231008@N05" raw="Club" machine_tag="0">club</tag>
+            <tag id="29225668-2902679383-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2902679383-2509269" author="29231008@N05" raw="Fezza" machine_tag="0">fezza</tag>
+            <tag id="29225668-2902679383-116028" author="29231008@N05" raw="F430" machine_tag="0">f430</tag>
+            <tag id="29225668-2902679383-147353" author="29231008@N05" raw="430" machine_tag="0">430</tag>
+            <tag id="29225668-2902679383-2709" author="29231008@N05" raw="Cool" machine_tag="0">cool</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2902679383/</url>
+        </urls>
+    </photo>
+</rsp>
+

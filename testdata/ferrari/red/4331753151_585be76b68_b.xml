@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4331753151" secret="585be76b68" server="4035" farm="5" dateuploaded="1265373226" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="9dd649892b" originalformat="jpg" views="387"
+           media="photo">
+        <owner nsid="31674926@N02" username="Damors" realname="Morten Schwend" location="Berlin, Deutschland"
+               iconserver="4051" iconfarm="5"/>
+        <title>Ferrari F40</title>
+        <description>&lt;a href="http://www.flickr.com/photos/schwend/sets/72157622646846088/"&gt;my Ferrari set&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1265373226" taken="2009-04-10 20:42:41" takengranularity="0" lastupdate="1323086566"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>3</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31654578-4331753151-484" author="31674926@N02" raw="paris" machine_tag="0">paris</tag>
+            <tag id="31654578-4331753151-487" author="31674926@N02" raw="france" machine_tag="0">france</tag>
+            <tag id="31654578-4331753151-3001" author="31674926@N02" raw="frankreich" machine_tag="0">frankreich</tag>
+            <tag id="31654578-4331753151-12608" author="31674926@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="31654578-4331753151-31387762" author="31674926@N02" raw="exoticsonroad" machine_tag="0">
+                exoticsonroad
+            </tag>
+            <tag id="31654578-4331753151-20383357" author="31674926@N02" raw="autogespot" machine_tag="0">autogespot
+            </tag>
+            <tag id="31654578-4331753151-14555679" author="31674926@N02" raw="carparazzi" machine_tag="0">carparazzi
+            </tag>
+            <tag id="31654578-4331753151-45427572" author="31674926@N02" raw="streetexotics" machine_tag="0">
+                streetexotics
+            </tag>
+            <tag id="31654578-4331753151-41654870" author="31674926@N02" raw="autoinformatief" machine_tag="0">
+                autoinformatief
+            </tag>
+            <tag id="31654578-4331753151-3442" author="31674926@N02" raw="italia" machine_tag="0">italia</tag>
+            <tag id="31654578-4331753151-126" author="31674926@N02" raw="italien" machine_tag="0">italien</tag>
+            <tag id="31654578-4331753151-17064895" author="31674926@N02" raw="4dk" machine_tag="0">4dk</tag>
+            <tag id="31654578-4331753151-330519" author="31674926@N02" raw="634" machine_tag="0">634</tag>
+            <tag id="31654578-4331753151-17119" author="31674926@N02" raw="gb" machine_tag="0">gb</tag>
+            <tag id="31654578-4331753151-9505" author="31674926@N02" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31654578-4331753151-164822" author="31674926@N02" raw="f40" machine_tag="0">f40</tag>
+            <tag id="31654578-4331753151-227" author="31674926@N02" raw="red" machine_tag="0">red</tag>
+            <tag id="31654578-4331753151-592" author="31674926@N02" raw="rot" machine_tag="0">rot</tag>
+            <tag id="31654578-4331753151-2036" author="31674926@N02" raw="mercedes" machine_tag="0">mercedes</tag>
+            <tag id="31654578-4331753151-2038" author="31674926@N02" raw="benz" machine_tag="0">benz</tag>
+            <tag id="31654578-4331753151-11449" author="31674926@N02" raw="sl" machine_tag="0">sl</tag>
+            <tag id="31654578-4331753151-87325" author="31674926@N02" raw="65" machine_tag="0">65</tag>
+            <tag id="31654578-4331753151-96270" author="31674926@N02" raw="sl65" machine_tag="0">sl65</tag>
+            <tag id="31654578-4331753151-96267" author="31674926@N02" raw="amg" machine_tag="0">amg</tag>
+            <tag id="31654578-4331753151-1395" author="31674926@N02" raw="silver" machine_tag="0">silver</tag>
+            <tag id="31654578-4331753151-188368" author="31674926@N02" raw="silber" machine_tag="0">silber</tag>
+            <tag id="31654578-4331753151-95163" author="31674926@N02" raw="est" machine_tag="0">est</tag>
+            <tag id="31654578-4331753151-4203201" author="31674926@N02" raw="esland" machine_tag="0">esland</tag>
+            <tag id="31654578-4331753151-6651" author="31674926@N02" raw="great" machine_tag="0">great</tag>
+            <tag id="31654578-4331753151-4846" author="31674926@N02" raw="britain" machine_tag="0">britain</tag>
+            <tag id="31654578-4331753151-2073" author="31674926@N02" raw="hotel" machine_tag="0">hotel</tag>
+            <tag id="31654578-4331753151-8786" author="31674926@N02" raw="prince" machine_tag="0">prince</tag>
+            <tag id="31654578-4331753151-10350" author="31674926@N02" raw="des" machine_tag="0">des</tag>
+            <tag id="31654578-4331753151-275211" author="31674926@N02" raw="galles" machine_tag="0">galles</tag>
+            <tag id="31654578-4331753151-1213" author="31674926@N02" raw="night" machine_tag="0">night</tag>
+            <tag id="31654578-4331753151-4061" author="31674926@N02" raw="shot" machine_tag="0">shot</tag>
+            <tag id="31654578-4331753151-4680" author="31674926@N02" raw="nacht" machine_tag="0">nacht</tag>
+            <tag id="31654578-4331753151-130614" author="31674926@N02" raw="combo" machine_tag="0">combo</tag>
+            <tag id="31654578-4331753151-923" author="31674926@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="31654578-4331753151-56637" author="31674926@N02" raw="morten" machine_tag="0">morten</tag>
+            <tag id="31654578-4331753151-46467712" author="31674926@N02" raw="schwend" machine_tag="0">schwend</tag>
+            <tag id="31654578-4331753151-67224" author="31674926@N02" raw="kk" machine_tag="0">kk</tag>
+            <tag id="31654578-4331753151-7671" author="31674926@N02" raw="royal" machine_tag="0">royal</tag>
+            <tag id="31654578-4331753151-7259" author="31674926@N02" raw="basement" machine_tag="0">basement</tag>
+            <tag id="31654578-4331753151-15876" author="31674926@N02" raw="tc" machine_tag="0">tc</tag>
+            <tag id="31654578-4331753151-159443" author="31674926@N02" raw="concepts" machine_tag="0">concepts</tag>
+        </tags>
+        <location latitude="48.869104" longitude="2.300841" accuracy="16" context="0" place_id="WU8qo85UV7J7dLZuCw"
+                  woeid="55843784">
+            <neighbourhood place_id="WU8qo85UV7J7dLZuCw" woeid="55843784">Triangle d'or</neighbourhood>
+            <locality place_id="EsIQUYZXU79_kEA" woeid="615702">Paris</locality>
+            <county place_id=".tpTHPFQUL.gM81.cQ" woeid="12597155">Paris</county>
+            <region place_id="QLdv_.RWU7_jEfrE" woeid="7153319">Ile-de-France</region>
+            <country place_id="lbWye9tTUb6GOcp80w" woeid="23424819">France</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/schwend/4331753151/</url>
+        </urls>
+    </photo>
+</rsp>
+

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4720646644" secret="b06a86728f" server="4055" farm="5" dateuploaded="1277114357" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="cdf2078869" originalformat="jpg" views="1567"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>458 Italia.</title>
+        <description>Gorgeous profile.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1277114357" taken="2010-06-20 09:35:29" takengranularity="0" lastupdate="1315895414"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>20</comments>
+        <notes/>
+        <people haspeople="1"/>
+        <tags>
+            <tag id="26957369-4720646644-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4720646644-627359" author="26977717@N02" raw="458" machine_tag="0">458</tag>
+            <tag id="26957369-4720646644-3442" author="26977717@N02" raw="Italia" machine_tag="0">italia</tag>
+            <tag id="26957369-4720646644-366" author="26977717@N02" raw="baby" machine_tag="0">baby</tag>
+            <tag id="26957369-4720646644-16596" author="26977717@N02" raw="Enzo" machine_tag="0">enzo</tag>
+            <tag id="26957369-4720646644-12608" author="26977717@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="26957369-4720646644-786" author="26977717@N02" raw="sports" machine_tag="0">sports</tag>
+            <tag id="26957369-4720646644-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-4720646644-8117" author="26977717@N02" raw="fast" machine_tag="0">fast</tag>
+            <tag id="26957369-4720646644-987" author="26977717@N02" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="26957369-4720646644-13029" author="26977717@N02" raw="Giallo" machine_tag="0">giallo</tag>
+            <tag id="26957369-4720646644-623" author="26977717@N02" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="26957369-4720646644-181526" author="26977717@N02" raw="Croissants" machine_tag="0">croissants</tag>
+            <tag id="26957369-4720646644-95" author="26977717@N02" raw="New" machine_tag="0">new</tag>
+            <tag id="26957369-4720646644-17334" author="26977717@N02" raw="Jersey" machine_tag="0">jersey</tag>
+            <tag id="26957369-4720646644-1072" author="26977717@N02" raw="wall" machine_tag="0">wall</tag>
+            <tag id="26957369-4720646644-395" author="26977717@N02" raw="white" machine_tag="0">white</tag>
+            <tag id="26957369-4720646644-14555" author="26977717@N02" raw="blank" machine_tag="0">blank</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4720646644/</url>
+        </urls>
+    </photo>
+</rsp>
+

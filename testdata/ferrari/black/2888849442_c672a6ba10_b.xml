@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2888849442" secret="c672a6ba10" server="3154" farm="4" dateuploaded="1222384500" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="aba625eb0d" originalformat="jpg" views="938"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>599</title>
+        <description>In the same spot as the Nera, a day later at the same time. This guy also was happy to make some
+            noise with his car, he gave it this enormous rev and then drove off.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1222384500" taken="2008-09-25 14:44:44" takengranularity="0" lastupdate="1284556390"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>4</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2888849442-472" author="29231008@N05" raw="Black" machine_tag="0">black</tag>
+            <tag id="29225668-2888849442-71650" author="29231008@N05" raw="Nera" machine_tag="0">nera</tag>
+            <tag id="29225668-2888849442-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2888849442-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-2888849442-119234" author="29231008@N05" raw="GTB" machine_tag="0">gtb</tag>
+            <tag id="29225668-2888849442-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-2888849442-663459" author="29231008@N05" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="29225668-2888849442-95" author="29231008@N05" raw="New" machine_tag="0">new</tag>
+            <tag id="29225668-2888849442-98" author="29231008@N05" raw="York" machine_tag="0">york</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2888849442/</url>
+        </urls>
+    </photo>
+</rsp>
+

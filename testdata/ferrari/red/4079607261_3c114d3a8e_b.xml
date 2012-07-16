@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4079607261" secret="3c114d3a8e" server="2675" farm="3" dateuploaded="1257508660" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="06f76762df" originalformat="jpg" views="882"
+           media="photo">
+        <owner nsid="31674926@N02" username="Damors" realname="Morten Schwend" location="Berlin, Deutschland"
+               iconserver="4051" iconfarm="5"/>
+        <title>Scuderia and Aston</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1257508660" taken="2009-10-31 13:56:55" takengranularity="0" lastupdate="1283431865"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>14</comments>
+        <notes>
+            <note id="72157622745814170" author="31674926@N02" authorname="Damors" x="61" y="140" w="155" h="60">&lt;a
+                href="http://www.flickr.com/photos/schwend/4080366232/"&gt;www.flickr.com/photos/schwend/4080366232/&lt;/a&gt;</note>
+        </notes>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31654578-4079607261-557" author="31674926@N02" raw="berlin" machine_tag="">berlin</tag>
+            <tag id="31654578-4079607261-12608" author="31674926@N02" raw="exotic" machine_tag="">exotic</tag>
+            <tag id="31654578-4079607261-31387762" author="31674926@N02" raw="exoticsonroad" machine_tag="">
+                exoticsonroad
+            </tag>
+            <tag id="31654578-4079607261-27475044" author="31674926@N02" raw="schlüterstraße" machine_tag="">
+                schlüterstrase
+            </tag>
+            <tag id="31654578-4079607261-16890" author="31674926@N02" raw="kudamm" machine_tag="">kudamm</tag>
+            <tag id="31654578-4079607261-180844" author="31674926@N02" raw="kurfürstendamm" machine_tag="">
+                kurfürstendamm
+            </tag>
+            <tag id="31654578-4079607261-23498022" author="31674926@N02" raw="mommsenstraße" machine_tag="0">
+                mommsenstrase
+            </tag>
+            <tag id="31654578-4079607261-65830" author="31674926@N02" raw="aston" machine_tag="0">aston</tag>
+            <tag id="31654578-4079607261-4162" author="31674926@N02" raw="martin" machine_tag="0">martin</tag>
+            <tag id="31654578-4079607261-193191" author="31674926@N02" raw="vanquish" machine_tag="0">vanquish</tag>
+            <tag id="31654578-4079607261-9015" author="31674926@N02" raw="s" machine_tag="">s</tag>
+            <tag id="31654578-4079607261-1237208" author="31674926@N02" raw="mansory" machine_tag="0">mansory</tag>
+            <tag id="31654578-4079607261-36391" author="31674926@N02" raw="tuning" machine_tag="">tuning</tag>
+            <tag id="31654578-4079607261-472" author="31674926@N02" raw="black" machine_tag="">black</tag>
+            <tag id="31654578-4079607261-54880" author="31674926@N02" raw="schwarz" machine_tag="">schwarz</tag>
+            <tag id="31654578-4079607261-50" author="31674926@N02" raw="california" machine_tag="">california</tag>
+            <tag id="31654578-4079607261-120109" author="31674926@N02" raw="kalifornien" machine_tag="0">kalifornien
+            </tag>
+            <tag id="31654578-4079607261-351" author="31674926@N02" raw="usa" machine_tag="0">usa</tag>
+            <tag id="31654578-4079607261-34697" author="31674926@N02" raw="amerika" machine_tag="0">amerika</tag>
+            <tag id="31654578-4079607261-9505" author="31674926@N02" raw="ferrari" machine_tag="">ferrari</tag>
+            <tag id="31654578-4079607261-116028" author="31674926@N02" raw="f430" machine_tag="0">f430</tag>
+            <tag id="31654578-4079607261-49217" author="31674926@N02" raw="scuderia" machine_tag="">scuderia</tag>
+            <tag id="31654578-4079607261-227" author="31674926@N02" raw="red" machine_tag="">red</tag>
+            <tag id="31654578-4079607261-592" author="31674926@N02" raw="rot" machine_tag="">rot</tag>
+            <tag id="31654578-4079607261-5665" author="31674926@N02" raw="stripes" machine_tag="">stripes</tag>
+            <tag id="31654578-4079607261-144461" author="31674926@N02" raw="streifen" machine_tag="">streifen</tag>
+            <tag id="31654578-4079607261-923" author="31674926@N02" raw="car" machine_tag="">car</tag>
+            <tag id="31654578-4079607261-56637" author="31674926@N02" raw="morten" machine_tag="">morten</tag>
+            <tag id="31654578-4079607261-46467712" author="31674926@N02" raw="schwend" machine_tag="">schwend</tag>
+            <tag id="31654578-4079607261-67224" author="31674926@N02" raw="kk" machine_tag="">kk</tag>
+            <tag id="31654578-4079607261-7671" author="31674926@N02" raw="royal" machine_tag="">royal</tag>
+            <tag id="31654578-4079607261-7259" author="31674926@N02" raw="basement" machine_tag="">basement</tag>
+            <tag id="31654578-4079607261-15876" author="31674926@N02" raw="tc" machine_tag="">tc</tag>
+            <tag id="31654578-4079607261-159443" author="31674926@N02" raw="concepts" machine_tag="">concepts</tag>
+        </tags>
+        <location latitude="52.502416" longitude="13.31692" accuracy="16" context="0" place_id="4NZ2D2BXV7yp7ps"
+                  woeid="656835">
+            <neighbourhood place_id="4NZ2D2BXV7yp7ps" woeid="656835">Halensee</neighbourhood>
+            <locality place_id="zot2ouJXUbKOJRM" woeid="638242">Berlin</locality>
+            <county place_id="BPfoJmlQUL8JcHDn4Q" woeid="12596838">Stadtkreis Berlin</county>
+            <region place_id="uxEOtndTUb4nLR9E" woeid="2345496">Berlin</region>
+            <country place_id="h7eZVDlTUb50Btij9Q" woeid="23424829">Germany</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/schwend/4079607261/</url>
+        </urls>
+    </photo>
+</rsp>
+

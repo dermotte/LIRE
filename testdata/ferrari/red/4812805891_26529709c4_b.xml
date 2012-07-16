@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4812805891" secret="26529709c4" server="4102" farm="5" dateuploaded="1279657307" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="4e4202ba9c" originalformat="jpg" views="252"
+           media="photo">
+        <owner nsid="30352243@N00" username="Daniel Dionne" realname="Daniel Dionne" location="" iconserver="71"
+               iconfarm="1"/>
+        <title>Ferrari 250 GTO - 24h Le Mans</title>
+        <description>1:18 model by Kyosho.
+            It's amazing how beautiful and detailed this model is. It's letting me do macro pictures without any hassle!
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1279657307" taken="2010-07-20 20:22:42" takengranularity="0" lastupdate="1311257755"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>11</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="3433870-4812805891-9505" author="30352243@N00" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="3433870-4812805891-69233" author="30352243@N00" raw="250" machine_tag="0">250</tag>
+            <tag id="3433870-4812805891-22413" author="30352243@N00" raw="GTO" machine_tag="0">gto</tag>
+            <tag id="3433870-4812805891-55373" author="30352243@N00" raw="Le Mans" machine_tag="0">lemans</tag>
+            <tag id="3433870-4812805891-227" author="30352243@N00" raw="red" machine_tag="0">red</tag>
+            <tag id="3433870-4812805891-21505" author="30352243@N00" raw="24" machine_tag="0">24</tag>
+            <tag id="3433870-4812805891-140578" author="30352243@N00" raw="1:18" machine_tag="0">118</tag>
+            <tag id="3433870-4812805891-2854" author="30352243@N00" raw="model" machine_tag="0">model</tag>
+            <tag id="3433870-4812805891-923" author="30352243@N00" raw="car" machine_tag="0">car</tag>
+            <tag id="3433870-4812805891-226699" author="30352243@N00" raw="diecast" machine_tag="0">diecast</tag>
+            <tag id="3433870-4812805891-308005" author="30352243@N00" raw="Kyosho" machine_tag="0">kyosho</tag>
+        </tags>
+        <location latitude="40.43781" longitude="-3.711673" accuracy="16" context="0" place_id="zug9XIFTUriSJgxU8w"
+                  woeid="20219861">
+            <neighbourhood place_id="zug9XIFTUriSJgxU8w" woeid="20219861">Chamberi</neighbourhood>
+            <locality place_id="uTYMKONWVLwFNrE" woeid="766273">Madrid</locality>
+            <county place_id="tbbWAcFQULxlR.kpfA" woeid="12602090">Madrid</county>
+            <region place_id="z1N32XdQUL_NGlw7Tw" woeid="12578024">Madrid</region>
+            <country place_id="oVKj1ohTUb5V1poSBg" woeid="23424950">Spain</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/mrzeon/4812805891/</url>
+        </urls>
+    </photo>
+</rsp>
+

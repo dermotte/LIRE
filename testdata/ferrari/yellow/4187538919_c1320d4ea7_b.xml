@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4187538919" secret="c1320d4ea7" server="4042" farm="5" dateuploaded="1260900229" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="66cb18f65a" originalformat="jpg" views="174"
+           media="photo">
+        <owner nsid="56087830@N00" username="markhillary" realname="Mark Hillary" location="São Paulo, Brazil"
+               iconserver="110" iconfarm="1"/>
+        <title>Ferrari and G-Wiz in Berkeley Square</title>
+        <description>Two G-Wiz electric cars refuelling on electricity in the street, parked next to a huge gas-guzzling
+            yellow Ferrari...
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1260900229" taken="2009-12-15 11:27:28" takengranularity="0" lastupdate="1262114762"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>1</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="4913155-4187538919-728977" author="56087830@N00" raw="g-wiz" machine_tag="0">gwiz</tag>
+            <tag id="4913155-4187538919-1010" author="56087830@N00" raw="electric" machine_tag="0">electric</tag>
+            <tag id="4913155-4187538919-923" author="56087830@N00" raw="car" machine_tag="0">car</tag>
+            <tag id="4913155-4187538919-623" author="56087830@N00" raw="cars" machine_tag="0">cars</tag>
+            <tag id="4913155-4187538919-17557" author="56087830@N00" raw="electricity" machine_tag="0">electricity</tag>
+            <tag id="4913155-4187538919-586" author="56087830@N00" raw="green" machine_tag="0">green</tag>
+            <tag id="4913155-4187538919-19622" author="56087830@N00" raw="environment" machine_tag="0">environment</tag>
+            <tag id="4913155-4187538919-987" author="56087830@N00" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="4913155-4187538919-9505" author="56087830@N00" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="4913155-4187538919-2129" author="56087830@N00" raw="berkeley" machine_tag="0">berkeley</tag>
+            <tag id="4913155-4187538919-1628" author="56087830@N00" raw="square" machine_tag="0">square</tag>
+            <tag id="4913155-4187538919-38615" author="56087830@N00" raw="mayfair" machine_tag="0">mayfair</tag>
+            <tag id="4913155-4187538919-595" author="56087830@N00" raw="london" machine_tag="0">london</tag>
+            <tag id="4913155-4187538919-31482179" author="56087830@N00" raw="cop15" machine_tag="0">cop15</tag>
+            <tag id="4913155-4187538919-1440" author="56087830@N00" raw="copenhagen" machine_tag="0">copenhagen</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/markhillary/4187538919/</url>
+        </urls>
+    </photo>
+</rsp>
+

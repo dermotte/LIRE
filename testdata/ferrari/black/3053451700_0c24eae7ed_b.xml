@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3053451700" secret="0c24eae7ed" server="3048" farm="4" dateuploaded="1227459639" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="efb0018c1a" originalformat="jpg" views="1100"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Plaza Athenee</title>
+        <description>Speaks for itself.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1227459639" taken="2008-08-11 09:10:29" takengranularity="0" lastupdate="1289027752"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>4</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-3053451700-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-3053451700-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-3053451700-119234" author="29231008@N05" raw="GTB" machine_tag="0">gtb</tag>
+            <tag id="29225668-3053451700-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-3053451700-5060485" author="29231008@N05" raw="F599" machine_tag="0">f599</tag>
+            <tag id="29225668-3053451700-183557" author="29231008@N05" raw="Hamann" machine_tag="0">hamann</tag>
+            <tag id="29225668-3053451700-277488" author="29231008@N05" raw="Tuned" machine_tag="0">tuned</tag>
+            <tag id="29225668-3053451700-472" author="29231008@N05" raw="Black" machine_tag="0">black</tag>
+            <tag id="29225668-3053451700-91" author="29231008@N05" raw="Plaza" machine_tag="0">plaza</tag>
+            <tag id="29225668-3053451700-677383" author="29231008@N05" raw="Athenee" machine_tag="0">athenee</tag>
+            <tag id="29225668-3053451700-142725" author="29231008@N05" raw="Pari" machine_tag="0">pari</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/3053451700/</url>
+        </urls>
+    </photo>
+</rsp>
+

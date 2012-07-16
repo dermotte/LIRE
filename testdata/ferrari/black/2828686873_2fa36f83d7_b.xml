@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2828686873" secret="2fa36f83d7" server="3153" farm="4" dateuploaded="1220576352" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="a189973062" originalformat="jpg" views="3310"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Paint it Black</title>
+        <description>Black Hamann with black rims. Outside the Ritz. In Paris. I. Am. Still. Shocked.
+
+            --
+
+            &lt;a href="http://www.carspotterphotography.com"
+            rel="nofollow"&gt;www.carspotterphotography.com&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1220576352" taken="2008-08-12 12:01:24" takengranularity="0" lastupdate="1281485677"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>12</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2828686873-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2828686873-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-2828686873-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-2828686873-183557" author="29231008@N05" raw="Hamann" machine_tag="0">hamann</tag>
+            <tag id="29225668-2828686873-277488" author="29231008@N05" raw="Tuned" machine_tag="0">tuned</tag>
+            <tag id="29225668-2828686873-663459" author="29231008@N05" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="29225668-2828686873-8117" author="29231008@N05" raw="Fast" machine_tag="0">fast</tag>
+            <tag id="29225668-2828686873-472" author="29231008@N05" raw="Black" machine_tag="0">black</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2828686873/</url>
+        </urls>
+    </photo>
+</rsp>
+

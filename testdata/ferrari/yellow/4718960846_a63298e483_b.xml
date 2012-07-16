@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4718960846" secret="a63298e483" server="4034" farm="5" dateuploaded="1277072218" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="df3b294305" originalformat="jpg" views="1378"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>458 Italia.</title>
+        <description>One of the first to be delivered in the US, absolutely stunning car in person.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1277072218" taken="2010-06-20 09:44:16" takengranularity="0" lastupdate="1290529520"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>16</comments>
+        <notes>
+            <note id="72157624195310857" author="29231008@N05" authorname="CarSpotter" x="269" y="148" w="16" h="16">
+                Racing seats = Good
+            </note>
+            <note id="72157624195310879" author="29231008@N05" authorname="CarSpotter" x="269" y="148" w="16" h="16">
+                Racing seats = A Good Thing
+            </note>
+        </notes>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4718960846-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4718960846-627359" author="26977717@N02" raw="458" machine_tag="0">458</tag>
+            <tag id="26957369-4718960846-3442" author="26977717@N02" raw="Italia" machine_tag="0">italia</tag>
+            <tag id="26957369-4718960846-366" author="26977717@N02" raw="baby" machine_tag="0">baby</tag>
+            <tag id="26957369-4718960846-16596" author="26977717@N02" raw="Enzo" machine_tag="0">enzo</tag>
+            <tag id="26957369-4718960846-95" author="26977717@N02" raw="new" machine_tag="0">new</tag>
+            <tag id="26957369-4718960846-12608" author="26977717@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="26957369-4718960846-786" author="26977717@N02" raw="sports" machine_tag="0">sports</tag>
+            <tag id="26957369-4718960846-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-4718960846-8117" author="26977717@N02" raw="fast" machine_tag="0">fast</tag>
+            <tag id="26957369-4718960846-987" author="26977717@N02" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="26957369-4718960846-13029" author="26977717@N02" raw="Giallo" machine_tag="0">giallo</tag>
+            <tag id="26957369-4718960846-623" author="26977717@N02" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="26957369-4718960846-181526" author="26977717@N02" raw="Croissants" machine_tag="0">croissants</tag>
+            <tag id="26957369-4718960846-17334" author="26977717@N02" raw="Jersey" machine_tag="0">jersey</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4718960846/</url>
+        </urls>
+    </photo>
+</rsp>
+

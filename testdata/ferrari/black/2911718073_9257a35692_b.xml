@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2911718073" secret="9257a35692" server="3236" farm="4" dateuploaded="1223137368" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="91475c2b17" originalformat="jpg" views="1603"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Hamann and Drop</title>
+        <description>Nice combo at the Ritz.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1223137368" taken="2008-08-12 11:55:44" takengranularity="0" lastupdate="1287975414"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>8</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2911718073-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2911718073-472" author="29231008@N05" raw="Black" machine_tag="0">black</tag>
+            <tag id="29225668-2911718073-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-2911718073-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-2911718073-183557" author="29231008@N05" raw="Hamann" machine_tag="0">hamann</tag>
+            <tag id="29225668-2911718073-663459" author="29231008@N05" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="29225668-2911718073-47566" author="29231008@N05" raw="Rare" machine_tag="0">rare</tag>
+            <tag id="29225668-2911718073-484" author="29231008@N05" raw="Paris" machine_tag="0">paris</tag>
+            <tag id="29225668-2911718073-21386" author="29231008@N05" raw="Rolls" machine_tag="0">rolls</tag>
+            <tag id="29225668-2911718073-60634" author="29231008@N05" raw="Royce" machine_tag="0">royce</tag>
+            <tag id="29225668-2911718073-30338" author="29231008@N05" raw="Phantom" machine_tag="0">phantom</tag>
+            <tag id="29225668-2911718073-1166875" author="29231008@N05" raw="Drophead" machine_tag="0">drophead</tag>
+            <tag id="29225668-2911718073-49172" author="29231008@N05" raw="Coupe" machine_tag="0">coupe</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2911718073/</url>
+        </urls>
+    </photo>
+</rsp>
+

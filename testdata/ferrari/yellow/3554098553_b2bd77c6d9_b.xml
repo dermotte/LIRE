@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3554098553" secret="b2bd77c6d9" server="2470" farm="3" dateuploaded="1243017744" isfavorite="0"
+           license="4" safety_level="0" rotation="0" views="240" media="photo">
+        <owner nsid="27665395@N05" username="JLaw45" realname="Jason Lawrence" location="" iconserver="3206"
+               iconfarm="4"/>
+        <title>Ferarri F355 Berlinetta</title>
+        <description>Beautiful F355 Berlinetta spotted in Alexandria, Virginia. The owner (along with his counterpart in
+            a 348 TS) was kind enough to pass by twice and give a couple of revs.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1243017744" taken="2008-05-25 13:38:42" takengranularity="0" lastupdate="1253577097"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="27660055-3554098553-9505" author="27665395@N05" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="27660055-3554098553-227" author="27665395@N05" raw="red" machine_tag="0">red</tag>
+            <tag id="27660055-3554098553-138077" author="27665395@N05" raw="targa" machine_tag="0">targa</tag>
+            <tag id="27660055-3554098553-428757" author="27665395@N05" raw="2door" machine_tag="0">2door</tag>
+            <tag id="27660055-3554098553-84743" author="27665395@N05" raw="2seater" machine_tag="0">2seater</tag>
+            <tag id="27660055-3554098553-192984" author="27665395@N05" raw="348" machine_tag="0">348</tag>
+            <tag id="27660055-3554098553-2570573" author="27665395@N05" raw="348ts" machine_tag="0">348ts</tag>
+            <tag id="27660055-3554098553-896" author="27665395@N05" raw="alexandria" machine_tag="0">alexandria</tag>
+            <tag id="27660055-3554098553-2159" author="27665395@N05" raw="virginia" machine_tag="0">virginia</tag>
+            <tag id="27660055-3554098553-12608" author="27665395@N05" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="27660055-3554098553-53450" author="27665395@N05" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="27660055-3554098553-47566" author="27665395@N05" raw="rare" machine_tag="0">rare</tag>
+            <tag id="27660055-3554098553-47022" author="27665395@N05" raw="luxury" machine_tag="0">luxury</tag>
+            <tag id="27660055-3554098553-8117" author="27665395@N05" raw="fast" machine_tag="0">fast</tag>
+            <tag id="27660055-3554098553-293471" author="27665395@N05" raw="355" machine_tag="0">355</tag>
+            <tag id="27660055-3554098553-334179" author="27665395@N05" raw="berlinetta" machine_tag="0">berlinetta</tag>
+            <tag id="27660055-3554098553-987" author="27665395@N05" raw="yellow" machine_tag="0">yellow</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/27665395@N05/3554098553/</url>
+        </urls>
+    </photo>
+</rsp>
+

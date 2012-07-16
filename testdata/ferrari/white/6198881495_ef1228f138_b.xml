@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6198881495" secret="ef1228f138" server="6138" farm="7" dateuploaded="1317427322" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="642445d99f" originalformat="jpg" views="366"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 599 GTB</title>
+        <description>Dubai 599 parked up on Sloane Street. Waited until I got a bus in the background to liven up the
+            long exposure - always adds a bit of light and interest to a shot.
+
+            Photostream went over half a million views this week - thanks for checking out my photos!
+
+            For more automotive goodness, follow @torquespeak on Twitter.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1317427322" taken="2011-08-02 23:03:54" takengranularity="0" lastupdate="1329591116"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>6</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6198881495-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6198881495-515196" author="31797562@N04" raw="599" machine_tag="0">599</tag>
+            <tag id="31765423-6198881495-119234" author="31797562@N04" raw="GTB" machine_tag="0">gtb</tag>
+            <tag id="31765423-6198881495-7494" author="31797562@N04" raw="cream" machine_tag="0">cream</tag>
+            <tag id="31765423-6198881495-395" author="31797562@N04" raw="white" machine_tag="0">white</tag>
+            <tag id="31765423-6198881495-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-6198881495-3918" author="31797562@N04" raw="power" machine_tag="0">power</tag>
+            <tag id="31765423-6198881495-1298" author="31797562@N04" raw="speed" machine_tag="0">speed</tag>
+            <tag id="31765423-6198881495-6630" author="31797562@N04" raw="rear" machine_tag="0">rear</tag>
+            <tag id="31765423-6198881495-2000" author="31797562@N04" raw="lights" machine_tag="0">lights</tag>
+            <tag id="31765423-6198881495-18337" author="31797562@N04" raw="ambient" machine_tag="0">ambient</tag>
+            <tag id="31765423-6198881495-3297" author="31797562@N04" raw="long" machine_tag="0">long</tag>
+            <tag id="31765423-6198881495-3298" author="31797562@N04" raw="exposure" machine_tag="0">exposure</tag>
+            <tag id="31765423-6198881495-554" author="31797562@N04" raw="bus" machine_tag="0">bus</tag>
+            <tag id="31765423-6198881495-595" author="31797562@N04" raw="London" machine_tag="0">london</tag>
+            <tag id="31765423-6198881495-14578" author="31797562@N04" raw="single" machine_tag="0">single</tag>
+            <tag id="31765423-6198881495-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+        </tags>
+        <location latitude="51.498524" longitude="-0.159237" accuracy="15" context="0" place_id="pjYotJFTUroSWUpC1Q"
+                  woeid="20094304">
+            <neighbourhood place_id="pjYotJFTUroSWUpC1Q" woeid="20094304">Brompton</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6198881495/</url>
+        </urls>
+    </photo>
+</rsp>
+

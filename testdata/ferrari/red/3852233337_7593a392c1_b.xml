@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3852233337" secret="7593a392c1" server="2522" farm="3" dateuploaded="1251131381" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="f93b1ae618" originalformat="jpg" views="522"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>360 Spider.</title>
+        <description>I'm back from Europe! Loads of shots coming this week of some amazing cars. Figured I'd start with
+            this since I saw it only 10 minutes after I left the airport. Insane 360 in Zurich.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1251131381" taken="2009-08-13 09:42:21" takengranularity="0" lastupdate="1310795679"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>3</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-3852233337-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-3852233337-8686" author="26977717@N02" raw="360" machine_tag="0">360</tag>
+            <tag id="26957369-3852233337-2249" author="26977717@N02" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="26957369-3852233337-227" author="26977717@N02" raw="Red" machine_tag="0">red</tag>
+            <tag id="26957369-3852233337-472" author="26977717@N02" raw="Black" machine_tag="0">black</tag>
+            <tag id="26957369-3852233337-6727" author="26977717@N02" raw="wheels" machine_tag="0">wheels</tag>
+            <tag id="26957369-3852233337-55500" author="26977717@N02" raw="coated" machine_tag="0">coated</tag>
+            <tag id="26957369-3852233337-5810" author="26977717@N02" raw="painted" machine_tag="0">painted</tag>
+            <tag id="26957369-3852233337-6446" author="26977717@N02" raw="Zurich" machine_tag="0">zurich</tag>
+            <tag id="26957369-3852233337-2110" author="26977717@N02" raw="Switzerland" machine_tag="0">switzerland</tag>
+            <tag id="26957369-3852233337-3272" author="26977717@N02" raw="Europe" machine_tag="0">europe</tag>
+            <tag id="26957369-3852233337-5111" author="26977717@N02" raw="Euro" machine_tag="0">euro</tag>
+            <tag id="26957369-3852233337-116" author="26977717@N02" raw="Trip" machine_tag="0">trip</tag>
+            <tag id="26957369-3852233337-14077" author="26977717@N02" raw="09" machine_tag="0">09</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/3852233337/</url>
+        </urls>
+    </photo>
+</rsp>
+

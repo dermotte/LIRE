@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="1408706779" secret="ef3c0138e8" server="1365" farm="2" dateuploaded="1190238532" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="2824868772" originalformat="jpg" views="953"
+           media="photo">
+        <owner nsid="10202563@N05" username="Axel Schwenke" realname="Axel Schwenke" location="Meschede, Deutschland"
+               iconserver="1092" iconfarm="2"/>
+        <title>IAA2007_2007-09-17 16-48-21</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1190238532" taken="2007-09-17 16:48:21" takengranularity="0" lastupdate="1273869295"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="10197223-1408706779-111888" author="10202563@N05" raw="IAA" machine_tag="0">iaa</tag>
+            <tag id="10197223-1408706779-5399" author="10202563@N05" raw="Frankfurt" machine_tag="0">frankfurt</tag>
+            <tag id="10197223-1408706779-1905" author="10202563@N05" raw="Deutschland" machine_tag="0">deutschland</tag>
+            <tag id="10197223-1408706779-1477" author="10202563@N05" raw="Germany" machine_tag="0">germany</tag>
+            <tag id="10197223-1408706779-33" author="10202563@N05" raw="Auto" machine_tag="0">auto</tag>
+            <tag id="10197223-1408706779-24834" author="10202563@N05" raw="Autos" machine_tag="0">autos</tag>
+            <tag id="10197223-1408706779-923" author="10202563@N05" raw="Car" machine_tag="0">car</tag>
+            <tag id="10197223-1408706779-623" author="10202563@N05" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="10197223-1408706779-9993" author="10202563@N05" raw="Exhibition" machine_tag="0">exhibition</tag>
+            <tag id="10197223-1408706779-92419" author="10202563@N05" raw="Internationale" machine_tag="0">
+                internationale
+            </tag>
+            <tag id="10197223-1408706779-394116" author="10202563@N05" raw="Automobil" machine_tag="0">automobil</tag>
+            <tag id="10197223-1408706779-93667" author="10202563@N05" raw="Ausstellung" machine_tag="0">ausstellung
+            </tag>
+            <tag id="10197223-1408706779-106428" author="10202563@N05" raw="2007" machine_tag="0">2007</tag>
+            <tag id="10197223-1408706779-6298" author="10202563@N05" raw="Main" machine_tag="0">main</tag>
+            <tag id="10197223-1408706779-36391" author="10202563@N05" raw="Tuning" machine_tag="0">tuning</tag>
+            <tag id="10197223-1408706779-1083090" author="10202563@N05" raw="Novitec" machine_tag="0">novitec</tag>
+            <tag id="10197223-1408706779-42383" author="10202563@N05" raw="Rosso" machine_tag="0">rosso</tag>
+            <tag id="10197223-1408706779-9505" author="10202563@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="10197223-1408706779-227" author="10202563@N05" raw="red" machine_tag="0">red</tag>
+            <tag id="10197223-1408706779-592" author="10202563@N05" raw="rot" machine_tag="0">rot</tag>
+        </tags>
+        <location latitude="50.111379" longitude="8.647742" accuracy="15" context="0" place_id="BLZnCZBTVLKaZRnypw"
+                  woeid="26822409">
+            <locality place_id="Z0FRRfRXV7oIeew" woeid="650272">Frankfurt</locality>
+            <county place_id="nLiTmf5QUL.SGmzwgQ" woeid="12597087">Frankfurt</county>
+            <region place_id="Y1pL8yxTUb7rOocm" woeid="2345485">Hesse</region>
+            <country place_id="h7eZVDlTUb50Btij9Q" woeid="23424829">Germany</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/schwenke/1408706779/</url>
+        </urls>
+    </photo>
+</rsp>
+

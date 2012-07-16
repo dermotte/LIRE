@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4134432241" secret="27a7fba12e" server="2487" farm="3" dateuploaded="1259204065" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="038294e990" originalformat="jpg" views="502"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>F430 Spider.</title>
+        <description>Combo! I heard a loud exhaust getting closer, looked over to my right and saw the yellow F430 slow
+            down to check out the Spider. Ran to get some pics right after this.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1259204065" taken="2009-11-22 16:27:58" takengranularity="0" lastupdate="1329085810"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>8</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4134432241-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4134432241-116028" author="26977717@N02" raw="F430" machine_tag="0">f430</tag>
+            <tag id="26957369-4134432241-2249" author="26977717@N02" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="26957369-4134432241-49172" author="26977717@N02" raw="Coupe" machine_tag="0">coupe</tag>
+            <tag id="26957369-4134432241-227" author="26977717@N02" raw="red" machine_tag="0">red</tag>
+            <tag id="26957369-4134432241-987" author="26977717@N02" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="26957369-4134432241-2871" author="26977717@N02" raw="Italian" machine_tag="0">italian</tag>
+            <tag id="26957369-4134432241-786" author="26977717@N02" raw="sports" machine_tag="0">sports</tag>
+            <tag id="26957369-4134432241-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-4134432241-524" author="26977717@N02" raw="West" machine_tag="0">west</tag>
+            <tag id="26957369-4134432241-7282" author="26977717@N02" raw="Broadway" machine_tag="0">broadway</tag>
+            <tag id="26957369-4134432241-106" author="26977717@N02" raw="NYC" machine_tag="0">nyc</tag>
+            <tag id="26957369-4134432241-5392" author="26977717@N02" raw="Manhattan" machine_tag="0">manhattan</tag>
+            <tag id="26957369-4134432241-95" author="26977717@N02" raw="New" machine_tag="0">new</tag>
+            <tag id="26957369-4134432241-98" author="26977717@N02" raw="York" machine_tag="0">york</tag>
+            <tag id="26957369-4134432241-103" author="26977717@N02" raw="City" machine_tag="0">city</tag>
+            <tag id="26957369-4134432241-558325" author="26977717@N02" raw="17mm" machine_tag="0">17mm</tag>
+            <tag id="26957369-4134432241-1382" author="26977717@N02" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="26957369-4134432241-4445507" author="26977717@N02" raw="40D" machine_tag="0">40d</tag>
+            <tag id="26957369-4134432241-49217" author="26977717@N02" raw="Scuderia" machine_tag="0">scuderia</tag>
+            <tag id="26957369-4134432241-6727" author="26977717@N02" raw="wheels" machine_tag="0">wheels</tag>
+            <tag id="26957369-4134432241-7376" author="26977717@N02" raw="tan" machine_tag="0">tan</tag>
+            <tag id="26957369-4134432241-5596" author="26977717@N02" raw="interior" machine_tag="0">interior</tag>
+            <tag id="26957369-4134432241-146951" author="26977717@N02" raw="prancing" machine_tag="0">prancing</tag>
+            <tag id="26957369-4134432241-325" author="26977717@N02" raw="horse" machine_tag="0">horse</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4134432241/</url>
+        </urls>
+    </photo>
+</rsp>
+

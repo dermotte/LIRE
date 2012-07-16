@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="2826761418" secret="04874d7f57" server="3123" farm="4" dateuploaded="1220490587" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="2dc25a6279" originalformat="jpg" views="839"
+           media="photo">
+        <owner nsid="29231008@N05" username="CarSpotter" realname="" location="New York" iconserver="3118"
+               iconfarm="4"/>
+        <title>Very Yellow</title>
+        <description>Am I the only one who thinks this looks like some crazed monster with eyes wide open and a big
+            gaping mouth? Maybe it's time to lay off the horror movies lol. Quite a car anyway.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1220490587" taken="2008-08-11 12:25:21" takengranularity="0" lastupdate="1284556304"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="29225668-2826761418-623" author="29231008@N05" raw="Cars" machine_tag="0">cars</tag>
+            <tag id="29225668-2826761418-9505" author="29231008@N05" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="29225668-2826761418-594331" author="29231008@N05" raw="Ferari" machine_tag="0">ferari</tag>
+            <tag id="29225668-2826761418-515196" author="29231008@N05" raw="599" machine_tag="0">599</tag>
+            <tag id="29225668-2826761418-2114564" author="29231008@N05" raw="599GTB" machine_tag="0">599gtb</tag>
+            <tag id="29225668-2826761418-663459" author="29231008@N05" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="29225668-2826761418-484" author="29231008@N05" raw="Paris" machine_tag="0">paris</tag>
+            <tag id="29225668-2826761418-987" author="29231008@N05" raw="Yellow" machine_tag="0">yellow</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/carspotter/2826761418/</url>
+        </urls>
+    </photo>
+</rsp>
+

@@ -1,0 +1,205 @@
+<!--
+  ~ This file is part of the LIRe project: http://www.semanticmetadata.net/lire
+  ~ LIRe is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ LIRe is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with LIRe; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ We kindly ask you to refer the following paper in any publication mentioning Lire:
+  ~
+  ~ Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+  ~ An Extensible Java CBIR Library. In proceedings of the 16th ACM International
+  ~ Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
+  ~
+  ~ http://doi.acm.org/10.1145/1459359.1459577
+  ~
+  ~ Copyright statement:
+  ~ ~~~~~~~~~~~~~~~~~~~
+  ~ (c) 2002-2011 by Mathias Lux (mathias@juggle.at)
+  ~     http://www.semanticmetadata.net/lire
+  -->
+
+<project name="Lire" default="compile" basedir=".">
+    <description>
+        This buildfile is used to build and package the LIRE library.
+        The LIRE library allows the creation of a Lucene Index for
+        content based image retrieval (CBIR). Furthermore methods
+        for searching the index are provided.
+
+        This library is part of the Caliph and Emir project and aims
+        to provide the CBIR features to other Java projects in an
+        easy and light weight way.
+
+        For more information on the usage of LIRE see the docs.
+
+        - Mathias Lux, Graz 2006-02-04
+        http://www.SemanticMetadata.net
+    </description>
+
+    <property name="src" value="src/main/java"/>
+    <property name="config" value="src/main/config"/>
+    <property name="build" value="classes"/>
+    <property name="dist" value="dist"/>
+    <property name="versionstring" value="0.9"/>
+    <!-- path to test files -->
+    <property name="test" value="test"/>
+    <!-- path to documentation like README or CHANGES -->
+    <property name="doc" value="src/main/doc"/>
+    <!-- path to additional files like installer scripts, icons and batch files -->
+    <property name="add.files" value="add.files"/>
+
+    <!-- define the classpath  -->
+    <path id="classpath.path">
+        <pathelement location="${build}"/>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <tstamp>
+            <format property="touch.time" pattern="dd.MM.yyyy hh:mm aa"/>
+        </tstamp>
+        <mkdir dir="${build}"/>
+    </target>
+
+
+    <target name="compile" depends="clean, init">
+        <propertyfile file="${config}/build.properties" comment="Properties of this specific CALIPH build">
+            <entry key="build-date" type="date" value="now"/>
+            <entry key="build-number" type="int" value="1" operation="+"/>
+        </propertyfile>
+        <property file="${config}/build.properties"/>
+        <echo file="default.mf" append="false">Build-Date: ${touch.time}
+            Build-Number: ${build-number}
+        </echo>
+        <javac srcdir="${src}" destdir="${build}">
+            <classpath refid="classpath.path"/>
+        </javac>
+    </target>
+
+    <target name="javadoc">
+        <!--<javadoc sourcepath="${src}" destdir="${dist}/docs/apidocs"/>-->
+        <javadoc packagenames="net.*"
+                 sourcepath="${src}"
+                 destdir="${dist}/docs/api"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="LIRE API"
+                 classpathref="classpath.path"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${dist}/lib"/>
+        <mkdir dir="${dist}/docs"/>
+
+        <copy todir="${dist}/lib">
+            <fileset dir="lib">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+        <copy todir="${dist}/docs">
+            <fileset dir="src/main/docs">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+
+        <zip destfile="${dist}/Lire-src-${versionstring}.zip">
+            <fileset dir="src/main/java">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+            <filename name="build.xml"/>
+        </zip>
+
+        <!--jar jarfile="${dist}/lire.jar" basedir="${build}" manifest="default.mf"/-->
+
+        <jar jarfile="${dist}/lire.jar" basedir="${build}"/>
+    </target>
+
+    <target name="copy_jar_to_liredemo" depends="dist">
+        <copy file="dist/lire.jar" todir="../liredemo/lib"/>
+    </target>
+
+    <target name="release" depends="dist, javadoc">
+        <!-- create binary package for release -->
+        <!-- Copy all ressources to the directory -->
+        <copy todir="${dist}/Lire-${versionstring}">
+            <fileset dir="${dist}">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+            <fileset dir=".">
+                <patternset>
+                    <include name="src/**"/>
+                    <!--include name="lib/**"/-->
+                    <include name="build.xml"/>
+                    <include name="LICENSE.txt"/>
+                    <include name="README.txt"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                    <exclude name="**/docs/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+        <copy todir="${dist}/Lire-${versionstring}">
+            <fileset dir=".">
+                <patternset>
+                    <include name="src/main/docs/INSTALL.txt"/>
+                    <include name="src/main/docs/CHANGES.txt"/>
+                </patternset>
+            </fileset>
+        </copy>
+        <!-- Make a tar file -->
+        <tar tarfile="${dist}/Lire-${versionstring}.tar.bz2" compression="bzip2">
+            <tarfileset dir="${dist}">
+                <patternset>
+                    <include name="Lire-${versionstring}/**"/>
+                </patternset>
+            </tarfileset>
+        </tar>
+        <!-- Make a zip file -->
+        <zip destfile="${dist}/Lire-${versionstring}.zip">
+            <fileset dir="${dist}">
+                <patternset>
+                    <include name="Lire-${versionstring}/**"/>
+                </patternset>
+            </fileset>
+        </zip>
+        <!-- Delete temp directory -->
+        <delete dir="${dist}/Lire-${versionstring}"/>
+
+    </target>
+
+</project>

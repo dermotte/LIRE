@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4875480073" secret="008a4d174d" server="4095" farm="5" dateuploaded="1281368282" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="d99f3bb7ab" originalformat="jpg" views="551"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>599 HGTE.</title>
+        <description>Shot from a few months ago in Greenwich, such a stunning car! This is not the same one I saw this
+            past weekend in the city.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1281368282" taken="2010-04-24 17:13:45" takengranularity="0" lastupdate="1322276942"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>11</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4875480073-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4875480073-45165928" author="26977717@N02" raw="HTGE" machine_tag="0">htge</tag>
+            <tag id="26957369-4875480073-119234" author="26977717@N02" raw="GTB" machine_tag="0">gtb</tag>
+            <tag id="26957369-4875480073-663459" author="26977717@N02" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="26957369-4875480073-168516" author="26977717@N02" raw="V12" machine_tag="0">v12</tag>
+            <tag id="26957369-4875480073-9656" author="26977717@N02" raw="front" machine_tag="0">front</tag>
+            <tag id="26957369-4875480073-1423234" author="26977717@N02" raw="engined" machine_tag="0">engined</tag>
+            <tag id="26957369-4875480073-53450" author="26977717@N02" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="26957369-4875480073-12608" author="26977717@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="26957369-4875480073-8117" author="26977717@N02" raw="fast" machine_tag="0">fast</tag>
+            <tag id="26957369-4875480073-472" author="26977717@N02" raw="black" machine_tag="0">black</tag>
+            <tag id="26957369-4875480073-49213" author="26977717@N02" raw="Nero" machine_tag="0">nero</tag>
+            <tag id="26957369-4875480073-403191" author="26977717@N02" raw="handling" machine_tag="0">handling</tag>
+            <tag id="26957369-4875480073-40966" author="26977717@N02" raw="package" machine_tag="0">package</tag>
+            <tag id="26957369-4875480073-6490" author="26977717@N02" raw="Greenwich" machine_tag="0">greenwich</tag>
+            <tag id="26957369-4875480073-5484" author="26977717@N02" raw="Connecticut" machine_tag="0">connecticut</tag>
+            <tag id="26957369-4875480073-1512" author="26977717@N02" raw="golf" machine_tag="0">golf</tag>
+            <tag id="26957369-4875480073-6379" author="26977717@N02" raw="country" machine_tag="0">country</tag>
+            <tag id="26957369-4875480073-1212" author="26977717@N02" raw="club" machine_tag="0">club</tag>
+            <tag id="26957369-4875480073-2935" author="26977717@N02" raw="woods" machine_tag="0">woods</tag>
+            <tag id="26957369-4875480073-2620" author="26977717@N02" raw="spring" machine_tag="0">spring</tag>
+            <tag id="26957369-4875480073-141246" author="26977717@N02" raw="blooming" machine_tag="0">blooming</tag>
+            <tag id="26957369-4875480073-556" author="26977717@N02" raw="tree" machine_tag="0">tree</tag>
+            <tag id="26957369-4875480073-586" author="26977717@N02" raw="green" machine_tag="0">green</tag>
+            <tag id="26957369-4875480073-136" author="26977717@N02" raw="pink" machine_tag="0">pink</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4875480073/</url>
+        </urls>
+    </photo>
+</rsp>
+

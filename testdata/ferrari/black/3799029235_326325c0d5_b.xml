@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3799029235" secret="326325c0d5" server="3430" farm="4" dateuploaded="1249694647" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="bf75acd0b8" originalformat="jpg" views="477"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title/>
+        <description>F430 Spider in a stunning color combo.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1249694647" taken="2009-08-01 14:59:33" takengranularity="0" lastupdate="1322272489"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>4</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-3799029235-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-3799029235-116028" author="26977717@N02" raw="F430" machine_tag="0">f430</tag>
+            <tag id="26957369-3799029235-2249" author="26977717@N02" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="26957369-3799029235-49213" author="26977717@N02" raw="Nero" machine_tag="0">nero</tag>
+            <tag id="26957369-3799029235-42383" author="26977717@N02" raw="Rosso" machine_tag="0">rosso</tag>
+            <tag id="26957369-3799029235-472" author="26977717@N02" raw="Black" machine_tag="0">black</tag>
+            <tag id="26957369-3799029235-227" author="26977717@N02" raw="Red" machine_tag="0">red</tag>
+            <tag id="26957369-3799029235-6490" author="26977717@N02" raw="Greenwich" machine_tag="0">greenwich</tag>
+            <tag id="26957369-3799029235-8185" author="26977717@N02" raw="CT" machine_tag="0">ct</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/3799029235/</url>
+        </urls>
+    </photo>
+</rsp>
+

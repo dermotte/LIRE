@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4175517996" secret="6245a0907c" server="2513" farm="3" dateuploaded="1260488432" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="c972c0c3f1" originalformat="jpg" views="366"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari F430 Scuderia</title>
+        <description>&lt;a href="http://www.twitter.com/torquespeak" rel="nofollow"&gt;www.twitter.com/torquespeak&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1260488432" taken="2009-11-10 18:52:34" takengranularity="0" lastupdate="1270039478"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>3</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-4175517996-595" author="31797562@N04" raw="london" machine_tag="0">london</tag>
+            <tag id="31765423-4175517996-9505" author="31797562@N04" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-4175517996-147353" author="31797562@N04" raw="430" machine_tag="0">430</tag>
+            <tag id="31765423-4175517996-116028" author="31797562@N04" raw="f430" machine_tag="0">f430</tag>
+            <tag id="31765423-4175517996-294159" author="31797562@N04" raw="scud" machine_tag="0">scud</tag>
+            <tag id="31765423-4175517996-49217" author="31797562@N04" raw="scuderia" machine_tag="0">scuderia</tag>
+            <tag id="31765423-4175517996-5665" author="31797562@N04" raw="stripes" machine_tag="0">stripes</tag>
+            <tag id="31765423-4175517996-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-4175517996-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+            <tag id="31765423-4175517996-2000" author="31797562@N04" raw="lights" machine_tag="0">lights</tag>
+            <tag id="31765423-4175517996-21965" author="31797562@N04" raw="parked" machine_tag="0">parked</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/4175517996/</url>
+        </urls>
+    </photo>
+</rsp>
+

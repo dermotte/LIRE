@@ -1,0 +1,45 @@
+<project name="LireSampleApp" default="compile" basedir=".">
+    <description>
+        Most simple project you can do with Lire
+    </description>
+    <!-- set global properties for this build -->
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+    </target>
+
+    <path id="class.path">
+        <fileset dir="lib" includes="*.jar"/>
+        <pathelement location="${build}"/>
+    </path>
+
+    <target name="compile" depends="init" description="compile the source ">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <javac srcdir="${src}" destdir="${build}" classpathref="class.path"/>
+    </target>
+
+    <target name="clean"
+            description="clean up">
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build}"/>
+    </target>
+
+    <target name="index" depends="compile">
+        <java classpathref="class.path" classname="net.semanticmetadata.lire.sampleapp.Indexer">
+            <!-- adapt this argument to use your pictures -->
+            <arg value="d:/temp"/>
+        </java>
+    </target>
+
+    <target name="search" depends="compile">
+        <java classpathref="class.path" classname="net.semanticmetadata.lire.sampleapp.Searcher">
+            <!-- adapt this argument to use your pictures -->
+            <arg value="d:/temp/image.jpg"/>
+        </java>
+    </target>
+</project>

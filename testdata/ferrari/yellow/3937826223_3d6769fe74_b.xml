@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3937826223" secret="3d6769fe74" server="2487" farm="3" dateuploaded="1253476959" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="ffa8097f3f" originalformat="jpg" views="538"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari F430 Scuderia</title>
+        <description>&lt;a href="http://torquespeak.wordpress.com"
+            rel="nofollow"&gt;torquespeak.wordpress.com&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1253476959" taken="2009-09-11 13:56:01" takengranularity="0" lastupdate="1326552318"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>1</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-3937826223-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-3937826223-116028" author="31797562@N04" raw="F430" machine_tag="0">f430</tag>
+            <tag id="31765423-3937826223-49217" author="31797562@N04" raw="Scuderia" machine_tag="0">scuderia</tag>
+            <tag id="31765423-3937826223-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-3937826223-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+        </tags>
+        <location latitude="51.510057" longitude="-0.143165" accuracy="15" context="0" place_id="amTwDy5TWr9_hw"
+                  woeid="28571">
+            <neighbourhood place_id="amTwDy5TWr9_hw" woeid="28571">Mayfair</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/3937826223/</url>
+        </urls>
+    </photo>
+</rsp>
+
