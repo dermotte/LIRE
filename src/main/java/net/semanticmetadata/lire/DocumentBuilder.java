@@ -92,7 +92,7 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_COLORLAYOUT_FAST = "featureColorLayoutfast";
     public static final String FIELD_NAME_SURF = "featureSurf";
     public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSURFHistogram";
-    public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureSurfHistogramVWords";
+    public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
     public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM = "featureMSERHistogram";
     public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureMSERHistogramVWords";
     public static final String FIELD_NAME_MSER = "featureMSER";

@@ -64,7 +64,7 @@ public class SurfFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
 
     private void init() {
         localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
-        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS;
+        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
         localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
         clusterFile = "./clusters-surf.dat";
     }

@@ -146,7 +146,8 @@
     </target>
 
     <target name="copy_jar_to_liredemo" depends="dist">
-        <copy file="dist/lire.jar" todir="../liredemo/lib"/>
+        <copy file="dist/lire.jar" todir="./samples/liredemo/lib"/>
+        <copy file="dist/lire.jar" todir="./samples/simpleapplication/lib"/>
     </target>
 
     <target name="release" depends="dist, javadoc">

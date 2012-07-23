@@ -61,11 +61,11 @@ public class FilterTest extends TestCase {
     private String indexPath = "test-filters";
 
     private DocumentBuilder getDocumentBuilder() {
-        ChainedDocumentBuilder result = new ChainedDocumentBuilder();
-        result.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-        result.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
-        result.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-        return result;
+        ChainedDocumentBuilder builder = new ChainedDocumentBuilder();
+        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+        return builder;
     }
 
     public void testRerankFilter() throws IOException {
@@ -75,7 +75,7 @@ public class FilterTest extends TestCase {
         System.out.println("---< searching >-------------------------");
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
         Document document = reader.document(0);
-        ImageSearcher searcher = ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(100);
+        ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(100);
         ImageSearchHits hits = searcher.search(document, reader);
         // rerank
         System.out.println("---< filtering >-------------------------");

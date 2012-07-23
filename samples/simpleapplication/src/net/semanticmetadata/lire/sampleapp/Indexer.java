@@ -2,6 +2,9 @@ package net.semanticmetadata.lire.sampleapp;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
@@ -45,11 +48,12 @@ public class Indexer {
         // Creating a CEDD document builder and indexing al files.
         DocumentBuilder builder = DocumentBuilderFactory.getCEDDDocumentBuilder();
         // Creating an Lucene IndexWriter
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_34, new WhitespaceAnalyzer(Version.LUCENE_34));
+        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36,
+                new WhitespaceAnalyzer(Version.LUCENE_36));
         IndexWriter iw = new IndexWriter(FSDirectory.open(new File("index")), conf);
         // Iterating through images building the low level features
-        for (Iterator<String> iterator = images.iterator(); iterator.hasNext(); ) {
-            String imageFilePath = iterator.next();
+        for (Iterator<String> it = images.iterator(); it.hasNext(); ) {
+            String imageFilePath = it.next();
             System.out.println("Indexing " + imageFilePath);
             try {
                 BufferedImage img = ImageIO.read(new FileInputStream(imageFilePath));
