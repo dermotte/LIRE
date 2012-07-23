@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2012-07-23
+==========
+  - Updated libs in samples.
+  - Updated build.xml
+  - refactored name of surf visual words index field
+
 2012-07-16
 ==========
   - Updated Lucene to version 3.6

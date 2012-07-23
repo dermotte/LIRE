@@ -117,6 +117,7 @@ public class LsaFilter implements SearchHitsFilter {
         ms = System.currentTimeMillis() - ms;
         double[] singularValues = svd.getSingularValues();
         RealMatrix s = svd.getS();
+        // if no number of dimensions is given reduce to a tenth.
         if (numberOfDimensions < 1) numberOfDimensions = singularValues.length / 10;
         for (int i = numberOfDimensions; i < singularValues.length; i++) {
             s.setEntry(i, i, 0);

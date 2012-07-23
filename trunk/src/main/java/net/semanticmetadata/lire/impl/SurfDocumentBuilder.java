@@ -50,7 +50,6 @@ import java.util.List;
 public class SurfDocumentBuilder extends AbstractDocumentBuilder {
     public Document createDocument(BufferedImage image, String identifier) {
         Document doc = null;
-        // test with MSER:
         Surf s = new Surf(image);
         List<SURFInterestPoint> interestPoints = s.getFreeOrientedInterestPoints();
         doc = new Document();

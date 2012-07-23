@@ -261,9 +261,9 @@ public class TestLocalFeatureHistogram extends TestCase {
 //        IndexReader reader = IndexReader.open(FSDirectory.open(new File("surf-idx")));
 //        int docID = 414;
 //
-//        String query = reader.document(docID).getValues(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS)[0];
+//        String query = reader.document(docID).getValues(DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS)[0];
 //        System.out.println("query = " + query);
-//        QueryParser qp = new QueryParser(Version.LUCENE_30, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+//        QueryParser qp = new QueryParser(Version.LUCENE_30, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
 //        IndexSearcher isearcher = new IndexSearcher(reader);
 //        isearcher.setSimilarity(new Similarity() {
 //            @Override

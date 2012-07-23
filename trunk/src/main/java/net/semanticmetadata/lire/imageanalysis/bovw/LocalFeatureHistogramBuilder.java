@@ -68,7 +68,7 @@ public abstract class LocalFeatureHistogramBuilder {
     private ProgressMonitor pm = null;
 
     protected String localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
-    protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS;
+    protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
     protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String clusterFile = "./clusters.dat";
     public static boolean DELETE_LOCAL_FEATURES = true;

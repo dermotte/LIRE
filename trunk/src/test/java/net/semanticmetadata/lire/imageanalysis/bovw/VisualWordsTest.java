@@ -27,7 +27,7 @@ public class VisualWordsTest extends TestCase {
         Document d = sb.createDocument(image, "query");
         SurfFeatureHistogramBuilder sfb = new SurfFeatureHistogramBuilder(reader);
         d = sfb.getVisualWords(d);
-        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(3, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
+        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(3, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
         ImageSearchHits hits = searcher.search(d, reader);
         for (int i = 0; i < hits.length(); i++) {
             hits.doc(i);

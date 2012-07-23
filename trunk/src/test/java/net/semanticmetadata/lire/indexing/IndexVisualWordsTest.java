@@ -121,7 +121,7 @@ public class IndexVisualWordsTest extends TestCase {
         int maxDocs = ir.maxDoc();
         for (int i = 0; i < maxDocs / 10; i++) {
             Document d = ir.document(i);
-            d.removeFields(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
+            d.removeFields(DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
             d.removeFields(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM);
 //            d.removeFields(DocumentBuilder.FIELD_NAME_SURF);
             iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
