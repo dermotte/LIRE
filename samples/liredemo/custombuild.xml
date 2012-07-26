@@ -55,11 +55,27 @@
         <javac srcdir="${src}" destdir="${build}">
             <classpath refid="classpath.path"/>
         </javac>
+
+        <copy todir="${build}">
+            <fileset dir="src">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                    <exclude name="**/*.java"/>
+                </patternset>
+            </fileset>
+        </copy>
+
     </target>
 
     <target name="dist" depends="compile">
         <mkdir dir="${dist}"/>
         <mkdir dir="${dist}/lib"/>
+
+        <echo file="default.mf" append="false">Main-Class: liredemo.LireDemoFrame
+Class-Path: lib/commons-math3-3.0.jar lib/JOpenSurf.jar lib/lire.jar lib/lucene-core-3.6.0.jar lib/metadata-extractor-2.3.1.jar
+        </echo>
 
         <copy todir="${dist}/lib">
             <fileset dir="lib">
@@ -71,7 +87,7 @@
             </fileset>
         </copy>
 
-        <jar jarfile="${dist}/liredemo.jar" basedir="${build}"/>
+        <jar jarfile="${dist}/liredemo.jar" basedir="${build}" manifest="default.mf"/>
     </target>
 
     <target name="clean">
