@@ -51,6 +51,28 @@
         <mkdir dir="${build}"/>
     </target>
 
+    <target name="compile" depends="clean, init">
+        <javac srcdir="${src}" destdir="${build}">
+            <classpath refid="classpath.path"/>
+        </javac>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${dist}/lib"/>
+
+        <copy todir="${dist}/lib">
+            <fileset dir="lib">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+
+        <jar jarfile="${dist}/liredemo.jar" basedir="${build}"/>
+    </target>
 
     <target name="clean">
         <delete dir="${build}"/>
