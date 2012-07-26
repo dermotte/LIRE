@@ -1934,7 +1934,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 10) {
             searcher = ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(numResults);
         } else if (selectboxDocumentBuilder.getSelectedIndex() > 10) {
-            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
+            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
         }
         return searcher;
     }
