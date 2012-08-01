@@ -185,7 +185,7 @@ public class MetricSpacesInvertedListIndexing {
 
     /**
      * We assume that the initial indexing has been done and a set of reference objects has been
-     * found and indexed in the sepaarete directory. However further documents were added and they
+     * found and indexed in the separate directory. However further documents were added and they
      * now need to get a ranked list of reference objects. So we (i) get all these new documents
      * missing the field "ro-order" and (ii) add this field.
      *
