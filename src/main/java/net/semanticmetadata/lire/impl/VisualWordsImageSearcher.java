@@ -33,10 +33,14 @@ package net.semanticmetadata.lire.impl;
 import net.semanticmetadata.lire.AbstractImageSearcher;
 import net.semanticmetadata.lire.ImageDuplicates;
 import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.utils.LuceneUtils;
+import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.ParseException;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
 
 import java.awt.image.BufferedImage;
@@ -54,19 +58,24 @@ import java.util.StringTokenizer;
 public class VisualWordsImageSearcher extends AbstractImageSearcher {
     private int numMaxHits;
     private String fieldName;
-    private Similarity similarity = new DefaultSimilarity();
-//    private Similarity similarity = new TfIdfSimilarity();
+    //    private Similarity similarity = new DefaultSimilarity();
+    private Similarity similarity = new TfIdfSimilarity();
+    QueryParser qp;
 
 
     public VisualWordsImageSearcher(int numMaxHits, Similarity similarity, String fieldName) {
         this.similarity = similarity;
         this.numMaxHits = numMaxHits;
         this.fieldName = fieldName;
+        qp = new QueryParser(LuceneUtils.LUCENE_VERSION, fieldName, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+        BooleanQuery.setMaxClauseCount(10000);
     }
 
     public VisualWordsImageSearcher(int numMaxHits, String fieldName) {
         this.numMaxHits = numMaxHits;
         this.fieldName = fieldName;
+        qp = new QueryParser(LuceneUtils.LUCENE_VERSION, fieldName, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+        BooleanQuery.setMaxClauseCount(10000);
     }
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
@@ -78,71 +87,47 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
         IndexSearcher isearcher = new IndexSearcher(reader);
         isearcher.setSimilarity(similarity);
         String queryString = doc.getValues(fieldName)[0];
-        Query tq = createQuery(queryString);
-
-        TopDocs docs = isearcher.search(tq, numMaxHits);
-        LinkedList<SimpleResult> res = new LinkedList<SimpleResult>();
-        float maxDistance = 0;
-        for (int i = 0; i < docs.scoreDocs.length; i++) {
-            float d = 1f / docs.scoreDocs[i].score;
-            maxDistance = Math.max(d, maxDistance);
-            SimpleResult sr = new SimpleResult(d, reader.document(docs.scoreDocs[i].doc));
-            res.add(sr);
-        }
-        sh = new SimpleImageSearchHits(res, maxDistance);
-        return sh;
-    }
-
-    private Query createQuery(String queryString) {
-        StringTokenizer st = new StringTokenizer(queryString);
-        BooleanQuery query = new BooleanQuery();
-        HashSet<String> terms = new HashSet<String>();
-        String term;
-        while (st.hasMoreTokens()) {
-            term = st.nextToken();
-            if (!terms.contains(term)) {
-                query.add(new BooleanClause(new TermQuery(new Term(fieldName, term)), BooleanClause.Occur.SHOULD));
-                terms.add(term);
+        Query tq = null;
+        try {
+            tq = qp.parse(queryString);
+            TopDocs docs = isearcher.search(tq, numMaxHits);
+            LinkedList<SimpleResult> res = new LinkedList<SimpleResult>();
+            float maxDistance = 0;
+            for (int i = 0; i < docs.scoreDocs.length; i++) {
+                float d = 1f / docs.scoreDocs[i].score;
+                maxDistance = Math.max(d, maxDistance);
+                SimpleResult sr = new SimpleResult(d, reader.document(docs.scoreDocs[i].doc));
+                res.add(sr);
             }
+            sh = new SimpleImageSearchHits(res, maxDistance);
+        } catch (ParseException e) {
+            System.err.println(queryString);
+            e.printStackTrace();
         }
-        return query;
+        return sh;
     }
 
     public ImageDuplicates findDuplicates(IndexReader reader) throws IOException {
         throw new UnsupportedOperationException("Not implemented!");
     }
 
-    private static class TfIdfSimilarity extends Similarity {
-
-        @Override
-        public float computeNorm(String s, FieldInvertState fieldInvertState) {
-            return 0;
+    /**
+     * This implementation has shown formidable results with the Nister UKBench data set.
+     */
+    private static class TfIdfSimilarity extends DefaultSimilarity {
+        public float tf(float freq) {
+            return (float) Math.log(freq);
         }
 
-        @Override
-        public float queryNorm(float v) {
+        public float idf(int docfreq, int numdocs) {
+            return 1f;
+        }
+
+        public float queryNorm(float sumOfSquaredWeights) {
             return 1;
         }
 
-        @Override
-        public float sloppyFreq(int i) {
-            return 0;
-        }
-
-        @Override
-        public float tf(float v) {
-            return (float) (v);
-//            return 1;
-        }
-
-        @Override
-        public float idf(int docfreq, int numdocs) {
-            return 1f;
-//            return (float) (Math.log((double) numdocs / ((double) docfreq)));
-        }
-
-        @Override
-        public float coord(int i, int i1) {
+        public float computeNorm(String field, FieldInvertState state) {
             return 1;
         }
     }
