@@ -1836,7 +1836,8 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private void indexAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexAllActionPerformed
         try {
             IndexReader reader = IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())), true);
-            final SurfFeatureHistogramBuilder builder = new SurfFeatureHistogramBuilder(reader);
+            int samples = Math.max(1000, reader.numDocs()/2);
+            final SurfFeatureHistogramBuilder builder = new SurfFeatureHistogramBuilder(reader, samples, 500);
             builder.setProgressMonitor(new javax.swing.ProgressMonitor(this, "Progress of BoVW indexing (~)", "", 0, 100));
             Thread t = new Thread(new Runnable() {
                 public void run() {

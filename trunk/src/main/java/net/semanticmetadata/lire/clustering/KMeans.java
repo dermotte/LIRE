@@ -30,6 +30,7 @@
 package net.semanticmetadata.lire.clustering;
 
 import net.semanticmetadata.lire.imageanalysis.Histogram;
+import net.semanticmetadata.lire.utils.StatsUtils;
 
 import java.util.*;
 
@@ -88,11 +89,7 @@ public class KMeans {
     }
 
     protected Set<Integer> selectInitialMedians(int numClusters) {
-        HashSet<Integer> medians = new HashSet<Integer>();
-        while (medians.size() < numClusters && medians.size() < features.size()) {
-            medians.add((int) (Math.random() * (double) numClusters));
-        }
-        return medians;
+        return StatsUtils.drawSample(numClusters, features.size());
     }
 
     /**
@@ -241,7 +238,8 @@ class Image {
     private final int QUANT_MAX_HISTOGRAM = 256;
 
     Image(String identifier, List<float[]> features) {
-        this.features = features;
+        this.features = new LinkedList<float[]>();
+        this.features.addAll(features);
         this.identifier = identifier;
     }
 
