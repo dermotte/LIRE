@@ -155,5 +155,11 @@ public class Cluster implements Comparable<Object> {
         this.stress = stress;
     }
 
+    public HashSet<Integer> getMembers() {
+        return members;
+    }
 
+    public void setMembers(HashSet<Integer> members) {
+        this.members = members;
+    }
 }

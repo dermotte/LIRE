@@ -62,12 +62,20 @@ public class GenericImageSearcher extends AbstractImageSearcher {
 
     private int maxHits = 10;
     protected TreeSet<SimpleResult> docs;
+    private LireFeature cachedInstance;
 
     public GenericImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName) {
         this.maxHits = maxHits;
         docs = new TreeSet<SimpleResult>();
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldName;
+        try {
+            cachedInstance = (LireFeature) descriptorClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
@@ -116,6 +124,8 @@ public class GenericImageSearcher extends AbstractImageSearcher {
 
             Document d = reader.document(i);
             float distance = getDistance(d, lireFeature);
+//            if (distance < 0 || Float.isNaN(distance))
+//                System.out.println("X");
             assert (distance >= 0);
             // calculate the overall max distance to normalize score afterwards
             if (overallMaxDistance < distance) {
@@ -144,20 +154,13 @@ public class GenericImageSearcher extends AbstractImageSearcher {
 
     protected float getDistance(Document d, LireFeature lireFeature) {
         float distance = 0f;
-        LireFeature lf;
-        try {
-            lf = (LireFeature) descriptorClass.newInstance();
-            String[] cls = d.getValues(fieldName);
-            if (cls != null && cls.length > 0) {
-                lf.setStringRepresentation(cls[0]);
-                distance = lireFeature.getDistance(lf);
-            } else {
-                logger.warning("No feature stored in this document!");
-            }
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
+//            cachedInstance = (LireFeature) descriptorClass.newInstance();
+        String[] cls = d.getValues(fieldName);
+        if (cls != null && cls.length > 0) {
+            cachedInstance.setStringRepresentation(cls[0]);
+            distance = lireFeature.getDistance(cachedInstance);
+        } else {
+            logger.warning("No feature stored in this document!");
         }
 
         return distance;

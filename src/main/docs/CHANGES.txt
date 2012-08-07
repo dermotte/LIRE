@@ -1,6 +1,16 @@
 CHANGES for LIRE
 ================
 
+2012-08-07
+==========
+  - Changed parametrers in LireDemo
+
+2012-08-06
+==========
+  - Fixed performance Bug in GenericImageSearcher (new instance per document)
+  - Added net.semanticmetadata.lire.utils.StatsUtils
+  - Fixed nasty bug in KMeans implementation.
+
 2012-07-23
 ==========
   - Typo in net.semanticmetadata.lire.indexing.MetricSpacesInvertedListIndexing

@@ -62,7 +62,7 @@ public abstract class LocalFeatureHistogramBuilder {
     IndexReader reader;
     // number of documents used to build the vocabulary / clusters.
     private int numDocsForVocabulary = 100;
-    private int numClusters = 1000;
+    private int numClusters = 512;
     private Cluster[] clusters = null;
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
     private ProgressMonitor pm = null;
@@ -108,7 +108,7 @@ public abstract class LocalFeatureHistogramBuilder {
         df.setMaximumFractionDigits(3);
         // find the documents for building the vocabulary:
         HashSet<Integer> docIDs = selectVocabularyDocs();
-        KMeans k = new ParallelKMeans(numClusters);
+        KMeans k = new KMeans(numClusters);
         // fill the KMeans object:
         LinkedList<float[]> features = new LinkedList<float[]>();
         for (Iterator<Integer> iterator = docIDs.iterator(); iterator.hasNext(); ) {
@@ -169,6 +169,11 @@ public abstract class LocalFeatureHistogramBuilder {
         }
         // Serializing clusters to a file on the disk ...
         clusters = k.getClusters();
+//        for (int i = 0; i < clusters.length; i++) {
+//            Cluster cluster = clusters[i];
+//            System.out.print(cluster.getMembers().size() + ", ");
+//        }
+//        System.out.println();
         Cluster.writeClusters(clusters, clusterFile);
         //  create & store histograms:
         System.out.println("Creating histograms ...");
@@ -282,13 +287,13 @@ public abstract class LocalFeatureHistogramBuilder {
      * @return the index of the cluster.
      */
     private int clusterForFeature(Histogram f) {
-        double d = clusters[0].getDistance(f);
+        double distance = clusters[0].getDistance(f);
         double tmp;
         int result = 0;
         for (int i = 1; i < clusters.length; i++) {
             tmp = clusters[i].getDistance(f);
-            if (tmp < d) {
-                d = tmp;
+            if (tmp < distance) {
+                distance = tmp;
                 result = i;
             }
         }

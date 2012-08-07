@@ -106,7 +106,8 @@ public class MetricsUtils {
 
     /**
      * Jeffrey Divergence or Jensen-Shannon divergence (JSD) from
-     * Deselaers, T.; Keysers, D. & Ney, H. Features for image retrieval: an experimental comparison Inf. Retr., Kluwer Academic Publishers, 2008, 11, 77-107
+     * Deselaers, T.; Keysers, D. & Ney, H. Features for image retrieval:
+     * an experimental comparison Inf. Retr., Kluwer Academic Publishers, 2008, 11, 77-107
      *
      * @param h1
      * @param h2
@@ -158,7 +159,10 @@ public class MetricsUtils {
             tmp1 += hist1[i] * hist1[i];
             tmp2 += hist2[i] * hist2[i];
         }
-        return distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2));
+        if (tmp1 * tmp2 > 0) {
+            return (distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2)));
+        }
+        else return 0d;
     }
 
 }
