@@ -76,10 +76,10 @@ public class TestNister extends TestCase {
     }
 
     public void computePrecision(String pathName, Similarity similarity, String label) throws IOException {
-        ImageSearcher vis = new GenericImageSearcher(4, SimpleFeature.class, "featureSURFHistogram");
+//        ImageSearcher vis = new GenericImageSearcher(4, SimpleFeature.class, "featureSURFHistogram");
 //        ImageSearcher vis = new GenericFastImageSearcher(4, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
 //        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
-//        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(pathName)));
 
         int queryID, resultID;
@@ -127,10 +127,10 @@ public class TestNister extends TestCase {
     public void benchmark(int numWords) throws IOException {
         numVisualWords = numWords;
         String pathName = "nis_test_surf_" + numWords;
-        createVocabulary(pathName);
+//        createVocabulary(pathName);
 //        testDocLengthIDF(pathName);
         for (int k = 0; k < 5; k++) { // run the test 5 times ...
-            computePrecision(pathName, new TfIdfSimilarity(), "SURF_lfhist_" + numWords + "_bm25");
+            computePrecision(pathName, new TfIdfSimilarity(), "SURF_lfhist_" + numWords + "_lucene");
         }
         System.out.println();
     }
@@ -138,9 +138,9 @@ public class TestNister extends TestCase {
     public void testBenchmark() throws IOException {
         //testIndexing();
 //        benchmark(256);
-        benchmark(512);
+//        benchmark(512);
 //        benchmark(1024);
-//        benchmark(2048);
+        benchmark(2048);
 //        benchmark(2048 + 1024);
 //        benchmark(2048 + 2048);
 //        computePrecision("nisterindex", DefaultSimilarity.getDefault(), "_hist_cedd");
@@ -809,26 +809,26 @@ class FileUtils {
 
 class TfIdfSimilarity extends DefaultSimilarity {
     public float tf(float freq) {
-        return (float) freq;
+        return (float) Math.log(freq);
     }
 
     public float idf(int docfreq, int numdocs) {
         return 1f;
     }
-
-    @Override
+//
+//    @Override
     public float queryNorm(float sumOfSquaredWeights) {
         return 1;    //To change body of overridden methods use File | Settings | File Templates.
     }
-
-    @Override
+//
+//    @Override
     public float computeNorm(String field, FieldInvertState state) {
         return 1;    //To change body of overridden methods use File | Settings | File Templates.
     }
-
-    @Override
-    public float coord(int overlap, int maxOverlap) {
-        return 1;
-    }
+//
+//    @Override
+//    public float coord(int overlap, int maxOverlap) {
+//        return 1;
+//    }
 }
 
