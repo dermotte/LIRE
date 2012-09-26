@@ -49,7 +49,7 @@
     <property name="config" value="src/main/config"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9"/>
+    <property name="versionstring" value="0.9.2"/>
     <!-- path to test files -->
     <property name="test" value="test"/>
     <!-- path to documentation like README or CHANGES -->
@@ -129,7 +129,7 @@
             </fileset>
         </copy>
 
-        <zip destfile="${dist}/Lire-src-${versionstring}.zip">
+        <!--zip destfile="${dist}/Lire-src-${versionstring}.zip">
             <fileset dir="src/main/java">
                 <patternset>
                     <include name="**/*.*"/>
@@ -138,7 +138,7 @@
                 </patternset>
             </fileset>
             <filename name="build.xml"/>
-        </zip>
+        </zip-->
 
         <!--jar jarfile="${dist}/lire.jar" basedir="${build}" manifest="default.mf"/-->
 
@@ -157,6 +157,7 @@
             <fileset dir="${dist}">
                 <patternset>
                     <include name="**/*.*"/>
+                    <exclude name="**/*.iml"/>
                     <exclude name="**/CVS/*"/>
                     <exclude name="**/.svn/*"/>
                 </patternset>
@@ -171,6 +172,7 @@
                     <exclude name="**/CVS/*"/>
                     <exclude name="**/.svn/*"/>
                     <exclude name="**/docs/*"/>
+                    <exclude name="**/*.iml"/>
                 </patternset>
             </fileset>
         </copy>

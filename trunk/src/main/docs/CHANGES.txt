@@ -1,10 +1,13 @@
 CHANGES for LIRE
 ================
 
-
 2012-09-26
 ==========
-  - Fixed some bugs in Liredemo browse panel.
+  - Released Lire 0.9.2 & LireDemo 0.9.2
+
+2012-09-25
+==========
+  - Fixed some bugs in LireDemo browse panel.
 
 2012-08-07
 ==========
