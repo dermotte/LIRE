@@ -1,9 +1,14 @@
 CHANGES for LIRE
 ================
 
+
+2012-09-26
+==========
+  - Fixed some bugs in Liredemo browse panel.
+
 2012-08-07
 ==========
-  - Changed parametrers in LireDemo
+  - Changed parameters in LireDemo
 
 2012-08-06
 ==========
