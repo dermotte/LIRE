@@ -369,7 +369,7 @@ public abstract class LocalFeatureHistogramBuilder {
                             f.setByteArrayRepresentation(binaryValues[j]);
                             tmpHist[clusterForFeature((Histogram) f)]++;
                         }
-                        d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
+                        d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES));
                         d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
 
                         // remove local features to save some space if requested:

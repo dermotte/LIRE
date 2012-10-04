@@ -40,6 +40,7 @@ import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.ParallelImageSearcher;
+import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
@@ -50,6 +51,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -83,7 +85,7 @@ public class TestWang extends TestCase {
         }
         // Setting up DocumentBuilder:
         builder = new ChainedDocumentBuilder();
-        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
@@ -94,7 +96,7 @@ public class TestWang extends TestCase {
 //        builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-//        builder.addBuilder(new SurfDocumentBuilder());
+        builder.addBuilder(new SurfDocumentBuilder());
 //        builder.addBuilder(new MSERDocumentBuilder());
 //        builder.addBuilder(new SiftDocumentBuilder());
     }
@@ -108,9 +110,9 @@ public class TestWang extends TestCase {
 //        in case of sift ...
 //        SiftFeatureHistogramBuilder sh1 = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
 //        sh1.index();
-//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath)), true), 400, 10000);
-//        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
-//        sh.index();
+        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath)), true), 400, 500);
+        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
+        sh.index();
 //        MSERFeatureHistogramBuilder sh2 = new MSERFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
 //        sh2.index();
 

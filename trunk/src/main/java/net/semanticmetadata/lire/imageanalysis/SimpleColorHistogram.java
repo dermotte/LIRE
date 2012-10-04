@@ -287,15 +287,9 @@ public class SimpleColorHistogram implements LireFeature {
             }
             // and for 64 bins ...
             else {
-                double minDist = Math.pow((rgbPalette64[0][0] - pixel[0]), 2) + Math.pow((rgbPalette64[0][1] - pixel[1]), 2) + Math.pow((rgbPalette64[0][2] - pixel[2]), 2);
-                int pos = 0;
-                for (int i = 1; i < rgbPalette64.length; i++) {
-                    double tmp = Math.pow((rgbPalette64[i][0] - pixel[0]), 2) + Math.pow((rgbPalette64[i][1] - pixel[1]), 2) + Math.pow((rgbPalette64[i][2] - pixel[2]), 2);
-                    if (tmp <= minDist) {
-                        minDist = tmp;
-                        pos = i;
-                    }
-                }
+                int pos = (int) Math.round((double) pixel[2] / 85d) +
+                        (int) Math.round((double) pixel[1] / 85d) * 4+
+                        (int) Math.round((double) pixel[0] / 85d) * 4*4;
                 return pos;
             }
         }
