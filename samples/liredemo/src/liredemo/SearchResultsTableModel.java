@@ -133,7 +133,7 @@ public class SearchResultsTableModel extends DefaultTableModel {
             ImageIcon icon = null;
             try {
                 BufferedImage img = null;
-                String fileIdentifier = hits.doc(i).getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+                String fileIdentifier = hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
                 if (!fileIdentifier.startsWith("http:")) {
                     // check isf it is a jpg file ...
                     if (fileIdentifier.toLowerCase().endsWith(".jpg")) {

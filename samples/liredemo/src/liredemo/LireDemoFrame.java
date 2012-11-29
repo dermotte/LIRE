@@ -49,6 +49,7 @@ import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
 
@@ -1291,7 +1292,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void buttonStartMosaicingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartMosaicingActionPerformed
         try {
-            if (!IndexReader.indexExists(open(new File(textfieldIndexName.getText())))) {
+            if (!DirectoryReader.indexExists(open(new File(textfieldIndexName.getText())))) {
                 JOptionPane.showMessageDialog(this, "Did not find existing index!\n"
                         + "Use the \"Index\" function to create a new one.", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (textfieldMosaicImage.getText().length() > 4) {
@@ -1418,7 +1419,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         try {
             Document d = browseReader.document(docID);
             BufferedImage img = null;
-            String file = d.getFieldable(net.semanticmetadata.lire.DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+            String file = d.getField(net.semanticmetadata.lire.DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
             if (!file.startsWith("http:")) {
                 img = ImageIO.read(new java.io.FileInputStream(file));
             } else {
@@ -1459,7 +1460,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         if (evt.getButton() == MouseEvent.BUTTON3) {
             int imageID = resultsTable.rowAtPoint(evt.getPoint()) * 3 + resultsTable.columnAtPoint(evt.getPoint());
             if (imageID >= 0 && imageID < tableModel.getHits().length()) {
-                String file = tableModel.getHits().doc(imageID).getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+                String file = tableModel.getHits().doc(imageID).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
 
                 try {
                     Desktop.getDesktop().open(new File(file));
@@ -1542,7 +1543,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
             public void run() {
                 try {
                     progressSearch.setValue(0);
-                    IndexReader reader = IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())), true);
+                    IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
                     ImageSearcher searcher = getSearcher();
                     // System.out.println(searcher.getClass().getName() + " " + searcher.toString());
                     progressSearch.setString("Searching for matching images: " + searcher.getClass().getName());
@@ -1820,7 +1821,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void indexAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexAllActionPerformed
         try {
-            IndexReader reader = IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())), true);
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
             int samples = Math.max(1000, reader.numDocs() / 2);
             final SurfFeatureHistogramBuilder builder = new SurfFeatureHistogramBuilder(reader, samples, 500);
             builder.setProgressMonitor(new javax.swing.ProgressMonitor(this, "Progress of BoVW indexing (~)", "", 0, 100));
@@ -1841,7 +1842,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void indexMissingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexMissingActionPerformed
         try {
-            IndexReader reader = IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())), true);
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
             SurfFeatureHistogramBuilder builder = new SurfFeatureHistogramBuilder(reader, reader.maxDoc() / 10, 2000);
             builder.indexMissing();
         } catch (IOException e) {
@@ -1888,7 +1889,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         Thread t = new Thread() {
             public void run() {
                 try {
-                    IndexReader reader = IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())), true);
+                    IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
                     int numDocs = reader.numDocs();
                     System.out.println("numDocs = " + numDocs);
                     ImageSearcher searcher = getSearcher();

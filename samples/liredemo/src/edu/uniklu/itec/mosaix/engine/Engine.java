@@ -140,7 +140,7 @@ public final class Engine {
 
         for (int i = 0; i < hits.length(); i++) {
             Document doc = hits.doc(i);
-            String file = doc.getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+            String file = doc.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
 //			BufferedImage repl = ImageIO.read(new File(file));
             WeightingData data = weightingDataFactory_.newInstance(doc);
             data.setRelevancy(hits.score(i));
