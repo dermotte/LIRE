@@ -31,24 +31,14 @@
 package net.semanticmetadata.lire.invertedlist;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.ImageSearcherFactory;
-import net.semanticmetadata.lire.utils.LuceneUtils;
-import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.*;
+import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.FieldInvertState;
+import org.apache.lucene.index.Norm;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.search.similarities.Similarity;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 
 public class GeneralInvertedListTest extends TestCase {
@@ -56,6 +46,7 @@ public class GeneralInvertedListTest extends TestCase {
     private int numRefObjsReferenced = 50;
     private int numRefObjs = 500;
 
+    /*
     public void testIndexing() throws IOException {
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
         int numDocs = reader.numDocs();
@@ -84,7 +75,7 @@ public class GeneralInvertedListTest extends TestCase {
             document.add(new Field("ro-id", count + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
             iw.addDocument(document);
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
 
         // now find the reference objects for each entry ;)
@@ -112,7 +103,7 @@ public class GeneralInvertedListTest extends TestCase {
             document.add(new Field("ro-order", sb.toString(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
             iw.addDocument(document);
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
 
     }
@@ -169,20 +160,9 @@ public class GeneralInvertedListTest extends TestCase {
             position++;
         }
         // fill up all the remaining doc scores,
-        /*
-        // TODO: Fix for Lucene 3.0!
-        TopFieldDocCollector col = new TopFieldDocCollector(reader, Sort.RELEVANCE, 100);
-        for (Iterator<Integer> iterator = doc2count.keySet().iterator(); iterator.hasNext();) {
-            currDoc = iterator.next();
-            if (doc2count.get(currDoc) < numRefObjsReferenced) { // at least half of the objects should be there ...
-//                doc2score.put(currDoc, doc2score.get(currDoc) + (numRefObjs-doc2count.get(currDoc))*position);
-                col.collect(currDoc, numRefObjsReferenced * position - (doc2score.get(currDoc) + (numRefObjsReferenced - doc2count.get(currDoc)) * position));
-            }
-        }
-        return col.topDocs();
-        */
+
         throw new UnsupportedOperationException("Not implemented");
-    }
+    }*/
 
     public static Query getQuery(String queryString) {
         BooleanQuery b = new BooleanQuery();
@@ -349,43 +329,23 @@ public class GeneralInvertedListTest extends TestCase {
 }*/
 
 class PlainSimilarity extends Similarity {
-
-    final static PlainSimilarity ps = new PlainSimilarity();
-
-    public static PlainSimilarity getSimilarity() {
-        return ps;
+    @Override
+    public void computeNorm(FieldInvertState fieldInvertState, Norm norm) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
-//    public float lengthNorm(String s, int i) {
-//        return 1f;
-//    }
-
-    public float computeNorm(String s, FieldInvertState fieldInvertState) {
-        return 1f;  //To change body of implemented methods use File | Settings | File Templates.
+    @Override
+    public SimWeight computeWeight(float v, CollectionStatistics collectionStatistics, TermStatistics... termStatisticses) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public float queryNorm(float v) {
-        return 1f;
+    @Override
+    public ExactSimScorer exactSimScorer(SimWeight simWeight, AtomicReaderContext atomicReaderContext) throws IOException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public float sloppyFreq(int i) {
-        return 1f;
-    }
-
-    public float tf(float v) {
-        return 1f;
-    }
-
-    public float idf(int i, int i1) {
-        return 1f;
-    }
-
-    public float coord(int i, int i1) {
-        return 1f;
-    }
-
-
-    public float idf(Collection collection, Searcher searcher) throws IOException {
-        return 1f;
+    @Override
+    public SloppySimScorer sloppySimScorer(SimWeight simWeight, AtomicReaderContext atomicReaderContext) throws IOException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

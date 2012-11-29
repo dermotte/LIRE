@@ -32,8 +32,13 @@ package net.semanticmetadata.lire.utils;
 
 import net.semanticmetadata.lire.ImageSearchHits;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -116,6 +121,38 @@ public class FileUtils {
         bw.write("</body>\n" +
                 "</html>");
         bw.close();
+    }
+
+    public static void saveImageResultsToPng(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
+        LinkedList<BufferedImage> results = new LinkedList<BufferedImage>();
+        int width = 0;
+        for (int i = 0; i < hits.length(); i++) {
+            // hits.score(i)
+            // hits.doc(i).get("descriptorImageIdentifier")
+            BufferedImage tmp = ImageIO.read(new FileInputStream(hits.doc(i).get("descriptorImageIdentifier")));
+            if (tmp.getHeight() > 200) {
+                double factor = 200d / ((double) tmp.getHeight());
+                tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);
+            }
+            width += tmp.getWidth() + 5;
+            results.add(tmp);
+        }
+        BufferedImage result = new BufferedImage(width, 220, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = (Graphics2D) result.getGraphics();
+        g2.setColor(Color.black);
+        g2.clearRect(0, 0, result.getWidth(), result.getHeight());
+        g2.setColor(Color.green);
+        g2.setFont(Font.decode("\"Arial\", Font.BOLD, 12"));
+        int offset = 0;
+        int count = 0;
+        for (Iterator<BufferedImage> iterator = results.iterator(); iterator.hasNext(); ) {
+            BufferedImage next = iterator.next();
+            g2.drawImage(next, offset, 20, null);
+            g2.drawString(hits.score(count) + "", offset + 5, 12);
+            offset += next.getWidth() + 5;
+            count++;
+        }
+        ImageIO.write(result, "PNG", new File(prefix + "_" + (System.currentTimeMillis() / 1000) + ".png"));
     }
 
     public static void zipDirectory(File directory, File base, ZipOutputStream zos) throws IOException {

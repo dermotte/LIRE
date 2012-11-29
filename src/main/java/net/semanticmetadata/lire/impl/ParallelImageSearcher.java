@@ -37,6 +37,8 @@ import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -145,16 +147,14 @@ public class ParallelImageSearcher extends AbstractImageSearcher {
             parDocs[i] = new TreeSet<SimpleResult>();
         }
 
-        boolean hasDeletions = reader.hasDeletions();
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
 
         // clear result set ...
 
         int docs = reader.numDocs();
         for (int i = 0; i < docs; i++) {
-            // bugfix by Roman Kern
-            if (hasDeletions && reader.isDeleted(i)) {
-                continue;
-            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
             Document d = reader.document(i);
             float[] distance = getDistance(d, lireFeature);

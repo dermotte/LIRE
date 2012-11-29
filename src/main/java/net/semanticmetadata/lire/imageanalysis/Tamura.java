@@ -296,6 +296,10 @@ public class Tamura implements LireFeature {
         histogram = SerializationUtils.toDoubleArray(in);
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        histogram = SerializationUtils.toDoubleArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         return histogram;
     }

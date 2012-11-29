@@ -282,6 +282,11 @@ public class Gabor implements LireFeature {
         histogram = SerializationUtils.toDoubleArray(in);
     }
 
+    @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        histogram = SerializationUtils.toDoubleArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         return histogram;
     }

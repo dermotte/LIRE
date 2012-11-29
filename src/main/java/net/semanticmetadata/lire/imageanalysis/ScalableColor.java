@@ -75,6 +75,16 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
         }
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        int[] result = SerializationUtils.toIntArray(in, offset, length);
+        NumberOfBitplanesDiscarded = result[0];
+        NumberOfCoefficients = result[1];
+        haarTransformedHistogram = new int[result.length - 2];
+        for (int i = 2; i < result.length; i++) {
+            haarTransformedHistogram[i - 2] = result[i];
+        }
+    }
+
     public double[] getDoubleHistogram() {
         int[] result = new int[NumberOfCoefficients];
         for (int i = 2; i < result.length; i++) {

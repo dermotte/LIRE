@@ -34,7 +34,8 @@ import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilder;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.IndexableField;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -64,12 +65,12 @@ public class ChainedDocumentBuilder extends AbstractDocumentBuilder {
         docsCreated = true;
         Document doc = new Document();
         if (identifier != null)
-            doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, StringField.TYPE_STORED));
         // this is unfortunately rather slow, but however it works :)
         if (builders.size() >= 1) {
             for (DocumentBuilder builder : builders) {
                 Document d = builder.createDocument(image, identifier);
-                for (Iterator<Fieldable> iterator = d.getFields().iterator(); iterator.hasNext(); ) {
+                for (Iterator<IndexableField> iterator = d.getFields().iterator(); iterator.hasNext(); ) {
                     Field f = (Field) iterator.next();
                     if (!f.name().equals(DocumentBuilder.FIELD_NAME_IDENTIFIER)) {
                         doc.add(f);

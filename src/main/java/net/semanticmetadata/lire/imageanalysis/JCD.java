@@ -65,6 +65,10 @@ public class JCD implements LireFeature {
         data = SerializationUtils.toDoubleArray(in);
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        data = SerializationUtils.toDoubleArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         return data;
     }

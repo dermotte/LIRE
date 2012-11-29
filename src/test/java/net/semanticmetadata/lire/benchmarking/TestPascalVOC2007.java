@@ -35,7 +35,6 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
-import net.semanticmetadata.lire.impl.CEDDDocumentBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -60,7 +59,7 @@ public class TestPascalVOC2007 extends TestCase {
     public void setUp() {
         // Setting up DocumentBuilder:
         builder = new ChainedDocumentBuilder();
-        builder.addBuilder(new CEDDDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
@@ -111,7 +110,6 @@ public class TestPascalVOC2007 extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
         iw.close();
     }
 

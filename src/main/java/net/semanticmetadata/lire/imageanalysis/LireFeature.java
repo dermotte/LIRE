@@ -47,6 +47,8 @@ public interface LireFeature {
 
     public void setByteArrayRepresentation(byte[] in);
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length);
+
     public double[] getDoubleHistogram();
 
     float getDistance(LireFeature feature);

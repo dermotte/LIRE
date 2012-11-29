@@ -83,7 +83,7 @@ public class FilterTest extends TestCase {
         hits = filter.filter(hits, document);
 
         // output
-        FileUtils.saveImageResultsToHtml("filtertest", hits, document.getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+        FileUtils.saveImageResultsToHtml("filtertest", hits, document.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
     }
 
     public void testLsaFilter() throws IOException {
@@ -101,7 +101,7 @@ public class FilterTest extends TestCase {
         hits = filter.filter(hits, document);
 
         // output
-        FileUtils.saveImageResultsToHtml("filtertest", hits, document.getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+        FileUtils.saveImageResultsToHtml("filtertest", hits, document.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
     }
 
     private Document indexFiles() throws IOException {

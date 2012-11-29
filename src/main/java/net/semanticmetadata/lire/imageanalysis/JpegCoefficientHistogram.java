@@ -94,6 +94,10 @@ public class JpegCoefficientHistogram implements LireFeature {
         descriptorValues = SerializationUtils.toIntArray(in);
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        descriptorValues = SerializationUtils.toIntArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         double[] result = new double[descriptorValues.length];
         for (int i = 0; i < descriptorValues.length; i++) {

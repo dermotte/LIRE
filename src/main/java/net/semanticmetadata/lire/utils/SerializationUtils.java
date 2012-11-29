@@ -156,6 +156,17 @@ public class SerializationUtils {
         return result;
     }
 
+    public static int[] toIntArray(byte[] in, int offset, int length) {
+        int[] result = new int[(length >> 2)];
+        byte[] tmp = new byte[4];
+        for (int i = offset; i < length >> 2; i++) {
+            System.arraycopy(in, offset + (i - offset) * 4, tmp, 0, 4);
+            result[i] = toInt(tmp);
+        }
+        return result;
+    }
+
+
     /**
      * Converts a float to a byte array with 4 elements. Used to put floats into a byte[] payload in a convenient
      * and fast way by shifting without using streams (which is kind of slow). Use
@@ -212,6 +223,25 @@ public class SerializationUtils {
         }
         return result;
     }
+
+    /**
+     * Convenience method for creating a float array from a byte array.
+     *
+     * @param in
+     * @param offset
+     * @param length
+     * @return
+     */
+    public static float[] toFloatArray(byte[] in, int offset, int length) {
+        float[] result = new float[length / 4];
+        byte[] tmp = new byte[4];
+        for (int i = offset; i < length / 4; i++) {
+            System.arraycopy(in, (i - offset) * 4 + offset, tmp, 0, 4);
+            result[i] = toFloat(tmp);
+        }
+        return result;
+    }
+
 
     /**
      * Converts a double to a byte array with 4 elements. Used to put doubles into a byte[] payload in a convenient
@@ -272,6 +302,24 @@ public class SerializationUtils {
         return result;
     }
 
+    /**
+     * Convenience method for creating a double array from a byte array.
+     *
+     * @param data
+     * @param length
+     * @param offset
+     * @return
+     */
+    public static double[] toDoubleArray(byte[] data, int offset, int length) {
+        double[] result = new double[length / 8];
+        byte[] tmp = new byte[8];
+        for (int i = offset; i < length / 8; i++) {
+            System.arraycopy(data, (i - offset) * 8 + offset, tmp, 0, 8);
+            result[i] = toDouble(tmp);
+        }
+        return result;
+    }
+
 
     /**
      * Convenience method for creating a String from an array.
@@ -314,4 +362,7 @@ public class SerializationUtils {
         }
         return result;
     }
+
+
 }
+

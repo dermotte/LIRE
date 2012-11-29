@@ -50,6 +50,11 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
         edgeHistogram = SerializationUtils.toIntArray(in);
     }
 
+    @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        edgeHistogram = SerializationUtils.toIntArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         return ConversionUtils.toDouble(edgeHistogram);
     }

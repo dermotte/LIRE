@@ -31,12 +31,11 @@
 package net.semanticmetadata.lire;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.impl.CEDDDocumentBuilder;
-import net.semanticmetadata.lire.impl.CEDDImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
@@ -74,7 +73,7 @@ public class RuntimeTest extends TestCase {
             Document doc = builder.createDocument(new FileInputStream(testFilesPath + identifier), identifier);
             iw.addDocument(doc);
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
     }
 
@@ -90,7 +89,7 @@ public class RuntimeTest extends TestCase {
             iw.addDocument(doc);
         }
         System.out.println("Time taken: " + ((System.currentTimeMillis() - ms) / testFiles.length) + " ms");
-        iw.optimize();
+        iw.commit();
         iw.close();
     }
 
@@ -99,7 +98,6 @@ public class RuntimeTest extends TestCase {
 
         ChainedDocumentBuilder builder = new ChainedDocumentBuilder();
         builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-        builder.addBuilder(new CEDDDocumentBuilder());
         IndexWriter iw = LuceneUtils.createIndexWriter(indexPath + "-cedd", true);
         int count = 0;
         long ms = System.currentTimeMillis();
@@ -114,18 +112,18 @@ public class RuntimeTest extends TestCase {
             if (count % 100 == 0) System.out.print((100 * count) / images.size() + "% ");
         }
         System.out.println("Time taken: " + ((System.currentTimeMillis() - ms) / testFiles.length) + " ms");
-        iw.optimize();
+        iw.commit();
         iw.close();
     }
 
     public void testCEDDSearch() throws IOException {
         int numsearches = 10;
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File("test-index-cedd")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("test-index-cedd")));
         int numDocs = reader.numDocs();
         System.out.println("numDocs = " + numDocs);
 
         // This is the new, shiny and fast one ...
-        ImageSearcher searcher = new CEDDImageSearcher(30);
+        ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(30);
 
         // This is the old and slow one.
 //        ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(30);
@@ -139,7 +137,7 @@ public class RuntimeTest extends TestCase {
         time = System.currentTimeMillis() - time;
         System.out.println(((float) time / (float) numsearches) + " ms per search with image, averaged on " + numsearches);
         for (int i = 0; i < hits.length(); i++) {
-            System.out.println(hits.score(i) + ": " + hits.doc(i).getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+            System.out.println(hits.score(i) + ": " + hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
         }
         Document document = hits.doc(4);
         time = System.currentTimeMillis();
@@ -149,7 +147,7 @@ public class RuntimeTest extends TestCase {
         time = System.currentTimeMillis() - time;
         System.out.println(((float) time / (float) numsearches) + " ms per search with document, averaged on " + numsearches);
         for (int i = 0; i < hits.length(); i++) {
-            System.out.println(hits.score(i) + ": " + hits.doc(i).getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+            System.out.println(hits.score(i) + ": " + hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
         }
 
     }

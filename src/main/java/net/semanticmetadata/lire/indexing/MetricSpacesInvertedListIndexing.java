@@ -36,11 +36,13 @@ import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.impl.GenericImageSearcher;
 import net.semanticmetadata.lire.utils.LuceneUtils;
-import org.apache.lucene.analysis.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -49,7 +51,10 @@ import org.apache.lucene.store.FSDirectory;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 
 /**
@@ -103,7 +108,7 @@ public class MetricSpacesInvertedListIndexing {
      * @throws IOException
      */
     public void createIndex(String indexPath) throws IOException {
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         int numDocs = reader.numDocs();
 
         if (numDocs < numReferenceObjects) {
@@ -138,10 +143,10 @@ public class MetricSpacesInvertedListIndexing {
         for (int i : referenceObjsIds) {
             count++;
             Document document = reader.document(i);
-            document.add(new Field("ro-id", count + "", Field.Store.YES, Field.Index.NOT_ANALYZED));
+            document.add(new Field("ro-id", count + "", StringField.TYPE_STORED));
             iw.addDocument(document);
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
 
         // progress report
@@ -150,16 +155,16 @@ public class MetricSpacesInvertedListIndexing {
         // now find the reference objects for each entry ;)
         IndexReader readerRo = IndexReader.open(FSDirectory.open(new File(indexPath + "-ro")));
         ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
-        PerFieldAnalyzerWrapper aWrapper =
-                new PerFieldAnalyzerWrapper(new SimpleAnalyzer(LuceneUtils.LUCENE_VERSION));
-        aWrapper.addAnalyzer("ro-order", new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+        Map<String, Analyzer> analyzerPerField = new HashMap<String, Analyzer>();
+        analyzerPerField.put("ro-order", new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+        PerFieldAnalyzerWrapper aWrapper = new PerFieldAnalyzerWrapper(new SimpleAnalyzer(LuceneUtils.LUCENE_VERSION), analyzerPerField);
 
         iw = new IndexWriter(FSDirectory.open(new File(indexPath)), new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, aWrapper).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
         StringBuilder sb = new StringBuilder(256);
         for (int i = 0; i < numDocs; i++) {
-            if (hasDeletions && reader.isDeleted(i)) {
-                continue;
-            }
+//            if (hasDeletions && reader.isDeleted(i)) {
+//                continue;
+//            }
             Document document = reader.document(i);
             ImageSearchHits hits = searcher.search(document, readerRo);
             sb.delete(0, sb.length());
@@ -175,7 +180,7 @@ public class MetricSpacesInvertedListIndexing {
             progress.setNumDocsProcessed(progress.getNumDocsProcessed() + 1);
 
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
 
         // progress report
@@ -200,18 +205,19 @@ public class MetricSpacesInvertedListIndexing {
 
         IndexReader readerRo = IndexReader.open(FSDirectory.open(new File(indexPath + "-ro")));
         ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
+        Map<String, Analyzer> perField = new HashMap<String, Analyzer>(1);
+        perField.put("ro-order", new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
         PerFieldAnalyzerWrapper aWrapper =
-                new PerFieldAnalyzerWrapper(new SimpleAnalyzer(LuceneUtils.LUCENE_VERSION));
-        aWrapper.addAnalyzer("ro-order", new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+                new PerFieldAnalyzerWrapper(new SimpleAnalyzer(LuceneUtils.LUCENE_VERSION), perField);
 
         IndexWriter iw = new IndexWriter(FSDirectory.open(new File(indexPath)), new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, aWrapper).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
         StringBuilder sb = new StringBuilder(256);
         for (int i = 0; i < numDocs; i++) {
-            if (hasDeletions && reader.isDeleted(i)) {
-                continue;
-            }
+//            if (hasDeletions && reader.isDeleted(i)) {
+//                continue;
+//            }
             Document document = reader.document(i);
-            if (document.getFieldable("ro-order") == null) {  // if the field is not here we create it.
+            if (document.getField("ro-order") == null) {  // if the field is not here we create it.
                 ImageSearchHits hits = searcher.search(document, readerRo);
                 sb.delete(0, sb.length());
                 for (int j = 0; j < numReferenceObjectsUsed; j++) {
@@ -230,7 +236,7 @@ public class MetricSpacesInvertedListIndexing {
             // debug:
             System.out.println("countUpdated = " + countUpdated);
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
     }
 
@@ -262,7 +268,7 @@ public class MetricSpacesInvertedListIndexing {
      * @throws IOException
      */
     public TopDocs search(Document d, String indexPath) throws IOException {
-        if (d.getFieldable("ro-order") != null) // if the document already contains the information on reference object neighbourhood
+        if (d.getField("ro-order") != null) // if the document already contains the information on reference object neighbourhood
             return scoreDocs(d.getValues("ro-order")[0], IndexReader.open(FSDirectory.open(new File(indexPath))));
         else { // if not we just create it :)
             ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
@@ -285,6 +291,7 @@ public class MetricSpacesInvertedListIndexing {
      * @throws IOException
      */
     protected TopDocs scoreDocs(String queryString, IndexReader reader) throws IOException {
+        /*
         // TODO: optimize here ;) Perhaps focus on the most promising results
         StringTokenizer st = new StringTokenizer(queryString);
         int position = 0;
@@ -322,6 +329,8 @@ public class MetricSpacesInvertedListIndexing {
         }
         while (results.size() > numHits) results.pollLast();
         return new TopDocs(Math.min(results.size(), numHits), (ScoreDoc[]) results.toArray(new ScoreDoc[results.size()]), maxScore);
+        */
+        throw new UnsupportedOperationException("Not implemented in Lucene 4.0");
     }
 
     public int getNumHits() {

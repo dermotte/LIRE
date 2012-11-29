@@ -33,7 +33,6 @@ package net.semanticmetadata.lire;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.CorrelogramImageSearcher;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.impl.SimpleImageSearcher;
 
 /**
  * <h2>Searching in an Index</h2>
@@ -105,35 +104,6 @@ public class ImageSearcherFactory {
      */
     public static ImageSearcher createColorOnlySearcher(int maximumHits) {
         return ImageSearcherFactory.createScalableColorImageSearcher(maximumHits);
-    }
-
-    /**
-     * Returns a new ImageSearcher with the given number of maximum hits and
-     * the specified weights on the different matching aspects. All weights
-     * should be in [0,1] whereas a weight of 0 implies that the feature is
-     * not taken into account for searching. Note that the effect is relative and
-     * can only be fully applied if the {@link DocumentBuilderFactory#getExtensiveDocumentBuilder() extensive DocumentBuilder}
-     * is used.
-     *
-     * @param maximumHits             defining how many hits are returned in max
-     * @param colorHistogramWeight    a weight in [0,1] defining the importance of overall color in the images
-     * @param colorDistributionWeight a weight in [0,1] defining the importance of color distribution (which color where) in the images
-     * @param textureWeight           defining the importance of texture (which edges where) in the images
-     * @return the searcher instance or NULL if the weights are not appropriate, eg. all 0 or not in [0,1]
-     * @see DocumentBuilderFactory
-     * @deprecated Use ColorLayout, EdgeHistogram and ScalableColor features instead.
-     */
-    public static ImageSearcher createWeightedSearcher(int maximumHits,
-                                                       float colorHistogramWeight,
-                                                       float colorDistributionWeight,
-                                                       float textureWeight) {
-        if (isAppropriateWeight(colorHistogramWeight)
-                && isAppropriateWeight(colorDistributionWeight)
-                && isAppropriateWeight(textureWeight)
-                && (colorHistogramWeight + colorDistributionWeight + textureWeight > 0f))
-            return new SimpleImageSearcher(maximumHits, colorHistogramWeight, colorDistributionWeight, textureWeight);
-        else
-            return null;
     }
 
     /**

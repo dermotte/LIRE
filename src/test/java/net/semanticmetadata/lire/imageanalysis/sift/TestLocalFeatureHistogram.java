@@ -30,11 +30,11 @@
 package net.semanticmetadata.lire.imageanalysis.sift;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.impl.CEDDDocumentBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
@@ -136,7 +136,7 @@ public class TestLocalFeatureHistogram extends TestCase {
         ArrayList<String> images = FileUtils.getAllImages(new File(testExtensive), true);
         ChainedDocumentBuilder db = new ChainedDocumentBuilder();
         db.addBuilder(new SiftDocumentBuilder());
-        db.addBuilder(new CEDDDocumentBuilder());
+        db.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
         IndexWriter iw = LuceneUtils.createIndexWriter("sift-idx", true);
 
         for (int i = 0; i < images.size(); i++) {
@@ -148,7 +148,6 @@ public class TestLocalFeatureHistogram extends TestCase {
             if (i > 1000) break;
         }
         System.out.println("");
-        iw.optimize();
         iw.close();
     }
 
@@ -166,14 +165,13 @@ public class TestLocalFeatureHistogram extends TestCase {
             if (i > 1000) break;
         }
         System.out.println("");
-        iw.optimize();
         iw.close();
     }
 
     public void testCreateLocalFeatureHistogram() throws IOException {
 //        testSiftIndexing();
 
-        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File("sift-idx")), false), 2000);
+        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File("sift-idx"))), 2000);
         sh.index();
         testFindimages();
     }
@@ -181,7 +179,7 @@ public class TestLocalFeatureHistogram extends TestCase {
     public void testCreateSurfFeatureHistogram() throws IOException {
 //        testSiftIndexing();
 
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File("surf-idx")), false), 500, 1000);
+        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File("surf-idx"))), 500, 1000);
         sh.index();
 //        testFindimages();
     }

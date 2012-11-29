@@ -25,6 +25,11 @@ public class SimpleFeature implements LireFeature {
     }
 
     @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
     public double[] getDoubleHistogram() {
         return hist;  //To change body of implemented methods use File | Settings | File Templates.
     }
@@ -44,8 +49,8 @@ public class SimpleFeature implements LireFeature {
         for (int i = 0; i < hist1.length; i++) {
 //            hist1[i] = (hist1[i]*(k1+1.0))/(hist1[i] + k1*(1-b+b*d1/TestNister.avgDocLength)) * Math.log((10200-TestNister.df[i]+0.5)/(TestNister.df[i]+0.5));
 //            hist2[i] = (hist2[i]*(k1+1.0))/(hist2[i] + k1*(1-b+b*d1/TestNister.avgDocLength)) * Math.log((10200-TestNister.df[i]+0.5)/(TestNister.df[i]+0.5));
-            if (hist1[i]>0) hist1[i] = 1 + Math.log(hist1[i]);
-            if (hist2[i]>0) hist2[i] = 1 + Math.log(hist2[i]);
+            if (hist1[i] > 0) hist1[i] = 1 + Math.log(hist1[i]);
+            if (hist2[i] > 0) hist2[i] = 1 + Math.log(hist2[i]);
         }
 //        double dist = (1f - MetricsUtils.cosineCoefficient(hist1, hist2));
 //        if (dist<0) {

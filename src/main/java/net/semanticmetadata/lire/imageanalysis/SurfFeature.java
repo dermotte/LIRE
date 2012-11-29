@@ -111,6 +111,10 @@ public class SurfFeature extends Histogram implements LireFeature {
         descriptor = SerializationUtils.toFloatArray(in);
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        descriptor = SerializationUtils.toFloatArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         return ConversionUtils.toDouble(descriptor);
     }

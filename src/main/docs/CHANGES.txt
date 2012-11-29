@@ -1,6 +1,21 @@
 CHANGES for LIRE
 ================
 
+2012-11-29
+==========
+  - Adoptions to test src tree for Lucene 4.0
+  - Eliminating errors & optimizing routines
+  - Added TestGeneral, confirmed global features, RerankFilter and LSAFilter working.
+  - Added utility function for showing results in an image: FileUtils.saveImageResultsToPng(...)
+
+2012-11-27
+==========
+  - Adoptions to src tree for Lucene 4.0
+
+2012-11-14
+==========
+  - Adoptions to src tree for Lucene 4.0
+
 2012-09-26
 ==========
   - Released Lire 0.9.2 & LireDemo 0.9.2
