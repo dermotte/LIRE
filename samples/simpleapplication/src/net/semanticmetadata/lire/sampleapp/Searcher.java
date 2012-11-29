@@ -4,6 +4,7 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
 
@@ -13,11 +14,9 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mlux
+ * User: Mathias Lux, mathias@juggle.at
  * Date: 25.05.12
  * Time: 12:19
- * To change this template use File | Settings | File Templates.
  */
 public class Searcher {
     public static void main(String[] args) throws IOException {
@@ -41,7 +40,7 @@ public class Searcher {
             System.exit(1);
         }
 
-        IndexReader ir = IndexReader.open(FSDirectory.open(new File("index")));
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("index")));
         ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(10);
 
         ImageSearchHits hits = searcher.search(img, ir);
