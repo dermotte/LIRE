@@ -2,11 +2,8 @@ package net.semanticmetadata.lire.sampleapp;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericFastDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -22,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Created by IntelliJ IDEA.
- * User: mlux
+ * User: Mathias Lux, mathias@juggle.at
  * Date: 25.05.12
  * Time: 12:04
- * To change this template use File | Settings | File Templates.
  */
 public class Indexer {
     public static void main(String[] args) throws IOException {
@@ -48,8 +43,8 @@ public class Indexer {
         // Creating a CEDD document builder and indexing al files.
         DocumentBuilder builder = DocumentBuilderFactory.getCEDDDocumentBuilder();
         // Creating an Lucene IndexWriter
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_36,
-                new WhitespaceAnalyzer(Version.LUCENE_36));
+        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40,
+                new WhitespaceAnalyzer(Version.LUCENE_40));
         IndexWriter iw = new IndexWriter(FSDirectory.open(new File("index")), conf);
         // Iterating through images building the low level features
         for (Iterator<String> it = images.iterator(); it.hasNext(); ) {
