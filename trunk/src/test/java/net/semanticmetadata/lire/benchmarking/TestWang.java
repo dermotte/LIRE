@@ -31,7 +31,10 @@
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.FCTH;
 import net.semanticmetadata.lire.imageanalysis.JCD;
@@ -44,12 +47,13 @@ import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Bits;
 
 import javax.swing.*;
 import java.io.*;
@@ -110,7 +114,7 @@ public class TestWang extends TestCase {
 //        in case of sift ...
 //        SiftFeatureHistogramBuilder sh1 = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
 //        sh1.index();
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath)), true), 400, 500);
+        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 400, 500);
         sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
         sh.index();
 //        MSERFeatureHistogramBuilder sh2 = new MSERFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
@@ -165,7 +169,7 @@ public class TestWang extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
+        iw.commit();
         iw.close();
     }
 
@@ -196,7 +200,7 @@ public class TestWang extends TestCase {
 
     public void computeMAP(ImageSearcher searcher, String prefix) throws IOException {
         // copy index to ram to be much faster ...
-        IndexReader reader = IndexReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath))), true);
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
 
         Pattern p = Pattern.compile("([0-9]+).jpg");
         double map = 0;
@@ -406,8 +410,8 @@ public class TestWang extends TestCase {
         BufferedWriter bw = new BufferedWriter(new FileWriter("data.csv"));
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
         // get the first document:
-        if (!IndexReader.indexExists(reader.directory()))
-            throw new FileNotFoundException("No index found at this specific location.");
+//        if (!IndexReader.indexExists(reader.directory()))
+//            throw new FileNotFoundException("No index found at this specific location.");
 
         CEDD cedd1 = new CEDD();
         FCTH fcth1 = new FCTH();
@@ -419,12 +423,13 @@ public class TestWang extends TestCase {
         JCD jcd2 = new JCD();
         String[] cls;
 
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
 
         int docs = reader.numDocs();
         for (int i = 0; i < docs; i++) {
-            if (reader.isDeleted(i)) {
-                continue;
-            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
+
             Document doc = reader.document(i);
             cls = doc.getValues(DocumentBuilder.FIELD_NAME_CEDD);
             if (cls != null && cls.length > 0)
@@ -434,9 +439,7 @@ public class TestWang extends TestCase {
                 fcth1.setStringRepresentation(cls[0]);
 
             for (int j = i + 1; j < docs; j++) {
-                if (reader.isDeleted(j)) {
-                    continue;
-                }
+                if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
                 Document doc2 = reader.document(j);
                 cls = doc2.getValues(DocumentBuilder.FIELD_NAME_CEDD);
                 if (cls != null && cls.length > 0)
@@ -459,6 +462,7 @@ public class TestWang extends TestCase {
         }
     }
 
+    /*
     public void testDistribution() throws IOException {
         IndexReader reader = IndexReader.open((FSDirectory.open(new File(indexPath))), true);
         TermEnum terms = reader.terms();
@@ -469,5 +473,6 @@ public class TestWang extends TestCase {
             if (docFreq > 0) System.out.println(docFreq + ";" + Math.log((double) numDocs / (double) docFreq));
         } while (terms.next());
     }
+     */
 
 }

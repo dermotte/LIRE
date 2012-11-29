@@ -392,6 +392,14 @@ public class CEDD implements LireFeature {
         }
     }
 
+    @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        data = new double[length];
+        for (int i = offset; i < length; i++) {
+            data[i] = in[i];
+        }
+    }
+
     public double[] getDoubleHistogram() {
         return data;
     }

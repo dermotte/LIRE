@@ -37,9 +37,10 @@ import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -114,13 +115,13 @@ public class GenericImageSearcher extends AbstractImageSearcher {
 
         // clear result set ...
         docs.clear();
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
+
 
         int docs = reader.numDocs();
         for (int i = 0; i < docs; i++) {
-            // bugfix by Roman Kern
-            if (hasDeletions && reader.isDeleted(i)) {
-                continue;
-            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
             Document d = reader.document(i);
             float distance = getDistance(d, lireFeature);
@@ -189,8 +190,8 @@ public class GenericImageSearcher extends AbstractImageSearcher {
         // get the first document:
         SimpleImageDuplicates simpleImageDuplicates = null;
         try {
-            if (!IndexReader.indexExists(reader.directory()))
-                throw new FileNotFoundException("No index found at this specific location.");
+//            if (!IndexReader.indexExists(reader.directory()))
+//                throw new FileNotFoundException("No index found at this specific location.");
             Document doc = reader.document(0);
 
             LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
@@ -206,9 +207,10 @@ public class GenericImageSearcher extends AbstractImageSearcher {
             int docs = reader.numDocs();
             int numDuplicates = 0;
             for (int i = 0; i < docs; i++) {
-                if (hasDeletions && reader.isDeleted(i)) {
-                    continue;
-                }
+                // I understand that with the Lucene 4.0 index format this is no longer needed.
+//                if (hasDeletions && reader.isDeleted(i)) {
+//                    continue;
+//                }
                 Document d = reader.document(i);
                 float distance = getDistance(d, lireFeature);
 
@@ -217,7 +219,7 @@ public class GenericImageSearcher extends AbstractImageSearcher {
                 } else {
                     numDuplicates++;
                 }
-                duplicates.get(distance).add(d.getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+                duplicates.get(distance).add(d.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
             }
 
             if (numDuplicates == 0) return null;

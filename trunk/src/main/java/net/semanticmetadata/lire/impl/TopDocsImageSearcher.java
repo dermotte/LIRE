@@ -105,9 +105,10 @@ public class TopDocsImageSearcher {
         int docs = results.totalHits;
         for (int i = 0; i < docs; i++) {
             // bugfix by Roman Kern
-            if (hasDeletions && reader.isDeleted(i)) {
-                continue;
-            }
+            // I understand that with the Lucene 4.0 index format this is no longer needed.
+//            if (hasDeletions && reader.isDeleted(i)) {
+//                continue;
+//            }
 
             Document d = reader.document(results.scoreDocs[i].doc);
             float distance = getDistance(d, lireFeature);

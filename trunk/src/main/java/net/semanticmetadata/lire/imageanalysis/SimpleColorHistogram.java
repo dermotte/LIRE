@@ -247,6 +247,10 @@ public class SimpleColorHistogram implements LireFeature {
         histogram = SerializationUtils.toIntArray(in);
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        histogram = SerializationUtils.toIntArray(in, offset, length);
+    }
+
     public double[] getDoubleHistogram() {
         return ConversionUtils.toDouble(histogram);
     }
@@ -288,8 +292,8 @@ public class SimpleColorHistogram implements LireFeature {
             // and for 64 bins ...
             else {
                 int pos = (int) Math.round((double) pixel[2] / 85d) +
-                        (int) Math.round((double) pixel[1] / 85d) * 4+
-                        (int) Math.round((double) pixel[0] / 85d) * 4*4;
+                        (int) Math.round((double) pixel[1] / 85d) * 4 +
+                        (int) Math.round((double) pixel[0] / 85d) * 4 * 4;
                 return pos;
             }
         }

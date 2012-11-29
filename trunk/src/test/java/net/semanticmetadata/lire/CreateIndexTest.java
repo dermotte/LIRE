@@ -57,7 +57,6 @@ public class CreateIndexTest extends TestCase {
             "img06.JPG", "img07.JPG", "img08.JPG", "img08a.JPG", "error.jpg"};
     private String testFilesPath = "./src/test/resources/images/";
     private String indexPath = "test-index";
-    //    private String testExtensive = "C:\\Temp\\images";
     private String testExtensive = "./wang-1000";
 
     private DocumentBuilder getDocumentBuilder() {
@@ -90,7 +89,6 @@ public class CreateIndexTest extends TestCase {
             Document doc = builder.createDocument(new FileInputStream(testFilesPath + identifier), identifier);
             iw.addDocument(doc);
         }
-        iw.optimize();
         iw.close();
     }
 
@@ -106,7 +104,6 @@ public class CreateIndexTest extends TestCase {
             iw.addDocument(doc);
         }
         System.out.println("Time taken: " + ((System.currentTimeMillis() - ms) / testFiles.length) + " ms");
-        iw.optimize();
         iw.close();
     }
 
@@ -118,7 +115,6 @@ public class CreateIndexTest extends TestCase {
             Document doc = builder.createDocument(new FileInputStream(identifier), identifier);
             iw.addDocument(doc);
         }
-        iw.optimize();
         iw.close();
     }
 
@@ -155,7 +151,6 @@ public class CreateIndexTest extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
         iw.close();
     }
 
@@ -185,7 +180,6 @@ public class CreateIndexTest extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
         iw.close();
     }
 

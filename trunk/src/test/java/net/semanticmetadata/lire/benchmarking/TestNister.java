@@ -3,20 +3,19 @@ package net.semanticmetadata.lire.benchmarking;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.impl.*;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
+import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.StatsUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.search.DefaultSimilarity;
-import org.apache.lucene.search.Similarity;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Bits;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -87,13 +86,16 @@ public class TestNister extends TestCase {
         float avgPrecision = 0f;
 
         Set<Integer> test = StatsUtils.drawSample(100, 10200);
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
 
-        for (int i : test)  {
+        for (int i : test) {
 //        for (int j = 0; j < tests.length; j++) {
 //            int i = tests[j];
 //        for (int i =0; i < 1000; i++) {
 //        for (int i =0; i < reader.numDocs(); i++) {
-            if (!reader.isDeleted(i)) {
+
+            if (!((reader.hasDeletions() && !liveDocs.get(i)))) {
                 ImageSearchHits hits = vis.search(reader.document(i), reader);
                 String s = reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
                 s = s.replaceAll("\\D", "");
@@ -130,7 +132,7 @@ public class TestNister extends TestCase {
 //        createVocabulary(pathName);
 //        testDocLengthIDF(pathName);
         for (int k = 0; k < 5; k++) { // run the test 5 times ...
-            computePrecision(pathName, new TfIdfSimilarity(), "SURF_lfhist_" + numWords + "_lucene");
+//            computePrecision(pathName, new TfIdfSimilarity(), "SURF_lfhist_" + numWords + "_lucene");
         }
         System.out.println();
     }
@@ -160,19 +162,19 @@ public class TestNister extends TestCase {
             len[i] = 0;
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(pathName)));
         for (int i = 0; i < reader.numDocs(); i++) {
-            if (!reader.isDeleted(i)) {
-                String s = reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
-                String f = reader.document(i).getValues("featureSURFHistogram")[0];
-                SimpleFeature sf = new SimpleFeature();
-                sf.setStringRepresentation(f);
-                double[] h = sf.getDoubleHistogram();
-                for (int j = 0; j < h.length; j++) {
-                    if (h[j] > 0.0) df[j] += 1; // add to the document frequency
-                    avgDocLength += h[j];
-                    len[i] += h[j];
-                }
-                numDocs +=1;
+//            if (!reader.isDeleted(i)) {
+            String s = reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            String f = reader.document(i).getValues("featureSURFHistogram")[0];
+            SimpleFeature sf = new SimpleFeature();
+            sf.setStringRepresentation(f);
+            double[] h = sf.getDoubleHistogram();
+            for (int j = 0; j < h.length; j++) {
+                if (h[j] > 0.0) df[j] += 1; // add to the document frequency
+                avgDocLength += h[j];
+                len[i] += h[j];
             }
+            numDocs += 1;
+//            }
         }
 //        System.out.println("avgDocLength = " + avgDocLength/numDocs);
 //        for (int i = 0; i < df.length; i++)
@@ -806,7 +808,7 @@ class FileUtils {
     }
 
 }
-
+/*
 class TfIdfSimilarity extends DefaultSimilarity {
     public float tf(float freq) {
         return (float) Math.log(freq);
@@ -815,12 +817,14 @@ class TfIdfSimilarity extends DefaultSimilarity {
     public float idf(int docfreq, int numdocs) {
         return 1f;
     }
-//
+
+    //
 //    @Override
     public float queryNorm(float sumOfSquaredWeights) {
         return 1;    //To change body of overridden methods use File | Settings | File Templates.
     }
-//
+
+    //
 //    @Override
     public float computeNorm(String field, FieldInvertState state) {
         return 1;    //To change body of overridden methods use File | Settings | File Templates.
@@ -831,4 +835,6 @@ class TfIdfSimilarity extends DefaultSimilarity {
 //        return 1;
 //    }
 }
+
+*/
 

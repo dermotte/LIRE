@@ -43,9 +43,10 @@ import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -145,7 +146,6 @@ public class TestGeneral extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
         iw.commit();
         iw.close();
     }
@@ -186,7 +186,7 @@ public class TestGeneral extends TestCase {
 
     public void computeErrorRate(ImageSearcher searcher, String prefix) throws IOException, InstantiationException, IllegalAccessException {
 //        int maxHits = 10;
-        IndexReader reader = IndexReader.open(SimpleFSDirectory.open(new File(testIndex)), true);
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(testIndex)));
         for (Iterator<String> testIterator = testcases.keySet().iterator(); testIterator.hasNext(); ) {
             queryImage = testIterator.next();
             Document query;

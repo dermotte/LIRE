@@ -31,13 +31,14 @@
 package net.semanticmetadata.lire.utils;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.KeywordAnalyzer;
-import org.apache.lucene.analysis.SimpleAnalyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
 import java.io.File;
@@ -55,7 +56,7 @@ public class LuceneUtils {
     /**
      * Currently employed version of Lucene
      */
-    public static final Version LUCENE_VERSION = Version.LUCENE_36;
+    public static final Version LUCENE_VERSION = Version.LUCENE_40;
 
     /**
      * Different types of analyzers
@@ -91,9 +92,12 @@ public class LuceneUtils {
     public static IndexWriter createIndexWriter(Directory directory, boolean create, AnalyzerType analyzer) throws IOException {
         // set the analyzer according to the method params
         Analyzer tmpAnalyzer = null;
-        if (analyzer == AnalyzerType.SimpleAnalyzer) tmpAnalyzer = new SimpleAnalyzer(LUCENE_VERSION);
-        else if (analyzer == AnalyzerType.WhitespaceAnalyzer) tmpAnalyzer = new WhitespaceAnalyzer(LUCENE_VERSION);
-        else if (analyzer == AnalyzerType.KeywordAnalyzer) tmpAnalyzer = new KeywordAnalyzer();
+        if (analyzer == AnalyzerType.SimpleAnalyzer)
+            tmpAnalyzer = new SimpleAnalyzer(LUCENE_VERSION);    // LetterTokenizer with LowerCaseFilter
+        else if (analyzer == AnalyzerType.WhitespaceAnalyzer)
+            tmpAnalyzer = new WhitespaceAnalyzer(LUCENE_VERSION);  // WhitespaceTokenizer
+        else if (analyzer == AnalyzerType.KeywordAnalyzer)
+            tmpAnalyzer = new KeywordAnalyzer(); // entire string as one token.
 
         // The config
         IndexWriterConfig config = new IndexWriterConfig(LUCENE_VERSION, tmpAnalyzer);
@@ -133,7 +137,18 @@ public class LuceneUtils {
         return createIndexWriter(indexPath, create, AnalyzerType.SimpleAnalyzer);
     }
 
-//    public static void moveIndexToMemory(IndexReader ir) {
-//        IndexWriter iw = new IndexWriter(RAMDirectory);
-//    }
+    /**
+     * Method for 'converting' ByteRefs to bytes. This is a horrible way to do it. Main goal is to make it work. Later
+     * we'll fix the performance implications of that.
+     *
+     * @param byteRef
+     * @return
+     */
+    public static byte[] getBytes(BytesRef byteRef) {
+        byte[] result = new byte[byteRef.length];
+        System.arraycopy(byteRef.bytes, byteRef.offset, result, 0, byteRef.length);
+        return result;
+    }
+
 }
+

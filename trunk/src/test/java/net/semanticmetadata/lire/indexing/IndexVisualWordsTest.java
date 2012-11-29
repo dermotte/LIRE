@@ -108,7 +108,6 @@ public class IndexVisualWordsTest extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
         iw.close();
 
     }
@@ -128,7 +127,6 @@ public class IndexVisualWordsTest extends TestCase {
         }
         System.out.println("# of deleted docs:  " + maxDocs / 10);
         System.out.println("Optimizing and closing ...");
-        iw.optimize();
         iw.close();
         ir.close();
         System.out.println("Creating new visual words ...");

@@ -259,6 +259,26 @@ public class AutoColorCorrelogram implements LireFeature {
         }
     }
 
+    @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        byte[] numBinsBytes = new byte[4];
+        numBinsBytes[0] = in[offset + length - 5];
+        numBinsBytes[1] = in[offset + length - 4];
+        numBinsBytes[2] = in[offset + length - 3];
+        numBinsBytes[3] = in[offset + length - 2];
+        int maxDistance = (int) in[offset + length - 1];
+        numBins = SerializationUtils.toInt(numBinsBytes);
+        correlogram = new float[numBins][maxDistance];
+        float[] temp = SerializationUtils.toFloatArray(in, offset, length);
+        for (int i = 0; i < correlogram.length; i++) {
+            System.arraycopy(temp, i * maxDistance, correlogram[i], 0, maxDistance);
+        }
+        distanceSet = new int[maxDistance];
+        for (int i = 0; i < distanceSet.length; i++) {
+            distanceSet[i] = i + 1;
+        }
+    }
+
     public double[] getDoubleHistogram() {
         return ConversionUtils.toDouble(getFloatHistogram());
     }

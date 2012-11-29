@@ -67,7 +67,6 @@ public class LocalitySensitiveHashingTest extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
 //        System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
         iw.close();
 
         return testSearch();
@@ -105,7 +104,7 @@ public class LocalitySensitiveHashingTest extends TestCase {
 
         String query = reader.document(docNum).getValues("hash")[0];
         CEDD ceddQuery = new CEDD();
-        ceddQuery.setByteArrayRepresentation(reader.document(docNum).getBinaryValue(DocumentBuilder.FIELD_NAME_CEDD));
+        ceddQuery.setByteArrayRepresentation(reader.document(docNum).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().bytes, reader.document(docNum).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().offset, reader.document(docNum).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().length);
 
         // -----------
 
@@ -138,7 +137,9 @@ public class LocalitySensitiveHashingTest extends TestCase {
         ArrayList<ScoreDoc> res = new ArrayList<ScoreDoc>(docs.scoreDocs.length);
         float maxScore = 0f;
         for (int i = 0; i < docs.scoreDocs.length; i++) {
-            tmp.setByteArrayRepresentation(reader.document(docs.scoreDocs[i].doc).getBinaryValue(DocumentBuilder.FIELD_NAME_CEDD));
+            tmp.setByteArrayRepresentation(reader.document(docs.scoreDocs[i].doc).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().bytes,
+                    reader.document(docs.scoreDocs[i].doc).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().offset,
+                    reader.document(docs.scoreDocs[i].doc).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().length);
             maxScore = Math.max(1 / tmp.getDistance(feature), maxScore);
             res.add(new ScoreDoc(docs.scoreDocs[i].doc, 1 / tmp.getDistance(feature)));
         }

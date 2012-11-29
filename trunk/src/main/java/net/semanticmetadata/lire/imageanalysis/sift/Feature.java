@@ -201,6 +201,11 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
         }
     }
 
+    @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
     public double[] getDoubleHistogram() {
         double[] result = new double[descriptor.length];
         for (int i = 0; i < descriptor.length; i++) {

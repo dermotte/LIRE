@@ -34,20 +34,22 @@ import net.semanticmetadata.lire.AbstractImageSearcher;
 import net.semanticmetadata.lire.ImageDuplicates;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.utils.LuceneUtils;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.search.*;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.Similarity;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.StringTokenizer;
 
 /**
  * Provides a general searcher for visual words implementation. Can be used for SIFT, SURF and MSER.

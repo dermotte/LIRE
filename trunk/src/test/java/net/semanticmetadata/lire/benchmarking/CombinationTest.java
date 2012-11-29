@@ -82,7 +82,7 @@ public class CombinationTest extends TestCase {
         float sec = ((float) timeTaken) / 1000f;
 
         System.out.println(sec + " seconds taken, " + (timeTaken / count) + " ms per image.");
-        iw.optimize();
+        iw.commit();
         iw.close();
 
         System.out.println("-< Local features are getting clustered >--------------");

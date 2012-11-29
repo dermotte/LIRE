@@ -37,9 +37,10 @@ import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -115,13 +116,12 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
 
         // clear result set ...
         docs.clear();
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
 
         int docs = reader.numDocs();
         for (int i = 0; i < docs; i++) {
-            // bugfix by Roman Kern
-            if (hasDeletions && reader.isDeleted(i)) {
-                continue;
-            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
             Document d = reader.document(i);
             float distance = getDistance(d, lireFeature);
@@ -159,9 +159,8 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
      * @return the distance between the given feature and the feature stored in the document.
      */
     protected float getDistance(Document document, LireFeature lireFeature) {
-        tempBinaryValue = document.getBinaryValue(fieldName);
-        if (tempBinaryValue != null && tempBinaryValue.length > 0) {
-            cachedInstance.setByteArrayRepresentation(tempBinaryValue);
+        if (document.getField(fieldName).binaryValue() != null && document.getField(fieldName).binaryValue().length > 0) {
+            cachedInstance.setByteArrayRepresentation(document.getField(fieldName).binaryValue().bytes, document.getField(fieldName).binaryValue().offset, document.getField(fieldName).binaryValue().length);
             return lireFeature.getDistance(cachedInstance);
         } else {
             logger.warning("No feature stored in this document! (" + descriptorClass.getName() + ")");
@@ -174,9 +173,8 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         try {
             LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
 
-            byte[] cls = doc.getBinaryValue(fieldName);
-            if (cls != null && cls.length > 0)
-                lireFeature.setByteArrayRepresentation(cls);
+            if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
+                lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
             float maxDistance = findSimilar(reader, lireFeature);
 
             searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
@@ -192,26 +190,24 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         // get the first document:
         SimpleImageDuplicates simpleImageDuplicates = null;
         try {
-            if (!IndexReader.indexExists(reader.directory()))
-                throw new FileNotFoundException("No index found at this specific location.");
+//            if (!IndexReader.indexExists(reader.directory()))
+//                throw new FileNotFoundException("No index found at this specific location.");
             Document doc = reader.document(0);
 
             LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
-            byte[] cls = doc.getBinaryValue(fieldName);
-            if (cls != null && cls.length > 0)
-                lireFeature.setByteArrayRepresentation(cls);
+            if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
+                lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
 
             HashMap<Float, List<String>> duplicates = new HashMap<Float, List<String>>();
 
-            // find duplicates ...
-            boolean hasDeletions = reader.hasDeletions();
+            // Needed for check whether the document is deleted.
+            Bits liveDocs = MultiFields.getLiveDocs(reader);
 
             int docs = reader.numDocs();
             int numDuplicates = 0;
             for (int i = 0; i < docs; i++) {
-                if (hasDeletions && reader.isDeleted(i)) {
-                    continue;
-                }
+                if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
+
                 Document d = reader.document(i);
                 float distance = getDistance(d, lireFeature);
 
@@ -220,7 +216,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
                 } else {
                     numDuplicates++;
                 }
-                duplicates.get(distance).add(d.getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+                duplicates.get(distance).add(d.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
             }
 
             if (numDuplicates == 0) return null;

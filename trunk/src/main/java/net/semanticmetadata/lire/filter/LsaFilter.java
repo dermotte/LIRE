@@ -83,14 +83,14 @@ public class LsaFilter implements SearchHitsFilter {
         // get all features from the result set, take care of those that do not have the respective field.
         for (int i = 0; i < results.length(); i++) {
             Document d = results.doc(i);
-            if (d.getFieldable(fieldName) != null) {
-                tempFeature.setByteArrayRepresentation(d.getFieldable(fieldName).getBinaryValue());
+            if (d.getField(fieldName) != null) {
+                tempFeature.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
                 features.add(tempFeature.getDoubleHistogram());
             }
         }
         // now go for the query
-        if (query.getFieldable(fieldName) != null) {
-            tempFeature.setByteArrayRepresentation(query.getFieldable(fieldName).getBinaryValue());
+        if (query.getField(fieldName) != null) {
+            tempFeature.setByteArrayRepresentation(query.getField(fieldName).binaryValue().bytes, query.getField(fieldName).binaryValue().offset, query.getField(fieldName).binaryValue().length);
         } else {
             logger.severe("Query document is missing the given feature " + featureClass.getName() + ".");
             return null;

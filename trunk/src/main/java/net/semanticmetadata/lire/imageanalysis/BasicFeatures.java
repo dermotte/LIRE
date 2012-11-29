@@ -165,6 +165,10 @@ public class BasicFeatures implements LireFeature {
         throw new UnsupportedOperationException("No implemented!");
     }
 
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        throw new UnsupportedOperationException("No implemented!");
+    }
+
     public double[] getDoubleHistogram() {
         double[] result = new double[8];
         result[0] = brightness;

@@ -32,16 +32,13 @@ package net.semanticmetadata.lire.imageanalysis.bovw;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
-import net.semanticmetadata.lire.clustering.ParallelKMeans;
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -113,18 +110,18 @@ public abstract class LocalFeatureHistogramBuilder {
         LinkedList<float[]> features = new LinkedList<float[]>();
         for (Iterator<Integer> iterator = docIDs.iterator(); iterator.hasNext(); ) {
             int nextDoc = iterator.next();
-            if (!reader.isDeleted(nextDoc)) {
-                Document d = reader.document(nextDoc);
-                features.clear();
-                byte[][] binaryValues = d.getBinaryValues(localFeatureFieldName);
-                String file = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
-                for (int j = 0; j < binaryValues.length; j++) {
-                    LireFeature f = getFeatureInstance();
-                    f.setByteArrayRepresentation(binaryValues[j]);
-                    features.add(((Histogram) f).descriptor);
-                }
-                k.addImage(file, features);
+//            if (!reader.isDeleted(nextDoc)) {
+            Document d = reader.document(nextDoc);
+            features.clear();
+            IndexableField[] fields = d.getFields(localFeatureFieldName);
+            String file = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            for (int j = 0; j < fields.length; j++) {
+                LireFeature f = getFeatureInstance();
+                f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+                features.add(((Histogram) f).descriptor);
             }
+            k.addImage(file, features);
+//            }
         }
         if (pm != null) { // set to 5 of 100 before clustering starts.
             pm.setProgress(5);
@@ -179,7 +176,7 @@ public abstract class LocalFeatureHistogramBuilder {
         System.out.println("Creating histograms ...");
         time = System.currentTimeMillis();
         int[] tmpHist = new int[numClusters];
-        IndexWriter iw = LuceneUtils.createIndexWriter(reader.directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer, 256d);
+        IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer, 256d);
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(50);
             pm.setNote("Clustering finished");
@@ -212,7 +209,7 @@ public abstract class LocalFeatureHistogramBuilder {
         }
 
         System.out.println(getDuration(time));
-        iw.optimize();
+        iw.commit();
         iw.close();
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(100);
@@ -230,29 +227,29 @@ public abstract class LocalFeatureHistogramBuilder {
         System.out.println("Creating histograms ...");
         int[] tmpHist = new int[numClusters];
         LireFeature f = getFeatureInstance();
-        IndexWriter iw = LuceneUtils.createIndexWriter(reader.directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+        IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         for (int i = 0; i < reader.maxDoc(); i++) {
-            if (!reader.isDeleted(i)) {
-                for (int j = 0; j < tmpHist.length; j++) {
-                    tmpHist[j] = 0;
-                }
-                Document d = reader.document(i);
-                // Only if there are no values yet:
-                if (d.getValues(visualWordsFieldName) == null || d.getValues(visualWordsFieldName).length == 0) {
-                    byte[][] binaryValues = d.getBinaryValues(localFeatureFieldName);
-                    // find the appropriate cluster for each feature:
-                    for (int j = 0; j < binaryValues.length; j++) {
-                        f.setByteArrayRepresentation(binaryValues[j]);
-                        tmpHist[clusterForFeature((Histogram) f)]++;
-                    }
-                    d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
-                    d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.NO));
-                    // now write the new one. we use the identifier to update ;)
-                    iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
-                }
+//            if (!reader.isDeleted(i)) {
+            for (int j = 0; j < tmpHist.length; j++) {
+                tmpHist[j] = 0;
             }
+            Document d = reader.document(i);
+            // Only if there are no values yet:
+            if (d.getValues(visualWordsFieldName) == null || d.getValues(visualWordsFieldName).length == 0) {
+                IndexableField[] fields = d.getFields(localFeatureFieldName);
+                // find the appropriate cluster for each feature:
+                for (int j = 0; j < fields.length; j++) {
+                    f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+                    tmpHist[clusterForFeature((Histogram) f)]++;
+                }
+                d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
+                d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.NO));
+                // now write the new one. we use the identifier to update ;)
+                iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
+            }
+//            }
         }
-        iw.optimize();
+        iw.commit();
         iw.close();
         System.out.println("Finished.");
     }
@@ -268,10 +265,10 @@ public abstract class LocalFeatureHistogramBuilder {
         clusters = Cluster.readClusters(clusterFile);
         int[] tmpHist = new int[clusters.length];
         LireFeature f = getFeatureInstance();
-        byte[][] binaryValues = d.getBinaryValues(localFeatureFieldName);
+        IndexableField[] fields = d.getFields(localFeatureFieldName);
         // find the appropriate cluster for each feature:
-        for (int j = 0; j < binaryValues.length; j++) {
-            f.setByteArrayRepresentation(binaryValues[j]);
+        for (int j = 0; j < fields.length; j++) {
+            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
             tmpHist[clusterForFeature((Histogram) f)]++;
         }
         d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
@@ -325,7 +322,7 @@ public abstract class LocalFeatureHistogramBuilder {
             do {
                 tmpDocNumber = (int) (Math.random() * maxDocs);
                 // check if the selected doc number is valid: not null, not deleted and not already chosen.
-                worksFine = (reader.document(tmpDocNumber) != null) && !reader.isDeleted(tmpDocNumber) && !result.contains(tmpDocNumber);
+                worksFine = (reader.document(tmpDocNumber) != null) && !result.contains(tmpDocNumber);
             } while (!worksFine);
             result.add(tmpDocNumber);
             // need to make sure that this is not running forever ...
@@ -354,37 +351,37 @@ public abstract class LocalFeatureHistogramBuilder {
             LireFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {
-                    if (!reader.isDeleted(i)) {
-                        for (int j = 0; j < tmpHist.length; j++) {
-                            tmpHist[j] = 0;
-                        }
-                        Document d = reader.document(i);
-                        byte[][] binaryValues = d.getBinaryValues(localFeatureFieldName);
-                        // remove the fields if they are already there ...
-                        d.removeField(visualWordsFieldName);
-                        d.removeField(localFeatureHistFieldName);
-
-                        // find the appropriate cluster for each feature:
-                        for (int j = 0; j < binaryValues.length; j++) {
-                            f.setByteArrayRepresentation(binaryValues[j]);
-                            tmpHist[clusterForFeature((Histogram) f)]++;
-                        }
-                        d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES));
-                        d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
-
-                        // remove local features to save some space if requested:
-                        if (DELETE_LOCAL_FEATURES) {
-                            d.removeFields(localFeatureFieldName);
-                        }
-                        // now write the new one. we use the identifier to update ;)
-                        iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
-                        if (pm != null) {
-                            double len = (double) (end - start);
-                            double percent = (double) (i - start) / len * 45d + 50;
-                            pm.setProgress((int) percent);
-                            pm.setNote("Creating visual words, ~" + (int) percent + "% finished");
-                        }
+//                    if (!reader.isDeleted(i)) {
+                    for (int j = 0; j < tmpHist.length; j++) {
+                        tmpHist[j] = 0;
                     }
+                    Document d = reader.document(i);
+                    IndexableField[] fields = d.getFields(localFeatureFieldName);
+                    // remove the fields if they are already there ...
+                    d.removeField(visualWordsFieldName);
+                    d.removeField(localFeatureHistFieldName);
+
+                    // find the appropriate cluster for each feature:
+                    for (int j = 0; j < fields.length; j++) {
+                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+                        tmpHist[clusterForFeature((Histogram) f)]++;
+                    }
+                    d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
+                    d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
+
+                    // remove local features to save some space if requested:
+                    if (DELETE_LOCAL_FEATURES) {
+                        d.removeFields(localFeatureFieldName);
+                    }
+                    // now write the new one. we use the identifier to update ;)
+                    iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
+                    if (pm != null) {
+                        double len = (double) (end - start);
+                        double percent = (double) (i - start) / len * 45d + 50;
+                        pm.setProgress((int) percent);
+                        pm.setNote("Creating visual words, ~" + (int) percent + "% finished");
+                    }
+//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

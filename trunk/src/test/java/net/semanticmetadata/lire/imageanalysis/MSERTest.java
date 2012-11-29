@@ -31,8 +31,6 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.mser.MSERFeature;
 import net.semanticmetadata.lire.impl.MSERDocumentBuilder;
 import org.apache.lucene.document.Document;
 
@@ -52,17 +50,17 @@ public class MSERTest extends TestCase {
         MSERDocumentBuilder db = new MSERDocumentBuilder();
         String file = "./wang-1000/199.jpg";
         Document document = db.createDocument(ImageIO.read(new FileInputStream(file)), file);
-        byte[][] binaryValues = document.getBinaryValues(DocumentBuilder.FIELD_NAME_MSER);
-        System.out.println("binaryValues.length = " + binaryValues.length);
-
-        for (int i = 0; i < binaryValues.length; i++) {
-            byte[] binaryValue = binaryValues[i];
-            MSERFeature feat = new MSERFeature();
-            feat.setByteArrayRepresentation(binaryValues[i]);
-            for (int j = 0; j < feat.descriptor.length; j++) {
-                if (!Float.isNaN(feat.descriptor[j])) System.out.println("feat " + i + " = " + feat);
-                break;
-            }
-        }
+//        byte[][] binaryValues = document.getBinaryValues(DocumentBuilder.FIELD_NAME_MSER);
+//        System.out.println("binaryValues.length = " + binaryValues.length);
+//
+//        for (int i = 0; i < binaryValues.length; i++) {
+//            byte[] binaryValue = binaryValues[i];
+//            MSERFeature feat = new MSERFeature();
+//            feat.setByteArrayRepresentation(binaryValues[i]);
+//            for (int j = 0; j < feat.descriptor.length; j++) {
+//                if (!Float.isNaN(feat.descriptor[j])) System.out.println("feat " + i + " = " + feat);
+//                break;
+//            }
+//        }
     }
 }

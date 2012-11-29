@@ -42,6 +42,8 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 
+import net.semanticmetadata.lire.utils.SerializationUtils;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -107,15 +109,20 @@ public class FuzzyColorHistogram implements LireFeature {
     }
 
     public byte[] getByteArrayRepresentation() {
-        throw new UnsupportedOperationException("No implemented!");
+        return SerializationUtils.toByteArray(descriptorValues);
     }
 
     public void setByteArrayRepresentation(byte[] in) {
-        throw new UnsupportedOperationException("No implemented!");
+        descriptorValues = SerializationUtils.toIntArray(in);
+    }
+
+    @Override
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        descriptorValues = SerializationUtils.toIntArray(in, offset, length);
     }
 
     public double[] getDoubleHistogram() {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
 
