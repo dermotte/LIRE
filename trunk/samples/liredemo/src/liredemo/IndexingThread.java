@@ -122,7 +122,7 @@ public class IndexingThread extends Thread {
             parent.progressBarIndexing.setString(Math.round(sec) + " sec. for " + count + " files");
             parent.buttonStartIndexing.setEnabled(true);
             parent.progressBarIndexing.setValue(100);
-            iw.optimize();
+            iw.commit();
             iw.close();
 
         } catch (IOException ex) {

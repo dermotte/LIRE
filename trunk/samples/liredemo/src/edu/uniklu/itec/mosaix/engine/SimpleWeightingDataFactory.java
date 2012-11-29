@@ -33,6 +33,6 @@ import org.apache.lucene.document.Document;
  */
 final class SimpleWeightingDataFactory implements WeightingDataFactory {
     public WeightingData newInstance(final Document doc) {
-        return new SimpleWeightingData(doc.getFieldable(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+        return new SimpleWeightingData(doc.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
     }
 }

@@ -153,7 +153,7 @@ public class FlickrIndexingThread extends Thread {
             parent.progressBarIndexing.setValue(100);
             parent.progressBarIndexing.setString(Math.round(sec) + " sec. for " + count + " files");
             parent.buttonStartIndexing.setEnabled(true);
-            iw.optimize();
+            iw.commit();
             iw.close();
 
         } catch (IOException ex) {

@@ -37,6 +37,7 @@ import liredemo.ProgressMonitor;
 import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
@@ -161,7 +162,7 @@ public class ImageFunctions {
                     searcher = ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(50);
                 } else if (colorDist > 0f) {
 //                System.out.println("Using Default Weighted Searcher ...");
-                    searcher = ImageSearcherFactory.createWeightedSearcher(50, colorHist, colorDist, texture); //.createSimpleSearcher(10);
+//                    searcher = ImageSearcherFactory.createWeightedSearcher(50, colorHist, colorDist, texture); //.createSimpleSearcher(10);
                 }
             }
             hits = searcher.search(bi, reader);
@@ -184,7 +185,7 @@ public class ImageFunctions {
         boolean hasIndex = false;
 
         try {
-            hasIndex = IndexReader.indexExists(FSDirectory.open(new File(path)));
+            hasIndex = DirectoryReader.indexExists(FSDirectory.open(new File(path)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -201,7 +202,7 @@ public class ImageFunctions {
                     iw.addDocument(doc);
                     count++;
                 }
-                iw.optimize();
+                iw.commit();
                 iw.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
