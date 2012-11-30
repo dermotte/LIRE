@@ -203,7 +203,23 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
 
     @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        byte[] tmp = new byte[4];
+        descriptor = new float[length / 4 - 4];
+        location = new float[2];
+
+        System.arraycopy(in, offset, tmp, 0, 4);
+        scale = SerializationUtils.toFloat(tmp);
+        System.arraycopy(in, offset + 4, tmp, 0, 4);
+        orientation = SerializationUtils.toFloat(tmp);
+        System.arraycopy(in, offset + 8, tmp, 0, 4);
+        location[0] = SerializationUtils.toFloat(tmp);
+        System.arraycopy(in, offset + 12, tmp, 0, 4);
+        location[1] = SerializationUtils.toFloat(tmp);
+
+        for (int i = 0; i < descriptor.length; i++) {
+            System.arraycopy(in, offset + 16 + i * 4, tmp, 0, 4);
+            descriptor[i] = SerializationUtils.toFloat(tmp);
+        }
     }
 
     public double[] getDoubleHistogram() {

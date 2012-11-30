@@ -86,7 +86,7 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_GABOR = "featureGabor";
     public static final String FIELD_NAME_SIFT = "featureSift";
     public static final String FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM = "featureSiftHistogram";
-    public static final String FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureSiftHistogramVWords";
+    public static final String FIELD_NAME_SIFT_VISUAL_WORDS = "featureSiftHistogramVWords";
     public static final String FIELD_NAME_IDENTIFIER = "descriptorImageIdentifier";
     public static final String FIELD_NAME_CEDD_FAST = "featureCEDDfast";
     public static final String FIELD_NAME_COLORLAYOUT_FAST = "featureColorLayoutfast";

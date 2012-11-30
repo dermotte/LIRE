@@ -3,9 +3,10 @@ CHANGES for LIRE
 
 2012-11-29
 ==========
-  - Adoptions to test src tree for Lucene 4.0 (BoVW).
+  - Adoptions to src tree for Lucene 4.0 (BoVW).
   - Changes in VisualWordsTest to test indexing and search.
   - Changed SURF BoVW weighting scheme to BM-25 as default setting.
+  - Found that SIFT doesn't work right now -> TODO!
 
 2012-11-29
 ==========

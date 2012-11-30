@@ -201,16 +201,13 @@ public class GenericImageSearcher extends AbstractImageSearcher {
 
             HashMap<Float, List<String>> duplicates = new HashMap<Float, List<String>>();
 
-            // find duplicates ...
-            boolean hasDeletions = reader.hasDeletions();
+            // Needed for check whether the document is deleted.
+            Bits liveDocs = MultiFields.getLiveDocs(reader);
 
             int docs = reader.numDocs();
             int numDuplicates = 0;
             for (int i = 0; i < docs; i++) {
-                // I understand that with the Lucene 4.0 index format this is no longer needed.
-//                if (hasDeletions && reader.isDeleted(i)) {
-//                    continue;
-//                }
+                if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
                 Document d = reader.document(i);
                 float distance = getDistance(d, lireFeature);
 
