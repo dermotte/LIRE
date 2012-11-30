@@ -60,7 +60,7 @@ public class SiftFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
 
     private void init() {
         localFeatureFieldName = DocumentBuilder.FIELD_NAME_SIFT;
-        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS;
+        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS;
         localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM;
         clusterFile = "./clusters-sift.dat";
     }

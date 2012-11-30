@@ -77,7 +77,7 @@ public class TestNister extends TestCase {
     public void computePrecision(String pathName, Similarity similarity, String label) throws IOException {
 //        ImageSearcher vis = new GenericImageSearcher(4, SimpleFeature.class, "featureSURFHistogram");
 //        ImageSearcher vis = new GenericFastImageSearcher(4, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
-//        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
+//        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
         VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(pathName)));
 

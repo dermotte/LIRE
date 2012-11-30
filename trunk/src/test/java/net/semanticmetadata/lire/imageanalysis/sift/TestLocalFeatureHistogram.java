@@ -197,9 +197,9 @@ public class TestLocalFeatureHistogram extends TestCase {
 //        }
 //        System.out.println("----");
 //        // test based on the Lucene scoring function:
-//        String query = reader.document(docID).getValues(DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS)[0];
+//        String query = reader.document(docID).getValues(DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS)[0];
 //        System.out.println("query = " + query);
-//        QueryParser qp = new QueryParser(Version.LUCENE_30, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+//        QueryParser qp = new QueryParser(Version.LUCENE_30, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
 //        IndexSearcher isearcher = new IndexSearcher(reader);
 //        isearcher.setSimilarity(new Similarity() {
 //            @Override

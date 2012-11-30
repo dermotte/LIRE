@@ -34,7 +34,9 @@ import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -101,14 +103,12 @@ public class TopDocsImageSearcher {
 
         // clear result set ...
         docs.clear();
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
 
         int docs = results.totalHits;
         for (int i = 0; i < docs; i++) {
-            // bugfix by Roman Kern
-            // I understand that with the Lucene 4.0 index format this is no longer needed.
-//            if (hasDeletions && reader.isDeleted(i)) {
-//                continue;
-//            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
             Document d = reader.document(results.scoreDocs[i].doc);
             float distance = getDistance(d, lireFeature);
