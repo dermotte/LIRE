@@ -44,6 +44,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 
@@ -60,8 +61,9 @@ import java.util.LinkedList;
 public class VisualWordsImageSearcher extends AbstractImageSearcher {
     private int numMaxHits;
     private String fieldName;
-    //    private Similarity similarity = new DefaultSimilarity();
-    private Similarity similarity = new TfIdfSimilarity();
+    //        private Similarity similarity = new DefaultSimilarity();
+//        private Similarity similarity = new MySimilarity();
+    private Similarity similarity = new BM25Similarity();
     QueryParser qp;
 
 
@@ -116,9 +118,10 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
     /**
      * This implementation has shown formidable results with the Nister UKBench data set.
      */
-    private static class TfIdfSimilarity extends DefaultSimilarity {
+    private static class MySimilarity extends DefaultSimilarity {
         public float tf(float freq) {
-            return (float) Math.log(freq);
+//            return (float) Math.log(freq);
+            return 1.0f;
         }
 
         public float idf(int docfreq, int numdocs) {
