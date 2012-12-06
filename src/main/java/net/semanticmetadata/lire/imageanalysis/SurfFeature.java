@@ -44,7 +44,6 @@ import java.util.StringTokenizer;
  * Mathias Lux, mathias@juggle.at
  * Date: 29.09.2010
  * Time: 15:44:14
- * To change this template use File | Settings | File Templates.
  */
 public class SurfFeature extends Histogram implements LireFeature {
     SURFInterestPoint sip;

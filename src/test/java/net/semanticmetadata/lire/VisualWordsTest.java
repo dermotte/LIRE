@@ -91,7 +91,7 @@ public class VisualWordsTest extends TestCase {
         IndexWriter iw = new IndexWriter(FSDirectory.open(indexPath), conf);
         long ms = System.currentTimeMillis();
         int count = 0;
-        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/flickr-10000"), true);
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata\\ferrari"), true);
         for (Iterator<File> i = files.iterator(); i.hasNext(); ) {
             File imgFile = i.next();
             iw.addDocument(siftBuilder.createDocument(
@@ -109,12 +109,12 @@ public class VisualWordsTest extends TestCase {
     }
 
     public void testSearchInIndexSift() throws IOException {
-        int[] docIDs = new int[]{1600, 4611, 4833, 4260, 2044, 7658};
+        int[] docIDs = new int[]{0, 10, 23, 35, 56, 77};
         for (int i : docIDs) {
             System.out.println("i = " + i);
             IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-            VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
-            ImageSearchHits hits = vis.search(ir.document(0), ir);
+            VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
+            ImageSearchHits hits = vis.search(ir.document(i), ir);
             FileUtils.saveImageResultsToPng("results_bow_no_tf_sift_" + i, hits, queryImage);
         }
     }
