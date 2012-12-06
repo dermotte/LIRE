@@ -32,6 +32,7 @@ package net.semanticmetadata.lire.imageanalysis.sift;
 
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
@@ -77,12 +78,8 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
     }
 
     public float descriptorDistance(Feature f) {
-        float d = 0;
-        for (int i = 0; i < descriptor.length; ++i) {
-            float a = descriptor[i] - f.descriptor[i];
-            d += a * a;
-        }
-        return (float) Math.sqrt(d);
+        if (!(f instanceof Feature)) return -1;
+        return MetricsUtils.distL2(descriptor, ((Feature) f).descriptor);
     }
 
     public String toString() {

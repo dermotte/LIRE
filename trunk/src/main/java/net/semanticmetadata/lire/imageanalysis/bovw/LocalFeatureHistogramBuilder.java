@@ -39,6 +39,7 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.*;
+import org.apache.lucene.util.Bits;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -108,9 +109,11 @@ public abstract class LocalFeatureHistogramBuilder {
         KMeans k = new KMeans(numClusters);
         // fill the KMeans object:
         LinkedList<float[]> features = new LinkedList<float[]>();
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
         for (Iterator<Integer> iterator = docIDs.iterator(); iterator.hasNext(); ) {
             int nextDoc = iterator.next();
-//            if (!reader.isDeleted(nextDoc)) {
+            if (reader.hasDeletions() && !liveDocs.get(nextDoc)) continue; // if it is deleted, just ignore it.
             Document d = reader.document(nextDoc);
             features.clear();
             IndexableField[] fields = d.getFields(localFeatureFieldName);
@@ -121,7 +124,6 @@ public abstract class LocalFeatureHistogramBuilder {
                 features.add(((Histogram) f).descriptor);
             }
             k.addImage(file, features);
-//            }
         }
         if (pm != null) { // set to 5 of 100 before clustering starts.
             pm.setProgress(5);
@@ -351,7 +353,7 @@ public abstract class LocalFeatureHistogramBuilder {
             LireFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {
-//                    if (!reader.isDeleted(i)) {
+//                    if (!reader.isDeleted(i)) {    // TODO!
                     for (int j = 0; j < tmpHist.length; j++) {
                         tmpHist[j] = 0;
                     }
