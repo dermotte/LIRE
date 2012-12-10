@@ -1,6 +1,19 @@
 CHANGES for LIRE
 ================
 
+2012-12-10
+==========
+  - Test for LSH done and reported working.
+  - New method in FileUtils to write a PNG from the results.
+
+2012-12-06
+==========
+  - Made SIFT BoVW work.
+
+2012-11-30
+==========
+  - Smaller bug fixes for Lucene 4.0 adoption
+
 2012-11-29
 ==========
   - Adoptions to src tree for Lucene 4.0 (BoVW).

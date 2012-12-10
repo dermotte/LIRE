@@ -33,7 +33,7 @@
     <property name="src" value="src"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9.3_alpha"/>
+    <property name="versionstring" value="0.9.3_beta"/>
 
     <!-- define the classpath  -->
     <path id="classpath.path">

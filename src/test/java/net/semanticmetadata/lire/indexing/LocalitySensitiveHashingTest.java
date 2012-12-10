@@ -13,6 +13,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.similarities.BasicStats;
+import org.apache.lucene.search.similarities.SimilarityBase;
 import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
@@ -28,7 +30,7 @@ import java.util.*;
  *         Created: 04.06.12, 14:19
  */
 public class LocalitySensitiveHashingTest extends TestCase {
-    String testExtensive = "./wang-1000";
+    String testExtensive = "./testdata/wang-1000";
     private String indexPath = "index-hashed";
     private int numImagesEval = 50;
 
@@ -118,8 +120,19 @@ public class LocalitySensitiveHashingTest extends TestCase {
         // ------------
 
         IndexSearcher searcher = new IndexSearcher(reader);
-        TopDocs topDocs = searcher.search(createQuery(query), numImagesEval);
-//        topDocs = rerank(topDocs, ceddQuery, reader);
+        searcher.setSimilarity(new SimilarityBase() {
+            @Override
+            protected float score(BasicStats basicStats, float freq, float v2) {
+                return 1;
+            }
+
+            @Override
+            public String toString() {
+                return null;
+            }
+        });
+        TopDocs topDocs = searcher.search(createQuery(query), 500);
+        topDocs = rerank(topDocs, ceddQuery, reader);
 //        System.out.println("topDocs.scoreDocs.length = " + topDocs.scoreDocs.length);
         double numMatches = 0;
         for (int i = 0; i < topDocs.scoreDocs.length; i++) {
@@ -130,6 +143,20 @@ public class LocalitySensitiveHashingTest extends TestCase {
             if (gold.contains(file)) numMatches++;
         }
         return numMatches;
+    }
+
+    public void testOutputSearchResults() throws IOException, InstantiationException, IllegalAccessException {
+        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        int docNum = 0; // doc to search for.
+        // -----------
+
+        String query = reader.document(docNum).getValues("hash")[0];
+        CEDD ceddQuery = new CEDD();
+        ceddQuery.setByteArrayRepresentation(reader.document(docNum).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().bytes, reader.document(docNum).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().offset, reader.document(docNum).getField(DocumentBuilder.FIELD_NAME_CEDD).binaryValue().length);
+
+        IndexSearcher searcher = new IndexSearcher(reader);
+        TopDocs topDocs = searcher.search(createQuery(query), numImagesEval);
+        FileUtils.saveImageResultsToPng("result_lsh", topDocs, reader.document(docNum).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0], reader);
     }
 
     private TopDocs rerank(TopDocs docs, LireFeature feature, IndexReader reader) throws IOException, IllegalAccessException, InstantiationException {
