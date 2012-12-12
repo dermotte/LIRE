@@ -35,6 +35,8 @@ public class TestJointHistogram extends TestCase {
                 (h2[i] > 0 ? (h2[i]) * Math.log((2f * h2[i]) / (h1[i] + h2[i])) : 0));
         System.out.println("result = " + result);
         System.out.println(h1[i] > 0 ? "1" : "0");
+
+        System.out.println((true ? 1 : 0) + 1);
     }
 
 }

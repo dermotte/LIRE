@@ -4,7 +4,8 @@ CHANGES for LIRE
 2012-12-12
 ==========
   - Added joint histogram class and added it to Searcher and Builder factories.
-  - Fixed bug in JSD implementation.
+  - Fixed nasty bug in JSD implementation (operator priority in Java!)
+  - Made JSD the default distance function in RGB color histogram.
 
 2012-12-10
 ==========
