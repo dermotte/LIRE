@@ -236,6 +236,16 @@ public class DocumentBuilderFactory {
         return new GenericFastDocumentBuilder(Gabor.class, DocumentBuilder.FIELD_NAME_GABOR);
     }
 
+    /**
+     * Returns a new DocumentBuilder instance for the {@link net.semanticmetadata.lire.imageanalysis.JointHistogram} feature
+     *
+     * @return a new instance of the respective Builder
+     * @see net.semanticmetadata.lire.imageanalysis.JointHistogram
+     */
+    public static DocumentBuilder getJointHistogramDocumentBuilder() {
+        return new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
+    }
+
 
     /**
      * Creates and returns a DocumentBuilder, which contains all available features. For
@@ -246,13 +256,16 @@ public class DocumentBuilderFactory {
      */
     public static DocumentBuilder getFullDocumentBuilder() {
         ChainedDocumentBuilder cdb = new ChainedDocumentBuilder();
-        cdb.addBuilder(DocumentBuilderFactory.getExtensiveDocumentBuilder());
+        cdb.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+        cdb.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+        cdb.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
         cdb.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
         cdb.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
         cdb.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
         cdb.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
         cdb.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
         cdb.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
+        cdb.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
         return cdb;
     }
 }

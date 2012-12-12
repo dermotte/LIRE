@@ -252,6 +252,18 @@ public class ImageSearcherFactory {
 
 
     /**
+     * Creates a new ImageSearcher instance based on the class {@link net.semanticmetadata.lire.imageanalysis.JointHistogram}.
+     *
+     * @param maximumHits
+     * @return a new searcher instance
+     * @see net.semanticmetadata.lire.imageanalysis.JointHistogram
+     */
+    public static ImageSearcher createJointHistogramImageSearcher(int maximumHits) {
+        return new GenericFastImageSearcher(maximumHits, JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
+    }
+
+
+    /**
      * Checks if the weight is in [0,1]
      *
      * @param f the weight to check

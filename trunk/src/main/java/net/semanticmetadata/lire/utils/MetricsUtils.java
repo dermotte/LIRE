@@ -97,7 +97,7 @@ public class MetricsUtils {
      * @return
      */
     public static float distL2(float[] h1, float[] h2) {
-        double sum = 0d;
+        float sum = 0f;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] - h2[i]) * (h1[i] - h2[i]);
         }
@@ -122,7 +122,45 @@ public class MetricsUtils {
         return sum;
     }
 
+    public static float jsd(float[] h1, float[] h2) {
+        float sum = 0f;
+        for (int i = 0; i < h1.length; i++) {
+            sum += (h1[i] > 0 ? (h1[i] / 2f) * Math.log((2f * h1[i]) / (h1[i] + h2[i])) : 0) +
+                    (h2[i] > 0 ? (h2[i] / 2f) * Math.log((2f * h2[i]) / (h1[i] + h2[i])) : 0);
+        }
+        return sum;
+    }
+
     public static double tanimoto(int[] h1, int[] h2) {
+        double result = 0;
+        double tmp1 = 0;
+        double tmp2 = 0;
+
+        double tmpCnt1 = 0, tmpCnt2 = 0, tmpCnt3 = 0;
+
+        for (int i = 0; i < h1.length; i++) {
+            tmp1 += h1[i];
+            tmp2 += h2[i];
+        }
+
+        if (tmp1 == 0 || tmp2 == 0) result = 100;
+        if (tmp1 == 0 && tmp2 == 0) result = 0;
+
+        if (tmp1 > 0 && tmp2 > 0) {
+            for (int i = 0; i < h1.length; i++) {
+                tmpCnt1 += (h1[i] / tmp1) * (h2[i] / tmp2);
+                tmpCnt2 += (h2[i] / tmp2) * (h2[i] / tmp2);
+                tmpCnt3 += (h1[i] / tmp1) * (h1[i] / tmp1);
+
+            }
+
+            result = (100 - 100 * (tmpCnt1 / (tmpCnt2 + tmpCnt3
+                    - tmpCnt1))); //Tanimoto
+        }
+        return result;
+    }
+
+    public static double tanimoto(float[] h1, float[] h2) {
         double result = 0;
         double tmp1 = 0;
         double tmp2 = 0;
@@ -161,8 +199,14 @@ public class MetricsUtils {
         }
         if (tmp1 * tmp2 > 0) {
             return (distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2)));
-        }
-        else return 0d;
+        } else return 0d;
     }
 
+    public static float distL1(float[] h1, float[] h2) {
+        float sum = 0f;
+        for (int i = 0; i < h1.length; i++) {
+            sum += Math.abs(h1[i] - h2[i]);
+        }
+        return sum;
+    }
 }

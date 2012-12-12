@@ -98,6 +98,7 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_MSER = "featureMSER";
     public static final String FIELD_NAME_BASIC_FEATURES = "featureBasic";
     public static final String FIELD_NAME_JPEGCOEFFS = "featureJpegCoeffs";
+    public static final String FIELD_NAME_JOINT_HISTOGRAM = "featureJointHist";
 
 
     /**
