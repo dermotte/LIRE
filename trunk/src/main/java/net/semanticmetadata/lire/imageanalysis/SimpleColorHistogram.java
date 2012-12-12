@@ -30,6 +30,7 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.utils.ConversionUtils;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.color.ColorSpace;
@@ -50,7 +51,7 @@ import java.util.StringTokenizer;
 public class SimpleColorHistogram implements LireFeature {
     public static int DEFAULT_NUMBER_OF_BINS = 512;
     public static HistogramType DEFAULT_HISTOGRAM_TYPE = HistogramType.RGB;
-    public static DistanceFunction DEFAULT_DISTANCE_FUNCTION = DistanceFunction.L1;
+    public static DistanceFunction DEFAULT_DISTANCE_FUNCTION = DistanceFunction.JSD;
 
     private static final int[] quantTable = {
             1, 32, 4, 8, 16, 4, 16, 4, 16, 4,            // Hue, Sum - subspace 0,1,2,3,4 for 256 levels
@@ -314,13 +315,13 @@ public class SimpleColorHistogram implements LireFeature {
         // do the comparison ...
         double sum = 0;
         if (distFunc == DistanceFunction.JSD)
-            return (float) jsd(histogram, ch.histogram);
+            return (float) MetricsUtils.jsd(histogram, ch.histogram);
         else if (distFunc == DistanceFunction.TANIMOTO)
-            return (float) tanimoto(histogram, ch.histogram);
+            return (float) MetricsUtils.tanimoto(histogram, ch.histogram);
         else if (distFunc == DistanceFunction.L1)
-            return (float) distL1(histogram, ch.histogram);
+            return (float) MetricsUtils.distL1(histogram, ch.histogram);
         else
-            return (float) distL2(histogram, ch.histogram);
+            return (float) MetricsUtils.distL2(histogram, ch.histogram);
     }
 
     /**
@@ -361,14 +362,6 @@ public class SimpleColorHistogram implements LireFeature {
      * @param h2
      * @return
      */
-    private static double jsd(int[] h1, int[] h2) {
-        double sum = 0d;
-        for (int i = 0; i < h1.length; i++) {
-            sum += h1[i] > 0 ? h1[i] * Math.log(2d * h1[i] / (h1[i] + h2[i])) : 0 +
-                    h2[i] > 0 ? h2[i] * Math.log(2d * h2[i] / (h1[i] + h2[i])) : 0;
-        }
-        return sum;
-    }
 
     private static double tanimoto(int[] h1, int[] h2) {
         double result = 0;
