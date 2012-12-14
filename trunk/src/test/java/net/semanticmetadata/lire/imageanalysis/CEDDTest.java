@@ -35,13 +35,15 @@ import junit.framework.TestCase;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class CEDDTest extends TestCase {
     private String[] testFiles = new String[]{"img01.jpg", "img02.jpg", "img03.jpg", "img04.jpg", "img05.jpg", "img06.jpg", "img07.jpg", "img08.jpg", "img09.jpg", "img10.jpg"};
-    private String testFilesPath = "../lire/src/test/resources/small/";
+    private String testFilesPath = "src/test/resources/small/";
 
     public void testExtraction() throws IOException {
         CEDD sch = new CEDD();
@@ -95,6 +97,20 @@ public class CEDDTest extends TestCase {
             b.setStringRepresentation(vds.get(i));
             assertTrue(a.getDistance(b) == 0);
         }
+    }
+
+    public void testNextSerialization() throws IOException {
+        // todo ...
+        int tmp = 0x0004;
+        System.out.println("tmp = " + (tmp & 0x0007));
+        tmp = tmp << 3;
+        System.out.println("tmp = " + (tmp & 0x0007));
+        tmp = tmp | 0x003;
+        System.out.println("tmp = " + (tmp & 0x0007));
+        tmp = tmp << 3;
+        tmp = tmp | 0x007;
+        System.out.println("tmp = " + tmp);
+        System.out.println("tmp = " + (tmp & 0x0007));
     }
 
 }

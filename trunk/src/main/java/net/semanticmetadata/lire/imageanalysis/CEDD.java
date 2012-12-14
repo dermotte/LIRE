@@ -50,7 +50,13 @@ public class CEDD implements LireFeature {
     public double T2;
     public double T3;
     public boolean Compact = false;
-    protected double[] data = null;
+    protected double[] data = new double[144];
+    int tmp;
+    // for tanimoto:
+    private double Result, Temp1, Temp2, TempCount1, TempCount2, TempCount3;
+    private CEDD tmpFeature;
+    private double iTmp1, iTmp2;
+
 
     public CEDD(double Th0, double Th1, double Th2, double Th3, boolean CompactDescriptor) {
         this.T0 = Th0;
@@ -295,32 +301,35 @@ public class CEDD implements LireFeature {
             throw new UnsupportedOperationException("Wrong descriptor.");
 
         // casting ...
-        CEDD ch = (CEDD) vd;
+        tmpFeature = (CEDD) vd;
 
         // check if parameters are fitting ...
-        if ((ch.data.length != data.length))
+        if ((tmpFeature.data.length != data.length))
             throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
 
-        // Tanimoto coefficient
-        double Result = 0;
-        double Temp1 = 0;
-        double Temp2 = 0;
+        // Init Tanimoto coefficient
+        Result = 0;
+        Temp1 = 0;
+        Temp2 = 0;
+        TempCount1 = 0;
+        TempCount2 = 0;
+        TempCount3 = 0;
 
-        double TempCount1 = 0, TempCount2 = 0, TempCount3 = 0;
-
-        for (int i = 0; i < ch.data.length; i++) {
-            Temp1 += ch.data[i];
+        for (int i = 0; i < tmpFeature.data.length; i++) {
+            Temp1 += tmpFeature.data[i];
             Temp2 += data[i];
         }
 
-        if (Temp1 == 0 || Temp2 == 0) Result = 100;
-        if (Temp1 == 0 && Temp2 == 0) Result = 0;
+        if (Temp1 == 0 || Temp2 == 0) return 100f;
+        if (Temp1 == 0 && Temp2 == 0) return 0f;
 
         if (Temp1 > 0 && Temp2 > 0) {
-            for (int i = 0; i < ch.data.length; i++) {
-                TempCount1 += (ch.data[i] / Temp1) * (data[i] / Temp2);
-                TempCount2 += (data[i] / Temp2) * (data[i] / Temp2);
-                TempCount3 += (ch.data[i] / Temp1) * (ch.data[i] / Temp1);
+            for (int i = 0; i < tmpFeature.data.length; i++) {
+                iTmp1 = tmpFeature.data[i] / Temp1;
+                iTmp2 = data[i] / Temp2;
+                TempCount1 += iTmp1 * iTmp2;
+                TempCount2 += iTmp2 * iTmp2;
+                TempCount3 += iTmp1 * iTmp1;
 
             }
 
@@ -372,9 +381,11 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#setByteArrayRepresentation(byte[])
      */
     public byte[] getByteArrayRepresentation() {
-        byte[] result = new byte[data.length];
+        byte[] result = new byte[data.length/2];
         for (int i = 0; i < result.length; i++) {
-            result[i] = (byte) data[i];
+            tmp = ((int) data[(i << 1)]) << 3;
+            tmp = (tmp | (int) data[(i << 1) +1]);
+            result[i] = (byte) tmp;
         }
         return result;
     }
@@ -385,18 +396,26 @@ public class CEDD implements LireFeature {
      * @param in byte array from corresponding method
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
+    /**
+     * Reads descriptor from a byte array. Much faster than the String based method.
+     *
+     * @param in byte array from corresponding method
+     * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
+     */
     public void setByteArrayRepresentation(byte[] in) {
-        data = new double[in.length];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = in[i];
+        for (int i = 0; i < in.length; i++) {
+            tmp = in[i];
+            data[(i << 1) +1] = tmp & 0x0007;
+            data[i << 1] = (tmp >> 3);
         }
     }
 
     @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        data = new double[length];
         for (int i = offset; i < length; i++) {
-            data[i] = in[i];
+            tmp = in[i];
+            data[(i << 1) +1] = tmp & 0x0007;
+            data[i << 1] = (tmp >> 3);
         }
     }
 

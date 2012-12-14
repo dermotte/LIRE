@@ -65,6 +65,8 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
     private int maxHits = 10;
     protected TreeSet<SimpleResult> docs;
     private byte[] tempBinaryValue;
+    private float maxDistance;
+    private float overallMaxDistance;
 
     public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName) {
         this.maxHits = maxHits;
@@ -111,39 +113,40 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
      * @throws java.io.IOException
      */
     protected float findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
-        float maxDistance = -1f, overallMaxDistance = -1f;
-        boolean hasDeletions = reader.hasDeletions();
+        maxDistance = -1f;
+        overallMaxDistance = -1f;
 
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
         Bits liveDocs = MultiFields.getLiveDocs(reader);
-
+        Document d;
+        float tmpDistance;
         int docs = reader.numDocs();
         for (int i = 0; i < docs; i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
-            Document d = reader.document(i);
-            float distance = getDistance(d, lireFeature);
-            assert (distance >= 0);
+            d = reader.document(i);
+            tmpDistance = getDistance(d, lireFeature);
+            assert (tmpDistance >= 0);
             // calculate the overall max distance to normalize score afterwards
-            if (overallMaxDistance < distance) {
-                overallMaxDistance = distance;
+            if (overallMaxDistance < tmpDistance) {
+                overallMaxDistance = tmpDistance;
             }
             // if it is the first document:
             if (maxDistance < 0) {
-                maxDistance = distance;
+                maxDistance = tmpDistance;
             }
             // if the array is not full yet:
             if (this.docs.size() < maxHits) {
-                this.docs.add(new SimpleResult(distance, d));
-                if (distance > maxDistance) maxDistance = distance;
-            } else if (distance < maxDistance) {
+                this.docs.add(new SimpleResult(tmpDistance, d));
+                if (tmpDistance > maxDistance) maxDistance = tmpDistance;
+            } else if (tmpDistance < maxDistance) {
                 // if it is nearer to the sample than at least on of the current set:
                 // remove the last one ...
                 this.docs.remove(this.docs.last());
                 // add the new one ...
-                this.docs.add(new SimpleResult(distance, d));
+                this.docs.add(new SimpleResult(tmpDistance, d));
                 // and set our new distance border ...
                 maxDistance = this.docs.last().getDistance();
             }

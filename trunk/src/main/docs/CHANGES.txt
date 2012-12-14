@@ -3,6 +3,13 @@ CHANGES for LIRE
 
 2012-12-12
 ==========
+  - Made CEDD faster. Packed two bins in one byte and extracted temp variables.
+  - Performance updates on GenericFastImageSearcher.
+  - Performance updates on GenericDocumentBuilder.
+  - Found out that on the 64 bit VM double operations are faster than float ops.
+
+2012-12-12
+==========
   - Added joint histogram class and added it to Searcher and Builder factories.
   - Fixed nasty bug in JSD implementation (operator priority in Java!)
   - Made JSD the default distance function in RGB color histogram.
