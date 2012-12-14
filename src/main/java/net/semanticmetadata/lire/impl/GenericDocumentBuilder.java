@@ -54,6 +54,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     String fieldName;
     final static Mode DEFAULT_MODE = Mode.Fast;
     Mode currentMode = DEFAULT_MODE;
+    private LireFeature lireFeature;
 
     // Decide between byte array version (fast) or string version (slow)
     public enum Mode {
@@ -69,6 +70,13 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, String fieldName) {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldName;
+        try {
+            lireFeature = (LireFeature) descriptorClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     /**
@@ -82,6 +90,13 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldName;
         this.currentMode = mode;
+        try {
+            lireFeature = (LireFeature) descriptorClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     public Document createDocument(BufferedImage image, String identifier) {
@@ -95,26 +110,20 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         }
         Document doc = null;
         logger.finer("Starting extraction from image [" + descriptorClass.getName() + "].");
-        try {
-            LireFeature vd = (LireFeature) descriptorClass.newInstance();
-            vd.extract(bimg);
+        //            lireFeature = (LireFeature) descriptorClass.newInstance();
+        lireFeature.extract(bimg);
 //            featureString = vd.getStringRepresentation();
-            logger.fine("Extraction finished [" + descriptorClass.getName() + "].");
+        logger.fine("Extraction finished [" + descriptorClass.getName() + "].");
 
-            doc = new Document();
-            if (currentMode == Mode.Slow)
-                doc.add(new Field(fieldName, vd.getStringRepresentation(), Field.Store.YES, Field.Index.NO));
-            else
-                doc.add(new Field(fieldName, vd.getByteArrayRepresentation()));
+        doc = new Document();
+        if (currentMode == Mode.Slow)
+            doc.add(new Field(fieldName, lireFeature.getStringRepresentation(), Field.Store.YES, Field.Index.NO));
+        else
+            doc.add(new Field(fieldName, lireFeature.getByteArrayRepresentation()));
 
-            if (identifier != null)
-                doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES, Field.Index.NOT_ANALYZED));
+        if (identifier != null)
+            doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic document builder: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic document builder: " + e.getMessage());
-        }
         return doc;
     }
 }

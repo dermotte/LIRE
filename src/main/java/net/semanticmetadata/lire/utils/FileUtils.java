@@ -141,9 +141,10 @@ public class FileUtils {
         }
         BufferedImage result = new BufferedImage(width, 220, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2 = (Graphics2D) result.getGraphics();
-        g2.setColor(Color.black);
+        g2.setColor(Color.white);
+        g2.setBackground(Color.white);
         g2.clearRect(0, 0, result.getWidth(), result.getHeight());
-        g2.setColor(Color.green);
+        g2.setColor(Color.black);
         g2.setFont(Font.decode("\"Arial\", Font.BOLD, 12"));
         int offset = 0;
         int count = 0;
