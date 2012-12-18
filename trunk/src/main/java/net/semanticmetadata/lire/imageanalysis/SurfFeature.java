@@ -50,7 +50,7 @@ public class SurfFeature extends Histogram implements LireFeature {
 
     public SurfFeature(SURFInterestPoint surfInterestPoint) {
         this.sip = surfInterestPoint;
-        descriptor = sip.getDescriptor();
+        descriptor = SerializationUtils.toDoubleArray(sip.getDescriptor());
     }
 
     public SurfFeature() {
@@ -63,7 +63,7 @@ public class SurfFeature extends Histogram implements LireFeature {
 
     public float getDistance(LireFeature feature) {
         if (!(feature instanceof SurfFeature)) return -1;
-        return MetricsUtils.distL2(descriptor, ((SurfFeature) feature).descriptor);
+        return (float) MetricsUtils.distL2(descriptor, ((SurfFeature) feature).descriptor);
     }
 
     public String getStringRepresentation() {
@@ -71,7 +71,7 @@ public class SurfFeature extends Histogram implements LireFeature {
     }
 
     public void setStringRepresentation(String s) {
-        float[] result = null;
+        double[] result = null;
         LinkedList<Float> tmp = new LinkedList<Float>();
         StringTokenizer st = new StringTokenizer(s);
         st.nextToken(); // point.x
@@ -79,7 +79,7 @@ public class SurfFeature extends Histogram implements LireFeature {
         st.nextToken(); // response
         while (st.hasMoreTokens())
             tmp.add(Float.parseFloat(st.nextToken()));
-        result = new float[tmp.size()];
+        result = new double[tmp.size()];
         int i = 0;
         for (Iterator<Float> iterator = tmp.iterator(); iterator.hasNext(); ) {
             Float next = iterator.next();
@@ -107,15 +107,15 @@ public class SurfFeature extends Histogram implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = SerializationUtils.toFloatArray(in);
+        descriptor = SerializationUtils.toDoubleArray(in);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = SerializationUtils.toFloatArray(in, offset, length);
+        descriptor = SerializationUtils.toDoubleArray(in, offset, length);
     }
 
     public double[] getDoubleHistogram() {
-        return ConversionUtils.toDouble(descriptor);
+        return descriptor;
     }
 
 }

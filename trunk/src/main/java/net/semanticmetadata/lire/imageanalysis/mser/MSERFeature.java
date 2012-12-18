@@ -49,7 +49,7 @@ import java.awt.image.BufferedImage;
 public class MSERFeature extends Histogram implements LireFeature {
     MSERGrowthHistory mser;
 
-    public MSERFeature(MSERGrowthHistory maxStableExtremalRegion, float[] invariants) {
+    public MSERFeature(MSERGrowthHistory maxStableExtremalRegion, double[] invariants) {
         this.mser = maxStableExtremalRegion;
         descriptor = invariants;
     }
@@ -65,7 +65,7 @@ public class MSERFeature extends Histogram implements LireFeature {
 
     public float getDistance(LireFeature feature) {
         if (!(feature instanceof MSERFeature)) return -1;
-        return MetricsUtils.distL2(descriptor, ((MSERFeature) feature).descriptor);
+        return (float) MetricsUtils.distL2(descriptor, ((MSERFeature) feature).descriptor);
     }
 
     public String getStringRepresentation() {
@@ -93,22 +93,22 @@ public class MSERFeature extends Histogram implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = SerializationUtils.toFloatArray(in);
+        descriptor = SerializationUtils.toDoubleArray(in);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = SerializationUtils.toFloatArray(in, offset, length);
+        descriptor = SerializationUtils.toDoubleArray(in, offset, length);
     }
 
     public double[] getDoubleHistogram() {
-        return ConversionUtils.toDouble(descriptor);
+        return descriptor;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < descriptor.length; i++) {
-            float v = descriptor[i];
+            double v = descriptor[i];
             sb.append(v);
             sb.append(' ');
 

@@ -105,19 +105,20 @@ public class ImageUtils {
     public static BufferedImage convertImageToGrey(BufferedImage image) {
         WritableRaster inRaster = image.getRaster();
         BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-        WritableRaster outRaster = result.getRaster();
-        int[] p = new int[3];
-        float v = 0;
-        for (int x = 0; x < inRaster.getWidth(); x++) {
-            for (int y = 0; y < inRaster.getHeight(); y++) {
-                inRaster.getPixel(x, y, p);
-                v = Math.round((p[0] + p[1] + p[2]) / 3f);
-                for (int i = 0; i < p.length; i++) {
-                    p[i] = (int) v;
-                }
-                outRaster.setPixel(x, y, p);
-            }
-        }
+        result.getGraphics().drawImage(image, 0, 0, null);
+//        WritableRaster outRaster = result.getRaster();
+//        int[] p = new int[3];
+//        float v = 0;
+//        for (int x = 0; x < inRaster.getWidth(); x++) {
+//            for (int y = 0; y < inRaster.getHeight(); y++) {
+//                inRaster.getPixel(x, y, p);
+//                v = Math.round((p[0] + p[1] + p[2]) / 3f);
+//                for (int i = 0; i < p.length; i++) {
+//                    p[i] = (int) v;
+//                }
+//                outRaster.setPixel(x, y, p);
+//            }
+//        }
         return result;
     }
 

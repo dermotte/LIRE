@@ -3,6 +3,20 @@ CHANGES for LIRE
 
 2012-12-12
 ==========
+  - changed Histogram abstract class member to double[] ... it's much faster
+    on 64 bit systems running Java 1.7.
+  - Changed  BufferedImage convertImageToGrey(...) to faster version.
+  - Change JointHistogram.java to use this method.
+  - Cleaned up SimpleColorHistogram a bit.
+  - Cleaned up AutoColorCorrelogram a bit.
+  - Added OpponentHistogram with JSD as a distance function.
+  - Checked for a way to re-implement Metric Spaces approach with Lucene:
+    Currently there is no way as the TermPositions object has gone missing.
+    Other ideas would be to integrate a new similarity based on footrule
+    distance. Or: put it in a simple byte[] based text file ?!?
+
+2012-12-12
+==========
   - Made CEDD faster. Packed two bins in one byte and extracted temp variables.
   - Performance updates on GenericFastImageSearcher.
   - Performance updates on GenericDocumentBuilder.

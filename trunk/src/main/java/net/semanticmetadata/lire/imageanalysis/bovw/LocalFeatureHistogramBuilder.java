@@ -108,7 +108,7 @@ public abstract class LocalFeatureHistogramBuilder {
         HashSet<Integer> docIDs = selectVocabularyDocs();
         KMeans k = new KMeans(numClusters);
         // fill the KMeans object:
-        LinkedList<float[]> features = new LinkedList<float[]>();
+        LinkedList<double[]> features = new LinkedList<double[]>();
         // Needed for check whether the document is deleted.
         Bits liveDocs = MultiFields.getLiveDocs(reader);
         for (Iterator<Integer> iterator = docIDs.iterator(); iterator.hasNext(); ) {

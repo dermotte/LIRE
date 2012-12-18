@@ -43,18 +43,17 @@ import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -153,7 +152,7 @@ public class MetricSpacesInvertedListIndexing {
         progress.setCurrentState(State.Indexing);
 
         // now find the reference objects for each entry ;)
-        IndexReader readerRo = IndexReader.open(FSDirectory.open(new File(indexPath + "-ro")));
+        IndexReader readerRo = DirectoryReader.open(FSDirectory.open(new File(indexPath + "-ro")));
         ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
         Map<String, Analyzer> analyzerPerField = new HashMap<String, Analyzer>();
         analyzerPerField.put("ro-order", new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
@@ -161,10 +160,11 @@ public class MetricSpacesInvertedListIndexing {
 
         iw = new IndexWriter(FSDirectory.open(new File(indexPath)), new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, aWrapper).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
         StringBuilder sb = new StringBuilder(256);
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
+
         for (int i = 0; i < numDocs; i++) {
-//            if (hasDeletions && reader.isDeleted(i)) {
-//                continue;
-//            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
             Document document = reader.document(i);
             ImageSearchHits hits = searcher.search(document, readerRo);
             sb.delete(0, sb.length());
@@ -173,7 +173,7 @@ public class MetricSpacesInvertedListIndexing {
                 sb.append(' ');
             }
             // System.out.println(sb.toString());
-            document.add(new Field("ro-order", sb.toString(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+            document.add(new TextField("ro-order", sb.toString(), Field.Store.YES));
             iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), document);
 
             // progress report
@@ -198,12 +198,12 @@ public class MetricSpacesInvertedListIndexing {
      * @throws IOException
      */
     public void updateIndex(String indexPath) throws IOException {
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         int numDocs = reader.numDocs();
         boolean hasDeletions = reader.hasDeletions();
         int countUpdated = 0;
 
-        IndexReader readerRo = IndexReader.open(FSDirectory.open(new File(indexPath + "-ro")));
+        IndexReader readerRo = DirectoryReader.open(FSDirectory.open(new File(indexPath + "-ro")));
         ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
         Map<String, Analyzer> perField = new HashMap<String, Analyzer>(1);
         perField.put("ro-order", new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
@@ -212,10 +212,11 @@ public class MetricSpacesInvertedListIndexing {
 
         IndexWriter iw = new IndexWriter(FSDirectory.open(new File(indexPath)), new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, aWrapper).setOpenMode(IndexWriterConfig.OpenMode.CREATE));
         StringBuilder sb = new StringBuilder(256);
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
+
         for (int i = 0; i < numDocs; i++) {
-//            if (hasDeletions && reader.isDeleted(i)) {
-//                continue;
-//            }
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
             Document document = reader.document(i);
             if (document.getField("ro-order") == null) {  // if the field is not here we create it.
                 ImageSearchHits hits = searcher.search(document, readerRo);
@@ -225,7 +226,7 @@ public class MetricSpacesInvertedListIndexing {
                     sb.append(' ');
                 }
                 // System.out.println(sb.toString());
-                document.add(new Field("ro-order", sb.toString(), Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS_OFFSETS));
+                document.add(new TextField("ro-order", sb.toString(), Field.Store.YES));
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), document);
                 countUpdated++;
             }
@@ -250,13 +251,13 @@ public class MetricSpacesInvertedListIndexing {
      */
     public TopDocs search(BufferedImage img, String indexPath) throws IOException {
         ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
-        ImageSearchHits hits = searcher.search(img, IndexReader.open(FSDirectory.open(new File(indexPath + "-ro"))));
+        ImageSearchHits hits = searcher.search(img, DirectoryReader.open(FSDirectory.open(new File(indexPath + "-ro"))));
         StringBuilder sb = new StringBuilder(numReferenceObjectsUsed * 4);
         for (int j = 0; j < numReferenceObjectsUsed; j++) {
             sb.append(hits.doc(j).getValues("ro-id")[0]);
             sb.append(' ');
         }
-        return scoreDocs(sb.toString(), IndexReader.open(FSDirectory.open(new File(indexPath))));
+        return scoreDocs(sb.toString(), DirectoryReader.open(FSDirectory.open(new File(indexPath))));
     }
 
     /**
@@ -269,7 +270,7 @@ public class MetricSpacesInvertedListIndexing {
      */
     public TopDocs search(Document d, String indexPath) throws IOException {
         if (d.getField("ro-order") != null) // if the document already contains the information on reference object neighbourhood
-            return scoreDocs(d.getValues("ro-order")[0], IndexReader.open(FSDirectory.open(new File(indexPath))));
+            return scoreDocs(d.getValues("ro-order")[0], DirectoryReader.open(FSDirectory.open(new File(indexPath))));
         else { // if not we just create it :)
             ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
             ImageSearchHits hits = searcher.search(d, IndexReader.open(FSDirectory.open(new File(indexPath + "-ro"))));
@@ -330,7 +331,7 @@ public class MetricSpacesInvertedListIndexing {
         while (results.size() > numHits) results.pollLast();
         return new TopDocs(Math.min(results.size(), numHits), (ScoreDoc[]) results.toArray(new ScoreDoc[results.size()]), maxScore);
         */
-        throw new UnsupportedOperationException("Not implemented in Lucene 4.0");
+        throw new UnsupportedOperationException("Not supported currently in Lucene 4.0");
     }
 
     public int getNumHits() {

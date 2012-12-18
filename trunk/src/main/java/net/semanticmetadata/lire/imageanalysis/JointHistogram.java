@@ -1,5 +1,6 @@
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -12,6 +13,8 @@ import java.util.StringTokenizer;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class JointHistogram extends Histogram implements LireFeature {
+    private int[] tmpIntensity = new int[1];
+
     public void extract(BufferedImage bimg) {
         // extract:
         int[][] histogram = new int[64][9];
@@ -19,8 +22,10 @@ public class JointHistogram extends Histogram implements LireFeature {
             for (int j = 0; j < histogram[i].length; j++)
                 histogram[i][j] = 0;
         }
+        WritableRaster grey = ImageUtils.convertImageToGrey(bimg).getRaster();
         WritableRaster raster = bimg.getRaster();
         int[] px = new int[3];
+        int[] intens = new int[1];
         for (int x = 1; x < raster.getWidth() - 1; x++) {
             for (int y = 1; y < raster.getHeight() - 1; y++) {
                 raster.getPixel(x, y, px);
@@ -28,39 +33,40 @@ public class JointHistogram extends Histogram implements LireFeature {
                         (int) Math.round((double) px[1] / 85d) * 4 +
                         (int) Math.round((double) px[0] / 85d) * 4 * 4;
                 int rank = 0;
-                double intensity = getIntensity(px);
-                if (getIntensity(raster.getPixel(x - 1, y - 1, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x, y - 1, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x + 1, y - 1, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x - 1, y + 1, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x, y + 1, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x + 1, y + 1, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x - 1, y, px)) > intensity) rank++;
-                if (getIntensity(raster.getPixel(x + 1, y, px)) > intensity) rank++;
+                grey.getPixel(x, y, intens);
+                if (getIntensity(x - 1, y - 1, grey) > intens[0]) rank++;
+                if (getIntensity(x, y - 1, grey) > intens[0]) rank++;
+                if (getIntensity(x + 1, y - 1, grey) > intens[0]) rank++;
+                if (getIntensity(x - 1, y + 1, grey) > intens[0]) rank++;
+                if (getIntensity(x, y + 1, grey) > intens[0]) rank++;
+                if (getIntensity(x + 1, y + 1, grey) > intens[0]) rank++;
+                if (getIntensity(x - 1, y, grey) > intens[0]) rank++;
+                if (getIntensity(x + 1, y, grey) > intens[0]) rank++;
                 histogram[colorPos][rank]++;
             }
         }
         // normalize with max norm & quantize to [0,127]:
-        descriptor = new float[64 * 9];
-        float max = 0;
+        descriptor = new double[64 * 9];
+        double max = 0;
         for (int i = 0; i < histogram.length; i++) {
             for (int j = 0; j < histogram[i].length; j++) {
-                max = Math.max((float) histogram[i][j], max);
+                max = Math.max(histogram[i][j], max);
             }
         }
         for (int i = 0; i < histogram.length; i++) {
             for (int j = 0; j < histogram[i].length; j++) {
-                descriptor[i + 64 * j] = (float) Math.floor(127f * ((float) histogram[i][j] / max));
+                descriptor[i + 64 * j] = Math.floor(127d * (histogram[i][j] / max));
             }
         }
     }
 
 
-    private double getIntensity(int[] px) {
-        return (0.3 * px[0] + 0.6 * px[1] + 0.1 * px[2]);
+    private int getIntensity(int x, int y, WritableRaster grey) {
+        grey.getPixel(x, y, tmpIntensity);
+        return tmpIntensity[0];
     }
 
-    public String getStringRepresentation() { // added by mlux
+    public String getStringRepresentation() {
         StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
         sb.append("jhist");
         sb.append(' ');
@@ -73,11 +79,11 @@ public class JointHistogram extends Histogram implements LireFeature {
         return sb.toString().trim();
     }
 
-    public void setStringRepresentation(String s) { // added by mlux
+    public void setStringRepresentation(String s) {
         StringTokenizer st = new StringTokenizer(s);
         if (!st.nextToken().equals("jhist"))
             throw new UnsupportedOperationException("This is not a JointHistogram descriptor.");
-        descriptor = new float[Integer.parseInt(st.nextToken())];
+        descriptor = new double[Integer.parseInt(st.nextToken())];
         for (int i = 0; i < descriptor.length; i++) {
             if (!st.hasMoreTokens())
                 throw new IndexOutOfBoundsException("Too few numbers in string representation.");
@@ -107,14 +113,14 @@ public class JointHistogram extends Histogram implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = new float[in.length];
+        descriptor = new double[in.length];
         for (int i = 0; i < descriptor.length; i++) {
             descriptor[i] = in[i];
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = new float[length];
+        descriptor = new double[length];
         for (int i = offset; i < length; i++) {
             descriptor[i] = in[i];
         }
