@@ -100,7 +100,7 @@ public class Cluster implements Comparable<Object> {
         return getDistance(f.descriptor);
     }
 
-    public double getDistance(float[] f) {
+    public double getDistance(double[] f) {
         double d = 0;
         // now using L1 for faster results ...
         for (int i = 0; i < f.length; i++) {

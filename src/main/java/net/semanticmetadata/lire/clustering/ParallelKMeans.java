@@ -81,7 +81,7 @@ public class ParallelKMeans extends KMeans {
             mean[j] = 0;
             for (Iterator<Integer> iterator = cluster.members.iterator(); iterator.hasNext(); ) {
                 Integer member = iterator.next();
-                float v = features.get(member)[j];
+                double v = features.get(member)[j];
                 mean[j] += v;
             }
             if (cluster.members.size() > 1)
@@ -92,7 +92,7 @@ public class ParallelKMeans extends KMeans {
         for (Integer member : cluster.members) {
             float tmpStress = 0;
             for (int k = 0; k < length; k++) {
-                float f = Math.abs(mean[k] - features.get(member)[k]);
+                double f = Math.abs(mean[k] - features.get(member)[k]);
                 tmpStress += f;
             }
             v += tmpStress;
@@ -112,7 +112,7 @@ public class ParallelKMeans extends KMeans {
 
         public void run() {
             for (int k = start; k < end; k++) {
-                float[] f = features.get(k);
+                double[] f = features.get(k);
                 int best = 0;
                 double minDistance = clusters[0].getDistance(f);
                 for (int i = 1; i < clusters.length; i++) {

@@ -31,6 +31,7 @@
 package net.semanticmetadata.lire.imageanalysis.mser;
 
 import net.semanticmetadata.lire.imageanalysis.mser.fourier.Fourier;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -420,7 +421,7 @@ public class MSER {
             // create affine invariant variables
             f.createInvariants2(1);
 
-            features.add(new MSERFeature(mser, f.getInvariants()));
+            features.add(new MSERFeature(mser, SerializationUtils.toDoubleArray(f.getInvariants())));
         }
 
         return features;

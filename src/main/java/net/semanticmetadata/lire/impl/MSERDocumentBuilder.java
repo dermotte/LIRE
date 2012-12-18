@@ -94,7 +94,7 @@ public class MSERDocumentBuilder extends AbstractDocumentBuilder {
                 // add each feature to the document:
                 // check first if NaN!!
                 for (int j = 0; j < f.descriptor.length; j++) {
-                    if (Float.isNaN(f.descriptor[j])) skip = true;
+                    if (Double.isNaN(f.descriptor[j])) skip = true;
                     break;
                 }
 

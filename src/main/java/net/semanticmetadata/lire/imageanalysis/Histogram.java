@@ -37,5 +37,5 @@ package net.semanticmetadata.lire.imageanalysis;
  * Time: 16:02:24
  */
 public class Histogram {
-    public float[] descriptor = null;
+    public double[] descriptor = null;
 }

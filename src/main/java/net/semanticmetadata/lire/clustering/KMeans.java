@@ -44,9 +44,9 @@ import java.util.*;
 public class KMeans {
     protected List<Image> images = new LinkedList<Image>();
     protected int countAllFeatures = 0, numClusters = 256;
-    protected ArrayList<float[]> features = null;
+    protected ArrayList<double[]> features = null;
     protected Cluster[] clusters = null;
-    protected HashMap<float[], Integer> featureIndex = null;
+    protected HashMap<double[], Integer> featureIndex = null;
 
     public KMeans() {
 
@@ -56,7 +56,7 @@ public class KMeans {
         this.numClusters = numClusters;
     }
 
-    public void addImage(String identifier, List<float[]> features) {
+    public void addImage(String identifier, List<double[]> features) {
         images.add(new Image(identifier, features));
         countAllFeatures += features.size();
     }
@@ -67,10 +67,10 @@ public class KMeans {
 
     public void init() {
         // create a set of all features:
-        features = new ArrayList<float[]>(countAllFeatures);
+        features = new ArrayList<double[]>(countAllFeatures);
         for (Image image : images) {
             if (image.features.size() > 0)
-                for (float[] histogram : image.features) {
+                for (double[] histogram : image.features) {
                     if (!hasNaNs(histogram)) features.add(histogram);
                 }
             else {
@@ -83,7 +83,7 @@ public class KMeans {
         Iterator<Integer> mediansIterator = medians.iterator();
         for (int i = 0; i < clusters.length; i++) {
             clusters[i] = new Cluster();
-            float[] descriptor = features.get(mediansIterator.next());
+            double[] descriptor = features.get(mediansIterator.next());
             System.arraycopy(descriptor, 0, clusters[i].mean, 0, descriptor.length);
         }
     }
@@ -107,10 +107,10 @@ public class KMeans {
         return overallStress();
     }
 
-    protected boolean hasNaNs(float[] histogram) {
+    protected boolean hasNaNs(double[] histogram) {
         boolean hasNaNs = false;
         for (int i = 0; i < histogram.length; i++) {
-            if (Float.isNaN(histogram[i])) {
+            if (Double.isNaN(histogram[i])) {
                 hasNaNs = true;
                 break;
             }
@@ -119,7 +119,7 @@ public class KMeans {
             System.err.println("Found a NaN in init");
 //            System.out.println("image.identifier = " + image.identifier);
             for (int j = 0; j < histogram.length; j++) {
-                float v = histogram[j];
+                double v = histogram[j];
                 System.out.print(v + ", ");
             }
             System.out.println("");
@@ -132,7 +132,7 @@ public class KMeans {
      */
     protected void reOrganizeFeatures() {
         for (int k = 0; k < features.size(); k++) {
-            float[] f = features.get(k);
+            double[] f = features.get(k);
             Cluster best = clusters[0];
             double minDistance = clusters[0].getDistance(f);
             for (int i = 1; i < clusters.length; i++) {
@@ -206,8 +206,8 @@ public class KMeans {
         this.numClusters = numClusters;
     }
 
-    private HashMap<float[], Integer> createIndex() {
-        featureIndex = new HashMap<float[], Integer>(features.size());
+    private HashMap<double[], Integer> createIndex() {
+        featureIndex = new HashMap<double[], Integer>(features.size());
         for (int i = 0; i < clusters.length; i++) {
             Cluster cluster = clusters[i];
             for (Iterator<Integer> fidit = cluster.members.iterator(); fidit.hasNext(); ) {
@@ -232,13 +232,13 @@ public class KMeans {
 }
 
 class Image {
-    public List<float[]> features;
+    public List<double[]> features;
     public String identifier;
     public float[] localFeatureHistogram = null;
     private final int QUANT_MAX_HISTOGRAM = 256;
 
-    Image(String identifier, List<float[]> features) {
-        this.features = new LinkedList<float[]>();
+    Image(String identifier, List<double[]> features) {
+        this.features = new LinkedList<double[]>();
         this.features.addAll(features);
         this.identifier = identifier;
     }

@@ -364,5 +364,12 @@ public class SerializationUtils {
     }
 
 
+    public static double[] toDoubleArray(float[] d) {
+        double[] result = new double[d.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = (double) d[i];
+        }
+        return result;
+    }
 }
 

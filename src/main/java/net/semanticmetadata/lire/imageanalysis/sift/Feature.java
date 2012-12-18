@@ -65,7 +65,7 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
         scale = s;
         orientation = o;
         location = l;
-        descriptor = d;
+        descriptor = SerializationUtils.toDoubleArray(d);
     }
 
     /**
@@ -79,7 +79,7 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
 
     public float descriptorDistance(Feature f) {
         if (!(f instanceof Feature)) return -1;
-        return MetricsUtils.distL2(descriptor, ((Feature) f).descriptor);
+        return (float) MetricsUtils.distL2(descriptor, ((Feature) f).descriptor);
     }
 
     public String toString() {
@@ -135,7 +135,7 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
         while (st.hasMoreTokens()) descVals.add(Float.parseFloat(st.nextToken()));
 
         // set descriptor:
-        descriptor = new float[descVals.size()];
+        descriptor = new double[descVals.size()];
         for (int i = 0; i < descriptor.length; i++) {
             descriptor[i] = descVals.get(i);
         }
@@ -180,7 +180,7 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
      */
     public void setByteArrayRepresentation(byte[] in) {
         byte[] tmp = new byte[4];
-        descriptor = new float[in.length / 4 - 4];
+        descriptor = new double[in.length / 4 - 4];
         location = new float[2];
 
         System.arraycopy(in, 0, tmp, 0, 4);
@@ -201,7 +201,7 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
     @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         byte[] tmp = new byte[4];
-        descriptor = new float[length / 4 - 4];
+        descriptor = new double[length / 4 - 4];
         location = new float[2];
 
         System.arraycopy(in, offset, tmp, 0, 4);
