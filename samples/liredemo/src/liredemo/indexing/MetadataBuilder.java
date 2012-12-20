@@ -70,7 +70,8 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
         addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
-//        addBuilder(new SiftDocumentBuilder());
+        addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+        addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
         addBuilder(new SurfDocumentBuilder());
     }
 

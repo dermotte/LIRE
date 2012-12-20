@@ -262,6 +262,15 @@ public class ImageSearcherFactory {
         return new GenericFastImageSearcher(maximumHits, JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
     }
 
+    /**
+     * Creates a new ImageSearcher instance based on the class {@link net.semanticmetadata.lire.imageanalysis.OpponentHistogram}
+     * @param maximumHits
+     * @return a new searcher instance
+     * @see net.semanticmetadata.lire.imageanalysis.OpponentHistogram
+     */
+    public static ImageSearcher createOpponentHistogramSearcher(int maximumHits) {
+        return new GenericFastImageSearcher(maximumHits, OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
+    }
 
     /**
      * Checks if the weight is in [0,1]

@@ -871,7 +871,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Type of IndexSearcher:");
 
-        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW"}));
+        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram"}));
         selectboxDocumentBuilder.setToolTipText(bundle.getString("options.tooltip.documentbuilderselection")); // NOI18N
         selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -899,7 +899,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel14.setText("Re-ranking feature:");
 
-        selectboxRerankFeature.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram"}));
+        selectboxRerankFeature.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "Joint Histogram", "Opponent Histogram"}));
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
@@ -1752,8 +1752,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
             filter = new RerankFilter(Tamura.class, DocumentBuilder.FIELD_NAME_TAMURA);
         } else if (selectboxRerankFeature.getSelectedIndex() == 9) { // Gabor
             filter = new RerankFilter(Gabor.class, DocumentBuilder.FIELD_NAME_GABOR);
-        } else if (selectboxRerankFeature.getSelectedIndex() >= 10) {  // JpegCoeffs
+        } else if (selectboxRerankFeature.getSelectedIndex() == 10) { // JPEG Coeffs
             filter = new RerankFilter(JpegCoefficientHistogram.class, DocumentBuilder.FIELD_NAME_JPEGCOEFFS);
+        } else if (selectboxRerankFeature.getSelectedIndex() == 11) { // Joint Histogram
+            filter = new RerankFilter(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
+        } else if (selectboxRerankFeature.getSelectedIndex() >= 12) {  // OpponentHistogram
+            filter = new RerankFilter(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
         }
         tableModel.setHits(filter.filter(tableModel.hits, tableModel.hits.doc(0)), null);
     }//GEN-LAST:event_rerankFeatureActionPerformed
@@ -1812,8 +1816,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
             filter = new LsaFilter(Tamura.class, DocumentBuilder.FIELD_NAME_TAMURA);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 9) { // Gabor
             filter = new LsaFilter(Gabor.class, DocumentBuilder.FIELD_NAME_GABOR);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 10) {  // JpegCoeffs
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 10) { // JPEG Coeffs
             filter = new LsaFilter(JpegCoefficientHistogram.class, DocumentBuilder.FIELD_NAME_JPEGCOEFFS);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 12) { // Joint Histogram
+            filter = new LsaFilter(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 13) {  // OpponentHistogram
+            filter = new LsaFilter(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
         }
 
         tableModel.setHits(filter.filter(tableModel.hits, tableModel.hits.doc(0)), null);
@@ -1943,8 +1951,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
             searcher = ImageSearcherFactory.createGaborImageSearcher(numResults);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 10) {
             searcher = ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(numResults);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() > 10) {
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 11) {
             searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 12) {
+            searcher = ImageSearcherFactory.createJointHistogramImageSearcher(numResults);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() > 12) {
+            searcher = ImageSearcherFactory.createOpponentHistogramSearcher(numResults);
         }
         return searcher;
     }
