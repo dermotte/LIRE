@@ -32,10 +32,7 @@ package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.*;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.FCTH;
-import net.semanticmetadata.lire.imageanalysis.JCD;
-import net.semanticmetadata.lire.imageanalysis.OpponentHistogram;
+import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
@@ -86,7 +83,7 @@ public class TestWang extends TestCase {
         }
         // Setting up DocumentBuilder:
         builder = new ChainedDocumentBuilder();
-        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
@@ -97,11 +94,18 @@ public class TestWang extends TestCase {
 //        builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-        builder.addBuilder(new GenericFastDocumentBuilder(OpponentHistogram.class, "opHist"));
+//        builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+//        builder.addBuilder(new GenericFastDocumentBuilder(JointOpponentHistogram.class, "opHist"));
+        builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
 //        builder.addBuilder(new SurfDocumentBuilder());
 //        builder.addBuilder(new MSERDocumentBuilder());
 //        builder.addBuilder(new SiftDocumentBuilder());
+    }
+
+    public void testIndexAndMap() throws IOException {
+        testIndexWang();
+        testMAP();
     }
 
     public void testIndexWang() throws IOException {
@@ -173,6 +177,7 @@ public class TestWang extends TestCase {
     }
 
     public void testMAP() throws IOException {
+        System.out.println("name\tmap\tp@10\terror rate");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L1;
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - L1");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L2;
@@ -189,7 +194,9 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
-        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, "opHist"), "Opponent Histogram - JSD");
+//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram - JSD");
+        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
+//        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1000), "JCD");
 //        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1000), "FCTH");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
@@ -213,7 +220,6 @@ public class TestWang extends TestCase {
             pr10cat[i] = 0d;
             pr10cnt[i] = 0d;
         }
-        System.out.println("name\tmap\tp@10\terror rate");
         for (int i = 0; i < sampleQueries.length; i++) {
             int id = sampleQueries[i];
             String file = testExtensive + "/" + id + ".jpg";
