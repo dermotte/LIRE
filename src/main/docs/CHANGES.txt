@@ -5,6 +5,7 @@ CHANGES for LIRE
 ==========
   - Added OpponentHistogram to ImageSearcherFactory and DocumentBuilderFactory.
   - Updated LireDemo to include Joint Histogram and Opponent Histogram.
+  - Added JointOpponentHistogram, fooled around with fuzzy opponent histogram ... didn't work out well.
 
 2012-12-12
 ==========
