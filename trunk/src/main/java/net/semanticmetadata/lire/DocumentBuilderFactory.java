@@ -246,6 +246,16 @@ public class DocumentBuilderFactory {
         return new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
     }
 
+    /**
+     * Returns a new DocumentBuilder instance for the {@link net.semanticmetadata.lire.imageanalysis.OpponentHistogram} feature
+     *
+     * @return a new instance of the respective Builder
+     * @see net.semanticmetadata.lire.imageanalysis.OpponentHistogram
+     */
+    public static DocumentBuilder getOpponentHistogramDocumentBuilder() {
+        return new GenericDocumentBuilder(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
+    }
+
 
     /**
      * Creates and returns a DocumentBuilder, which contains all available features. For

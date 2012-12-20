@@ -102,7 +102,7 @@ public class TestParallelIndexer extends TestCase {
         int maxDocs = reader.maxDoc();
         Document d;
         for (int i = 0; i < maxDocs; i++) {
-            if (!reader.isDeleted(0)) {
+/*            if (!reader.isDeleted(0)) {
                 d = reader.document(i);
                 Document writeDoc = new Document();
                 writeDoc.add(d.getFieldable(DocumentBuilder.FIELD_NAME_CEDD));
@@ -110,13 +110,13 @@ public class TestParallelIndexer extends TestCase {
                 writeDoc.add(d.getFieldable("tags"));
                 writeDoc.add(d.getFieldable(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS));
                 writer.addDocument(writeDoc);
-            }
+            }*/
         }
         writer.close();
     }
 
     public void testSearchTime() throws IOException {
-        ImageSearcher ceddImageSearcher = new VisualWordsImageSearcher(100, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
+        ImageSearcher ceddImageSearcher = new VisualWordsImageSearcher(100, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
 //        ImageSearcher ceddImageSearcher = ImageSearcherFactory.createCEDDImageSearcher(100);
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
 //        IndexReader reader = IndexReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath + "-reduced"))));
