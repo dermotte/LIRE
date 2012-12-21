@@ -49,7 +49,7 @@
     <property name="config" value="src/main/config"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9.3_beta"/>
+    <property name="versionstring" value="0.9.3"/>
     <!-- path to test files -->
     <property name="test" value="test"/>
     <!-- path to documentation like README or CHANGES -->
