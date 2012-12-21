@@ -132,10 +132,10 @@ public class FileUtils {
             // hits.score(i)
             // hits.doc(i).get("descriptorImageIdentifier")
             BufferedImage tmp = ImageIO.read(new FileInputStream(hits.doc(i).get("descriptorImageIdentifier")));
-            if (tmp.getHeight() > 200) {
+//            if (tmp.getHeight() > 200) {
                 double factor = 200d / ((double) tmp.getHeight());
                 tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);
-            }
+//            }
             width += tmp.getWidth() + 5;
             results.add(tmp);
         }

@@ -3,7 +3,7 @@ CHANGES for LIRE
 
 2012-12-20
 ==========
-  - Release
+  - Release 0.9.3
 
 2012-12-20
 ==========
