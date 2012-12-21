@@ -43,7 +43,6 @@ public class FuzzyOpponentHistogram extends Histogram implements LireFeature {
     private int[] tmpIntensity = new int[1];
 
 
-    @Override
     public void extract(BufferedImage bimg) {
         // extract:
         double[][] histogram = new double[64][9];
