@@ -49,10 +49,12 @@ public class GeneralTest extends TestCase {
             DocumentBuilderFactory.getColorLayoutBuilder(),
             DocumentBuilderFactory.getEdgeHistogramBuilder(),
             DocumentBuilderFactory.getGaborDocumentBuilder(),
-            DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder(),
+            DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder(), // 7
             DocumentBuilderFactory.getScalableColorBuilder(),
             DocumentBuilderFactory.getColorHistogramDocumentBuilder(),
-            DocumentBuilderFactory.getTamuraDocumentBuilder(),
+            DocumentBuilderFactory.getTamuraDocumentBuilder(),              // 10
+            DocumentBuilderFactory.getOpponentHistogramDocumentBuilder(),   // 11
+            DocumentBuilderFactory.getJointHistogramDocumentBuilder()       // 12
     };
 
     private ImageSearcher[] searchers = new ImageSearcher[]{
@@ -67,6 +69,8 @@ public class GeneralTest extends TestCase {
             ImageSearcherFactory.createScalableColorImageSearcher(10),
             ImageSearcherFactory.createColorHistogramImageSearcher(10),
             ImageSearcherFactory.createTamuraImageSearcher(10),
+            ImageSearcherFactory.createOpponentHistogramSearcher(10),
+            ImageSearcherFactory.createJointHistogramImageSearcher(10),
     };
 
     public void testExtractionAndMetric() throws IOException, IllegalAccessException, InstantiationException {
@@ -121,7 +125,7 @@ public class GeneralTest extends TestCase {
         ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Java\\Projects\\LireSVN\\testdata\\flickr-10000"), false);
         IndexWriter iw = LuceneUtils.createIndexWriter("index-large", true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         // select one feature for the large index:
-        int featureIndex = 0;
+        int featureIndex = 11;
         int count = 0;
         long ms = System.currentTimeMillis();
         DocumentBuilder builder = new ChainedDocumentBuilder();
@@ -168,12 +172,13 @@ public class GeneralTest extends TestCase {
     }
 
     public void testSearchIndexLarge() throws IOException {
-        for (int i = 0; i < 1; i++) {
+
+        for (int i = 0; i < 10; i++) {
             int queryDocID = (int) (Math.random() * 10000);
-            queryDocID = 0;
+            queryDocID = 877 * (i+1);
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("index-large")));
             // select one feature for the large index:
-            int featureIndex = 0;
+            int featureIndex = 11;
             int count = 0;
             long ms = System.currentTimeMillis();
             ImageSearchHits hits = searchers[featureIndex].search(reader.document(queryDocID), reader);
