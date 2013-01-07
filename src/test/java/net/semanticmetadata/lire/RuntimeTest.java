@@ -94,7 +94,7 @@ public class RuntimeTest extends TestCase {
     }
 
     public void testCreateCEDDIndex() throws IOException {
-        ArrayList<String> images = FileUtils.getAllImages(new File("c:/temp/flickrphotos"), true);
+        ArrayList<String> images = FileUtils.getAllImages(new File("E:/temp/flickrphotos/flickrphotos"), true);
 
         ChainedDocumentBuilder builder = new ChainedDocumentBuilder();
         builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
@@ -109,7 +109,7 @@ public class RuntimeTest extends TestCase {
                 System.err.print("\n ;-( ");//e.printStackTrace();
             }
             count++;
-            if (count % 100 == 0) System.out.print((100 * count) / images.size() + "% ");
+            if (count % 1000 == 0) System.out.println((100 * count) / images.size() + "% ");
         }
         System.out.println("Time taken: " + ((System.currentTimeMillis() - ms) / testFiles.length) + " ms");
         iw.commit();
@@ -127,7 +127,7 @@ public class RuntimeTest extends TestCase {
 
         // This is the old and slow one.
 //        ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(30);
-        FileInputStream imageStream = new FileInputStream("wang-1000/0.jpg");
+        FileInputStream imageStream = new FileInputStream("testdata/wang-1000/0.jpg");
         BufferedImage bimg = ImageIO.read(imageStream);
         ImageSearchHits hits = null;
         long time = System.currentTimeMillis();

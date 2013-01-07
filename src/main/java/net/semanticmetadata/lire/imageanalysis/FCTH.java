@@ -382,10 +382,10 @@ public class FCTH implements LireFeature {
             Temp2 += histogram[i];
         }
 
-        if (Temp1 == 0 || Temp2 == 0) Result = 100;
         if (Temp1 == 0 && Temp2 == 0) Result = 0;
+        if (Temp1 == 0 || Temp2 == 0) Result = 100;
 
-        if (Temp1 > 0 && Temp2 > 0) {
+//        if (Temp1 > 0 && Temp2 > 0) {
             for (int i = 0; i < ch.histogram.length; i++) {
                 TempCount1 += (ch.histogram[i] / Temp1) * (histogram[i] / Temp2);
                 TempCount2 += (histogram[i] / Temp2) * (histogram[i] / Temp2);
@@ -395,7 +395,7 @@ public class FCTH implements LireFeature {
 
             Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
                     - TempCount1))); //Tanimoto
-        }
+//        }
         return (float) Result;
 
     }
