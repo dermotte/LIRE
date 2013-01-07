@@ -320,10 +320,10 @@ public class CEDD implements LireFeature {
             Temp2 += data[i];
         }
 
-        if (Temp1 == 0 || Temp2 == 0) return 100f;
         if (Temp1 == 0 && Temp2 == 0) return 0f;
+        if (Temp1 == 0 || Temp2 == 0) return 100f;
 
-        if (Temp1 > 0 && Temp2 > 0) {
+//        if (Temp1 > 0 && Temp2 > 0) {
             for (int i = 0; i < tmpFeature.data.length; i++) {
                 iTmp1 = tmpFeature.data[i] / Temp1;
                 iTmp2 = data[i] / Temp2;
@@ -335,7 +335,7 @@ public class CEDD implements LireFeature {
 
             Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
                     - TempCount1))); //Tanimoto
-        }
+//        }
         return (float) Result;
 
     }
