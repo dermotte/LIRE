@@ -3,6 +3,10 @@ CHANGES for LIRE
 
 2013-01-07
 ==========
+  - Added a verbose exception to LocalFeatureHistogramBuilder.
+
+2013-01-07
+==========
   - Fixed a non-critical bug in CEDD.java & FCTH.java
   - 10% speed up in search with CEDD
 

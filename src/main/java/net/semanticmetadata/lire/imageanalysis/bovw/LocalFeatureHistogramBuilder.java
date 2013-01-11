@@ -77,7 +77,7 @@ public abstract class LocalFeatureHistogramBuilder {
     }
 
     /**
-     * Creates a new instance of the SiftFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
+     * Creates a new instance of the LocalFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
      * indicates how many documents of the index are used to build the vocabulary (clusters).
      *
      * @param reader               the reader used to open the Lucene index,
@@ -88,6 +88,16 @@ public abstract class LocalFeatureHistogramBuilder {
         this.numDocsForVocabulary = numDocsForVocabulary;
     }
 
+    /**
+     * Creates a new instance of the LocalFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
+     * indicates how many documents of the index are used to build the vocabulary (clusters). The numClusters gives
+     * the number of clusters k-means should find. Note that this number should be lower than the number of features,
+     * otherwise an exception will be thrown while indexing.
+     *
+     * @param reader the index reader
+     * @param numDocsForVocabulary the number of documents that should be sampled for building the visual vocabulary
+     * @param numClusters the size of the visual vocabulary
+     */
     public LocalFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
         this.numDocsForVocabulary = numDocsForVocabulary;
         this.numClusters = numClusters;
@@ -95,7 +105,7 @@ public abstract class LocalFeatureHistogramBuilder {
     }
 
     /**
-     * Uses an existing index, where each and every document should have a set of SURF features. A number of
+     * Uses an existing index, where each and every document should have a set of local features. A number of
      * random images (numDocsForVocabulary) is selected and clustered to get a vocabulary of visual words
      * (the cluster means). For all images a histogram on the visual words is created and added to the documents.
      * Pre-existing histograms are deleted, so this method can be used for re-indexing.
@@ -128,6 +138,10 @@ public abstract class LocalFeatureHistogramBuilder {
         if (pm != null) { // set to 5 of 100 before clustering starts.
             pm.setProgress(5);
             pm.setNote("Starting clustering");
+        }
+        if (features.size()<numClusters) {
+            // this cannot work. You need more data points than clusters.
+            throw new UnsupportedOperationException("Only " + features.size() + " features found to cluster in " + numClusters + ". Try to use less clusters or more images.");
         }
         // do the clustering:
         System.out.println("k.getFeatureCount() = " + k.getFeatureCount());
