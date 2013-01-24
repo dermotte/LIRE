@@ -170,7 +170,7 @@ public class ParallelImageSearcher extends AbstractImageSearcher {
                 }
                 // if the array is not full yet:
                 if (this.parDocs[j].size() < maxHits) {
-                    this.parDocs[j].add(new SimpleResult(f, d));
+                    this.parDocs[j].add(new SimpleResult(f, d, i));
                     if (f > maxDistance[j]) {
                         maxDistance[j] = f;
                     }
@@ -179,7 +179,7 @@ public class ParallelImageSearcher extends AbstractImageSearcher {
                     // remove the last one ...
                     this.parDocs[j].remove(this.parDocs[j].last());
                     // add the new one ...
-                    this.parDocs[j].add(new SimpleResult(f, d));
+                    this.parDocs[j].add(new SimpleResult(f, d, i));
                     // and set our new distance border ...
                     maxDistance[j] = this.parDocs[j].last().getDistance();
                 }
