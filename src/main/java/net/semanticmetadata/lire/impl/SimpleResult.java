@@ -42,10 +42,29 @@ import org.apache.lucene.document.Document;
 public class SimpleResult implements Comparable<SimpleResult> {
     private float distance;
     private Document document;
+    private int indexNumber = 0;
 
-    public SimpleResult(float distance, Document document) {
+//    public SimpleResult(float distance, Document document) {
+//        this.distance = distance;
+//        this.document = document;
+//    }
+
+    /**
+     * Constructor for a result. The indexNumer is needed for sorting issues. Problem is that the TreeMap used for
+     * collecting the results considers equality of objects based on the compareTo function. So if an image is in
+     * the index twice, it's only found one time, the second instance -- with the same distance, but a
+     * different Lucene document -- is not added to the TreeMap at runtime as their distance between each other
+     * would be 0. This is tweaked with the running number of the document from the index, so duplicate documents that
+     * are in the index twice, appear in the result list in the order they are found in the index. See also compareTo(...)
+     * method.
+     * @param distance the actual distance to the query
+     * @param document the document instance form the Lucene index
+     * @param indexNumber the running number from the IndexReader. Needed for sorting issues in the result TreeMap.
+     */
+    public SimpleResult(float distance, Document document, int indexNumber) {
         this.distance = distance;
         this.document = document;
+        this.indexNumber = indexNumber;
     }
 
     public float getDistance() {
@@ -65,11 +84,26 @@ public class SimpleResult implements Comparable<SimpleResult> {
         this.document = document;
     }
 
+    /**
+     * Compare the distance values to allow sorting in a tree map. If the distance value is the same, but the document
+     * is different, the index number within the index is used to distinguishing the results. Otherwise the TreeMap
+     * implementation wouldn't add the result.
+     * @param o the SimpleResult to compare the current one to.
+     * @return -1, 0, or 1
+     */
     public int compareTo(SimpleResult o) {
         int compareValue = (int) Math.signum(distance - ((SimpleResult) o).distance);
-        // Bugfix after hint from Kai Jauslin
-//        if (compareValue == 0 && !(document.equals(((SimpleResult) o).document)))
-//            compareValue = document.hashCode() - ((SimpleResult) o).document.hashCode();
+        if (compareValue==0 && !document.equals(o.document)) {
+            return (int) Math.signum(indexNumber-o.indexNumber);
+        }
         return compareValue;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        // it's not the same if it's not the same class.
+        if (! (obj instanceof SimpleResult)) return false;
+        // it's the same if the document is the same, regardless of the distance.
+        else return (document.equals(((SimpleResult)obj).document) && indexNumber == ((SimpleResult)obj).indexNumber);
     }
 }

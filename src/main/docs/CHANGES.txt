@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-01-24
+==========
+  - Bug fix in handling the result list based on the comment from Nikolay Neshov.
+
 2013-01-07
 ==========
   - Added a verbose exception to LocalFeatureHistogramBuilder.

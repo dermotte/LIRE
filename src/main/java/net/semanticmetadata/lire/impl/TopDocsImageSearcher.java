@@ -123,14 +123,14 @@ public class TopDocsImageSearcher {
             }
             // if the array is not full yet:
             if (this.docs.size() < maxHits) {
-                this.docs.add(new SimpleResult(distance, d));
+                this.docs.add(new SimpleResult(distance, d, i));
                 if (distance > maxDistance) maxDistance = distance;
             } else if (distance < maxDistance) {
                 // if it is nearer to the sample than at least on of the current set:
                 // remove the last one ...
                 this.docs.remove(this.docs.last());
                 // add the new one ...
-                this.docs.add(new SimpleResult(distance, d));
+                this.docs.add(new SimpleResult(distance, d, i));
                 // and set our new distance border ...
                 maxDistance = this.docs.last().getDistance();
             }

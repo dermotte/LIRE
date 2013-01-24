@@ -144,12 +144,28 @@ public class GeneralTest extends TestCase {
 
     public void testPerformance() throws IOException {
         System.out.println(" ****************** CEDD OLD ****************** ");
-        indexFiles("C:\\Temp\\images1", "index-large-new", 0);
+        indexFiles("C:\\Temp\\images1", "index-large-new", 0, true);
     }
 
-    private void indexFiles(String dir, String index, int featureIndex) throws IOException {
+    /**
+     * There was an error that images with the same score but different documents in the index
+     * were not included in the result list. Here's the test for that.
+     */
+    public void testDuplicatesInIndex() throws IOException {
+        indexFiles("src\\test\\resources\\images", "index-large-new", 0, true);
+        indexFiles("src\\test\\resources\\images", "index-large-new", 0, false);
+        indexFiles("src\\test\\resources\\images", "index-large-new", 0, false);
+
+        ImageSearcher s = searchers[0];
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("index-large-new")));
+        Document query = reader.document(0);
+        ImageSearchHits hits = s.search(query, reader);
+        FileUtils.saveImageResultsToPng("duplicate_", hits, query.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+    }
+
+    private void indexFiles(String dir, String index, int featureIndex, boolean createNewIndex) throws IOException {
         ArrayList<String> images = FileUtils.getAllImages(new File(dir), true);
-        IndexWriter iw = LuceneUtils.createIndexWriter(index, true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+        IndexWriter iw = LuceneUtils.createIndexWriter(index, createNewIndex, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         // select one feature for the large index:
         int count = 0;
         long ms = System.currentTimeMillis();
@@ -175,7 +191,7 @@ public class GeneralTest extends TestCase {
 
         for (int i = 0; i < 10; i++) {
             int queryDocID = (int) (Math.random() * 10000);
-            queryDocID = 877 * (i+1);
+            queryDocID = 877 * (i + 1);
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("index-large")));
             // select one feature for the large index:
             int featureIndex = 11;
@@ -204,8 +220,8 @@ public class GeneralTest extends TestCase {
             // select one feature for the large index:
             hits = searchers[featureIndex].search(reader.document(queryDocID), reader);
         }
-        ms = System.currentTimeMillis()-ms;
-        System.out.println("ms = " + ms/100);
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("ms = " + ms / 100);
     }
 
     public void testRerankFilters() throws IOException {

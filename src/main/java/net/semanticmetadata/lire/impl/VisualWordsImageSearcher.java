@@ -100,7 +100,7 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
             for (int i = 0; i < docs.scoreDocs.length; i++) {
                 float d = 1f / docs.scoreDocs[i].score;
                 maxDistance = Math.max(d, maxDistance);
-                SimpleResult sr = new SimpleResult(d, reader.document(docs.scoreDocs[i].doc));
+                SimpleResult sr = new SimpleResult(d, reader.document(docs.scoreDocs[i].doc), i);
                 res.add(sr);
             }
             sh = new SimpleImageSearchHits(res, maxDistance);

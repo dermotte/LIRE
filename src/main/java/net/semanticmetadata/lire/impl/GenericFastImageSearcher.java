@@ -139,14 +139,14 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
             }
             // if the array is not full yet:
             if (this.docs.size() < maxHits) {
-                this.docs.add(new SimpleResult(tmpDistance, d));
+                this.docs.add(new SimpleResult(tmpDistance, d, i));
                 if (tmpDistance > maxDistance) maxDistance = tmpDistance;
             } else if (tmpDistance < maxDistance) {
                 // if it is nearer to the sample than at least on of the current set:
                 // remove the last one ...
                 this.docs.remove(this.docs.last());
                 // add the new one ...
-                this.docs.add(new SimpleResult(tmpDistance, d));
+                this.docs.add(new SimpleResult(tmpDistance, d, i));
                 // and set our new distance border ...
                 maxDistance = this.docs.last().getDistance();
             }

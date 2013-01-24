@@ -233,7 +233,7 @@ public class TestGeneral extends TestCase {
         for (int i = 0; i < hits.length(); i++) {
             LireFeature lf = getFeature(descriptorClass, hits.doc(i).getValues(fieldName)[0]);
             float distance = lf.getDistance(qf);
-            SimpleResult sr = new SimpleResult(distance, hits.doc(i));
+            SimpleResult sr = new SimpleResult(distance, hits.doc(i), i);
             results.add(sr);
             maxDistance = Math.max(maxDistance, distance);
         }
