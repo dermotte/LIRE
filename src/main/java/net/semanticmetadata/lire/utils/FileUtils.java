@@ -64,7 +64,7 @@ public class FileUtils {
         ArrayList<String> resultList = new ArrayList<String>(256);
         File[] f = directory.listFiles();
         for (File file : f) {
-            if (file != null && (file.getName().toLowerCase().endsWith(".jpg") || file.getName().toLowerCase().endsWith(".png")) && !file.getName().startsWith("tn_")) {
+            if (file != null && (file.getName().toLowerCase().endsWith(".jpg") || file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".gif")) && !file.getName().startsWith("tn_")) {
                 resultList.add(file.getCanonicalPath());
             }
             if (descendIntoSubDirectories && file.isDirectory()) {
