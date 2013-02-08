@@ -8,6 +8,7 @@ import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.utils.FileUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -16,6 +17,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,7 +49,7 @@ public class GeneralTest extends TestCase {
             DocumentBuilderFactory.getJCDDocumentBuilder(),
             DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder(),
             DocumentBuilderFactory.getColorLayoutBuilder(),
-            DocumentBuilderFactory.getEdgeHistogramBuilder(),
+            DocumentBuilderFactory.getEdgeHistogramBuilder(),  // 5
             DocumentBuilderFactory.getGaborDocumentBuilder(),
             DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder(), // 7
             DocumentBuilderFactory.getScalableColorBuilder(),
@@ -122,10 +124,11 @@ public class GeneralTest extends TestCase {
     }
 
     public void testIndexLarge() throws IOException {
-        ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Java\\Projects\\LireSVN\\testdata\\flickr-10000"), false);
+        ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Temp\\testImagelogos"), true);
+//        ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Java\\Projects\\LireSVN\\testdata\\flickr-10000"), false);
         IndexWriter iw = LuceneUtils.createIndexWriter("index-large", true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         // select one feature for the large index:
-        int featureIndex = 11;
+        int featureIndex = 5;
         int count = 0;
         long ms = System.currentTimeMillis();
         DocumentBuilder builder = new ChainedDocumentBuilder();
@@ -137,7 +140,14 @@ public class GeneralTest extends TestCase {
                 System.out.println(count + " files indexed. " + (System.currentTimeMillis() - ms) / (count) + " ms per file");
             }
             String file = iterator.next();
-            iw.addDocument(builder.createDocument(new FileInputStream(file), file));
+            try {
+                // try to trim the image first ....
+//                BufferedImage img = ImageUtils.trimWhiteSpace(ImageIO.read(new FileInputStream(file)));
+//                iw.addDocument(builder.createDocument(img, file));
+                iw.addDocument(builder.createDocument(new FileInputStream(file), file));
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
         }
         iw.close();
     }
@@ -190,11 +200,11 @@ public class GeneralTest extends TestCase {
     public void testSearchIndexLarge() throws IOException {
 
         for (int i = 0; i < 10; i++) {
-            int queryDocID = (int) (Math.random() * 10000);
-            queryDocID = 877 * (i + 1);
+            int queryDocID = (int) (Math.random() * 12000);
+//            queryDocID = 877 * (i + 1);
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("index-large")));
             // select one feature for the large index:
-            int featureIndex = 11;
+            int featureIndex = 5;
             int count = 0;
             long ms = System.currentTimeMillis();
             ImageSearchHits hits = searchers[featureIndex].search(reader.document(queryDocID), reader);

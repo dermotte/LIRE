@@ -1,6 +1,15 @@
 CHANGES for LIRE
 ================
 
+2013-02-07
+==========
+  - Additional experiments.
+
+2013-02-07
+==========
+  - Added MSERTest
+  - Added trim function in ImageUtils
+
 2013-01-24
 ==========
   - Bug fix in handling the result list based on the comment from Nikolay Neshov.

@@ -39,7 +39,9 @@ import com.drew.metadata.iptc.IptcReader;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.ColorLayoutDocumentBuilder;
+import net.semanticmetadata.lire.impl.MSERDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
@@ -77,7 +79,7 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
 
     @Override
     public Document createDocument(BufferedImage bufferedImage, String s) throws FileNotFoundException {
-        Document d = super.createDocument(bufferedImage, s);
+        Document d = super.createDocument(ImageUtils.createWorkingCopy(bufferedImage), s);
         // extract available metadata:
         Metadata metadata = new Metadata();
         try {

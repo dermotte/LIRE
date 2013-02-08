@@ -60,11 +60,12 @@ public class ImageUtils {
         } else {
             scaleFactor = ((double) maxSideLength / originalHeight);
         }
-        // create smaller image
+        // create new image
         BufferedImage img = new BufferedImage((int) (originalWidth * scaleFactor), (int) (originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
         // fast scale (Java 1.4 & 1.5)
         Graphics g = img.getGraphics();
-        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+//        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g.drawImage(image, 0, 0, img.getWidth(), img.getHeight(), null);
         return img;
     }
@@ -145,6 +146,60 @@ public class ImageUtils {
         }
         return image;
     }
+
+    /**
+     * Trims the white (and respective the black) border around an image.
+     *
+     * @param img
+     * @return a new image, hopefully trimmed.
+     */
+    public static BufferedImage trimWhiteSpace(BufferedImage img) {
+        // idea is to scan lines of an image starting from each side.
+        // As soon as a scan line encounters non-white (or non-black) pixels we know there is actual image content.
+        WritableRaster raster = img.getRaster();
+        boolean hasWhite = true;
+        int ymin = 0, ymax = raster.getHeight() - 1, xmin = 0, xmax = raster.getWidth() - 1;
+        int[] pixels = new int[3 * raster.getWidth()];
+        int thresholdWhite = 250;
+        int thresholdBlack = 5;
+        while (hasWhite) {
+            raster.getPixels(0, ymin, raster.getWidth(), 1, pixels);
+            for (int i = 0; i < pixels.length; i++) {
+                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+            }
+            if (hasWhite) ymin++;
+        }
+        hasWhite = true;
+        while (hasWhite && ymax > ymin) {
+            raster.getPixels(0, ymax, raster.getWidth(), 1, pixels);
+            for (int i = 0; i < pixels.length; i++) {
+                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+            }
+            if (hasWhite) ymax--;
+        }
+        pixels = new int[3 * raster.getHeight()];
+        hasWhite = true;
+        while (hasWhite) {
+            raster.getPixels(xmin, 0, 1, raster.getHeight(), pixels);
+            for (int i = 0; i < pixels.length; i++) {
+                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+            }
+            if (hasWhite) xmin++;
+        }
+        hasWhite = true;
+        while (hasWhite && xmax > xmin) {
+            raster.getPixels(xmax, 0, 1, raster.getHeight(), pixels);
+            for (int i = 0; i < pixels.length; i++) {
+                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+            }
+            if (hasWhite) xmax--;
+        }
+        BufferedImage result = new BufferedImage(xmax - xmin, ymax - ymin, BufferedImage.TYPE_INT_RGB);
+        result.getGraphics().drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
+                xmin, ymin, xmax, ymax, null);
+        return result;
+    }
+
 
 
 }
