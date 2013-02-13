@@ -94,9 +94,9 @@ public abstract class LocalFeatureHistogramBuilder {
      * the number of clusters k-means should find. Note that this number should be lower than the number of features,
      * otherwise an exception will be thrown while indexing.
      *
-     * @param reader the index reader
+     * @param reader               the index reader
      * @param numDocsForVocabulary the number of documents that should be sampled for building the visual vocabulary
-     * @param numClusters the size of the visual vocabulary
+     * @param numClusters          the size of the visual vocabulary
      */
     public LocalFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
         this.numDocsForVocabulary = numDocsForVocabulary;
@@ -139,7 +139,7 @@ public abstract class LocalFeatureHistogramBuilder {
             pm.setProgress(5);
             pm.setNote("Starting clustering");
         }
-        if (features.size()<numClusters) {
+        if (features.size() < numClusters) {
             // this cannot work. You need more data points than clusters.
             throw new UnsupportedOperationException("Only " + features.size() + " features found to cluster in " + numClusters + ". Try to use less clusters or more images.");
         }
@@ -331,18 +331,25 @@ public abstract class LocalFeatureHistogramBuilder {
         int loopCount = 0;
         float maxDocs = reader.maxDoc();
         int capacity = (int) Math.min(numDocsForVocabulary, maxDocs - 5);
+        if (capacity < 0) capacity = (int) (maxDocs / 2);
         HashSet<Integer> result = new HashSet<Integer>(capacity);
-        int tmpDocNumber;
+        int tmpDocNumber, tmpIndex;
+        LinkedList<Integer> docCandidates = new LinkedList<Integer>();
+        for (int i = 0; i < maxDocs; i++) {
+            docCandidates.add(i);
+        }
         for (int r = 0; r < capacity; r++) {
             boolean worksFine = false;
             do {
-                tmpDocNumber = (int) (Math.random() * maxDocs);
+                tmpIndex = (int) Math.floor(Math.random() * (double) docCandidates.size());
+                tmpDocNumber = docCandidates.get(tmpIndex);
+                docCandidates.remove(tmpIndex);
                 // check if the selected doc number is valid: not null, not deleted and not already chosen.
                 worksFine = (reader.document(tmpDocNumber) != null) && !result.contains(tmpDocNumber);
             } while (!worksFine);
             result.add(tmpDocNumber);
             // need to make sure that this is not running forever ...
-            if (loopCount++ > numDocsForVocabulary * 100)
+            if (loopCount++ > capacity * 100)
                 throw new UnsupportedOperationException("Could not get the documents, maybe there are not enough documents in the index?");
         }
         return result;

@@ -152,14 +152,14 @@ public class KMeans {
     protected void recomputeMeans() {
         int length = features.get(0).length;
         for (Cluster cluster : clusters) {
-            float[] mean = cluster.mean;
+            double[] mean = cluster.mean;
             for (int j = 0; j < length; j++) {
                 mean[j] = 0;
                 for (Integer member : cluster.members) {
                     mean[j] += features.get(member)[j];
                 }
                 if (cluster.members.size() > 1)
-                    mean[j] = mean[j] / (float) cluster.members.size();
+                    mean[j] = mean[j] / (double) cluster.members.size();
             }
         }
     }
