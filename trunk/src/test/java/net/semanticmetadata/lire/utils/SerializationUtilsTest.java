@@ -92,9 +92,9 @@ public class SerializationUtilsTest extends TestCase {
     public void testClusterSerialization() throws IOException {
         Cluster[] tc = new Cluster[12];
         for (int i = 0; i < tc.length; i++) {
-            float[] test = new float[128];
+            double[] test = new double[128];
             for (int j = 0; j < test.length; j++) {
-                test[j] = (float) (Math.random() * 1000);
+                test[j] = (Math.random() * 1000);
             }
             tc[i] = new Cluster(test);
         }

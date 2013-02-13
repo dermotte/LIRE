@@ -65,17 +65,17 @@ import java.util.HashSet;
  * Time: 12:10:19
  */
 public class Cluster implements Comparable<Object> {
-    float[] mean;
+    double[] mean;
     HashSet<Integer> members = new HashSet<Integer>();
 
     private double stress = 0;
 
     public Cluster() {
-        this.mean = new float[4 * 4 * 8];
+        this.mean = new double[4 * 4 * 8];
         Arrays.fill(mean, 0f);
     }
 
-    public Cluster(float[] mean) {
+    public Cluster(double[] mean) {
         this.mean = mean;
     }
 
@@ -119,7 +119,7 @@ public class Cluster implements Comparable<Object> {
     }
 
     public void setByteRepresentation(byte[] data) {
-        mean = SerializationUtils.toFloatArray(data);
+        mean = SerializationUtils.toDoubleArray(data);
     }
 
     public static void writeClusters(Cluster[] clusters, String file) throws IOException {

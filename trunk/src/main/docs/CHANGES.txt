@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-02-13
+==========
+  - Changed cluster medians in k-means to double.
+
 2013-02-07
 ==========
   - Additional experiments.

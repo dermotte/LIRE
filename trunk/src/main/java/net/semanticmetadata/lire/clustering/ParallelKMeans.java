@@ -76,7 +76,7 @@ public class ParallelKMeans extends KMeans {
     private void recomputeMeanOfCluster(int clusterIndex) {
         int length = features.get(0).length;
         Cluster cluster = getCluster(clusterIndex);
-        float[] mean = cluster.mean;
+        double[] mean = cluster.mean;
         for (int j = 0; j < length; j++) {
             mean[j] = 0;
             for (Iterator<Integer> iterator = cluster.members.iterator(); iterator.hasNext(); ) {
@@ -90,7 +90,7 @@ public class ParallelKMeans extends KMeans {
         double v = 0;
         // add up to stress ...
         for (Integer member : cluster.members) {
-            float tmpStress = 0;
+            double tmpStress = 0;
             for (int k = 0; k < length; k++) {
                 double f = Math.abs(mean[k] - features.get(member)[k]);
                 tmpStress += f;

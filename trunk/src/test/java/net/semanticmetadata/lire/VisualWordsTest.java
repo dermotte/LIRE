@@ -3,10 +3,12 @@ package net.semanticmetadata.lire;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import net.semanticmetadata.lire.utils.FileUtils;
+import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -17,7 +19,9 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -126,6 +130,47 @@ public class VisualWordsTest extends TestCase {
         Document doc = sfh.getVisualWords(siftBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
         ImageSearchHits hits = vis.search(doc, ir);
         FileUtils.saveImageResultsToPng("results_bow_sift", hits, queryImage);
+    }
+
+    // from the developer wiki
+    public void testWikiCreateIndex() throws IOException {
+        String indexPath = "./bovw-test";
+
+        // create the initial local features:
+        ChainedDocumentBuilder builder = new ChainedDocumentBuilder();
+        builder.addBuilder(new SurfDocumentBuilder());
+        IndexWriter iw = LuceneUtils.createIndexWriter(indexPath, true);
+        ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Temp\\dataset-sample\\images"), true);
+        System.out.println("Indexing " + images.size() + " images.");
+        int count = 0;
+        for (String identifier : images) {
+            Document doc = builder.createDocument(new FileInputStream(identifier), identifier);
+            iw.addDocument(doc);
+            count++;
+            if (count%100 ==0) System.out.println(count);
+        }
+        iw.close();
+        System.out.println("Creating vocabulary.");
+        // create the visual words.
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+        // create a BoVW indexer, "-1" means that half of the images in the index are
+        // employed for creating the vocabulary. "100" is the number of visual words to be created.
+        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(ir, -1, 100);
+        // progress monitoring is optional and opens a window showing you the progress.
+        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
+        sh.index();
+    }
+
+    public void testWikiSearchIndex() throws IOException {
+        String indexPath = "./bovw-test";
+        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(10,
+                DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+        // let's take the first document for a query:
+        Document query = reader.document(2);
+        ImageSearchHits hits = searcher.search(query, reader);
+        // show or analyze your results ....
+        FileUtils.saveImageResultsToPng("bovw", hits, query.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
     }
 
 
