@@ -131,15 +131,16 @@ public class Cluster implements Comparable<Object> {
         fout.close();
     }
 
+    // TODO: re-visit here to make the length variable (depending on the actual feature size).
     public static Cluster[] readClusters(String file) throws IOException {
         FileInputStream fin = new FileInputStream(file);
         byte[] tmp = new byte[4];
         fin.read(tmp, 0, 4);
         Cluster[] result = new Cluster[SerializationUtils.toInt(tmp)];
-        tmp = new byte[128 * 4];
+        tmp = new byte[128 * 8];
         for (int i = 0; i < result.length; i++) {
-            int bytesRead = fin.read(tmp, 0, 128 * 4);
-            if (bytesRead != 128 * 4) System.err.println("Didn't read enough bytes ...");
+            int bytesRead = fin.read(tmp, 0, 128 * 8);
+            if (bytesRead != 128 * 8) System.err.println("Didn't read enough bytes ...");
             result[i] = new Cluster();
             result[i].setByteRepresentation(tmp);
         }
