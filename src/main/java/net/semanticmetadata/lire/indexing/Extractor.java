@@ -1,6 +1,7 @@
 package net.semanticmetadata.lire.indexing;
 
 import com.sun.org.apache.bcel.internal.generic.IfInstruction;
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.SerializationUtils;
@@ -28,6 +29,8 @@ import java.util.zip.GZIPOutputStream;
  * <p/>
  * The file is sent through an GZIPOutputStream, so it's compressed in addition.
  *
+ * Note that the outfile has to be in a folder parent to all images!
+ *
  * @author Mathias Lux, mathias@juggle.at
  *         Date: 08.03.13
  *         Time: 13:15
@@ -37,7 +40,32 @@ public class Extractor implements Runnable {
             "net.semanticmetadata.lire.imageanalysis.CEDD",                 // 0
             "net.semanticmetadata.lire.imageanalysis.FCTH",                 // 1
             "net.semanticmetadata.lire.imageanalysis.OpponentHistogram",    // 2
-            "net.semanticmetadata.lire.imageanalysis.JointHistogram"        // 3
+            "net.semanticmetadata.lire.imageanalysis.JointHistogram",       // 3
+            "net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram", // 4
+            "net.semanticmetadata.lire.imageanalysis.ColorLayout",          // 5
+            "net.semanticmetadata.lire.imageanalysis.EdgeHistogram",        // 6
+            "net.semanticmetadata.lire.imageanalysis.Gabor",                // 7
+            "net.semanticmetadata.lire.imageanalysis.JCD",                  // 8
+            "net.semanticmetadata.lire.imageanalysis.JpegCoefficientHistogram",
+            "net.semanticmetadata.lire.imageanalysis.ScalableColor",        // 10
+            "net.semanticmetadata.lire.imageanalysis.SimpleColorHistogram", // 11
+            "net.semanticmetadata.lire.imageanalysis.Tamura"                // 12
+    };
+
+    public static final String[] featureFieldNames = new String[]{
+            DocumentBuilder.FIELD_NAME_CEDD,                 // 0
+            DocumentBuilder.FIELD_NAME_FCTH,                 // 1
+            DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM,   // 2
+            DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM,      // 3
+            DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM, // 4
+            DocumentBuilder.FIELD_NAME_COLORLAYOUT,          // 5
+            DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,        // 6
+            DocumentBuilder.FIELD_NAME_GABOR,                // 7
+            DocumentBuilder.FIELD_NAME_JCD,                  // 8
+            DocumentBuilder.FIELD_NAME_JPEGCOEFFS,
+            DocumentBuilder.FIELD_NAME_SCALABLECOLOR,
+            DocumentBuilder.FIELD_NAME_COLORHISTOGRAM,
+            DocumentBuilder.FIELD_NAME_TAMURA
     };
 
     static HashMap<String, Integer> feature2index;
@@ -93,10 +121,14 @@ public class Extractor implements Runnable {
             String arg = args[i];
             if (arg.startsWith("-i")) {
                 // infile ...
-                e.setFileList(new File(args[i + 1]));
+                if ((i+1) < args.length)
+                    e.setFileList(new File(args[i + 1]));
+                else printHelp();
             } else if (arg.startsWith("-o")) {
                 // out file
-                e.setOutFile(new File(args[i + 1]));
+                if ((i+1) < args.length)
+                    e.setOutFile(new File(args[i + 1]));
+                else printHelp();
             } else if (arg.startsWith("-h")) {
                 // help
                 printHelp();
@@ -168,6 +200,8 @@ public class Extractor implements Runnable {
         }
 
         // do it ...
+        byte[] myBuffer = new byte[1024*100];
+        int bufferCount = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileList));
             BufferedOutputStream dos = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outFile)));
@@ -182,20 +216,33 @@ public class Extractor implements Runnable {
                 try {
                     BufferedImage img = ImageIO.read(input);
                     byte[] tmpBytes = relFile.getBytes();
-                    dos.write(SerializationUtils.toBytes(tmpBytes.length));
-                    dos.write(tmpBytes);
+                    // everything is written to a buffer and only if no exception is thrown, the image goes to index.
+                    System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, 0, 4);
+                    bufferCount += 4;
+                    // dos.write(SerializationUtils.toBytes(tmpBytes.length));
+                    System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
+                    bufferCount += tmpBytes.length;
+                    // dos.write(tmpBytes);
                     for (LireFeature feature : listOfFeatures) {
                         feature.extract(img);
-                        dos.write(feature2index.get(feature.getClass().getName()));
+                        myBuffer[bufferCount] = (byte) feature2index.get(feature.getClass().getName()).intValue();
+                        bufferCount++;
+                        // dos.write(feature2index.get(feature.getClass().getName()));
                         tmpBytes = feature.getByteArrayRepresentation();
-                        dos.write(SerializationUtils.toBytes(tmpBytes.length));
-                        dos.write(tmpBytes);
+                        System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, bufferCount, 4);
+                        bufferCount += 4;
+                        // dos.write(SerializationUtils.toBytes(tmpBytes.length));
+                        System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
+                        bufferCount += tmpBytes.length;
+                        // dos.write(tmpBytes);
                     }
+                    // finally write everything to the stream - in case no exception was thrown..
+                    dos.write(myBuffer, 0, bufferCount);
                     dos.write(-1);
+                    bufferCount = 0;
                     count++;
                 } catch (Exception e) {
-                    System.err.println("Error reading image " + relFile);
-                    e.printStackTrace();
+                    System.err.println("Error reading image " + relFile + ": " + e.getMessage());
                 }
                 if (count%100==0)
                     System.out.println(count + " files processed, " + (System.currentTimeMillis()-ms)/count + " ms per file.");

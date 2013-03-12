@@ -11,15 +11,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/commons-math3-3.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/JOpenSurf.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -29,7 +20,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/lucene-core-4.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/commons-math3-3.1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -38,7 +29,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/lucene-analyzers-common-4.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/lucene-analyzers-common-4.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -47,7 +38,16 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/lucene-queryparser-4.0.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/lucene-core-4.2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../lib/lucene-queryparser-4.2.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -33,7 +33,7 @@ package net.semanticmetadata.lire.invertedlist;
 import junit.framework.TestCase;
 import org.apache.lucene.index.AtomicReaderContext;
 import org.apache.lucene.index.FieldInvertState;
-import org.apache.lucene.index.Norm;
+//import org.apache.lucene.index.Norm;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.Similarity;
@@ -328,24 +328,24 @@ public class GeneralInvertedListTest extends TestCase {
     public String toString() { return "scorer(" + weight + ")"; }
 }*/
 
-class PlainSimilarity extends Similarity {
-    @Override
-    public void computeNorm(FieldInvertState fieldInvertState, Norm norm) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public SimWeight computeWeight(float v, CollectionStatistics collectionStatistics, TermStatistics... termStatisticses) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public ExactSimScorer exactSimScorer(SimWeight simWeight, AtomicReaderContext atomicReaderContext) throws IOException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public SloppySimScorer sloppySimScorer(SimWeight simWeight, AtomicReaderContext atomicReaderContext) throws IOException {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-}
+//class PlainSimilarity extends Similarity {
+//    @Override
+//    public void computeNorm(FieldInvertState fieldInvertState, Norm norm) {
+//        //To change body of implemented methods use File | Settings | File Templates.
+//    }
+//
+//    @Override
+//    public SimWeight computeWeight(float v, CollectionStatistics collectionStatistics, TermStatistics... termStatisticses) {
+//        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//    }
+//
+//    @Override
+//    public ExactSimScorer exactSimScorer(SimWeight simWeight, AtomicReaderContext atomicReaderContext) throws IOException {
+//        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//    }
+//
+//    @Override
+//    public SloppySimScorer sloppySimScorer(SimWeight simWeight, AtomicReaderContext atomicReaderContext) throws IOException {
+//        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//    }
+//}
