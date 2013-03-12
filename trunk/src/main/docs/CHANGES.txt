@@ -1,6 +1,14 @@
 CHANGES for LIRE
 ================
 
+2013-03-12
+==========
+  - Created Indexor & Extractor, an intermediate step for distributed indexing.
+  - Tested it, seems to work on byte[] level.
+  - Updated to Lucene 4.2
+  - Updated to Commons Math 3.1.1
+  - Removed deprecated calls from GenericDocumentBuilder
+
 2013-03-08
 ==========
   - Fixed bug in cluster serialization.

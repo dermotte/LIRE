@@ -35,6 +35,8 @@ import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
@@ -121,16 +123,16 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
 
             doc = new Document();
             if (currentMode == Mode.Slow)
-                doc.add(new Field(fieldName, lireFeature.getStringRepresentation(), Field.Store.YES, Field.Index.NO));
+                doc.add(new StringField(fieldName, lireFeature.getStringRepresentation(), Field.Store.YES));
             else
-                doc.add(new Field(fieldName, lireFeature.getByteArrayRepresentation()));
+                doc.add(new StoredField(fieldName, lireFeature.getByteArrayRepresentation()));
 
             if (identifier != null)
-                doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
         } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
         return doc;
     }
