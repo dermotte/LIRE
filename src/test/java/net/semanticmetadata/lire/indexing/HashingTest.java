@@ -53,8 +53,12 @@ public class HashingTest extends TestCase {
                 for (int i = 0; i < ints.length; i++) {
                     query.add(new BooleanClause(new TermQuery(new Term("Hashes", ints[i]+"")), BooleanClause.Occur.SHOULD));
                 }
-                TopDocs topDocs = searcher.search(query, 10);
+                long ms = System.currentTimeMillis();
+                TopDocs topDocs = searcher.search(query, 100000);
+                System.out.println(System.currentTimeMillis()-ms);
+                ms = System.currentTimeMillis();
                 topDocs = rerank(topDocs, feat, reader);
+                System.out.println(System.currentTimeMillis()-ms);
                 String file = printToHtml(topDocs, reader);
                 FileUtils.browseUri(file);
             } catch (Exception e) {
