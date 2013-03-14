@@ -125,6 +125,28 @@ public class FileUtils {
         bw.close();
     }
 
+    public static void browseUri(String uri) {
+        if (!java.awt.Desktop.isDesktopSupported()) {
+            System.err.println("Desktop is not supported (fatal)");
+            System.exit(1);
+        }
+
+        java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+
+        if (!desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
+            System.err.println("Desktop doesn't support the browse action (fatal)");
+            System.exit(1);
+        }
+
+        try {
+            java.net.URI url = new java.net.URI(uri);
+            desktop.browse(url);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+
     public static void saveImageResultsToPng(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
         LinkedList<BufferedImage> results = new LinkedList<BufferedImage>();
         int width = 0;
