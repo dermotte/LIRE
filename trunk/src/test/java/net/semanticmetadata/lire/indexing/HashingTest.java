@@ -29,10 +29,10 @@ import java.util.Comparator;
  * Time: 08:41
  */
 public class HashingTest extends TestCase {
-    String queryFile = "E:\\Temp\\images1\\1\\im3.jpg";
+    String queryFile = "E:\\Temp\\images1\\1\\im1.jpg";
 
     public void testSearch() throws IOException {
-        HashingUtils.readHashFunctions();
+        LocalitySensitiveHashing.readHashFunctions();
         IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("indexor-1mh")));
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(new DefaultSimilarity() {
