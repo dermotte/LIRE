@@ -3,6 +3,11 @@ CHANGES for LIRE
 
 2013-03-12
 ==========
+  - Worked on HashingUtils to configure it for use with CEDD & tested it.
+  - Added some utility methods.
+
+2013-03-12
+==========
   - Created Indexor & Extractor, an intermediate step for distributed indexing.
   - Tested it, seems to work on byte[] level.
   - Updated to Lucene 4.2

@@ -6,9 +6,11 @@ import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -26,12 +29,43 @@ import java.util.Comparator;
  * Time: 08:41
  */
 public class HashingTest extends TestCase {
-    String queryFile = "E:\\Temp\\images1\\1\\im1.jpg";
+    String queryFile = "E:\\Temp\\images1\\1\\im3.jpg";
 
     public void testSearch() throws IOException {
         HashingUtils.readHashFunctions();
         IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("indexor-1mh")));
         IndexSearcher searcher = new IndexSearcher(reader);
+        searcher.setSimilarity(new DefaultSimilarity() {
+            @Override
+            public float tf(float freq) {
+                return 1;
+            }
+
+            @Override
+            public float idf(long docFreq, long numDocs) {
+                return 1;
+            }
+
+            @Override
+            public float coord(int overlap, int maxOverlap) {
+                return 1;
+            }
+
+            @Override
+            public float queryNorm(float sumOfSquaredWeights) {
+                return 1;
+            }
+
+            @Override
+            public float sloppyFreq(int distance) {
+                return 1;
+            }
+
+            @Override
+            public float lengthNorm(FieldInvertState state) {
+                return 1;
+            }
+        });
         CEDD feat = null;
         try {
             feat = new CEDD();
@@ -43,6 +77,7 @@ public class HashingTest extends TestCase {
         if (feat != null) {
             feat.extract(ImageIO.read(new File(queryFile)));
             int[] ints = HashingUtils.generateHashes(feat.getDoubleHistogram());
+            System.out.println(Arrays.toString(ints));
             StringBuilder queryStringBuilder = new StringBuilder(10*10);
             for (int i = 0; i < ints.length; i++) {
                 queryStringBuilder.append(ints[i]);
@@ -54,7 +89,7 @@ public class HashingTest extends TestCase {
                     query.add(new BooleanClause(new TermQuery(new Term("Hashes", ints[i]+"")), BooleanClause.Occur.SHOULD));
                 }
                 long ms = System.currentTimeMillis();
-                TopDocs topDocs = searcher.search(query, 100000);
+                TopDocs topDocs = searcher.search(query, 5000);
                 System.out.println(System.currentTimeMillis()-ms);
                 ms = System.currentTimeMillis();
                 topDocs = rerank(topDocs, feat, reader);

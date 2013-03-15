@@ -10,9 +10,10 @@ import java.io.*;
  */
 public class HashingUtils {
     private static int bits = 16, dimensions = 512;
-    private static int numFunctionBundles = 10;
+    private static int numFunctionBundles = 20;
     private static String name = "hashFunctions.obj";
-    private static float[][][] hashes = null;
+    private static double w = 4d;
+    private static double[][][] hashes = null;
 
     /**
      * Generate new hash functions.
@@ -40,7 +41,7 @@ public class HashingUtils {
         for (int c = 0; c < numFunctionBundles; c++) {
             for (int i = 0; i < bits; i++) {
                 for (int j = 0; j < dimensions; j++) {
-                    oos.writeFloat((float) (Math.random() * 8d - 4d));
+                    oos.writeDouble((Math.random() * w - w/2));
                 }
             }
         }
@@ -48,25 +49,25 @@ public class HashingUtils {
     }
 
     /**
-     * Reads a file from disk, where the hash bundles are specified. Make sur to generate it first
+     * Reads a file from disk, where the hash bundles are specified. Make sure to generate it first
      * and make sure to re-use it for search.
      *
      * @return
      * @throws IOException
      */
-    public static float[][][] readHashFunctions() throws IOException {
+    public static double[][][] readHashFunctions() throws IOException {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));
         int bits = ois.readInt();
         int dimensions = ois.readInt();
         int numFunctionBundles = ois.readInt();
 
-        float[][][] hashFunctions = new float[numFunctionBundles][bits][dimensions];
+        double[][][] hashFunctions = new double[numFunctionBundles][bits][dimensions];
         for (int i = 0; i < hashFunctions.length; i++) {
-            float[][] functionBundle = hashFunctions[i];
+            double[][] functionBundle = hashFunctions[i];
             for (int j = 0; j < functionBundle.length; j++) {
-                float[] bitFunctions = functionBundle[j];
+                double[] bitFunctions = functionBundle[j];
                 for (int k = 0; k < bitFunctions.length; k++) {
-                    bitFunctions[k] = ois.readFloat();
+                    bitFunctions[k] = ois.readDouble();
                 }
             }
         }
@@ -84,12 +85,12 @@ public class HashingUtils {
         double val = 0d;
         int[] hashResults = new int[hashes.length];
         for (int i = 0; i < hashes.length; i++) {
-            float[][] hashBundle = hashes[i];
+            double[][] hashBundle = hashes[i];
             for (int j = 0; j < hashBundle.length; j++) {
                 val = 0d;
-                float[] hashBit = hashBundle[j];
+                double[] hashBit = hashBundle[j];
                 for (int k = 0; k < histogram.length; k++) {
-                    val += hashBit[k] * (float) histogram[k];
+                    val += hashBit[k] * histogram[k];
                 }
                 hashResults[i] += Math.pow(2, j) * (Math.signum(val) < 0 ? 0 : 1);
             }

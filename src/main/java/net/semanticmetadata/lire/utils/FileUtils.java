@@ -52,6 +52,7 @@ import java.util.zip.ZipOutputStream;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class FileUtils {
+    enum FileTypes {JPG, GIF, TIF, PNG, PDF, UNKNOWN};
     /**
      * Returns all jpg images from a directory in an array.
      *
@@ -80,8 +81,59 @@ public class FileUtils {
             return null;
     }
 
+//    public static BufferedImage openImage(String path) {
+//        BufferedImage result = null;
+//        try {
+//            result = ImageIO.read(new FileInputStream(path));
+//        } catch (Exception e) {
+//            System.err.println("Couldn't open image with Java, trying with Sanselan. " + path + ", " + e.getMessage());
+//        }
+//
+//        if (result == null) {
+//            try {
+//                result = Sanselan.getBufferedImage(new FileInputStream(path));
+//            } catch (Exception e) {
+//                System.err.println("Couldn't open image with Sanselan, trying with IJ. " + path + ", " + e.getMessage());
+//            }
+//        }
+//
+//        if (result == null) {
+//            try {
+//                ImagePlus imgPlus = new ImagePlus(path);
+//                ImageConverter imageConverter = new ImageConverter(imgPlus);
+//                imageConverter.convertToRGB();
+//                result = imgPlus.getBufferedImage();
+//            } catch (Exception e) {
+//                System.err.println("Couldn't open image with IJ. " + path + ", " + e.getMessage());
+//            }
+//        }
+//        // try to trim the image to reduce the noise introduced by white borders ...
+//        if (result != null) {
+//            try {
+//                if (result.getColorModel().getPixelSize() != 24) {
+//                    BufferedImage tmp = new BufferedImage(result.getWidth(), result.getHeight(), BufferedImage.TYPE_INT_RGB);
+//                    tmp.getGraphics().drawImage(result, 0, 0, null);
+//                    result = tmp;
+//                }
+//                result = trimWhiteSpace(result);
+//            } catch (Exception e) {
+//                // do nothing here ...
+//                System.err.println("Could not trim image " + path);
+//            }
+//        }
+//        // check image size to find out if image is some kind of placeholder gif or something like that
+//        // or a just white or just black image, which has been trimmed to nearly nothing.
+//        if (result != null) {
+//            if (result.getWidth() < 5 || result.getHeight() < 5) {
+//                result = null; // we don't need those
+//                System.err.println("Skipping file due to its size: " + path);
+//            }
+//        }
+//        return result;
+//    }
+
     /**
-     * Returns all jpg images from a directory in an array.
+     * Returns all jpg & png images from a directory in an array.
      *
      * @param directory                 the directory to start with
      * @param descendIntoSubDirectories should we include sub directories?
@@ -125,6 +177,11 @@ public class FileUtils {
         bw.close();
     }
 
+    /**
+     * Opens a browser windows th<t shows the given URI.
+     *
+     * @param uri the path to the file to show in the browser window.
+     */
     public static void browseUri(String uri) {
         if (!java.awt.Desktop.isDesktopSupported()) {
             System.err.println("Desktop is not supported (fatal)");
@@ -155,8 +212,8 @@ public class FileUtils {
             // hits.doc(i).get("descriptorImageIdentifier")
             BufferedImage tmp = ImageIO.read(new FileInputStream(hits.doc(i).get("descriptorImageIdentifier")));
 //            if (tmp.getHeight() > 200) {
-                double factor = 200d / ((double) tmp.getHeight());
-                tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);
+            double factor = 200d / ((double) tmp.getHeight());
+            tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);
 //            }
             width += tmp.getWidth() + 5;
             results.add(tmp);
@@ -228,6 +285,39 @@ public class FileUtils {
                 }
                 in.close();
             }
+        }
+    }
+
+    /**
+     * Identifies the type of image based on the magic bytes at the beginning of the file.
+     * @param file the File to test.
+     * @return the file type by enumeration FileTypes.
+     * @throws IOException
+     */
+    private static FileTypes identifyFileType(File file) throws IOException {
+        byte[] buffer = new byte[8];
+        InputStream in = new FileInputStream(file);
+        in.read(buffer);
+        if ((buffer[0] == -119) && (buffer[1] == 0x50) && (buffer[2] == 0x4E) && (buffer[3] == 0x47)) {
+            // PNG: 89 50 4E 47 ...
+            return FileTypes.PNG;
+        } else if ((buffer[0] == 0xFF) && (buffer[1] == 0xD8)) {
+            // JPEG image files begin with FF D8 and end with FF D9
+            return FileTypes.JPG;
+        } else if ((buffer[0] == 0x25) && (buffer[1] == 0x50) && (buffer[2] == 0x44) && (buffer[3] == 0x46)) {
+            // PDF 25 50 44 46
+            return FileTypes.PDF;
+        } else if ((buffer[0] == 0x49) && (buffer[1] == 0x49) && (buffer[2] == 0x2A) && (buffer[3] == 0x00)) {
+            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
+            return FileTypes.TIF;
+        } else if ((buffer[0] == 0x4D) && (buffer[1] == 0x4D) && (buffer[2] == 0x00) && (buffer[3] == 0x2A)) {
+            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
+            return FileTypes.TIF;
+        } else if ((buffer[0] == 0x47) && (buffer[1] == 0x49) && (buffer[2] == 0x46) && (buffer[3] == 0x38)) {
+            // GIF: 47 49 46 38 ...
+            return FileTypes.GIF;
+        } else {
+            return FileTypes.UNKNOWN;
         }
     }
 

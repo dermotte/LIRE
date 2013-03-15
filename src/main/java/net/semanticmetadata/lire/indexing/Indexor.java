@@ -9,6 +9,7 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
@@ -168,8 +169,9 @@ public class Indexor {
     private void addToDocument(LireFeature feature, Document document, String featureFieldName) {
 //        if (feature instanceof CEDD) {
             document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
-//            int[] ints = HashingUtils.generateHashes(feature.getDoubleHistogram());
-//            document.add(new TextField("Hashes", SerializationUtils.arrayToString(ints), Field.Store.YES));
+//            int[] hashes = HashingUtils.generateHashes(feature.getDoubleHistogram());
+//            System.out.println(Arrays.toString(hashes));
+//            document.add(new TextField("Hashes", SerializationUtils.arrayToString(hashes), Field.Store.YES));
 //        }
     }
 
