@@ -15,13 +15,13 @@ import java.io.*;
  */
 public class LocalitySensitiveHashing {
     private static String name = "lshHashFunctions.obj";
-    private static int dimensions = 512;         // max d
-    public static int numFunctionBundles = 25;   // k
-    public static double binLength = 1.8d;         // w
+    private static int dimensions = 512;           // max d
+    public static int numFunctionBundles = 25;     // k
+    public static double binLength = 0.01;         // w
 
     private static double[][] hashA = null;      // a
     private static double[] hashB = null;        // b
-    private static double dilation = 1d;        // defines how "stretched out" the hash values are.
+    private static double dilation = 1d;         // defines how "stretched out" the hash values are.
 
     /**
      * Writes a new file to disk to be read for hashing with LSH.
