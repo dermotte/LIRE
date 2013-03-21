@@ -3,6 +3,14 @@ CHANGES for LIRE
 
 2013-03-12
 ==========
+  - Moved hashing to sub package of indexing
+  - Moved Extractor and Indexor to tool package (in indexing)
+  - Renamed HashingUtils to BitSampling, which is the name of the method employed.
+  - Added HashingIndexor extending Indexor. It does bit sampling based hashing on the CEDD feature.
+  - Tested BitSampling on OpponentHistogram and found it working.
+
+2013-03-12
+==========
   - Worked on HashingUtils to configure it for use with CEDD & tested it.
   - Added some utility methods.
 

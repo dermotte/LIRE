@@ -118,7 +118,7 @@ public class RuntimeTest extends TestCase {
 
     public void testCEDDSearch() throws IOException {
         int numsearches = 10;
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("test-index-cedd")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("indexor-1.4mh")));
         int numDocs = reader.numDocs();
         System.out.println("numDocs = " + numDocs);
 
@@ -127,7 +127,7 @@ public class RuntimeTest extends TestCase {
 
         // This is the old and slow one.
 //        ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(30);
-        FileInputStream imageStream = new FileInputStream("testdata/wang-1000/0.jpg");
+        FileInputStream imageStream = new FileInputStream("E:\\Temp\\images1\\1\\im1.jpg");
         BufferedImage bimg = ImageIO.read(imageStream);
         ImageSearchHits hits = null;
         long time = System.currentTimeMillis();

@@ -1,4 +1,4 @@
-package net.semanticmetadata.lire.indexing;
+package net.semanticmetadata.lire.indexing.hashing;
 
 import java.io.*;
 
@@ -48,7 +48,7 @@ public class LocalitySensitiveHashing {
      *
      * @return
      * @throws IOException
-     * @see net.semanticmetadata.lire.indexing.LocalitySensitiveHashing#generateHashFunctions()
+     * @see LocalitySensitiveHashing#generateHashFunctions()
      */
     public static double[][] readHashFunctions() throws IOException {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));

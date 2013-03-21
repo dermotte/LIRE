@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.OpponentHistogram;
+import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FieldInvertState;
@@ -12,6 +14,9 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.store.RAMDirectory;
 
 import javax.imageio.ImageIO;
 import java.io.BufferedWriter;
@@ -32,8 +37,9 @@ public class HashingTest extends TestCase {
     String queryFile = "E:\\Temp\\images1\\1\\im1.jpg";
 
     public void testSearch() throws IOException {
-        LocalitySensitiveHashing.readHashFunctions();
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("indexor-1mh")));
+        BitSampling.readHashFunctions();
+        // Putting the index into RAM ... with MMapDirectory instead of FSDirectory:
+        IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File("indexor-1.4mh")));
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(new DefaultSimilarity() {
             @Override
@@ -66,9 +72,9 @@ public class HashingTest extends TestCase {
                 return 1;
             }
         });
-        CEDD feat = null;
+        LireFeature feat = null;
         try {
-            feat = new CEDD();
+            feat = new OpponentHistogram();
         } catch (Exception e) {
             System.err.println("there is a problem with creating the right feature instance.");
             e.printStackTrace();
@@ -76,9 +82,9 @@ public class HashingTest extends TestCase {
 
         if (feat != null) {
             feat.extract(ImageIO.read(new File(queryFile)));
-            int[] ints = HashingUtils.generateHashes(feat.getDoubleHistogram());
+            int[] ints = BitSampling.generateHashes(feat.getDoubleHistogram());
             System.out.println(Arrays.toString(ints));
-            StringBuilder queryStringBuilder = new StringBuilder(10*10);
+            StringBuilder queryStringBuilder = new StringBuilder(10 * 10);
             for (int i = 0; i < ints.length; i++) {
                 queryStringBuilder.append(ints[i]);
                 queryStringBuilder.append(' ');
@@ -86,14 +92,17 @@ public class HashingTest extends TestCase {
             try {
                 BooleanQuery query = new BooleanQuery();
                 for (int i = 0; i < ints.length; i++) {
-                    query.add(new BooleanClause(new TermQuery(new Term("Hashes", ints[i]+"")), BooleanClause.Occur.SHOULD));
+                    query.add(new BooleanClause(new TermQuery(new Term("Hashes", ints[i] + "")), BooleanClause.Occur.SHOULD));
                 }
                 long ms = System.currentTimeMillis();
-                TopDocs topDocs = searcher.search(query, 5000);
-                System.out.println(System.currentTimeMillis()-ms);
+                TopDocs topDocs = null;
+                for (int i = 0; i < 3; i++) {
+                    topDocs = searcher.search(query, 5000);
+                }
+                System.out.println((System.currentTimeMillis() - ms)/3);
                 ms = System.currentTimeMillis();
-                topDocs = rerank(topDocs, feat, reader);
-                System.out.println(System.currentTimeMillis()-ms);
+                for (int i = 0; i < 3; i++) topDocs = rerank(topDocs, feat, reader);
+                System.out.println((System.currentTimeMillis() - ms)/3);
                 String file = printToHtml(topDocs, reader);
                 FileUtils.browseUri(file);
             } catch (Exception e) {
@@ -109,10 +118,10 @@ public class HashingTest extends TestCase {
         LireFeature tmp = feature.getClass().newInstance();
         ArrayList<ScoreDoc> res = new ArrayList<ScoreDoc>(docs.scoreDocs.length);
         float maxScore = 0f;
-        for (int i = 0; i< docs.scoreDocs.length; i++) {
-            tmp.setByteArrayRepresentation(reader.document(docs.scoreDocs[i].doc).getBinaryValue(DocumentBuilder.FIELD_NAME_CEDD).bytes);
-            maxScore = Math.max(1/tmp.getDistance(feature), maxScore);
-            res.add(new ScoreDoc(docs.scoreDocs[i].doc, 1/tmp.getDistance(feature)));
+        for (int i = 0; i < docs.scoreDocs.length; i++) {
+            tmp.setByteArrayRepresentation(reader.document(docs.scoreDocs[i].doc).getBinaryValue(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).bytes);
+            maxScore = Math.max(1 / tmp.getDistance(feature), maxScore);
+            res.add(new ScoreDoc(docs.scoreDocs[i].doc, 1 / tmp.getDistance(feature)));
         }
         // sorting res ...
         Collections.sort(res, new Comparator<ScoreDoc>() {
@@ -125,7 +134,6 @@ public class HashingTest extends TestCase {
     }
 
 
-
     private String printToHtml(TopDocs topDocs, IndexReader reader) throws IOException {
         String fileName = "results-" + System.currentTimeMillis() / 1000 + ".html";
         BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
@@ -134,13 +142,25 @@ public class HashingTest extends TestCase {
                 "<body bgcolor=\"#FFFFFF\">\n");
         bw.write("<h3>query</h3>\n");
         bw.write("<a href=\"" + queryFile + "\"><img src=\"" + queryFile + "\"></a><p>\n");
-        bw.write("<h3>results</h3>\n");
-        for (int i = 0; i < Math.min(topDocs.scoreDocs.length, 50); i++) {
+        bw.write("<h3>results</h3>\n<table>");
+        int elems = Math.min(topDocs.scoreDocs.length, 50);
+        for (int i = 0; i < elems; i++) {
+            if (i % 3 == 0) bw.write("<tr>");
             String s = reader.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
             s = new File(s).getAbsolutePath();
-            bw.write("<a href=\"" + s + "\"><img src=\"" + s + "\"></a><p>\n");
+            bw.write("<td><a href=\"" + s + "\"><img style=\"max-width:220px\"src=\"" + s + "\"></a></td>\n");
+            if (i % 3 == 2) bw.write("</tr>");
         }
-        bw.write("</body>\n" +
+        if (elems % 3 != 0) {
+            if (elems % 3 == 2) {
+                bw.write("<td>-</td>\n");
+                bw.write("<td>-</td>\n");
+            } else if (elems % 3 == 2) {
+                bw.write("<td>-</td>\n");
+            }
+            bw.write("</tr>");
+        }
+        bw.write("</table></body>\n" +
                 "</html>");
         bw.close();
         return new File(fileName).getPath();
