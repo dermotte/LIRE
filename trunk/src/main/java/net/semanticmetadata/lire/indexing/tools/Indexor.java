@@ -1,7 +1,6 @@
-package net.semanticmetadata.lire.indexing;
+package net.semanticmetadata.lire.indexing.tools;
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
@@ -9,7 +8,6 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 
 import java.io.*;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
@@ -24,42 +22,39 @@ import java.util.zip.GZIPInputStream;
  *         Time: 14:28
  */
 public class Indexor {
-    private LinkedList<File> inputFiles = new LinkedList<File>();
-    private String indexPath = null;
+    protected LinkedList<File> inputFiles = new LinkedList<File>();
+    protected String indexPath = null;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
         Indexor indexor = new Indexor();
-//        HashingUtils.generateHashFunctions();
-//        HashingUtils.readHashFunctions();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (arg.startsWith("-i") || arg.startsWith("--input-file") ) {
+            if (arg.startsWith("-i") || arg.startsWith("--input-file")) {
                 // infile ...
-                if ((i+1) < args.length)
+                if ((i + 1) < args.length)
                     indexor.addInputFile(new File(args[i + 1]));
                 else printHelp();
-            } else if (arg.startsWith("-l")|| arg.startsWith("--index") ) {
+            } else if (arg.startsWith("-l") || arg.startsWith("--index")) {
                 // index
-                if ((i+1) < args.length)
-                    indexor.setIndexPath(args[i+1]);
+                if ((i + 1) < args.length)
+                    indexor.setIndexPath(args[i + 1]);
                 else printHelp();
             } else if (arg.startsWith("-h")) {
                 // help
                 printHelp();
             } else if (arg.startsWith("-c")) {
                 // list of input files within a file.
-                if ((i+1) < args.length) {
+                if ((i + 1) < args.length) {
                     BufferedReader br = new BufferedReader(new FileReader(new File(args[i + 1])));
                     String file;
                     while ((file = br.readLine()) != null) {
-                        if (file.trim().length()>2) {
+                        if (file.trim().length() > 2) {
                             File f = new File(file);
                             if (f.exists()) indexor.addInputFile(f);
                             else System.err.println("Did not find file " + f.getCanonicalPath());
                         }
                     }
-                }
-                else printHelp();
+                } else printHelp();
             }
         }
         // check if there is an infile, an outfile and some features to extract.
@@ -70,7 +65,7 @@ public class Indexor {
         }
     }
 
-    private boolean isConfigured() {
+    protected boolean isConfigured() {
         boolean isConfigured = true;
         // check if there are input files and if they exist.
         if (inputFiles.size() > 0) {
@@ -82,7 +77,10 @@ public class Indexor {
         return isConfigured;
     }
 
-    private static void printHelp() {
+    /**
+     * Just prints help.
+     */
+    protected static void printHelp() {
         System.out.println("Help for the Indexor class.\n" +
                 "===========================\n" +
                 "This help text is shown if you start the Indexor with the '-h' option.\n" +
@@ -120,8 +118,9 @@ public class Indexor {
 
     /**
      * Reads data from a file and writes it to an index.
+     *
      * @param indexWriter the index to write to.
-     * @param inputFile the input data for the process.
+     * @param inputFile   the input data for the process.
      * @throws IOException
      * @throws InstantiationException
      * @throws IllegalAccessException
@@ -162,17 +161,13 @@ public class Indexor {
 
     /**
      * Overwrite this method if you want to filter the input, apply hashing, etc.
-     * @param feature the current feature.
-     * @param document the current document.
+     *
+     * @param feature          the current feature.
+     * @param document         the current document.
      * @param featureFieldName the field name of the feature.
      */
-    private void addToDocument(LireFeature feature, Document document, String featureFieldName) {
-//        if (feature instanceof CEDD) {
-            document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
-//            int[] hashes = HashingUtils.generateHashes(feature.getDoubleHistogram());
-//            System.out.println(Arrays.toString(hashes));
-//            document.add(new TextField("Hashes", SerializationUtils.arrayToString(hashes), Field.Store.YES));
-//        }
+    protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
+        document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
     }
 
     public void addInputFile(File inputFile) {

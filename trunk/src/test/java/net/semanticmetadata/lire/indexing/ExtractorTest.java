@@ -1,16 +1,10 @@
 package net.semanticmetadata.lire.indexing;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.utils.LuceneUtils;
+import net.semanticmetadata.lire.indexing.tools.Extractor;
 import net.semanticmetadata.lire.utils.SerializationUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.IndexWriter;
 
 import javax.imageio.ImageIO;
 import java.io.BufferedInputStream;

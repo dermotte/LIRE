@@ -1,11 +1,8 @@
-package net.semanticmetadata.lire.indexing;
+package net.semanticmetadata.lire.indexing.tools;
 
-import com.sun.org.apache.bcel.internal.generic.IfInstruction;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.SerializationUtils;
-import sun.security.provider.SystemSigner;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

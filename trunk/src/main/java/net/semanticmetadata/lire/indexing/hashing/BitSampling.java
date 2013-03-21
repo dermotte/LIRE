@@ -1,17 +1,19 @@
-package net.semanticmetadata.lire.indexing;
+package net.semanticmetadata.lire.indexing.hashing;
 
 import java.io.*;
 
 /**
- * Provides a simple way to hashing ... based on min-hash.
+ * Provides a simple way to hashing. It's bit sampling and can be put into the
+ * locality sensitive hashing family of hashing functions.
+ * <p/>
+ * Created: 24.02.12, 14:00
  *
  * @author Mathias Lux, mathias@juggle.at
- *         Created: 24.02.12, 14:00
  */
-public class HashingUtils {
+public class BitSampling {
     private static int bits = 16, dimensions = 512;
-    private static int numFunctionBundles = 20;
-    private static String name = "hashFunctions.obj";
+    private static int numFunctionBundles = 50;
+    private static String name = "LshBitSampling.obj";
     private static double w = 4d;
     private static double[][][] hashes = null;
 
@@ -41,7 +43,7 @@ public class HashingUtils {
         for (int c = 0; c < numFunctionBundles; c++) {
             for (int i = 0; i < bits; i++) {
                 for (int j = 0; j < dimensions; j++) {
-                    oos.writeDouble((Math.random() * w - w/2));
+                    oos.writeDouble((Math.random() * w - w / 2));
                 }
             }
         }
@@ -71,7 +73,7 @@ public class HashingUtils {
                 }
             }
         }
-        HashingUtils.hashes = hashFunctions;
+        BitSampling.hashes = hashFunctions;
         return hashFunctions;
     }
 
