@@ -160,9 +160,18 @@ public class FileUtils {
             return null;
     }
 
-    public static void saveImageResultsToHtml(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
+    /**
+     * Puts results into a HTML file.
+     * @param prefix
+     * @param hits
+     * @param queryImage
+     * @return
+     * @throws IOException
+     */
+    public static String saveImageResultsToHtml(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
         long l = System.currentTimeMillis() / 1000;
-        BufferedWriter bw = new BufferedWriter(new FileWriter("results-" + prefix + "-" + l + ".html"));
+        String fileName = "results-" + prefix + "-" + l + ".html";
+        BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
         bw.write("<html>\n" +
                 "<head><title>Search Results</title></head>\n" +
                 "<body bgcolor=\"#FFFFFF\">\n");
@@ -175,6 +184,35 @@ public class FileUtils {
         bw.write("</body>\n" +
                 "</html>");
         bw.close();
+        return fileName;
+    }
+
+    /**
+     * Puts results into a HTML file.
+     * @param prefix
+     * @param hits
+     * @param reader
+     * @param queryImage
+     * @return
+     * @throws IOException
+     */
+    public static String saveImageResultsToHtml(String prefix, TopDocs hits, IndexReader reader, String queryImage) throws IOException {
+        long l = System.currentTimeMillis() / 1000;
+        String fileName = "results-" + prefix + "-" + l + ".html";
+        BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+        bw.write("<html>\n" +
+                "<head><title>Search Results</title></head>\n" +
+                "<body bgcolor=\"#FFFFFF\">\n");
+        bw.write("<h3>query</h3>\n");
+        bw.write("<a href=\"file://" + queryImage + "\"><img src=\"file://" + queryImage + "\"></a><p>\n");
+        bw.write("<h3>results</h3>\n");
+        for (int i = 0; i < hits.scoreDocs.length; i++) {
+            bw.write(hits.scoreDocs[i].score + " - <a href=\"file://" + reader.document(hits.scoreDocs[i].doc).get("descriptorImageIdentifier") + "\"><img src=\"file://" + reader.document(hits.scoreDocs[i].doc).get("descriptorImageIdentifier") + "\"></a><p>\n");
+        }
+        bw.write("</body>\n" +
+                "</html>");
+        bw.close();
+        return fileName;
     }
 
     /**

@@ -31,6 +31,10 @@
 package net.semanticmetadata.lire;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.TopDocs;
+
+import java.io.IOException;
 
 /**
  * Interface for all filters that take a result list and create a new result list. This can be done by actual
@@ -44,9 +48,19 @@ public interface SearchHitsFilter {
     /**
      * Filters a given result list based on the given query document.
      *
-     * @param results
-     * @param query
+     * @param results the results
+     * @param query the original query document
      * @return
      */
     public ImageSearchHits filter(ImageSearchHits results, Document query);
+
+    /**
+     * Filters the result list of a Lucene search based on image features.
+     * @param results the results
+     * @param reader the IndexReader employed
+     * @param query the original query document
+     * @return
+     * @throws IOException
+     */
+    public ImageSearchHits filter(TopDocs results, IndexReader reader, Document query) throws IOException;
 }

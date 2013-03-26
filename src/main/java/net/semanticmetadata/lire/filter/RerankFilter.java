@@ -36,7 +36,11 @@ import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.impl.SimpleImageSearchHits;
 import net.semanticmetadata.lire.impl.SimpleResult;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 
+import java.io.IOException;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -90,6 +94,49 @@ public class RerankFilter implements SearchHitsFilter {
                 distance = queryFeature.getDistance(tempFeature);
                 maxDistance = Math.max(maxDistance, distance);
                 resultSet.add(new SimpleResult(distance, results.doc(x), x));
+            } else {
+                logger.info("Could not instantiate class " + featureClass.getName() + " from the given result set.");
+            }
+        }
+        return new SimpleImageSearchHits(resultSet, maxDistance);
+    }
+
+    @Override
+    public ImageSearchHits filter(TopDocs results, IndexReader reader, Document query) throws IOException {
+        LireFeature queryFeature = null;
+        LireFeature tempFeature = null;
+        float distance = 0, maxDistance = 0;
+        TreeSet<SimpleResult> resultSet = new TreeSet<SimpleResult>();
+
+        // create our feature classes
+        try {
+            queryFeature = (LireFeature) featureClass.newInstance();
+            tempFeature = (LireFeature) featureClass.newInstance();
+        } catch (Exception e) {
+            logger.severe("Could not instantiate class " + featureClass.getName() + " in " + getClass().getName() + " (" + e.getMessage() + ").");
+            return null;
+        }
+
+        // check if features are there and compatible.
+        if (query.getField(fieldName) != null) {
+            queryFeature.setByteArrayRepresentation(query.getField(fieldName).binaryValue().bytes,
+                    query.getField(fieldName).binaryValue().offset,
+                    query.getField(fieldName).binaryValue().length);
+        } else {
+            logger.severe("Given feature class " + featureClass.getName() + " is not available in the query document (" + getClass().getName() + ").");
+            return null;
+        }
+        ScoreDoc[] scoreDocs = results.scoreDocs;
+        Document tmp = null;
+        for (int x = 0; x < scoreDocs.length; x++) {
+            tmp =reader.document(scoreDocs[x].doc);
+            if (tmp.getField(fieldName) != null) {
+                tempFeature.setByteArrayRepresentation(tmp.getField(fieldName).binaryValue().bytes,
+                        tmp.getField(fieldName).binaryValue().offset,
+                        tmp.getField(fieldName).binaryValue().length);
+                distance = queryFeature.getDistance(tempFeature);
+                maxDistance = Math.max(maxDistance, distance);
+                resultSet.add(new SimpleResult(distance, tmp, x));
             } else {
                 logger.info("Could not instantiate class " + featureClass.getName() + " from the given result set.");
             }
