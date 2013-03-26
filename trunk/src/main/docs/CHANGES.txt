@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2013-03-26
+==========
+  - Added new method to abstract SearchHitsFilter class
+  - Added TestRerankTextSearch.java
+  - Added functions to FileUtils.java
+
 2013-03-12
 ==========
   - Moved hashing to sub package of indexing

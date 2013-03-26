@@ -41,7 +41,11 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -138,5 +142,18 @@ public class LsaFilter implements SearchHitsFilter {
         ImageSearchHits hits;
         hits = new SimpleImageSearchHits(result, (float) maxDistance);
         return hits;
+    }
+
+    public ImageSearchHits filter(TopDocs results, IndexReader reader, Document query) throws IOException {
+        LinkedList<SimpleResult> tmp = new LinkedList<SimpleResult>();
+        double max = 0;
+        for (int i = 0; i < results.scoreDocs.length; i++) {
+            ScoreDoc scoreDoc = results.scoreDocs[i];
+            SimpleResult s = new SimpleResult(1/scoreDoc.score, reader.document(scoreDoc.doc), scoreDoc.doc);
+            max = Math.max(max, 1/scoreDoc.score);
+            tmp.add(s);
+        }
+
+        return filter(new SimpleImageSearchHits(tmp, (float) max), query);
     }
 }
