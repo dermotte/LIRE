@@ -54,6 +54,8 @@ public class TestRerankTextSearch extends TestCase {
     public void testIndexing() throws IOException, ParserConfigurationException, SAXException {
         IndexWriterConfig iwConf = new IndexWriterConfig(Version.LUCENE_42, new SimpleAnalyzer(Version.LUCENE_42));
         IndexWriter iw = new IndexWriter(FSDirectory.open(testIndex), iwConf);
+        // if you want to append the index to a pre-existing one use the next line.
+        // iwConf.setOpenMode(IndexWriterConfig.OpenMode.APPEND);
         // create a LIRE DocumentBuilder for extracting FCTH (just an example, every other feature will do).
         DocumentBuilder builder = DocumentBuilderFactory.getFCTHDocumentBuilder();
         ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
