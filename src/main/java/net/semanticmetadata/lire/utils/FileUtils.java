@@ -359,5 +359,21 @@ public class FileUtils {
         }
     }
 
+    /**
+     * Just opens an image with Java and reports if false if there are problems. This method can be used
+     * to check for JPG etc. that are not supported by the employed Java version.
+     * @param f the file to check.
+     * @return true if no exceptions are thrown bey the decoder.
+     */
+    public static boolean isImageFileCompatible(File f) {
+        boolean result = true;
+        try {
+            ImageIO.read(f);
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
+    }
+
 
 }
