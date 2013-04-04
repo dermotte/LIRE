@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-04-04
+==========
+  - Added a method to check if an image file can be opened by Java.
+
 2013-03-26
 ==========
   - Added new method to abstract SearchHitsFilter class

@@ -32,6 +32,7 @@ package net.semanticmetadata.lire.imageanalysis.bovw;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
+import net.semanticmetadata.lire.clustering.ParallelKMeans;
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
