@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-04-05
+==========
+  - Added Canny Edge Detector
+  - Added PHOG descriptor in a simple, 1-level version.
+
 2013-04-04
 ==========
   - Added a method to check if an image file can be opened by Java.
