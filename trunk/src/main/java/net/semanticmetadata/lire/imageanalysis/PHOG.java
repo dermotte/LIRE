@@ -40,6 +40,7 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.utils.ImageUtils;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.color.ColorSpace;
@@ -67,7 +68,7 @@ public class PHOG implements LireFeature {
     double thresholdLow = 60, thresholdHigh = 100;
 
     // And now for PHOG:
-    int bins = 6;
+    public static int bins = 40;
     double[] histogram;
 
 
@@ -81,7 +82,7 @@ public class PHOG implements LireFeature {
         // doing canny edge detection first:
         // filter images:
         gray = grayscale.filter(bimg, null);
-        gray = gaussian.filter(gray, null);
+        // gray = gaussian.filter(gray, null);
         gx = sobelFilterX(gray);
         gy = sobelFilterY(gray);
         int width = gray.getWidth();
@@ -156,7 +157,7 @@ public class PHOG implements LireFeature {
 
         // TODO: more bins, more levels, more histogram quantization.
         // Canny Edge Detection over ... lets go for the PHOG ...
-        histogram = new double[5*bins];
+        histogram = new double[5 * bins];
         //level0
         System.arraycopy(getHistogram(0, 0, width, height, gray, gd), 0, histogram, 0, bins);
         //level1
@@ -184,25 +185,39 @@ public class PHOG implements LireFeature {
     private double[] getHistogram(int startX, int startY, int width, int height, BufferedImage gray, double gd[][]) {
         int[] tmp = {0};
         double[] result = new double[bins];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = 0;
-
-        }
+        double actual = 0;
+        int bin;
+        // set initial histogram to 0
+        for (int i = 0; i < result.length; i++) result[i] = 0;
+        // find and increment the right bin/s
         for (int x = startX; x < startX + width; x++) {
             for (int y = startY; y < startY + height; y++) {
                 if (gray.getRaster().getPixel(x, y, tmp)[0] < 50) {
-                    // it's an edge pixel, so it counts.
-                    result[quantAngle(gd[x][y])]++;
+                    // it's an edge pixel, so it counts in.
+                    actual = (gd[x][y] / Math.PI + 0.5) * (bins);
+                    if (actual == Math.floor(actual)) {  // if it's a discrete thing ...
+                        bin = ((int) Math.floor(actual));
+                        if (bin == bins) bin = 0;
+                        result[bin] += 1;
+                    } else { // in between: we make it fuzzy ...
+                        bin = ((int) Math.floor(actual));
+                        if (bin == bins) bin = 0;
+                        result[bin] += actual - Math.floor(actual);
+                        bin = (int) Math.ceil(actual);
+                        if (bin == bins) bin = 0;
+                        result[bin] += Math.ceil(actual) - actual;
+                    }
                 }
             }
         }
+        // normalize histogram to max norm.
         double max = 0d;
         for (int i = 0; i < result.length; i++) {
             max = Math.max(result[i], max);
         }
         if (max > 0d) {
             for (int i = 0; i < result.length; i++) {
-                result[i] = result[i] / max;
+                result[i] = Math.round(64d * result[i] / max);
             }
         }
         return result;
@@ -210,6 +225,7 @@ public class PHOG implements LireFeature {
 
     private int quantAngle(double v) {
         int bin = (int) Math.round((v / Math.PI + 0.5) * (bins));
+        // angles are a circular thing ... so we put the ends together here.
         if (bin == bins) bin = 0;
         return bin;
     }
@@ -318,14 +334,15 @@ public class PHOG implements LireFeature {
     @Override
     public float getDistance(LireFeature feature) {
         // chi^2 distance ... as mentioned in the paper.
-        double distance = 0;
-        double lower;
-        for (int i = 0; i < histogram.length; i++) {
-            lower = histogram[i] + ((PHOG) feature).histogram[i];
-            if (lower > 0)
-                distance += (histogram[i] - ((PHOG) feature).histogram[i])*(histogram[i] - ((PHOG) feature).histogram[i]) / lower;
-        }
-        return (float) distance;
+//        double distance = 0;
+//        double lower;
+//        for (int i = 0; i < histogram.length; i++) {
+//            lower = histogram[i] + ((PHOG) feature).histogram[i];
+//            if (lower > 0)
+//                distance += (histogram[i] - ((PHOG) feature).histogram[i]) * (histogram[i] - ((PHOG) feature).histogram[i]) / lower;
+//        }
+//        return (float) distance;
+        return (float) MetricsUtils.distL1(histogram, ((PHOG) feature).histogram);
     }
 
     @Override
