@@ -37,34 +37,27 @@
  *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
  */
 
-package net.semanticmetadata.lire.impl;
+package net.semanticmetadata.lire.imageanalysis;
 
-import net.semanticmetadata.lire.ImageDuplicates;
+import junit.framework.TestCase;
 
-import java.util.List;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
- * This class implements the format for returning found duplicates.<br>
- * <p/>
- * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net
- * <br>Date: 04.08.2006
- * <br>Time: 10:20:20
- *
- * @author Mathias Lux, mathias@juggle.at
+ * Created with IntelliJ IDEA.
+ * User: mlux
+ * Date: 05.04.13
+ * Time: 12:52
+ * To change this template use File | Settings | File Templates.
  */
-public class SimpleImageDuplicates implements ImageDuplicates {
-    private List<List<String>> duplicates;
-
-
-    public SimpleImageDuplicates(List<List<String>> duplicates) {
-        this.duplicates = duplicates;
-    }
-
-    public int length() {
-        return duplicates.size();
-    }
-
-    public List<String> getDuplicate(int position) {
-        return duplicates.get(position);
+public class PHOGTest extends TestCase {
+    public void testExtraction() throws IOException {
+//        BufferedImage img = ImageIO.read(new File("testdata\\ferrari\\black\\2828686873_2fa36f83d7_b.jpg"));
+        BufferedImage img = ImageIO.read(new File("test.jpg"));
+        PHOG p = new PHOG();
+        p.extract(img);
     }
 }
