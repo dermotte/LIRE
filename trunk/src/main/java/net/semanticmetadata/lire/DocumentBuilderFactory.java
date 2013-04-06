@@ -267,6 +267,28 @@ public class DocumentBuilderFactory {
 
 
     /**
+     * Returns a new DocumentBuilder instance for the {@link net.semanticmetadata.lire.imageanalysis.PHOG} feature
+     *
+     * @return a new instance of the respective Builder
+     * @see net.semanticmetadata.lire.imageanalysis.PHOG
+     */
+    public static DocumentBuilder getPHOGDocumentBuilder() {
+        return new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
+    }
+
+
+    /**
+     * Returns a new DocumentBuilder instance for the {@link net.semanticmetadata.lire.imageanalysis.LuminanceLayout} feature
+     *
+     * @return a new instance of the respective Builder
+     * @see net.semanticmetadata.lire.imageanalysis.LuminanceLayout
+     */
+    public static DocumentBuilder getLuminanceLayoutDocumentBuilder() {
+        return new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT);
+    }
+
+
+    /**
      * Creates and returns a DocumentBuilder, which contains all available features. For
      * AutoColorCorrelogram the getAutoColorCorrelogramDocumentBuilder() is used. Therefore
      * it is compatible with the respective Searcher.

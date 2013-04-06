@@ -34,7 +34,9 @@
  * Copyright statement:
  * --------------------
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 06.04.13 10:18
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -45,19 +47,22 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Test class for PHOG descriptor.
- * @author Mathias Lux, mathias@juggle.at, 05.04.13
+ * This file is part of LIRE, a Java library for content based image retrieval.
+ *
+ * @author Mathias Lux, mathias@juggle.at, 06.04.13
  */
-public class PHOGTest extends TestCase {
+public class LuminanceLayoutTest extends TestCase {
     public void testExtraction() throws IOException {
-        BufferedImage img = ImageIO.read(new File("testdata\\ferrari\\black\\2828686873_2fa36f83d7_b.jpg"));
+        BufferedImage img = ImageIO.read(new File("test.png"));
 //        BufferedImage img = ImageIO.read(new File("test.jpg"));
-        PHOG p = new PHOG();
+        LuminanceLayout p = new LuminanceLayout();
         p.extract(img);
+        System.out.println(Arrays.toString(p.getDoubleHistogram()));
         byte[] bytes = p.getByteArrayRepresentation();
-        PHOG g = new PHOG();
+        LuminanceLayout g = new LuminanceLayout();
         g.setByteArrayRepresentation(bytes, 0, bytes.length);
         float distance = p.getDistance(p);
         System.out.println("distance = " + distance);

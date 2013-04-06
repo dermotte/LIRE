@@ -172,7 +172,7 @@ public class Indexor {
         BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inputFile)));
         byte[] tempInt = new byte[4];
         int tmp, tmpFeature;
-        byte[] temp = new byte[2064];
+        byte[] temp = new byte[100*1024];
         // read file name length:
         while (in.read(tempInt, 0, 4) > 0) {
             Document d = new Document();
@@ -183,9 +183,9 @@ public class Indexor {
             // normalize Filename to full path.
             filename = inputFile.getCanonicalPath().substring(0, inputFile.getCanonicalPath().lastIndexOf(inputFile.getName())) + filename;
             d.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, filename, Field.Store.YES));
-//                System.out.print(filename);
+//            System.out.print(filename);
             while ((tmpFeature = in.read()) < 255) {
-//                    System.out.print(", " + tmpFeature);
+//                System.out.print(", " + tmpFeature);
                 LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
                 // byte[] length ...
                 in.read(tempInt, 0, 4);

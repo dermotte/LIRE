@@ -70,25 +70,25 @@ import java.util.zip.GZIPOutputStream;
  *
  * Note that the outfile has to be in a folder parent to all images!
  *
- * @author Mathias Lux, mathias@juggle.at
- *         Date: 08.03.13
- *         Time: 13:15
+ * @author Mathias Lux, mathias@juggle.at, 08.03.13
  */
 public class Extractor implements Runnable {
     public static final String[] features = new String[]{
-            "net.semanticmetadata.lire.imageanalysis.CEDD",                 // 0
-            "net.semanticmetadata.lire.imageanalysis.FCTH",                 // 1
-            "net.semanticmetadata.lire.imageanalysis.OpponentHistogram",    // 2
-            "net.semanticmetadata.lire.imageanalysis.JointHistogram",       // 3
-            "net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram", // 4
-            "net.semanticmetadata.lire.imageanalysis.ColorLayout",          // 5
-            "net.semanticmetadata.lire.imageanalysis.EdgeHistogram",        // 6
-            "net.semanticmetadata.lire.imageanalysis.Gabor",                // 7
-            "net.semanticmetadata.lire.imageanalysis.JCD",                  // 8
+            "net.semanticmetadata.lire.imageanalysis.CEDD",                  // 0
+            "net.semanticmetadata.lire.imageanalysis.FCTH",                  // 1
+            "net.semanticmetadata.lire.imageanalysis.OpponentHistogram",     // 2
+            "net.semanticmetadata.lire.imageanalysis.JointHistogram",        // 3
+            "net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram",  // 4
+            "net.semanticmetadata.lire.imageanalysis.ColorLayout",           // 5
+            "net.semanticmetadata.lire.imageanalysis.EdgeHistogram",         // 6
+            "net.semanticmetadata.lire.imageanalysis.Gabor",                 // 7
+            "net.semanticmetadata.lire.imageanalysis.JCD",                   // 8
             "net.semanticmetadata.lire.imageanalysis.JpegCoefficientHistogram",
-            "net.semanticmetadata.lire.imageanalysis.ScalableColor",        // 10
-            "net.semanticmetadata.lire.imageanalysis.SimpleColorHistogram", // 11
-            "net.semanticmetadata.lire.imageanalysis.Tamura"                // 12
+            "net.semanticmetadata.lire.imageanalysis.ScalableColor",         // 10
+            "net.semanticmetadata.lire.imageanalysis.SimpleColorHistogram",  // 11
+            "net.semanticmetadata.lire.imageanalysis.Tamura",                // 12
+            "net.semanticmetadata.lire.imageanalysis.LuminanceLayout",       // 13
+            "net.semanticmetadata.lire.imageanalysis.PHOG"                   // 14
     };
 
     public static final String[] featureFieldNames = new String[]{
@@ -104,7 +104,9 @@ public class Extractor implements Runnable {
             DocumentBuilder.FIELD_NAME_JPEGCOEFFS,
             DocumentBuilder.FIELD_NAME_SCALABLECOLOR,
             DocumentBuilder.FIELD_NAME_COLORHISTOGRAM,
-            DocumentBuilder.FIELD_NAME_TAMURA
+            DocumentBuilder.FIELD_NAME_TAMURA,               // 12
+            DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,     // 13
+            DocumentBuilder.FIELD_NAME_PHOG                  // 14
     };
 
     static HashMap<String, Integer> feature2index;
@@ -200,7 +202,18 @@ public class Extractor implements Runnable {
     private boolean isConfigured() {
         boolean configured = true;
         if (fileList==null || !fileList.exists()) configured = false;
-        if (outFile==null) configured = false;
+        if (outFile==null) {
+            // create an outfile ...
+            try {
+                outFile = new File(fileList.getCanonicalPath() + ".data");
+                System.out.println("Setting out file to " + outFile.getCanonicalFile());
+            } catch (IOException e) {
+                configured = false;
+            }
+        }
+        if (outFile.exists()) {
+            System.err.println(outFile.getName() + " already exists. Please delete or choose another outfile.");
+        }
         if (listOfFeatures.size()<1) configured = false;
         return configured;
     }
@@ -212,7 +225,9 @@ public class Extractor implements Runnable {
                 "\n" +
                 "1. Usage\n" +
                 "========\n" +
-                "$> Extractor -i <infile> -o <outfile> -c <configfile>\n" +
+                "$> Extractor -i <infile> [-o <outfile>] -c <configfile>\n" +
+                "\n" +
+                "Note: if you don't specify an outfile just \".data\" is appended to the infile for output.\n" +
                 "\n" +
                 "2. Config File\n" +
                 "==============\n" +

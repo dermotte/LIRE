@@ -41,7 +41,6 @@ package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
-import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -77,12 +76,11 @@ public class PHOG implements LireFeature {
         BufferedImage gray;
         double[][] gx, gy;
         double[][] gd, gm;
-        int[][] gdRounded;
 
         // doing canny edge detection first:
         // filter images:
         gray = grayscale.filter(bimg, null);
-        // gray = gaussian.filter(gray, null);
+//        gray = gaussian.filter(gray, null);
         gx = sobelFilterX(gray);
         gy = sobelFilterY(gray);
         int width = gray.getWidth();
@@ -157,7 +155,9 @@ public class PHOG implements LireFeature {
 
         // TODO: more bins, more levels, more histogram quantization.
         // Canny Edge Detection over ... lets go for the PHOG ...
-        histogram = new double[5 * bins];
+        histogram = new double[5 * bins + 4*4*bins + 4*4*4*4*bins];
+        // for level 3:
+//        histogram = new double[5 * bins + 4*4*bins + 4*4*4*4*bins];
         //level0
         System.arraycopy(getHistogram(0, 0, width, height, gray, gd), 0, histogram, 0, bins);
         //level1
@@ -169,6 +169,27 @@ public class PHOG implements LireFeature {
                 0, histogram, 3 * bins, bins);
         System.arraycopy(getHistogram(width / 2, height / 2, width / 2, height / 2, gray, gd),
                 0, histogram, 4 * bins, bins);
+        // level 2
+        int wstep = width / 4;
+        int hstep = height / 4;
+        int binPos = 5; // the next free section in the histogram
+        for (int i = 0; i< 4; i++) {
+            for (int j=0; j<4; j++) {
+                System.arraycopy(getHistogram(i*wstep, j*hstep, wstep, hstep, gray, gd),
+                        0, histogram, binPos*bins, bins);
+                binPos++;
+            }
+        }
+        // level 3
+//        wstep = width / 16;
+//        hstep = height / 16;
+//        for (int i = 0; i< 16; i++) {
+//            for (int j=0; j<16; j++) {
+//                System.arraycopy(getHistogram(i*wstep, j*hstep, wstep, hstep, gray, gd),
+//                        0, histogram, binPos*bins, bins);
+//                binPos++;
+//            }
+//        }
     }
 
     /**
@@ -217,17 +238,11 @@ public class PHOG implements LireFeature {
         }
         if (max > 0d) {
             for (int i = 0; i < result.length; i++) {
-                result[i] = Math.round(64d * result[i] / max);
+                // quantize single values to 32 steps to compress feature a little bit.
+                result[i] = Math.round(31d * result[i] / max);
             }
         }
         return result;
-    }
-
-    private int quantAngle(double v) {
-        int bin = (int) Math.round((v / Math.PI + 0.5) * (bins));
-        // angles are a circular thing ... so we put the ends together here.
-        if (bin == bins) bin = 0;
-        return bin;
     }
 
     /**
@@ -311,27 +326,33 @@ public class PHOG implements LireFeature {
         return result;
     }
 
-    @Override
     public byte[] getByteArrayRepresentation() {
-        return SerializationUtils.toByteArray(histogram);
+        byte[] result = new byte[histogram.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = (byte) histogram[i];
+//            System.out.println("result[i]-histogram[i] = " + (result[i] - histogram[i]));
+        }
+        return result;
     }
 
-    @Override
     public void setByteArrayRepresentation(byte[] in) {
-        histogram = SerializationUtils.toDoubleArray(in);
+        histogram = new double[in.length];
+        for (int i = 0; i < in.length; i++) {
+            histogram[i] = (double) in[i];
+        }
     }
 
-    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        histogram = SerializationUtils.toDoubleArray(in, offset, length);
+        histogram = new double[length];
+        for (int i = offset; i < length; i++) {
+            histogram[i] = (double) in[i];
+        }
     }
 
-    @Override
     public double[] getDoubleHistogram() {
         return histogram;
     }
 
-    @Override
     public float getDistance(LireFeature feature) {
         // chi^2 distance ... as mentioned in the paper.
 //        double distance = 0;

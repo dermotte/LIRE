@@ -109,6 +109,8 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_JPEGCOEFFS = "featureJpegCoeffs";
     public static final String FIELD_NAME_JOINT_HISTOGRAM = "featureJointHist";
     public static final String  FIELD_NAME_OPPONENT_HISTOGRAM = "featOpHist";
+    public static final String  FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
+    public static final String  FIELD_NAME_PHOG = "featPHOG";
 
 
     /**
