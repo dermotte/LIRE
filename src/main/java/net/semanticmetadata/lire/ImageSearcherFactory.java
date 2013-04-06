@@ -282,6 +282,26 @@ public class ImageSearcherFactory {
     }
 
     /**
+     * Creates a new ImageSearcher instance based on the class {@link net.semanticmetadata.lire.imageanalysis.LuminanceLayout}
+     * @param maximumHits
+     * @return a new searcher instance
+     * @see net.semanticmetadata.lire.imageanalysis.LuminanceLayout
+     */
+    public static ImageSearcher createLuminanceLayoutSearcher(int maximumHits) {
+        return new GenericFastImageSearcher(maximumHits, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT);
+    }
+
+    /**
+     * Creates a new ImageSearcher instance based on the class {@link net.semanticmetadata.lire.imageanalysis.PHOG}
+     * @param maximumHits
+     * @return a new searcher instance
+     * @see net.semanticmetadata.lire.imageanalysis.PHOG
+     */
+    public static ImageSearcher createPHOGSearcher(int maximumHits) {
+        return new GenericFastImageSearcher(maximumHits, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
+    }
+
+    /**
      * Checks if the weight is in [0,1]
      *
      * @param f the weight to check

@@ -57,6 +57,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 
 import java.io.*;
@@ -93,7 +95,8 @@ public class TestWang extends TestCase {
         // Setting up DocumentBuilder:
         builder = new ChainedDocumentBuilder();
 //        builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-//        builder.addBuilder(new GenericFastDocumentBuilder(PHOG.class, "phog"));
+        builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
@@ -102,7 +105,7 @@ public class TestWang extends TestCase {
 //        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
@@ -179,7 +182,7 @@ public class TestWang extends TestCase {
             Document doc = builder.createDocument(new FileInputStream(identifier), identifier);
             iw.addDocument(doc);
             count++;
-//            if (count % 100 == 0) System.out.println(count + " files indexed.");
+            if (count % 100 == 0) System.out.println(count + " files indexed.");
 //            if (count == 200) break;
         }
         long timeTaken = (System.currentTimeMillis() - time);
@@ -206,9 +209,10 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1000), "Color Correlogram");
 //        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1000), "Color Layout");
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
-        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
+//        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
-//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, "phog"), "PHOG");
+        computeMAP(ImageSearcherFactory.createPHOGSearcher(1000), "PHOG");
+//        computeMAP(ImageSearcherFactory.createLuminanceLayoutSearcher(1000), "LumLay");
 //        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
@@ -223,7 +227,7 @@ public class TestWang extends TestCase {
 
     public void computeMAP(ImageSearcher searcher, String prefix) throws IOException {
         // copy index to ram to be much faster ...
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
 
         Pattern p = Pattern.compile("([0-9]+).jpg");
         double map = 0;

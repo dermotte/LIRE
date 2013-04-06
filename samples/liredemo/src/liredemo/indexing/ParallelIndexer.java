@@ -57,8 +57,8 @@ import java.util.concurrent.Executors;
 public class ParallelIndexer implements Runnable {
     // Vectors are already synchronized, so that's the cheap solution.
     Vector<String> imageFiles;
-    private int NUMBER_OF_SYNC_THREADS = 4;
-    Hashtable<String, Boolean> indexThreads = new Hashtable<String, Boolean>(3);
+    private int NUMBER_OF_SYNC_THREADS = 8;
+    Hashtable<String, Boolean> indexThreads = new Hashtable<String, Boolean>(8);
     DocumentBuilder builder;
     Vector<Document> finished = new Vector<Document>();
     private boolean started = false;
