@@ -79,7 +79,7 @@ public class PHOG implements LireFeature {
 
         // doing canny edge detection first:
         // filter images:
-        gray = grayscale.filter(bimg, null);
+        gray = grayscale.filter(bimg, new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_BYTE_GRAY));
 //        gray = gaussian.filter(gray, null);
         gx = sobelFilterX(gray);
         gy = sobelFilterY(gray);
@@ -274,7 +274,7 @@ public class PHOG implements LireFeature {
 
     private double[][] sobelFilterX(BufferedImage gray) {
         double[][] result = new double[gray.getWidth()][gray.getHeight()];
-        int[] tmp = new int[1];
+        int[] tmp = new int[4];
         int tmpSum = 0;
         for (int x = 1; x < gray.getWidth() - 1; x++) {
             for (int y = 1; y < gray.getHeight() - 1; y++) {
@@ -301,7 +301,7 @@ public class PHOG implements LireFeature {
 
     private double[][] sobelFilterY(BufferedImage gray) {
         double[][] result = new double[gray.getWidth()][gray.getHeight()];
-        int[] tmp = new int[1];
+        int[] tmp = new int[4];
         int tmpSum = 0;
         for (int x = 1; x < gray.getWidth() - 1; x++) {
             for (int y = 1; y < gray.getHeight() - 1; y++) {

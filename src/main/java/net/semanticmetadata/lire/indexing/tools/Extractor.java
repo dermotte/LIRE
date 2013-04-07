@@ -213,6 +213,7 @@ public class Extractor implements Runnable {
         }
         if (outFile.exists()) {
             System.err.println(outFile.getName() + " already exists. Please delete or choose another outfile.");
+            configured = false;
         }
         if (listOfFeatures.size()<1) configured = false;
         return configured;
@@ -254,7 +255,7 @@ public class Extractor implements Runnable {
         }
 
         // do it ...
-        byte[] myBuffer = new byte[1024*100];
+        byte[] myBuffer = new byte[1024*1024*10];
         int bufferCount = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileList));
@@ -296,9 +297,10 @@ public class Extractor implements Runnable {
                     bufferCount = 0;
                     count++;
                 } catch (Exception e) {
-                    System.err.println("Error reading image " + relFile + ": " + e.getMessage());
+                    System.err.println("Error processing image " + relFile + ": " + e.getMessage());
+                    e.printStackTrace();
                 }
-                if (count%100==0)
+                if (count%100==0 && count > 0)
                     System.out.println(count + " files processed, " + (System.currentTimeMillis()-ms)/count + " ms per file.");
             }
             dos.close();
