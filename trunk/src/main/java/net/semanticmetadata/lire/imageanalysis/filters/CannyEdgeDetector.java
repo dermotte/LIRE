@@ -53,8 +53,6 @@ import java.awt.image.Kernel;
  * @author Mathias Lux, mathias@juggle.at, 05.04.13
  */
 public class CannyEdgeDetector {
-    static ConvolveOp sobelX = new ConvolveOp(new Kernel(3, 3, new float[]{1, 0, -1, 2, 0, -2, 1, 0, -1}));
-    static ConvolveOp sobelY = new ConvolveOp(new Kernel(3, 3, new float[]{1, 2, 1, 0, 0, 0, -1, -2, -1}));
     static ConvolveOp gaussian = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 1.4f)));
     static ColorConvertOp grayscale = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
 
@@ -208,7 +206,7 @@ public class CannyEdgeDetector {
     private double[][] sobelFilterX(BufferedImage gray) {
         double[][] result = new double[gray.getWidth()][gray.getHeight()];
         int[] tmp = new int[1];
-        int tmpSum = 0;
+        int tmpSum;
         for (int x = 1; x < gray.getWidth() - 1; x++) {
             for (int y = 1; y < gray.getHeight() - 1; y++) {
                 tmpSum = 0;
