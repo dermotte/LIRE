@@ -3,6 +3,10 @@ CHANGES for LIRE
 
 2013-04-06
 ==========
+  - Fixed bug with transparency channel in PHOG.
+
+2013-04-06
+==========
   - Extended buffer size in Indexor.
   - Added levels to PHOG, reduced serialization size.
   - Introduced LuminanceLayout feature.
