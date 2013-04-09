@@ -113,7 +113,10 @@ public class Indexor {
         if (inputFiles.size() > 0) {
             for (Iterator<File> iterator = inputFiles.iterator(); iterator.hasNext(); ) {
                 File next = iterator.next();
-                if (!next.exists()) isConfigured = false;
+                if (!next.exists()) {
+                    isConfigured = false;
+                        System.err.println("Input file " + next.getPath() + " does not exist.");
+                }
             }
         }
         return isConfigured;

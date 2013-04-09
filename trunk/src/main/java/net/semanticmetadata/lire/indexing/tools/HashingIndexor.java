@@ -122,9 +122,12 @@ public class HashingIndexor extends Indexor {
 
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
         if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
+            // just add the specific feature, don't add the other ones.
             document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
+            // generate hashes here:
             int[] hashes = BitSampling.generateHashes(feature.getDoubleHistogram());
             // System.out.println(Arrays.toString(hashes));
+            // store hashes in index as terms
             document.add(new TextField("Hashes", SerializationUtils.arrayToString(hashes), Field.Store.YES));
         }
     }

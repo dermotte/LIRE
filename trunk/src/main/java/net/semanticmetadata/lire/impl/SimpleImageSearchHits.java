@@ -100,6 +100,15 @@ public class SimpleImageSearchHits implements ImageSearchHits {
         return results.get(position).getDocument();
     }
 
+    /**
+     * Returns the id of the document within the respective Lucene IndexReader
+     * @param position position in the result list
+     * @return the id in the IndexReader.
+     */
+    public int readerID(int position) {
+        return results.get(position).getIndexNumber();
+    }
+
     private float sigmoid(float f) {
         double result = 0f;
         result = -1d + 2d / (1d + Math.exp(-2d * f / 0.6));

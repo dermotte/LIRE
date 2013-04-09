@@ -41,8 +41,8 @@ package net.semanticmetadata.lire.indexing;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.OpponentHistogram;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.index.DirectoryReader;
@@ -109,7 +109,7 @@ public class HashingTest extends TestCase {
         });
         LireFeature feat = null;
         try {
-            feat = new OpponentHistogram();
+            feat = new CEDD();
         } catch (Exception e) {
             System.err.println("there is a problem with creating the right feature instance.");
             e.printStackTrace();
@@ -127,6 +127,7 @@ public class HashingTest extends TestCase {
             try {
                 BooleanQuery query = new BooleanQuery();
                 for (int i = 0; i < ints.length; i++) {
+                    // be aware that the name of the field must match the one you put the hashes in before.
                     query.add(new BooleanClause(new TermQuery(new Term("Hashes", ints[i] + "")), BooleanClause.Occur.SHOULD));
                 }
                 long ms = System.currentTimeMillis();

@@ -75,18 +75,23 @@ public class BitSampling {
      * @throws IOException
      */
     public static void generateHashFunctions() throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(name));
-        oos.writeInt(bits);
-        oos.writeInt(dimensions);
-        oos.writeInt(numFunctionBundles);
-        for (int c = 0; c < numFunctionBundles; c++) {
-            for (int i = 0; i < bits; i++) {
-                for (int j = 0; j < dimensions; j++) {
-                    oos.writeDouble((Math.random() * w - w / 2));
+        File hashFile = new File(name);
+        if (!hashFile.exists()) {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(hashFile));
+            oos.writeInt(bits);
+            oos.writeInt(dimensions);
+            oos.writeInt(numFunctionBundles);
+            for (int c = 0; c < numFunctionBundles; c++) {
+                for (int i = 0; i < bits; i++) {
+                    for (int j = 0; j < dimensions; j++) {
+                        oos.writeDouble((Math.random() * w - w / 2));
+                    }
                 }
             }
+            oos.close();
+        } else {
+            System.err.println("Hashes could not be written: " + name + " already exists");
         }
-        oos.close();
     }
 
     /**
