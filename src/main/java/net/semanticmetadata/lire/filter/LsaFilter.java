@@ -145,7 +145,7 @@ public class LsaFilter implements SearchHitsFilter {
         for (int i = 1; i < data.length; i++) {
             double[] doubles = data[i];
             double distance = MetricsUtils.distL1(doubles, queryData);
-            result.add(new SimpleResult((float) distance, results.doc(i - 1), i));
+            result.add(new SimpleResult((float) distance, results.doc(i - 1), i-1));
             maxDistance = Math.max(maxDistance, distance);
         }
         ImageSearchHits hits;

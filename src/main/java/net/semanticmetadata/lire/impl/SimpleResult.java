@@ -93,6 +93,10 @@ public class SimpleResult implements Comparable<SimpleResult> {
         this.document = document;
     }
 
+    public int getIndexNumber() {
+        return indexNumber;
+    }
+
     /**
      * Compare the distance values to allow sorting in a tree map. If the distance value is the same, but the document
      * is different, the index number within the index is used to distinguishing the results. Otherwise the TreeMap

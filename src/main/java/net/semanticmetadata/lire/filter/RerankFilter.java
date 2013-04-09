@@ -145,7 +145,7 @@ public class RerankFilter implements SearchHitsFilter {
                         tmp.getField(fieldName).binaryValue().length);
                 distance = queryFeature.getDistance(tempFeature);
                 maxDistance = Math.max(maxDistance, distance);
-                resultSet.add(new SimpleResult(distance, tmp, x));
+                resultSet.add(new SimpleResult(distance, tmp, scoreDocs[x].doc));
             } else {
                 logger.info("Could not instantiate class " + featureClass.getName() + " from the given result set.");
             }

@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2013-04-08
+==========
+  - Added security check to BitSampling.generateHashes not to overwrite hash file on disk.
+  - Added additional error message to Indexor.
+  - Changed signature of SimpleImageSearchHits to support a simple web app.
+
 2013-04-06
 ==========
   - Fixed bug with transparency channel in PHOG.

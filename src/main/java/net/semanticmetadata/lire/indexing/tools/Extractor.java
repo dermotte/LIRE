@@ -202,7 +202,7 @@ public class Extractor implements Runnable {
     private boolean isConfigured() {
         boolean configured = true;
         if (fileList==null || !fileList.exists()) configured = false;
-        if (outFile==null) {
+        else if (outFile==null) {
             // create an outfile ...
             try {
                 outFile = new File(fileList.getCanonicalPath() + ".data");
@@ -210,8 +210,7 @@ public class Extractor implements Runnable {
             } catch (IOException e) {
                 configured = false;
             }
-        }
-        if (outFile.exists()) {
+        } else if (outFile.exists()) {
             System.err.println(outFile.getName() + " already exists. Please delete or choose another outfile.");
             configured = false;
         }
