@@ -287,7 +287,7 @@ public class ImageSearcherFactory {
      * @return a new searcher instance
      * @see net.semanticmetadata.lire.imageanalysis.LuminanceLayout
      */
-    public static ImageSearcher createLuminanceLayoutSearcher(int maximumHits) {
+    public static ImageSearcher createLuminanceLayoutImageSearcher(int maximumHits) {
         return new GenericFastImageSearcher(maximumHits, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT);
     }
 
@@ -297,7 +297,7 @@ public class ImageSearcherFactory {
      * @return a new searcher instance
      * @see net.semanticmetadata.lire.imageanalysis.PHOG
      */
-    public static ImageSearcher createPHOGSearcher(int maximumHits) {
+    public static ImageSearcher createPHOGImageSearcher(int maximumHits) {
         return new GenericFastImageSearcher(maximumHits, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
     }
 
