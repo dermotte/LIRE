@@ -211,8 +211,8 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
-        computeMAP(ImageSearcherFactory.createPHOGSearcher(1000), "PHOG");
-//        computeMAP(ImageSearcherFactory.createLuminanceLayoutSearcher(1000), "LumLay");
+        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
+//        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
 //        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
