@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-04-11
+==========
+  - Added method to BitSampling
+  - Removed printStackTrace from Extractor
+
 2013-04-08
 ==========
   - Added security check to BitSampling.generateHashes not to overwrite hash file on disk.

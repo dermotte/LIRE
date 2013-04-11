@@ -96,12 +96,40 @@ public class BitSampling {
 
     /**
      * Reads a file from disk, where the hash bundles are specified. Make sure to generate it first
-     * and make sure to re-use it for search.
+     * and make sure to re-use it for search. This method reads the in class specified file relative
+     * to the execution directory.
      *
      * @return
      * @throws IOException
      */
     public static double[][][] readHashFunctions() throws IOException {
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));
+        int bits = ois.readInt();
+        int dimensions = ois.readInt();
+        int numFunctionBundles = ois.readInt();
+
+        double[][][] hashFunctions = new double[numFunctionBundles][bits][dimensions];
+        for (int i = 0; i < hashFunctions.length; i++) {
+            double[][] functionBundle = hashFunctions[i];
+            for (int j = 0; j < functionBundle.length; j++) {
+                double[] bitFunctions = functionBundle[j];
+                for (int k = 0; k < bitFunctions.length; k++) {
+                    bitFunctions[k] = ois.readDouble();
+                }
+            }
+        }
+        BitSampling.hashes = hashFunctions;
+        return hashFunctions;
+    }
+
+    /**
+     * Reads a file from a given InputStream, where the hash bundles are specified. Make sure to generate it first
+     * and make sure to re-use it for search.
+     * @param inputStream to access the data, most likely a File on a hard disk
+     * @return
+     * @throws IOException
+     */
+    public static double[][][] readHashFunctions(InputStream inputStream) throws IOException {
         ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));
         int bits = ois.readInt();
         int dimensions = ois.readInt();
@@ -128,7 +156,7 @@ public class BitSampling {
      * @return
      */
     public static int[] generateHashes(double[] histogram) {
-        double val = 0d;
+        double val;
         int[] hashResults = new int[hashes.length];
         for (int i = 0; i < hashes.length; i++) {
             double[][] hashBundle = hashes[i];
