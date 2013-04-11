@@ -297,7 +297,7 @@ public class Extractor implements Runnable {
                     count++;
                 } catch (Exception e) {
                     System.err.println("Error processing image " + relFile + ": " + e.getMessage());
-                    e.printStackTrace();
+                    // e.printStackTrace();
                 }
                 if (count%100==0 && count > 0)
                     System.out.println(count + " files processed, " + (System.currentTimeMillis()-ms)/count + " ms per file.");

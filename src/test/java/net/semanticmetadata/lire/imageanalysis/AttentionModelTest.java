@@ -59,7 +59,7 @@ public class AttentionModelTest extends TestCase {
     public void testExtraction() throws IOException {
         StentifordModel sm = new StentifordModel();
         // sm.extract(ImageIO.read(new File("wang-1000/103.jpg")));
-        sm.extract(ImageIO.read(new File("C:\\Temp\\kitty.png")));
+        sm.extract(ImageIO.read(new File("src\\test\\resources\\images\\img01.JPG")));
         ImageIO.write(sm.getAttentionVisualization(), "png", new File("out.png"));
     }
 
