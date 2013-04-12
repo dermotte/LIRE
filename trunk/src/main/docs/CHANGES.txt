@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-04-12
+==========
+  - Added BitSamplingImageSearcher
+
 2013-04-11
 ==========
   - Added method to BitSampling

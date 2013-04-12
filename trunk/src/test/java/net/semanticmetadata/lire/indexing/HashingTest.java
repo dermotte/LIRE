@@ -43,8 +43,10 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.utils.FileUtils;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
@@ -167,6 +169,14 @@ public class HashingTest extends TestCase {
             }
         });
         return new TopDocs(50, (ScoreDoc[]) res.toArray(new ScoreDoc[res.size()]), maxScore);
+    }
+
+    public void testImageSearcher() throws IOException {
+        BitSamplingImageSearcher is = new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_CEDD, "Hashes", new CEDD());
+        IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File("wipo-index-hashed")));
+        Document queryDoc = reader.document(0);
+        String file = FileUtils.saveImageResultsToHtml("wipo", is.search(queryDoc, reader), queryDoc.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+        FileUtils.browseUri(file);
     }
 
 
