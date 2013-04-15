@@ -71,7 +71,7 @@ import java.util.Stack;
 
 public class ParallelIndexer implements Runnable {
     private int numberOfThreads = 10;
-    private String pathname = "para-idx";
+    private String indexPath = "para-idx";
     private String imageDirectory = "testdata/wang-1000";
     Stack<WorkItem> images = new Stack<WorkItem>();
     IndexWriter writer;
@@ -92,9 +92,9 @@ public class ParallelIndexer implements Runnable {
         p.run();
     }
 
-    public ParallelIndexer(int numberOfThreads, String pathname, String imageDirectory) {
+    public ParallelIndexer(int numberOfThreads, String indexPath, String imageDirectory) {
         this.numberOfThreads = numberOfThreads;
-        this.pathname = pathname;
+        this.indexPath = indexPath;
         this.imageDirectory = imageDirectory;
     }
 
@@ -116,7 +116,7 @@ public class ParallelIndexer implements Runnable {
         IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer(LuceneUtils.LUCENE_VERSION));
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         try {
-            writer = new IndexWriter(FSDirectory.open(new File(pathname)), config);
+            writer = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
             files = FileUtils.getAllImageFiles(new File(imageDirectory), true);
             Thread p = new Thread(new Producer());
             p.start();

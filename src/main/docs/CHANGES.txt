@@ -8,7 +8,8 @@ CHANGES for LIRE
   - Fixed bug in PHOG: Far too many bins were created.
   - Added a producer-consumer version of the indexer.
   - Parallelized TestWang
-  - Added hashing to GenericDocumentBuilder
+  - Added hashing to GenericDocumentBuilder.
+  - Added ParallelIndexing to sample application.
 
 2013-04-12
 ==========

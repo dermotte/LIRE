@@ -32,7 +32,16 @@
     <target name="index" depends="compile">
         <java classpathref="class.path" classname="net.semanticmetadata.lire.sampleapp.Indexer">
             <!-- adapt this argument to use your pictures -->
-            <arg value="d:/temp"/>
+            <arg value="D:/Java/Projects/Lire/testdata"/>
+        </java>
+    </target>
+
+    <target name="index-parallel" depends="compile">
+        <!-- Note: This needs to be forked, otherwise multi threading won't work and the heap space will be exceeded soon. -->
+        <java classpathref="class.path" classname="net.semanticmetadata.lire.sampleapp.ParallelIndexing" fork="true" maxmemory="1024M">
+            <jvmarg line="-Xmx1024M -server"/>
+            <!-- adapt this argument to use your pictures -->
+            <arg value="D:/Java/Projects/Lire/testdata"/>
         </java>
     </target>
 
