@@ -86,6 +86,17 @@
         <javac srcdir="${src}" destdir="${build}">
             <classpath refid="classpath.path"/>
         </javac>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/*.java"/>
+                    <exclude name="**/*.html"/>
+                    <exclude name="**/.svn/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
     </target>
 
     <target name="javadoc">
