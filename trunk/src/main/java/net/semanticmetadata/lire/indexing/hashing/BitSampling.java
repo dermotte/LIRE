@@ -40,6 +40,8 @@
 package net.semanticmetadata.lire.indexing.hashing;
 
 import java.io.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Provides a simple way to hashing. It's bit sampling and can be put into the
@@ -50,7 +52,7 @@ import java.io.*;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class BitSampling {
-    private static int bits = 16, dimensions = 512;
+    private static int bits = 16, dimensions = 1024;
     private static int numFunctionBundles = 50;
     private static String name = "LshBitSampling.obj";
     private static double w = 4d;
@@ -77,7 +79,7 @@ public class BitSampling {
     public static void generateHashFunctions() throws IOException {
         File hashFile = new File(name);
         if (!hashFile.exists()) {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(hashFile));
+            ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hashFile)));
             oos.writeInt(bits);
             oos.writeInt(dimensions);
             oos.writeInt(numFunctionBundles);
@@ -103,7 +105,7 @@ public class BitSampling {
      * @throws IOException
      */
     public static double[][][] readHashFunctions() throws IOException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));
+        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(BitSampling.class.getResourceAsStream(name)));
         int bits = ois.readInt();
         int dimensions = ois.readInt();
         int numFunctionBundles = ois.readInt();
@@ -130,7 +132,7 @@ public class BitSampling {
      * @throws IOException
      */
     public static double[][][] readHashFunctions(InputStream inputStream) throws IOException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));
+        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(new FileInputStream(name)));
         int bits = ois.readInt();
         int dimensions = ois.readInt();
         int numFunctionBundles = ois.readInt();

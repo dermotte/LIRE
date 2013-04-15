@@ -1,6 +1,15 @@
 CHANGES for LIRE
 ================
 
+2013-04-15
+==========
+  - Moved serialized hash functions to classpath & SVN.
+  - Added GZIP compression to hash file.
+  - Fixed bug in PHOG: Far too many bins were created.
+  - Added a producer-consumer version of the indexer.
+  - Parallelized TestWang
+  - Added hashing to GenericDocumentBuilder
+
 2013-04-12
 ==========
   - Added BitSamplingImageSearcher

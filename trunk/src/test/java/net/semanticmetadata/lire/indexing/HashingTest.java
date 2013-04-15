@@ -179,6 +179,10 @@ public class HashingTest extends TestCase {
         FileUtils.browseUri(file);
     }
 
+    public void testLoadHashFunctions() throws IOException {
+        BitSampling.readHashFunctions();
+    }
+
 
     private String printToHtml(TopDocs topDocs, IndexReader reader) throws IOException {
         String fileName = "results-" + System.currentTimeMillis() / 1000 + ".html";
