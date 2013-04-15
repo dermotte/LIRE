@@ -66,7 +66,7 @@ public class HashingIndexor extends Indexor {
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
         HashingIndexor indexor = new HashingIndexor();
-        BitSampling.generateHashFunctions();
+//        BitSampling.generateHashFunctions();
         BitSampling.readHashFunctions();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];

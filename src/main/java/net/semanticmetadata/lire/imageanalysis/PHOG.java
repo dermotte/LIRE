@@ -81,6 +81,7 @@ public class PHOG implements LireFeature {
         // filter images:
         gray = grayscale.filter(bimg, new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_BYTE_GRAY));
 //        gray = gaussian.filter(gray, null);
+        // TODO: Combine the next few steps to just iterate through the pixels once!
         gx = sobelFilterX(gray);
         gy = sobelFilterY(gray);
         int width = gray.getWidth();
@@ -153,9 +154,8 @@ public class PHOG implements LireFeature {
             }
         }
 
-        // TODO: more bins, more levels, more histogram quantization.
         // Canny Edge Detection over ... lets go for the PHOG ...
-        histogram = new double[5 * bins + 4*4*bins + 4*4*4*4*bins];
+        histogram = new double[bins + 4*bins + 4*4*bins];
         // for level 3:
 //        histogram = new double[5 * bins + 4*4*bins + 4*4*4*4*bins];
         //level0
@@ -239,7 +239,7 @@ public class PHOG implements LireFeature {
         if (max > 0d) {
             for (int i = 0; i < result.length; i++) {
                 // quantize single values to 32 steps to compress feature a little bit.
-                result[i] = Math.round(31d * result[i] / max);
+                result[i] = Math.round(63d * result[i] / max);
             }
         }
         return result;

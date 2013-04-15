@@ -41,13 +41,13 @@ package net.semanticmetadata.lire.impl;
 import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.utils.ImageUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.StringField;
+import net.semanticmetadata.lire.utils.SerializationUtils;
+import org.apache.lucene.document.*;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -58,6 +58,7 @@ import java.util.logging.Logger;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class GenericDocumentBuilder extends AbstractDocumentBuilder {
+    private boolean HASHING = false;
     private Logger logger = Logger.getLogger(getClass().getName());
     public static final int MAX_IMAGE_DIMENSION = 1024;
     Class<? extends LireFeature> descriptorClass;
@@ -65,6 +66,16 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     final static Mode DEFAULT_MODE = Mode.Fast;
     Mode currentMode = DEFAULT_MODE;
     // private LireFeature lireFeature;
+
+    static {
+        // Let's try to read the hash functions right here and we don't have to care about it right now.
+        try {
+            BitSampling.readHashFunctions();
+        } catch (IOException e) {
+            System.err.println("Could not read hashes from file when first creating a GenericDocumentBuilder instance.");
+            e.printStackTrace();
+        }
+    }
 
     // Decide between byte array version (fast) or string version (slow)
     public enum Mode {
@@ -80,13 +91,18 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, String fieldName) {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldName;
-        /*try {
-            lireFeature = (LireFeature) descriptorClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } */
+    }
+
+    /**
+     * Creating a new DocumentBuilder based on a class based on the interface {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     * @param descriptorClass has to implement {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     * @param fieldName The name of the field, where the feature vector is stored.
+     * @param hashing set to true is you want to create an additional field for hashes based on BitSampling.
+     */
+    public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, String fieldName, boolean hashing) {
+        this.descriptorClass = descriptorClass;
+        this.fieldName = fieldName;
+        HASHING = hashing;
     }
 
     /**
@@ -100,13 +116,6 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldName;
         this.currentMode = mode;
-        /*try {
-            lireFeature = (LireFeature) descriptorClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } */
     }
 
     public Document createDocument(BufferedImage image, String identifier) {
@@ -135,6 +144,14 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
             else
                 doc.add(new StoredField(fieldName, lireFeature.getByteArrayRepresentation()));
 
+            // if BitSampling is an issue we add a field with the given name and the suffix "hash":
+            if (HASHING) {
+                if (lireFeature.getDoubleHistogram().length <= 1024) {
+                    int[] hashes = BitSampling.generateHashes(lireFeature.getDoubleHistogram());
+                    doc.add(new TextField(fieldName+"_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
+                } else
+                    System.err.println("Could not create hashes, feature vector too long: " + lireFeature.getDoubleHistogram().length + " ("+lireFeature.getClass().getName()+")");
+            }
             if (identifier != null)
                 doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
         } catch (InstantiationException e) {
