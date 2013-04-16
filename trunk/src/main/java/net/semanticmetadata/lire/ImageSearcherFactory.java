@@ -34,13 +34,15 @@
  * Copyright statement:
  * --------------------
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire;
 
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.impl.CorrelogramImageSearcher;
+import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 
 /**
@@ -124,19 +126,6 @@ public class ImageSearcherFactory {
      */
     public static ImageSearcher createAutoColorCorrelogramImageSearcher(int maximumHits) {
         return new GenericFastImageSearcher(maximumHits, AutoColorCorrelogram.class, DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM);
-//        return new CorrelogramImageSearcher(maximumHits, AutoColorCorrelogram.Mode.SuperFast);
-    }
-
-    /**
-     * Create and return an ImageSearcher for the {@link net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram}
-     * image feature. Be sure to use the same options for the ImageSearcher as you used for the DocumentBuilder.
-     *
-     * @param maximumHits number of hits returned.
-     * @return
-     * @deprecated Use #createAutoColorCorrelogramImageSearcher instead
-     */
-    public static ImageSearcher createFastCorrelogramImageSearcher(int maximumHits) {
-        return new CorrelogramImageSearcher(maximumHits, AutoColorCorrelogram.Mode.SuperFast);
     }
 
     /**
@@ -147,8 +136,22 @@ public class ImageSearcherFactory {
      * @return
      */
     public static ImageSearcher createCEDDImageSearcher(int maximumHits) {
-//        return new CEDDImageSearcher(maximumHits);
         return new GenericFastImageSearcher(maximumHits, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
+    }
+
+    /**
+     * Create and return an ImageSearcher for the {@link net.semanticmetadata.lire.imageanalysis.CEDD}
+     * image feature based on {@link net.semanticmetadata.lire.indexing.hashing.BitSampling} hashes.
+     * Be sure to use the same options for the ImageSearcher as you used for the DocumentBuilder.
+     * It won't work out if you don't use {@link DocumentBuilderFactory#getHashingCEDDDocumentBuilder()}
+     * or the code within.
+     *
+     * @param maximumHits
+     * @return
+     */
+    public static ImageSearcher createHashingCEDDImageSearcher(int maximumHits) {
+        return new BitSamplingImageSearcher(maximumHits, DocumentBuilder.FIELD_NAME_CEDD,
+                DocumentBuilder.FIELD_NAME_CEDD+"_hash", new CEDD());
     }
 
 

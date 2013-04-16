@@ -34,7 +34,9 @@
  * Copyright statement:
  * --------------------
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire;
@@ -97,7 +99,6 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM = "featureSiftHistogram";
     public static final String FIELD_NAME_SIFT_VISUAL_WORDS = "featureSiftHistogramVWords";
     public static final String FIELD_NAME_IDENTIFIER = "descriptorImageIdentifier";
-    public static final String FIELD_NAME_CEDD_FAST = "featureCEDDfast";
     public static final String FIELD_NAME_COLORLAYOUT_FAST = "featureColorLayoutfast";
     public static final String FIELD_NAME_SURF = "featureSurf";
     public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSURFHistogram";

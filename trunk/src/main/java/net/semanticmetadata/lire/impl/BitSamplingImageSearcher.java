@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 12.04.13 13:16
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire.impl;
@@ -58,17 +58,27 @@ import java.io.InputStream;
 import java.util.TreeSet;
 
 /**
- * This class allows for searching based on {@link net.semanticmetadata.lire.indexing.hashing.BitSampling} Hashing.
+ * This class allows for searching based on {@link net.semanticmetadata.lire.indexing.hashing.BitSampling}
+ * Hashing. First a number of candidates is retrieved from the index, then the candidates are re-ranked.
+ * The number of candidates can be tuned with the numHashedResults parameter in the constructor. The higher
+ * this parameter, the better the results, but the slower the search.
  * @author Mathias Lux, mathias@juggle.at, 2013-04-12
  */
 
 public class BitSamplingImageSearcher extends AbstractImageSearcher {
-    private final int maxResultsHashBased = 1000;
+    private int maxResultsHashBased = 1000;
     private int maximumHits = 100;
     private String featureFieldName = DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM;
     private LireFeature feature;
     private String hashesFieldName = "Hashes";
 
+    /**
+     * Creates a new searcher for BitSampling based hashes.
+     * @param maximumHits how many hits the searcher shall return.
+     * @param featureFieldName the field name of the feature.
+     * @param hashesFieldName the field name of the hashes.
+     * @param feature an instance of the feature.
+     */
     public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
@@ -82,11 +92,40 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         }
     }
 
+    public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, int numHashedResults) {
+        this.maximumHits = maximumHits;
+        this.featureFieldName = featureFieldName;
+        this.hashesFieldName = hashesFieldName;
+        this.feature = feature;
+        maxResultsHashBased = numHashedResults;
+        try {
+            BitSampling.readHashFunctions();
+        } catch (IOException e) {
+            System.err.println("Error reading hash functions from default location.");
+            e.printStackTrace();
+        }
+    }
+
     public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
         this.feature = feature;
+        try {
+            BitSampling.readHashFunctions(hashes);
+            hashes.close();
+        } catch (IOException e) {
+            System.err.println("Error reading has functions from given input stream.");
+            e.printStackTrace();
+        }
+    }
+
+    public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes, int numHashedResults) {
+        this.maximumHits = maximumHits;
+        this.featureFieldName = featureFieldName;
+        this.hashesFieldName = hashesFieldName;
+        this.feature = feature;
+        maxResultsHashBased = numHashedResults;
         try {
             BitSampling.readHashFunctions(hashes);
             hashes.close();
@@ -148,6 +187,8 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
                 maxDistance = Math.max(maxDistance, tmpScore);
             } else if (tmpScore < maxDistance) {
                 resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
+            }
+            while (resultScoreDocs.size() > maximumHits) {
                 resultScoreDocs.remove(resultScoreDocs.last());
                 maxDistance = resultScoreDocs.last().getDistance();
             }
