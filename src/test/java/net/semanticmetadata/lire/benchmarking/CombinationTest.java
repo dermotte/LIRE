@@ -34,15 +34,17 @@
  * Copyright statement:
  * --------------------
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.ColorLayoutDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -71,7 +73,7 @@ public class CombinationTest extends TestCase {
     public void testIndexing() throws IOException {
         ChainedDocumentBuilder cb = new ChainedDocumentBuilder();
         cb.addBuilder(new SurfDocumentBuilder());
-        cb.addBuilder(new ColorLayoutDocumentBuilder());
+        cb.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 
         System.out.println("-< Getting files to index >--------------");
         ArrayList<String> images = FileUtils.getAllImages(new File(dataPath), true);

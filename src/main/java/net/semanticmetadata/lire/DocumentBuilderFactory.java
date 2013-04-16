@@ -34,14 +34,15 @@
  * Copyright statement:
  * --------------------
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire;
 
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.CorrelogramDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastDocumentBuilder;
 
@@ -63,7 +64,7 @@ public class DocumentBuilderFactory {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD
      */
     public static DocumentBuilder getDefaultDocumentBuilder() {
-        return new GenericFastDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
+        return new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
     }
 
     /**
@@ -148,21 +149,6 @@ public class DocumentBuilderFactory {
     }
 
     /**
-     * Creates a DocumentBuilder for the AutoColorCorrelation feature. Note that the extraction of this feature
-     * is especially slow, but this is a more fast, but less accurate settings version!
-     * Images that do not fit in a defined bounding box they are
-     * resized by the document builder to ensure shorter processing time. See
-     * {@link net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram} for more information on the image feature.
-     * Be sure to use the same options for the ImageSearcher as you used for the DocumentBuilder.
-     *
-     * @return the created AutoCorrelation feature DocumentBuilder.
-     * @deprecated Use #getAutoColorCorrelogramDocumentBuilder instead.
-     */
-    public static DocumentBuilder getFastAutoColorCorrelationDocumentBuilder() {
-        return new CorrelogramDocumentBuilder(AutoColorCorrelogram.Mode.SuperFast);
-    }
-
-    /**
      * Creates a DocumentBuilder for the CEDD feature. See
      * {@link net.semanticmetadata.lire.imageanalysis.CEDD} for more information on the image feature.
      * Be sure to use the same options for the ImageSearcher as you used for the DocumentBuilder.
@@ -170,8 +156,20 @@ public class DocumentBuilderFactory {
      * @return the created CEDD feature DocumentBuilder.
      */
     public static DocumentBuilder getCEDDDocumentBuilder() {
-//        return new CEDDDocumentBuilder();
-        return new GenericFastDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
+        return new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
+    }
+
+    /**
+     * Creates a DocumentBuilder for the CEDD feature and adds BitSampling based hashes in an additional
+     * index field for sub linear search. See {@link net.semanticmetadata.lire.imageanalysis.CEDD} for
+     * more information on the image feature. See {@link net.semanticmetadata.lire.indexing.hashing.BitSampling}
+     * for more information on the employed hashing technique.
+     * Be sure to use the same options for the ImageSearcher as you used for the DocumentBuilder.
+     *
+     * @return the created CEDD feature DocumentBuilder.
+     */
+    public static DocumentBuilder getHashingCEDDDocumentBuilder() {
+        return new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true);
     }
 
 

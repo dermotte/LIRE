@@ -34,7 +34,9 @@
  * Copyright statement:
  * --------------------
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -74,7 +76,7 @@ public class PHOG implements LireFeature {
     public void extract(BufferedImage bimg) {
         // All for Canny Edge ...
         BufferedImage gray;
-        double[][] gx, gy;
+        double[][] gx = null, gy = null;
         double[][] gd, gm;
 
         // doing canny edge detection first:
@@ -82,8 +84,11 @@ public class PHOG implements LireFeature {
         gray = grayscale.filter(bimg, new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_BYTE_GRAY));
 //        gray = gaussian.filter(gray, null);
         // TODO: Combine the next few steps to just iterate through the pixels once!
-        gx = sobelFilterX(gray);
-        gy = sobelFilterY(gray);
+        gx = new double[gray.getWidth()][gray.getHeight()];
+        gy = new double[gray.getWidth()][gray.getHeight()];
+        sobelFilter(gray, gx, gy);
+//        gx = sobelFilterX(gray);
+//        gy = sobelFilterY(gray);
         int width = gray.getWidth();
         int height = gray.getHeight();
         gd = new double[width][height];
@@ -272,6 +277,51 @@ public class PHOG implements LireFeature {
         else gray.getRaster().setPixel(x, y, tmp255);
     }
 
+    private void sobelFilter(BufferedImage gray, double[][] gx, double[][] gy) {
+        int[] tmp = new int[4];
+        int tmpSumX = 0, tmpSumY =0, pix;
+        for (int x = 1; x < gray.getWidth() - 1; x++) {
+            for (int y = 1; y < gray.getHeight() - 1; y++) {
+                tmpSumX = 0;
+                tmpSumY = 0;
+                pix = gray.getRaster().getPixel(x - 1, y - 1, tmp)[0];
+                tmpSumX += pix;
+                tmpSumY += pix;
+                pix = gray.getRaster().getPixel(x - 1, y, tmp)[0];
+                tmpSumX += 2 * pix;
+                pix = gray.getRaster().getPixel(x - 1, y + 1, tmp)[0];
+                tmpSumX += pix;
+                tmpSumY -= pix;
+
+                pix = gray.getRaster().getPixel(x + 1, y - 1, tmp)[0];
+                tmpSumX -= pix;
+                tmpSumY += pix;
+                pix = gray.getRaster().getPixel(x + 1, y, tmp)[0];
+                tmpSumX -= 2 * pix;
+                pix = gray.getRaster().getPixel(x + 1, y + 1, tmp)[0];
+                tmpSumX -= pix;
+                tmpSumY -= pix;
+                gx[x][y] = tmpSumX;
+
+                tmpSumY += 2 * gray.getRaster().getPixel(x    , y - 1, tmp)[0];
+                tmpSumY -= 2 * gray.getRaster().getPixel(x    , y + 1, tmp)[0];
+                gy[x][y] = tmpSumY;
+
+            }
+        }
+        for (int x = 0; x < gray.getWidth(); x++) {
+            gx[x][0] = 0;
+            gx[x][gray.getHeight() - 1] = 0;
+            gy[x][0] = 0;
+            gy[x][gray.getHeight() - 1] = 0;
+        }
+        for (int y = 0; y < gray.getHeight(); y++) {
+            gx[0][y] = 0;
+            gx[gray.getWidth() - 1][y] = 0;
+            gy[0][y] = 0;
+            gy[gray.getWidth() - 1][y] = 0;
+        }
+    }
     private double[][] sobelFilterX(BufferedImage gray) {
         double[][] result = new double[gray.getWidth()][gray.getHeight()];
         int[] tmp = new int[4];
@@ -296,6 +346,7 @@ public class PHOG implements LireFeature {
             result[0][y] = 0;
             result[gray.getWidth() - 1][y] = 0;
         }
+
         return result;
     }
 
@@ -306,12 +357,12 @@ public class PHOG implements LireFeature {
         for (int x = 1; x < gray.getWidth() - 1; x++) {
             for (int y = 1; y < gray.getHeight() - 1; y++) {
                 tmpSum = 0;
-                tmpSum += gray.getRaster().getPixel(x - 1, y - 1, tmp)[0];
+                tmpSum +=     gray.getRaster().getPixel(x - 1, y - 1, tmp)[0];
                 tmpSum += 2 * gray.getRaster().getPixel(x, y - 1, tmp)[0];
-                tmpSum += gray.getRaster().getPixel(x + 1, y - 1, tmp)[0];
-                tmpSum -= gray.getRaster().getPixel(x - 1, y + 1, tmp)[0];
+                tmpSum +=     gray.getRaster().getPixel(x + 1, y - 1, tmp)[0];
+                tmpSum -=     gray.getRaster().getPixel(x - 1, y + 1, tmp)[0];
                 tmpSum -= 2 * gray.getRaster().getPixel(x, y + 1, tmp)[0];
-                tmpSum -= gray.getRaster().getPixel(x + 1, y + 1, tmp)[0];
+                tmpSum -=     gray.getRaster().getPixel(x + 1, y + 1, tmp)[0];
                 result[x][y] = tmpSum;
             }
         }

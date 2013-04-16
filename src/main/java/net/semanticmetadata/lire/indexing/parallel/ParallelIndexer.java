@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 15.04.13 15:18
+ * Updated: 16.04.13 18:32
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -71,8 +71,8 @@ import java.util.Stack;
 
 public class ParallelIndexer implements Runnable {
     private int numberOfThreads = 10;
-    private String indexPath = "para-idx";
-    private String imageDirectory = "testdata/wang-1000";
+    private String indexPath;
+    private String imageDirectory;
     Stack<WorkItem> images = new Stack<WorkItem>();
     IndexWriter writer;
     boolean ended = false;
@@ -80,16 +80,61 @@ public class ParallelIndexer implements Runnable {
     int overallCount = 0;
 
     public static void main(String[] args) {
-        ParallelIndexer p = new ParallelIndexer(10, "para-index", "testdata/wang-1000") {
+        String indexPath = null;
+        String imageDirectory = null;
+        int numThreads = 10;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("-i")) {  // index
+                if ((i+1) < args.length) {
+                    indexPath = args[i+1];
+                }
+            } else if (arg.startsWith("-n")) { // number of Threads
+                if ((i+1) < args.length) {
+                    try {
+                        numThreads = Integer.parseInt(args[i + 1]);
+                    } catch (NumberFormatException e) {
+                        System.err.println("Could not read number of threads: " + args[i + 1] + "\nUsing default value " + numThreads);
+                    }
+                }
+            } else if (arg.startsWith("-d")) { // imgae directory
+                if ((i+1) < args.length) {
+                    imageDirectory = args[i+1];
+                }
+            }
+        }
+
+        if (indexPath == null || imageDirectory ==null || !new File(imageDirectory).exists()) {
+            printHelp();
+            System.exit(-1);
+        }
+
+        ParallelIndexer p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
                 builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
             }
         };
-
         p.run();
+    }
+
+    /**
+     * Prints help text in case the thing is not configured correctly.
+     */
+    private static void printHelp() {
+        System.out.println("Usage:\n" +
+                "\n" +
+                "$> ParallelIndexer -i <index> -d <image-directory> [-n <number of threads>]\n" +
+                "\n" +
+                "index \t\t\t  ... The directory of the index. Will be created and/or overwritten.\n" +
+                "images-directory  ... The directory the images are found in. It's traversed recursively.\n" +
+                "number of threads ... The number of threads used for extracting features, e.g. # of CPU cores.");
     }
 
     public ParallelIndexer(int numberOfThreads, String indexPath, String imageDirectory) {
@@ -100,16 +145,22 @@ public class ParallelIndexer implements Runnable {
 
     /**
      * Overwrite this method to define the builders to be used within the Indexer.
+     *
      * @param builder
      */
     public void addBuilders(ChainedDocumentBuilder builder) {
         builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-//            builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-//            builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-//            builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
     }
 
     public void run() {
@@ -127,17 +178,35 @@ public class ParallelIndexer implements Runnable {
                 c.start();
                 threads.add(c);
             }
+            Thread m = new Thread(new Monitoring());
+            m.start();
             for (Iterator<Thread> iterator = threads.iterator(); iterator.hasNext(); ) {
                 iterator.next().join();
             }
             long l1 = System.currentTimeMillis() - l;
-            System.out.println("Analyzed " + overallCount + " images in " + l1/1000 + " seconds, " + l1/overallCount + " ms each.");
+            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + l1 / overallCount + " ms each.");
             writer.commit();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        }
+    }
+
+    class Monitoring implements Runnable {
+        public void run() {
+            long ms = System.currentTimeMillis();
+            while (!ended) {
+                try {
+                    Thread.sleep(1000*10); // wait ten seconds
+                    // print the current status:
+                    long time  = System.currentTimeMillis() - ms;
+                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each.");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -151,7 +220,7 @@ public class ParallelIndexer implements Runnable {
                     int tmpSize = 1;
                     synchronized (images) {
                         images.add(new WorkItem(next.getCanonicalPath(), tmpImage));
-                        tmpSize =  images.size();
+                        tmpSize = images.size();
                         images.notifyAll();
                     }
                     try {
