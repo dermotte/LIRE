@@ -69,8 +69,8 @@ public class PHOG implements LireFeature {
     double thresholdLow = 60, thresholdHigh = 100;
 
     // And now for PHOG:
-    public static int bins = 40;
-    double[] histogram;
+    public static int bins = 32;
+    double[] histogram = new double[bins + 4*bins + 4*4*bins];
 
 
     public void extract(BufferedImage bimg) {
@@ -322,79 +322,22 @@ public class PHOG implements LireFeature {
             gy[gray.getWidth() - 1][y] = 0;
         }
     }
-    private double[][] sobelFilterX(BufferedImage gray) {
-        double[][] result = new double[gray.getWidth()][gray.getHeight()];
-        int[] tmp = new int[4];
-        int tmpSum = 0;
-        for (int x = 1; x < gray.getWidth() - 1; x++) {
-            for (int y = 1; y < gray.getHeight() - 1; y++) {
-                tmpSum = 0;
-                tmpSum += gray.getRaster().getPixel(x - 1, y - 1, tmp)[0];
-                tmpSum += 2 * gray.getRaster().getPixel(x - 1, y, tmp)[0];
-                tmpSum += gray.getRaster().getPixel(x - 1, y + 1, tmp)[0];
-                tmpSum -= gray.getRaster().getPixel(x + 1, y - 1, tmp)[0];
-                tmpSum -= 2 * gray.getRaster().getPixel(x + 1, y, tmp)[0];
-                tmpSum -= gray.getRaster().getPixel(x + 1, y + 1, tmp)[0];
-                result[x][y] = tmpSum;
-            }
-        }
-        for (int x = 0; x < gray.getWidth(); x++) {
-            result[x][0] = 0;
-            result[x][gray.getHeight() - 1] = 0;
-        }
-        for (int y = 0; y < gray.getHeight(); y++) {
-            result[0][y] = 0;
-            result[gray.getWidth() - 1][y] = 0;
-        }
-
-        return result;
-    }
-
-    private double[][] sobelFilterY(BufferedImage gray) {
-        double[][] result = new double[gray.getWidth()][gray.getHeight()];
-        int[] tmp = new int[4];
-        int tmpSum = 0;
-        for (int x = 1; x < gray.getWidth() - 1; x++) {
-            for (int y = 1; y < gray.getHeight() - 1; y++) {
-                tmpSum = 0;
-                tmpSum +=     gray.getRaster().getPixel(x - 1, y - 1, tmp)[0];
-                tmpSum += 2 * gray.getRaster().getPixel(x, y - 1, tmp)[0];
-                tmpSum +=     gray.getRaster().getPixel(x + 1, y - 1, tmp)[0];
-                tmpSum -=     gray.getRaster().getPixel(x - 1, y + 1, tmp)[0];
-                tmpSum -= 2 * gray.getRaster().getPixel(x, y + 1, tmp)[0];
-                tmpSum -=     gray.getRaster().getPixel(x + 1, y + 1, tmp)[0];
-                result[x][y] = tmpSum;
-            }
-        }
-        for (int x = 0; x < gray.getWidth(); x++) {
-            result[x][0] = 0;
-            result[x][gray.getHeight() - 1] = 0;
-        }
-        for (int y = 0; y < gray.getHeight(); y++) {
-            result[0][y] = 0;
-            result[gray.getWidth() - 1][y] = 0;
-        }
-        return result;
-    }
 
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[histogram.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = (byte) histogram[i];
-//            System.out.println("result[i]-histogram[i] = " + (result[i] - histogram[i]));
         }
         return result;
     }
 
     public void setByteArrayRepresentation(byte[] in) {
-        histogram = new double[in.length];
         for (int i = 0; i < in.length; i++) {
             histogram[i] = (double) in[i];
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        histogram = new double[length];
         for (int i = offset; i < length; i++) {
             histogram[i] = (double) in[i];
         }

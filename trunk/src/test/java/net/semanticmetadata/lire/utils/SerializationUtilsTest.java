@@ -116,4 +116,27 @@ public class SerializationUtilsTest extends TestCase {
             System.out.println(clusters[i].toString().equals(tc[i].toString()));
         }
     }
+
+    public void testByteCompression() {
+        for (int j = 0; j<10000; j++) {
+            byte[] test = new byte[6];
+            for (int i = 0; i < test.length; i++) {
+                test[i] = (byte) Math.floor(Math.random()*16);
+    //            System.out.println(i + " = " + test[i]);
+            }
+            int tmp = test[0];
+            tmp = tmp << 5 | test[1];
+            tmp = tmp << 5 | test[2];
+            tmp = tmp << 5 | test[3];
+            tmp = tmp << 5 | test[4];
+            tmp = tmp << 5 | test[5];
+            int bitmask = 0x000F;
+            assertTrue((tmp & bitmask) == (int) test[5]);
+            assertTrue((tmp >> 5 & bitmask) == (int) test[4]);
+            assertTrue((tmp >> 10 & bitmask) == (int) test[3]);
+            assertTrue((tmp >> 15 & bitmask) == (int) test[2]);
+            assertTrue((tmp >> 20 & bitmask) == (int) test[1]);
+            assertTrue((tmp >> 25 & bitmask) == (int) test[0]);
+        }
+    }
 }

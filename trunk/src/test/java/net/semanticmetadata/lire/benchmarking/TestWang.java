@@ -94,7 +94,7 @@ public class TestWang extends TestCase {
 
         }
         // Setting up DocumentBuilder:
-        parallelIndexer = new ParallelIndexer(6, indexPath, testExtensive){
+        parallelIndexer = new ParallelIndexer(1, indexPath, testExtensive){
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
