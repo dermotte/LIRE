@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-04-18
+==========
+  - Added file list option to ParallelIndexer
+  - Tuned PHOG parameters to get a smaller feature
+
 2013-04-15
 ==========
   - Added hash based approach for CEDD to DocumentBuilderFactory and ImageSearcherFactory

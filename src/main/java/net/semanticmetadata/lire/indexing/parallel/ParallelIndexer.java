@@ -53,12 +53,10 @@ import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -75,13 +73,15 @@ public class ParallelIndexer implements Runnable {
     private String imageDirectory;
     Stack<WorkItem> images = new Stack<WorkItem>();
     IndexWriter writer;
+    File imageList = null;
     boolean ended = false;
-    private ArrayList<File> files;
+    private List<File> files;
     int overallCount = 0;
 
     public static void main(String[] args) {
         String indexPath = null;
         String imageDirectory = null;
+        File imageList = null;
         int numThreads = 10;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
@@ -97,30 +97,59 @@ public class ParallelIndexer implements Runnable {
                         System.err.println("Could not read number of threads: " + args[i + 1] + "\nUsing default value " + numThreads);
                     }
                 }
-            } else if (arg.startsWith("-d")) { // imgae directory
+            } else if (arg.startsWith("-l")) { // list of images in a file ...
+                imageDirectory = null;
+                if ((i+1) < args.length) {
+                    imageList = new File(args[i+1]);
+                    if (!imageList.exists()) {
+                        System.err.println(args[i+1] + " does not exits!");
+                        printHelp();
+                        System.exit(-1);
+                    }
+                }
+            } else if (arg.startsWith("-d")) { // image directory
                 if ((i+1) < args.length) {
                     imageDirectory = args[i+1];
                 }
             }
         }
 
-        if (indexPath == null || imageDirectory ==null || !new File(imageDirectory).exists()) {
+        if (indexPath == null) {
+            printHelp();
+            System.exit(-1);
+        } else if (imageList == null && (imageDirectory ==null || !new File(imageDirectory).exists()) ) {
             printHelp();
             System.exit(-1);
         }
+        ParallelIndexer p;
+        if (imageList!=null) {
+            p = new ParallelIndexer(numThreads, indexPath, imageList) {
+                @Override
+                public void addBuilders(ChainedDocumentBuilder builder) {
+                    builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                }
+            };
 
-        ParallelIndexer p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
-            @Override
-            public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
-            }
-        };
+        } else {
+            p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
+                @Override
+                public void addBuilders(ChainedDocumentBuilder builder) {
+                    builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+                    builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                }
+            };
+        }
         p.run();
     }
 
@@ -130,17 +159,36 @@ public class ParallelIndexer implements Runnable {
     private static void printHelp() {
         System.out.println("Usage:\n" +
                 "\n" +
-                "$> ParallelIndexer -i <index> -d <image-directory> [-n <number of threads>]\n" +
+                "$> ParallelIndexer -i <index> <-d <image-directory> | -l <image-list>> [-n <number of threads>]\n" +
                 "\n" +
-                "index \t\t\t  ... The directory of the index. Will be created and/or overwritten.\n" +
+                "index             ... The directory of the index. Will be created and/or overwritten.\n" +
                 "images-directory  ... The directory the images are found in. It's traversed recursively.\n" +
+                "image-list        ... A list of images in a file, one per line. Use instead of images-directory.\n" +
                 "number of threads ... The number of threads used for extracting features, e.g. # of CPU cores.");
     }
 
+    /**
+     *
+     * @param numberOfThreads
+     * @param indexPath
+     * @param imageDirectory a directory containing all the images somewhere in the child hierarchy.
+     */
     public ParallelIndexer(int numberOfThreads, String indexPath, String imageDirectory) {
         this.numberOfThreads = numberOfThreads;
         this.indexPath = indexPath;
         this.imageDirectory = imageDirectory;
+    }
+
+    /**
+     *
+     * @param numberOfThreads
+     * @param indexPath
+     * @param imageList a file containing a list of images, one per line
+     */
+    public ParallelIndexer(int numberOfThreads, String indexPath, File imageList) {
+        this.numberOfThreads = numberOfThreads;
+        this.indexPath = indexPath;
+        this.imageList = imageList;
     }
 
     /**
@@ -155,20 +203,31 @@ public class ParallelIndexer implements Runnable {
         builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
         builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
         builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
     }
 
     public void run() {
         IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer(LuceneUtils.LUCENE_VERSION));
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         try {
+            System.out.println("Getting all images in " + imageDirectory + ".");
             writer = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
-            files = FileUtils.getAllImageFiles(new File(imageDirectory), true);
+            if (imageList==null) {
+                files = FileUtils.getAllImageFiles(new File(imageDirectory), true);
+            } else {
+                files = new LinkedList<File>();
+                BufferedReader br = new BufferedReader(new FileReader(imageList));
+                String line = null;
+                while ((line = br.readLine()) !=null) {
+                    if (line.trim().length()>3) files.add(new File(line.trim()));
+                }
+            }
+            System.out.println("Indexing " + files.size() + " images.");
             Thread p = new Thread(new Producer());
             p.start();
             LinkedList<Thread> threads = new LinkedList<Thread>();
@@ -197,12 +256,17 @@ public class ParallelIndexer implements Runnable {
     class Monitoring implements Runnable {
         public void run() {
             long ms = System.currentTimeMillis();
+            try {
+                Thread.sleep(1000*10); // wait ten seconds
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             while (!ended) {
                 try {
-                    Thread.sleep(1000*10); // wait ten seconds
                     // print the current status:
                     long time  = System.currentTimeMillis() - ms;
                     System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each.");
+                    Thread.sleep(1000 * 10); // wait ten seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -240,6 +304,9 @@ public class ParallelIndexer implements Runnable {
         }
     }
 
+    /**
+     * Consumers take the images prepared from the Producer and extract all the image features.
+     */
     class Consumer implements Runnable {
         WorkItem tmp = null;
         ChainedDocumentBuilder builder = new ChainedDocumentBuilder();
