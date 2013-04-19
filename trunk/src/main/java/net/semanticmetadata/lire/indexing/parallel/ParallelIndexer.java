@@ -41,8 +41,11 @@
 
 package net.semanticmetadata.lire.indexing.parallel;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
+import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -126,13 +129,13 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageList) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
+                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, DocumentBuilder.FIELD_NAME_COLORHISTOGRAM, true));
                 }
             };
 
@@ -140,13 +143,13 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-                    builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
+                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, DocumentBuilder.FIELD_NAME_COLORHISTOGRAM, true));
                 }
             };
         }
@@ -288,8 +291,8 @@ public class ParallelIndexer implements Runnable {
                         images.notifyAll();
                     }
                     try {
-                        if (tmpSize > 20) Thread.sleep(100);
-                        else Thread.sleep(10);
+                        if (tmpSize > 100) Thread.sleep(100);
+                        else Thread.sleep(3);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
