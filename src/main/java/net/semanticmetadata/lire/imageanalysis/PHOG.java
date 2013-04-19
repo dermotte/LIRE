@@ -69,7 +69,7 @@ public class PHOG implements LireFeature {
     double thresholdLow = 60, thresholdHigh = 100;
 
     // And now for PHOG:
-    public static int bins = 32;
+    public static int bins = 30;
     double[] histogram = new double[bins + 4*bins + 4*4*bins];
 
 

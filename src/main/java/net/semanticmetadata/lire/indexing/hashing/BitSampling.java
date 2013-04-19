@@ -52,8 +52,8 @@ import java.util.zip.GZIPOutputStream;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class BitSampling {
-    private static int bits = 16, dimensions = 1024;
-    private static int numFunctionBundles = 50;
+    private static int bits = 16, dimensions = 640;  // todo: reduce dimensions & numFunctionBundles ... test if recall changes too much.
+    private static int numFunctionBundles = 40;
     private static String name = "LshBitSampling.obj";
     private static double w = 4d;
     private static double[][][] hashes = null;
@@ -86,7 +86,7 @@ public class BitSampling {
             for (int c = 0; c < numFunctionBundles; c++) {
                 for (int i = 0; i < bits; i++) {
                     for (int j = 0; j < dimensions; j++) {
-                        oos.writeDouble((Math.random() * w - w / 2));
+                        oos.writeFloat((float) (Math.random() * w - w / 2));
                     }
                 }
             }
@@ -116,7 +116,7 @@ public class BitSampling {
             for (int j = 0; j < functionBundle.length; j++) {
                 double[] bitFunctions = functionBundle[j];
                 for (int k = 0; k < bitFunctions.length; k++) {
-                    bitFunctions[k] = ois.readDouble();
+                    bitFunctions[k] = (double) ois.readFloat();
                 }
             }
         }

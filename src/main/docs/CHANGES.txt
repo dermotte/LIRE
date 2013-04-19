@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-04-19
+==========
+  - Tuned PHOG & BitSampling parameters to reduce index size
+  - Changed ParallelIndexer to create hashes by default.
+
 2013-04-18
 ==========
   - Added file list option to ParallelIndexer
