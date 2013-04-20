@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 08:43
  */
 package net.semanticmetadata.lire.impl;
 
@@ -45,14 +47,12 @@ import net.semanticmetadata.lire.imageanalysis.mser.MSERFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.RescaleOp;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Creates a Document out of the given image with MSER Features
@@ -62,17 +62,6 @@ import java.util.logging.Logger;
  * @author Christine Keim, christine.keim@inode.at
  */
 public class MSERDocumentBuilder extends AbstractDocumentBuilder {
-    static ColorSpace cs;
-    static ColorConvertOp op;
-    static RescaleOp rop;
-
-    static {
-        cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-        op = new ColorConvertOp(cs, null);
-        rop = new RescaleOp(-1.0f, 255f, null);
-    }
-
-    private Logger logger = Logger.getLogger(getClass().getName());
     private MSER extractor;
 
     public MSERDocumentBuilder() {
@@ -83,7 +72,7 @@ public class MSERDocumentBuilder extends AbstractDocumentBuilder {
         Document doc = null;
         try {
             // convert to grey ...
-            BufferedImage image1 = ImageUtils.convertImageToGrey(image);
+            BufferedImage image1 = convertImageToGrey(image);
             // extract features from image:
             List<MSERFeature> features = extractor.computeMSERFeatures(image1);
 
@@ -96,6 +85,8 @@ public class MSERDocumentBuilder extends AbstractDocumentBuilder {
             doc = new Document();
             if (features.size() < 1) {
                 System.err.println("No MSER features found for " + identifier);
+//            } else {
+//                System.out.println("features.size() = " + features.size());
             }
             for (Iterator<MSERFeature> fit = features.iterator(); fit.hasNext(); ) {
                 MSERFeature f = fit.next();
@@ -108,24 +99,23 @@ public class MSERDocumentBuilder extends AbstractDocumentBuilder {
                 }
 
                 if (!skip)
-                    doc.add(new Field(DocumentBuilder.FIELD_NAME_MSER, f.getByteArrayRepresentation()));
+                    doc.add(new StoredField(DocumentBuilder.FIELD_NAME_MSER, f.getByteArrayRepresentation()));
                 else {
 //                    System.err.println("Found NaN in features in file " + identifier + ". ");
                 }
             }
             if (identifier != null) {
-                doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
             }
         } catch (Exception e) {
             e.printStackTrace();
-//            logger.severe(e.getMessage());
         }
-        /*
-        catch (IOException e)
-        {
-            logger.severe(e.getMessage());
-        }
-        */
         return doc;
+    }
+
+    public BufferedImage convertImageToGrey(BufferedImage image) {
+        BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        result.getGraphics().drawImage(image, 0, 0, null);
+        return result;
     }
 }

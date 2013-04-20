@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 19.04.13 21:31
  */
 
 package net.semanticmetadata.lire.imageanalysis.mser;
@@ -436,7 +438,7 @@ public class MSER {
         return features;
     }
 
-    public static Point2D.Double[] matrixToPoints(double[][] coarsedPoly, boolean closeShape) {
+    public Point2D.Double[] matrixToPoints(double[][] coarsedPoly, boolean closeShape) {
         int n = (closeShape) ? coarsedPoly[0].length + 1 : coarsedPoly[0].length;
         int mod = coarsedPoly[0].length;
         Point2D.Double[] points = new Point2D.Double[n];
@@ -459,7 +461,7 @@ public class MSER {
      *         cycltrans([1 2 3; 4 5 6; 7 8 9], 1,1)
      *         = [5 6 4; 8 9 7 ; 2 3 1]
      */
-    protected static double[][] cycltrans(double[][] matrix, int m, int n) {
+    protected double[][] cycltrans(double[][] matrix, int m, int n) {
         int ys = matrix.length;
         int xs = matrix[0].length;
 
@@ -485,7 +487,7 @@ public class MSER {
         return res;
     }
 
-    public static double[][] coarsenPoly(double[][] p, double angle) {
+    public double[][] coarsenPoly(double[][] p, double angle) {
         // finding the number of indices of p
         int n = p[0].length;
 
@@ -572,7 +574,7 @@ public class MSER {
     }
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         double[][] matrix = new double[3][2];
 
@@ -752,9 +754,9 @@ public class MSER {
 
 */
 
-    }
+//    }
 
-    public static double[][] pointToMatrix(Point2D.Double[] poly) {
+    public double[][] pointToMatrix(Point2D.Double[] poly) {
         double[][] res = new double[2][poly.length];
         for (int i = 0; i < poly.length; i++) {
             res[0][i] = poly[i].getX();
@@ -766,10 +768,10 @@ public class MSER {
 
     /**
      * @param poly   the poly to transform
-     * @param length Lenght of the matrix
+     * @param length length of the matrix
      * @return a matrix of the values
      */
-    public static double[][] pointToMatrix(ImagePoint[] poly, int length) {
+    public double[][] pointToMatrix(ImagePoint[] poly, int length) {
         double[][] res = new double[2][length];
         for (int i = 0; i < length; i++) {
             res[0][i] = poly[i].getX();
@@ -779,7 +781,7 @@ public class MSER {
         return res;
     }
 
-    public static void printMatrix(String name, double[][] matrix) {
+    public void printMatrix(String name, double[][] matrix) {
         System.out.println("MATRIX " + name + ":");
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -790,7 +792,7 @@ public class MSER {
         }
     }
 
-    private static void printArray(String name, double[] array) {
+    private void printArray(String name, double[] array) {
         System.out.println("ARRAY " + name + ":");
         for (int i = 0; i < array.length; i++) {
             System.out.print(array[i]);
@@ -799,7 +801,7 @@ public class MSER {
         }
     }
 
-    public static void printPoints(String name, Point2D.Double[] points) {
+    public void printPoints(String name, Point2D.Double[] points) {
         System.out.println("points " + name + ":");
         for (int i = 0; i < points.length; i++) {
             System.out.print("," + points[i].getX() + "," + points[i].getY());

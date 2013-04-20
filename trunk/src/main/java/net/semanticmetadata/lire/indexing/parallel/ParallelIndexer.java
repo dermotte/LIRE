@@ -32,11 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.04.13 18:32
+ * Updated: 20.04.13 08:43
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -78,7 +78,7 @@ public class ParallelIndexer implements Runnable {
     IndexWriter writer;
     File imageList = null;
     boolean ended = false;
-    private List<File> files;
+    private List<String> files;
     int overallCount = 0;
 
     public static void main(String[] args) {
@@ -221,13 +221,13 @@ public class ParallelIndexer implements Runnable {
             System.out.println("Getting all images in " + imageDirectory + ".");
             writer = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
             if (imageList==null) {
-                files = FileUtils.getAllImageFiles(new File(imageDirectory), true);
+                files = FileUtils.getAllImages(new File(imageDirectory), true);
             } else {
-                files = new LinkedList<File>();
+                files = new LinkedList<String>();
                 BufferedReader br = new BufferedReader(new FileReader(imageList));
                 String line = null;
                 while ((line = br.readLine()) !=null) {
-                    if (line.trim().length()>3) files.add(new File(line.trim()));
+                    if (line.trim().length()>3) files.add(line.trim());
                 }
             }
             System.out.println("Indexing " + files.size() + " images.");
@@ -280,8 +280,8 @@ public class ParallelIndexer implements Runnable {
     class Producer implements Runnable {
         public void run() {
             BufferedImage tmpImage;
-            for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
-                File next = iterator.next();
+            for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
+                File next = new File(iterator.next());
                 try {
                     tmpImage = ImageIO.read(next);
                     int tmpSize = 1;
