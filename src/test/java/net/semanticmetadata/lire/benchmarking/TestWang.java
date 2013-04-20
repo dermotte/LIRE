@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 09:45
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -98,12 +100,12 @@ public class TestWang extends TestCase {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+        builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
@@ -213,11 +215,11 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura");
 //        computeMAP(ImageSearcherFactory.createGaborImageSearcher(1000), "Gabor");
 //        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1000), "Color Correlogram");
-//        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1000), "Color Layout");
+        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1000), "Color Layout");
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
-        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
+//        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
 //        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
 //        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");

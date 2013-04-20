@@ -32,13 +32,13 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 10:19
  */
 package net.semanticmetadata.lire.imageanalysis;
-
-import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 
@@ -48,7 +48,8 @@ import java.awt.image.BufferedImage;
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
 public class JCD implements LireFeature {
-    protected double[] data;
+    int tmp;
+    protected double[] data = new double[168];
 
     public JCD(CEDD cedd, FCTH fcth) {
         init(cedd, fcth);
@@ -66,16 +67,53 @@ public class JCD implements LireFeature {
         init(c, f);
     }
 
+//    public byte[] getByteArrayRepresentation() {
+//        return SerializationUtils.toByteArray(data);
+//    }
+//
+//    public void setByteArrayRepresentation(byte[] in) {
+//        data = SerializationUtils.toDoubleArray(in);
+//    }
+//
+//    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+//        data = SerializationUtils.toDoubleArray(in, offset, length);
+//    }
+
+    /**
+     * Creates a small byte array from an JCD descriptor.
+     * Stuffs 2 numbers into one byte.
+     * @return
+     */
     public byte[] getByteArrayRepresentation() {
-        return SerializationUtils.toByteArray(data);
+        byte[] result = new byte[data.length/2];
+        for (int i = 0; i < result.length; i++) {
+            tmp = ((int) (data[(i << 1)] * 2)) << 4;
+            tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
+            result[i] = (byte) (tmp-128);
+        }
+        return result;
     }
 
+    /**
+     * Reads descriptor from a byte array. Much faster than the String based method.
+     *
+     * @param in byte array from corresponding method
+     * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
+     */
     public void setByteArrayRepresentation(byte[] in) {
-        data = SerializationUtils.toDoubleArray(in);
+        for (int i = 0; i < in.length; i++) {
+            tmp = in[i]+128;
+            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            data[i << 1] = ((double) (tmp >> 4))/2d;
+        }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        data = SerializationUtils.toDoubleArray(in, offset, length);
+        for (int i = offset; i < length; i++) {
+            tmp = in[i]+128;
+            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            data[i << 1] = ((double) (tmp >> 4))/2d;
+        }
     }
 
     public double[] getDoubleHistogram() {

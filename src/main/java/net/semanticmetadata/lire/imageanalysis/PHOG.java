@@ -32,11 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.04.13 18:32
+ * Updated: 20.04.13 09:28
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -243,7 +243,7 @@ public class PHOG implements LireFeature {
         }
         if (max > 0d) {
             for (int i = 0; i < result.length; i++) {
-                // quantize single values to 32 steps to compress feature a little bit.
+                // quantize single values to 64 steps to compress feature a little bit.
                 result[i] = Math.round(63d * result[i] / max);
             }
         }
