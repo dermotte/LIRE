@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 08:43
  */
 
 package net.semanticmetadata.lire;
@@ -42,14 +44,16 @@ package net.semanticmetadata.lire;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.imageanalysis.mser.MSER;
 import net.semanticmetadata.lire.imageanalysis.mser.MSERFeature;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.MSERDocumentBuilder;
+import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.ImageUtils;
+import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -80,17 +84,28 @@ public class MserTest extends TestCase {
         }
     }
 
+    public void testParallelIndexMSER() throws IOException {
+        ParallelIndexer pin = new ParallelIndexer(1, "mser-idx", "D:\\DataSets\\WIPO\\CA\\sample") {
+            @Override
+            public void addBuilders(ChainedDocumentBuilder builder) {
+                builder.addBuilder(new MSERDocumentBuilder());
+            }
+        };
+        pin.run();
+    }
+
     public void testExtendedIndexMSER() throws IOException {
         MSERDocumentBuilder builder = new MSERDocumentBuilder();
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, new WhitespaceAnalyzer(Version.LUCENE_40));
+        IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION,
+                new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
         IndexWriter iw = new IndexWriter(FSDirectory.open(indexPath), conf);
         long ms = System.currentTimeMillis();
         int count = 0;
-        ArrayList<File> files = FileUtils.getAllImageFiles(new File("C:\\Temp\\testImagelogos"), true);
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("D:\\DataSets\\WIPO\\CA\\sample"), true);
         for (Iterator<File> i = files.iterator(); i.hasNext(); ) {
             File imgFile = i.next();
             BufferedImage img = ImageIO.read(imgFile);
-            if (Math.max(img.getWidth(), img.getHeight())<800) {
+            if (Math.max(img.getWidth(), img.getHeight()) < 800) {
                 // scale image ...
                 img = ImageUtils.scaleImage(img, 800);
             }

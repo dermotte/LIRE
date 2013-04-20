@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-04-20
+==========
+  - Changed internal file handling of ParallelIndexer
+
 2013-04-19
 ==========
   - Tuned PHOG & BitSampling parameters to reduce index size
