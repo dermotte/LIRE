@@ -10,6 +10,7 @@ CHANGES for LIRE
   - Made footprint of ColorLayout smaller (2*6*21 = 504 bytes instead of 4*2*28*64 = 14336 bytes)
   - That's only 4% of the space these three descriptors used, reduced by stuffing bytes.
   - PHOG needs 30*21 = 630 bytes
+  - Added indexing routine to build.xml
 
 2013-04-19
 ==========
