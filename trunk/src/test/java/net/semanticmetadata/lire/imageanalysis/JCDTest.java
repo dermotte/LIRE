@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 09:30
+ * Updated: 20.04.13 09:21
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -53,25 +53,25 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * User: Mathias Lux, mathias@juggle.at
- * Date: 20.10.2010
- * Time: 16:21:45
+ * This file is part of LIRE, a Java library for content based image retrieval.
+ *
+ * @author Mathias Lux, mathias@juggle.at, 20.04.13
  */
-public class ColorLayoutTest extends TestCase {
+
+public class JCDTest extends TestCase {
     public void testExtraction() throws IOException {
         ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
         for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
             File next = iterator.next();
             BufferedImage image = ImageIO.read(next);
-            ColorLayout p1 = new ColorLayout();
-            ColorLayout p2 = new ColorLayout();
+            JCD jcd1 = new JCD();
+            JCD jcd2 = new JCD();
 
-            p1.extract(image);
-            System.out.println(Arrays.toString(p1.getDoubleHistogram()));
-            p2.setByteArrayRepresentation(p1.getByteArrayRepresentation());
-            System.out.println(Arrays.toString(p2.getDoubleHistogram()));
-            assertTrue(p2.getDistance(p1) == 0);
+            jcd1.extract(image);
+            System.out.println(Arrays.toString(jcd1.getDoubleHistogram()));
+            jcd2.setByteArrayRepresentation(jcd1.getByteArrayRepresentation());
+            System.out.println(Arrays.toString(jcd2.getDoubleHistogram()));
+            assertTrue(jcd2.getDistance(jcd1) == 0);
         }
     }
-
 }

@@ -32,16 +32,17 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 10:19
  */
 package net.semanticmetadata.lire.imageanalysis;
 
 
 import net.semanticmetadata.lire.imageanalysis.mpeg7.EdgeHistogramImplementation;
 import net.semanticmetadata.lire.utils.ConversionUtils;
-import net.semanticmetadata.lire.utils.SerializationUtils;
 
 /**
  * Just a wrapper for the use of LireFeature.
@@ -51,6 +52,48 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class EdgeHistogram extends EdgeHistogramImplementation implements LireFeature {
+    private int tmp;
+
+
+    /**
+     * Creates a 40 byte array from an edge histogram descriptor.
+     * Stuffs 2 numbers into one byte.
+     * @return
+     */
+    public byte[] getByteArrayRepresentation() {
+        byte[] result = new byte[edgeHistogram.length/2];
+        for (int i = 0; i < result.length; i++) {
+            tmp = (edgeHistogram[(i << 1)]) << 3;
+            tmp = (tmp | edgeHistogram[(i << 1) +1]);
+            result[i] = (byte) tmp;
+        }
+        return result;
+    }
+
+    /**
+     * Reads descriptor from a byte array. Much faster than the String based method.
+     *
+     * @param in byte array from corresponding method
+     * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
+     */
+    public void setByteArrayRepresentation(byte[] in) {
+        for (int i = 0; i < in.length; i++) {
+            tmp = in[i];
+            edgeHistogram[(i << 1) +1] = tmp & 0x0007;
+            edgeHistogram[i << 1] = (tmp >> 3);
+        }
+    }
+
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        for (int i = offset; i < length; i++) {
+            tmp = in[i];
+            edgeHistogram[(i << 1) +1] = tmp & 0x0007;
+            edgeHistogram[i << 1] = (tmp >> 3);
+        }
+    }
+
+
+    /*
     public byte[] getByteArrayRepresentation() {
         return SerializationUtils.toByteArray(edgeHistogram);
     }
@@ -63,7 +106,7 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         edgeHistogram = SerializationUtils.toIntArray(in, offset, length);
     }
-
+ */
     public double[] getDoubleHistogram() {
         return ConversionUtils.toDouble(edgeHistogram);
     }

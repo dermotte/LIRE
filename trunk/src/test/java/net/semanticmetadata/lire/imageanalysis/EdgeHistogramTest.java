@@ -32,25 +32,38 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 09:05
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class EdgeHistogramTest extends TestCase {
     public void testExtraction() throws IOException {
-        BufferedImage image = ImageIO.read(new File("C:\\Java\\Projects\\Lire\\src\\test\\resources\\images\\Pginas de 060305_b_Pgina_1_Imagem_0004_Pgina_08_Imagem_0002.jpg"));
-        EdgeHistogram eh = new EdgeHistogram();
-        eh.extract(image);
-        System.out.println("eh = " + eh.getStringRepresentation());
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+            File next = iterator.next();
+            BufferedImage image = ImageIO.read(next);
+            EdgeHistogram eh1 = new EdgeHistogram();
+            EdgeHistogram eh2 = new EdgeHistogram();
+
+            eh1.extract(image);
+            System.out.println(" = " + eh1.getStringRepresentation());
+            eh2.setByteArrayRepresentation(eh1.getByteArrayRepresentation());
+            assertTrue(eh2.getDistance(eh1) == 0);
+        }
     }
 }

@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 09:52
  */
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
 
@@ -55,11 +57,12 @@ public class ColorLayoutImpl {
 
     protected static int[] availableCoeffNumbers = {1, 3, 6, 10, 15, 21, 28, 64};
 
-    public int[] YCoeff;
-    public int[] CbCoeff;
-    public int[] CrCoeff;
+    protected int numCCoeff = 6, numYCoeff = 21;
 
-    protected int numCCoeff = 28, numYCoeff = 64;
+    public int[] YCoeff = new int[numYCoeff];
+    public int[] CbCoeff = new int[numCCoeff];
+    public int[] CrCoeff = new int[numCCoeff];
+
 
     protected static int[] arrayZigZag = {
             0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5,

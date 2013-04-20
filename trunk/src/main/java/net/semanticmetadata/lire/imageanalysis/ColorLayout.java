@@ -32,14 +32,15 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 10:19
  */
 package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.imageanalysis.mpeg7.ColorLayoutImpl;
-import net.semanticmetadata.lire.utils.SerializationUtils;
 
 /**
  * Just a wrapper for the use of LireFeature.
@@ -49,51 +50,6 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class ColorLayout extends ColorLayoutImpl implements LireFeature {
-
-    /*
-        public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(256);
-        StringBuilder sbtmp = new StringBuilder(256);
-        for (int i = 0; i < numYCoeff; i++) {
-            sb.append(YCoeff[i]);
-            if (i + 1 < numYCoeff) sb.append(' ');
-        }
-        sb.append("z");
-        for (int i = 0; i < numCCoeff; i++) {
-            sb.append(CbCoeff[i]);
-            if (i + 1 < numCCoeff) sb.append(' ');
-            sbtmp.append(CrCoeff[i]);
-            if (i + 1 < numCCoeff) sbtmp.append(' ');
-        }
-        sb.append("z");
-        sb.append(sbtmp);
-        return sb.toString();
-    }
-
-    public void setStringRepresentation(String descriptor) {
-        String[] coeffs = descriptor.split("z");
-        String[] y = coeffs[0].split(" ");
-        String[] cb = coeffs[1].split(" ");
-        String[] cr = coeffs[2].split(" ");
-
-        numYCoeff = y.length;
-        numCCoeff = Math.min(cb.length, cr.length);
-
-        YCoeff = new int[numYCoeff];
-        CbCoeff = new int[numCCoeff];
-        CrCoeff = new int[numCCoeff];
-
-        for (int i = 0; i < numYCoeff; i++) {
-            YCoeff[i] = Integer.parseInt(y[i]);
-        }
-        for (int i = 0; i < numCCoeff; i++) {
-            CbCoeff[i] = Integer.parseInt(cb[i]);
-            CrCoeff[i] = Integer.parseInt(cr[i]);
-
-        }
-    }
-     */
-
     /**
      * Provides a much faster way of serialization.
      *
@@ -101,12 +57,22 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#setByteArrayRepresentation(byte[])
      */
     public byte[] getByteArrayRepresentation() {
-        byte[] result = new byte[2 * 4 + numYCoeff * 4 + 2 * numCCoeff * 4];
-        System.arraycopy(SerializationUtils.toBytes(numYCoeff), 0, result, 0, 4);
-        System.arraycopy(SerializationUtils.toBytes(numCCoeff), 0, result, 4, 4);
-        System.arraycopy(SerializationUtils.toByteArray(YCoeff), 0, result, 8, numYCoeff * 4);
-        System.arraycopy(SerializationUtils.toByteArray(CbCoeff), 0, result, numYCoeff * 4 + 8, numCCoeff * 4);
-        System.arraycopy(SerializationUtils.toByteArray(CrCoeff), 0, result, numYCoeff * 4 + numCCoeff * 4 + 8, numCCoeff * 4);
+        byte[] result = new byte[2 + numYCoeff + 2 * numCCoeff];
+        result[0] = (byte) numYCoeff;
+        result[1] = (byte) numCCoeff;
+        for (int i = 0; i < numYCoeff; i++) {
+            result[2 + i] = (byte) YCoeff[i];
+        }
+        for (int i = 0; i < numCCoeff; i++) {
+            result[2 + numYCoeff + i] = (byte) CbCoeff[i];
+            result[2 + numYCoeff + numCCoeff + i] = (byte) CrCoeff[i];
+        }
+//        byte[] result = new byte[2 * 4 + numYCoeff * 4 + 2 * numCCoeff * 4];
+//        System.arraycopy(SerializationUtils.toBytes(numYCoeff), 0, result, 0, 4);
+//        System.arraycopy(SerializationUtils.toBytes(numCCoeff), 0, result, 4, 4);
+//        System.arraycopy(SerializationUtils.toByteArray(YCoeff), 0, result, 8, numYCoeff * 4);
+//        System.arraycopy(SerializationUtils.toByteArray(CbCoeff), 0, result, numYCoeff * 4 + 8, numCCoeff * 4);
+//        System.arraycopy(SerializationUtils.toByteArray(CrCoeff), 0, result, numYCoeff * 4 + numCCoeff * 4 + 8, numCCoeff * 4);
         return result;
     }
 
@@ -117,27 +83,37 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        int[] data = SerializationUtils.toIntArray(in);
-        numYCoeff = data[0];
-        numCCoeff = data[1];
-        YCoeff = new int[numYCoeff];
-        CbCoeff = new int[numCCoeff];
-        CrCoeff = new int[numCCoeff];
-        System.arraycopy(data, 2, YCoeff, 0, numYCoeff);
-        System.arraycopy(data, 2 + numYCoeff, CbCoeff, 0, numCCoeff);
-        System.arraycopy(data, 2 + numYCoeff + numCCoeff, CrCoeff, 0, numCCoeff);
+        numYCoeff = in[0];
+        numCCoeff = in[1];
+        for (int i = 0; i < numYCoeff; i++) {
+            YCoeff[i] = in[2 + i];
+        }
+        for (int i = 0; i < numCCoeff; i++) {
+            CbCoeff[i] = in[i + 2 + numYCoeff];
+            CrCoeff[i] = in[i + 2 + numYCoeff + numCCoeff];
+        }
+//        int[] data = SerializationUtils.toIntArray(in);
+//        numYCoeff = data[0];
+//        numCCoeff = data[1];
+//        YCoeff = new int[numYCoeff];
+//        CbCoeff = new int[numCCoeff];
+//        CrCoeff = new int[numCCoeff];
+//        System.arraycopy(data, 2, YCoeff, 0, numYCoeff);
+//        System.arraycopy(data, 2 + numYCoeff, CbCoeff, 0, numCCoeff);
+//        System.arraycopy(data, 2 + numYCoeff + numCCoeff, CrCoeff, 0, numCCoeff);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        int[] data = SerializationUtils.toIntArray(in, offset, length);
-        numYCoeff = data[0];
-        numCCoeff = data[1];
-        YCoeff = new int[numYCoeff];
-        CbCoeff = new int[numCCoeff];
-        CrCoeff = new int[numCCoeff];
-        System.arraycopy(data, 2, YCoeff, 0, numYCoeff);
-        System.arraycopy(data, 2 + numYCoeff, CbCoeff, 0, numCCoeff);
-        System.arraycopy(data, 2 + numYCoeff + numCCoeff, CrCoeff, 0, numCCoeff);
+        numYCoeff = in[0 + offset];
+        numCCoeff = in[1 + offset];
+        for (int i = 0; i < numYCoeff; i++) {
+            YCoeff[i] = in[2 + i + offset];
+        }
+        for (int i = 0; i < numCCoeff; i++) {
+            CbCoeff[i] = in[i + 2 + numYCoeff + offset];
+            CrCoeff[i] = in[i + 2 + numYCoeff + numCCoeff + offset];
+        }
+
     }
 
     public double[] getDoubleHistogram() {

@@ -32,19 +32,25 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 09:27
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Test class for PHOG descriptor.
@@ -61,5 +67,21 @@ public class PHOGTest extends TestCase {
         g.setByteArrayRepresentation(bytes, 0, bytes.length);
         float distance = p.getDistance(p);
         System.out.println("distance = " + distance);
+    }
+
+    public void testSerialization() throws IOException {
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+            File next = iterator.next();
+            BufferedImage image = ImageIO.read(next);
+            PHOG p1 = new PHOG();
+            PHOG p2 = new PHOG();
+
+            p1.extract(image);
+            System.out.println(Arrays.toString(p1.getDoubleHistogram()));
+            p2.setByteArrayRepresentation(p1.getByteArrayRepresentation());
+            System.out.println(Arrays.toString(p2.getDoubleHistogram()));
+            assertTrue(p2.getDistance(p1) == 0);
+        }
     }
 }

@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 20.04.13 09:05
  */
 
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
@@ -124,7 +126,7 @@ public class EdgeHistogramImplementation {
     /**
      * The actual edge histogram.
      */
-    protected int[] edgeHistogram;
+    protected int[] edgeHistogram = new int[80];
 
     /**
      * Allocates a new <code>EdgeHistogramDescriptor</code> so that it represents the
@@ -200,8 +202,8 @@ public class EdgeHistogramImplementation {
     }
 
     /**
-     * If the maximum of the five edge strengths is greater than a thrshold, then the image block is
-     * considered to habe the corresponding edge in it. Otherwise, the image block contains no edge.
+     * If the maximum of the five edge strengths is greater than a threshold, then the image block is
+     * considered to have the corresponding edge in it. Otherwise, the image block contains no edge.
      * The default value is 11.
      */
 
@@ -214,13 +216,13 @@ public class EdgeHistogramImplementation {
     }
 
     /**
-     * The image is splitted into 16 local regions, each of them is divided into a fixed number
+     * The image is split into 16 local regions, each of them is divided into a fixed number
      * of image_blocks, depending on width and height of the image.
      * The size of this image_block is here computed.
      *
      * @return b_size
      */
-    private int getblockSize() {
+    private int getBlockSize() {
         if (blockSize < 0) {
             double a = (int) (Math.sqrt((width * height) / num_block));
             blockSize = (int) (Math.floor((a / 2)) * 2);
@@ -260,15 +262,15 @@ public class EdgeHistogramImplementation {
         double average_brightness = 0;
         if (grey_level[i][j] != 0) {
 
-            for (int m = 0; m <= (getblockSize() >> 1) - 1; m++) {
-                for (int n = 0; n <= (getblockSize() >> 1) - 1; n++) {
+            for (int m = 0; m <= (getBlockSize() >> 1) - 1; m++) {
+                for (int n = 0; n <= (getBlockSize() >> 1) - 1; n++) {
                     average_brightness = average_brightness + grey_level[i + m][j + n];
                 }
             }
         } else {
             System.err.println("Grey level not initialized.");
         }
-        double bs = getblockSize() * getblockSize();
+        double bs = getBlockSize() * getBlockSize();
         double div = 4 / bs;
         average_brightness = average_brightness * div;
         return average_brightness;
@@ -290,8 +292,8 @@ public class EdgeHistogramImplementation {
         double average_brightness = 0;
         if (grey_level[i][j] != 0)
 
-            for (int m = (int) (getblockSize() >> 1); m <= getblockSize() - 1; m++) {
-                for (int n = 0; n <= (getblockSize() >> 1) - 1; n++) {
+            for (int m = (int) (getBlockSize() >> 1); m <= getBlockSize() - 1; m++) {
+                for (int n = 0; n <= (getBlockSize() >> 1) - 1; n++) {
                     average_brightness += grey_level[i + m][j + n];
 
 
@@ -300,7 +302,7 @@ public class EdgeHistogramImplementation {
         else {
             System.err.println("Grey level not initialized.");
         }
-        double bs = getblockSize() * getblockSize();
+        double bs = getBlockSize() * getBlockSize();
         double div = 4 / bs;
         average_brightness = average_brightness * div;
         return average_brightness;
@@ -321,15 +323,15 @@ public class EdgeHistogramImplementation {
         double average_brightness = 0;
         if (grey_level[i][j] != 0) {
 
-            for (int m = 0; m <= (getblockSize() >> 1) - 1; m++) {
-                for (int n = (int) (getblockSize() >> 1); n <= getblockSize() - 1; n++) {
+            for (int m = 0; m <= (getBlockSize() >> 1) - 1; m++) {
+                for (int n = (int) (getBlockSize() >> 1); n <= getBlockSize() - 1; n++) {
                     average_brightness += grey_level[i + m][j + n];
                 }
             }
         } else {
             System.err.println("Grey level not initialized.");
         }
-        double bs = getblockSize() * getblockSize();
+        double bs = getBlockSize() * getBlockSize();
         double div = 4 / bs;
         average_brightness = average_brightness * div;
         return average_brightness;
@@ -349,12 +351,12 @@ public class EdgeHistogramImplementation {
     private double getFourthBlockAVG(int i, int j) {
         double average_brightness = 0;
 
-        for (int m = (int) (getblockSize() >> 1); m <= getblockSize() - 1; m++) {
-            for (int n = (int) (getblockSize() >> 1); n <= getblockSize() - 1; n++) {
+        for (int m = (int) (getBlockSize() >> 1); m <= getBlockSize() - 1; m++) {
+            for (int n = (int) (getBlockSize() >> 1); n <= getBlockSize() - 1; n++) {
                 average_brightness += grey_level[i + m][j + n];
             }
         }
-        double bs = getblockSize() * getblockSize();
+        double bs = getBlockSize() * getBlockSize();
         double div = 4 / bs;
         average_brightness = average_brightness * div;
         return average_brightness;
@@ -431,8 +433,8 @@ public class EdgeHistogramImplementation {
             count_local[i] = 0;
         }
 
-        for (int j = 0; j <= height - getblockSize(); j += getblockSize())
-            for (int i = 0; i <= width - getblockSize(); i += getblockSize()) {
+        for (int j = 0; j <= height - getBlockSize(); j += getBlockSize())
+            for (int i = 0; i <= width - getBlockSize(); i += getBlockSize()) {
                 sub_local_index = (int) ((i << 2) / width) + ((int) ((j << 2) / height) << 2);
                 count_local[sub_local_index]++;
 
@@ -475,7 +477,6 @@ public class EdgeHistogramImplementation {
 
     public int[] setEdgeHistogram() {
         int Edge_HistogramElement[] = new int[80];
-//        int j = 0;
         double iQuantValue = 0;
         double value[] = Local_Edge_Histogram;
 
@@ -490,20 +491,6 @@ public class EdgeHistogramImplementation {
                     break;
                 }
             }
-/*
-            // old version ...
-            int j = 0;
-            while (true) {
-                if (j < 7)
-                    iQuantValue = (EdgeHistogramImplementation.QuantTable[i % 5][j] + EdgeHistogramImplementation.QuantTable[i % 5][j + 1]) / 2.0;
-                else
-                    iQuantValue = 1.0;
-                if (value[i] <= iQuantValue)
-                    break;
-                j++;
-            }
-            bins[i] = j;
-*/
         }
         return bins;
     }
@@ -519,20 +506,20 @@ public class EdgeHistogramImplementation {
     public static float calculateDistance(int[] edgeHistogramA, int[] edgeHistogramB) {
         if (edgeHistogramA == null) System.err.println("Input edgeHistogram a is null!");
         if (edgeHistogramB == null) System.err.println("Input edgeHistogram b is null!");
-        float result = 0f;
+        double result = 0f;
         // Todo: this first for loop should sum up the differences of the non quantized edges. Check if this code is right!
         for (int i = 0; i < edgeHistogramA.length; i++) {
-            // first version is the un-quantisized version, according to the mpeg-7 docs part 8 this version is quite okay as though its nearly linear quantization
+            // first version is the un-quantized version, according to the MPEG-7 docs part 8 this version is quite okay as though its nearly linear quantization
             // result += Math.abs((float) edgeHistogramA[i] - (float) edgeHistogramB[i]);
-            result += Math.abs((float) EdgeHistogramImplementation.QuantTable[i % 5][edgeHistogramA[i]] - (float) EdgeHistogramImplementation.QuantTable[i % 5][edgeHistogramB[i]]);
+            result += Math.abs((double) EdgeHistogramImplementation.QuantTable[i % 5][edgeHistogramA[i]] - (double) EdgeHistogramImplementation.QuantTable[i % 5][edgeHistogramB[i]]);
         }
         for (int i = 0; i <= 4; i++) {
-            result += 5f * Math.abs((float) edgeHistogramA[i] - (float) edgeHistogramB[i]);
+            result += 5d * Math.abs((double) edgeHistogramA[i] - (double) edgeHistogramB[i]);
         }
         for (int i = 5; i < 80; i++) {
-            result += Math.abs((float) edgeHistogramA[i] - (float) edgeHistogramB[i]);
+            result += Math.abs((double) edgeHistogramA[i] - (double) edgeHistogramB[i]);
         }
-        return result;
+        return (float) result;
     }
 
     private static int[] RGB2YCRCB(int[] pixel, int[] result) {
