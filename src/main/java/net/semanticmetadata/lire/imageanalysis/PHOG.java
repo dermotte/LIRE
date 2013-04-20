@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 09:28
+ * Updated: 20.04.13 10:58
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -71,6 +71,9 @@ public class PHOG implements LireFeature {
     // And now for PHOG:
     public static int bins = 30;
     double[] histogram = new double[bins + 4*bins + 4*4*bins];
+//    double[] histogram = new double[5 * bins + 4*4*bins + 4*4*4*bins];
+    // used to quantize bins to [0, quantizationFactor]
+    private double quantizationFactor = 127d;
 
 
     public void extract(BufferedImage bimg) {
@@ -162,7 +165,7 @@ public class PHOG implements LireFeature {
         // Canny Edge Detection over ... lets go for the PHOG ...
         histogram = new double[bins + 4*bins + 4*4*bins];
         // for level 3:
-//        histogram = new double[5 * bins + 4*4*bins + 4*4*4*4*bins];
+//        histogram = new double[5 * bins + 4*4*bins + 4*4*4*bins];
         //level0
         System.arraycopy(getHistogram(0, 0, width, height, gray, gd), 0, histogram, 0, bins);
         //level1
@@ -186,10 +189,10 @@ public class PHOG implements LireFeature {
             }
         }
         // level 3
-//        wstep = width / 16;
-//        hstep = height / 16;
-//        for (int i = 0; i< 16; i++) {
-//            for (int j=0; j<16; j++) {
+//        wstep = width / 8;
+//        hstep = height / 8;
+//        for (int i = 0; i< 8; i++) {
+//            for (int j=0; j<8; j++) {
 //                System.arraycopy(getHistogram(i*wstep, j*hstep, wstep, hstep, gray, gd),
 //                        0, histogram, binPos*bins, bins);
 //                binPos++;
@@ -243,8 +246,8 @@ public class PHOG implements LireFeature {
         }
         if (max > 0d) {
             for (int i = 0; i < result.length; i++) {
-                // quantize single values to 64 steps to compress feature a little bit.
-                result[i] = Math.round(63d * result[i] / max);
+                // quantize single values to xx steps to compress feature a little bit.
+                result[i] = Math.round(quantizationFactor * result[i] / max);
             }
         }
         return result;
