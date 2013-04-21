@@ -41,8 +41,10 @@ package net.semanticmetadata.lire.indexing;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.PHOG;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.utils.FileUtils;
@@ -53,6 +55,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.MMapDirectory;
 
 import javax.imageio.ImageIO;
@@ -172,11 +175,19 @@ public class HashingTest extends TestCase {
     }
 
     public void testImageSearcher() throws IOException {
-        BitSamplingImageSearcher is = new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_CEDD, "Hashes", new CEDD());
-        IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File("wipo-index-hashed")));
-        Document queryDoc = reader.document(0);
-        String file = FileUtils.saveImageResultsToHtml("wipo", is.search(queryDoc, reader), queryDoc.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
-        FileUtils.browseUri(file);
+        BitSamplingImageSearcher is = new BitSamplingImageSearcher(60, DocumentBuilder.FIELD_NAME_PHOG,
+                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 500);
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("E:\\wipo1m-idx")));
+        Document queryDoc = reader.document(1);
+        ImageSearchHits search = is.search(queryDoc, reader);;
+        long ms = System.currentTimeMillis();
+        int runs = 50;
+        for (int i = 0; i<runs; i++)
+            search = is.search(queryDoc, reader);
+        ms = System.currentTimeMillis() -ms;
+//        String file = FileUtils.saveImageResultsToHtml("wipo", search, queryDoc.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+//        FileUtils.browseUri(file);
+        System.out.println(((double) ms) / ((double) runs) + " ms per search.");
     }
 
     public void testLoadHashFunctions() throws IOException {

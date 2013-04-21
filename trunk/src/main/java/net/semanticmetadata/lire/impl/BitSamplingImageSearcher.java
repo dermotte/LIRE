@@ -192,7 +192,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
                 resultScoreDocs.remove(resultScoreDocs.last());
                 maxDistance = resultScoreDocs.last().getDistance();
             }
-            resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
+//            resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
         }
         return new SimpleImageSearchHits(resultScoreDocs, maxDistance);
     }
