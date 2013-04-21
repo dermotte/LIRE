@@ -32,11 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.04.13 18:32
+ * Updated: 21.04.13 21:48
  */
 
 package liredemo.indexing;
@@ -53,6 +53,7 @@ import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
@@ -106,7 +107,7 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
                     Tag tag = (Tag) ti.next();
                     // System.out.println(prefix+"-"+tag.getTagName()+" -> " + dir.getString(tag.getTagType()));
                     // add to document:
-                    d.add(new Field(prefix + "-" + tag.getTagName(), dir.getString(tag.getTagType()), Field.Store.YES, Field.Index.ANALYZED));
+                    d.add(new TextField(prefix + "-" + tag.getTagName(), dir.getString(tag.getTagType()), Field.Store.YES));
                 }
             }
         } catch (JpegProcessingException e) {
