@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 18:19
+ * Updated: 21.04.13 08:52
  */
 package net.semanticmetadata.lire.impl;
 
@@ -97,9 +97,10 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
 
     /**
      * Creating a new DocumentBuilder based on a class based on the interface {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     *
      * @param descriptorClass has to implement {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
-     * @param fieldName The name of the field, where the feature vector is stored.
-     * @param hashing set to true is you want to create an additional field for hashes based on BitSampling.
+     * @param fieldName       The name of the field, where the feature vector is stored.
+     * @param hashing         set to true is you want to create an additional field for hashes based on BitSampling.
      */
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, String fieldName, boolean hashing) {
         this.descriptorClass = descriptorClass;
@@ -120,7 +121,10 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         this.currentMode = mode;
     }
 
-    public Document createDocument(BufferedImage image, String identifier) {
+    public Field[] createDescriptorFields(BufferedImage image) {
+        Field[] result;
+        if (HASHING) result = new Field[2];
+        else result = new Field[1];
         String featureString = "";
         assert (image != null);
         BufferedImage bimg = image;
@@ -140,27 +144,39 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
 //            featureString = vd.getStringRepresentation();
             logger.fine("Extraction finished [" + descriptorClass.getName() + "].");
 
-            doc = new Document();
-            if (currentMode == Mode.Slow)
-                doc.add(new StringField(fieldName, lireFeature.getStringRepresentation(), Field.Store.YES));
-            else
-                doc.add(new StoredField(fieldName, lireFeature.getByteArrayRepresentation()));
+            result[0] = new StoredField(fieldName, lireFeature.getByteArrayRepresentation());
 
             // if BitSampling is an issue we add a field with the given name and the suffix "hash":
             if (HASHING) {
                 // TODO: check eventually if there is a more compressed string version of the integers. i.e. the hex string
                 if (lireFeature.getDoubleHistogram().length <= 640) {
                     int[] hashes = BitSampling.generateHashes(lireFeature.getDoubleHistogram());
-                    doc.add(new TextField(fieldName+"_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
+                    result[1] = new TextField(fieldName + "_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES);
                 } else
-                    System.err.println("Could not create hashes, feature vector too long: " + lireFeature.getDoubleHistogram().length + " ("+lireFeature.getClass().getName()+")");
+                    System.err.println("Could not create hashes, feature vector too long: " + lireFeature.getDoubleHistogram().length + " (" + lireFeature.getClass().getName() + ")");
             }
-            if (identifier != null)
-                doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * Creates a fully fledged Document to be added to a Lucene index.
+     * @param image      the image to index. Cannot be NULL.
+     * @param identifier an id for the image, for instance the filename or an URL. Can be NULL.
+     * @return
+     */
+    public Document createDocument(BufferedImage image, String identifier) {
+        assert (image != null);
+        Document doc = null;
+        if (identifier != null)
+            doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
+        Field[] fields = createDescriptorFields(image);
+        for (int i = 0; i < fields.length; i++) {
+            doc.add(fields[i]);
         }
         return doc;
     }

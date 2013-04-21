@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2013-04-21
+==========
+  - Removed GenericFastDocumentBuilder, it is completely replaced by GenericDocumentBuilder.
+  - Update net.semanticmetadata.lire.impl.SurfDocumentBuilder
+  - Updated DocumentBuilder interface to allow for creation of Fields without Document
+  - Updated ChainedDocumentBuilder to save Space (less "new" operators).
+
 2013-04-20
 ==========
   - Changed internal file handling of ParallelIndexer

@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 21.04.13 09:06
  */
 package net.semanticmetadata.lire.impl;
 
@@ -44,6 +46,8 @@ import net.semanticmetadata.lire.imageanalysis.sift.Extractor;
 import net.semanticmetadata.lire.imageanalysis.sift.Feature;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -66,6 +70,26 @@ public class SiftDocumentBuilder extends AbstractDocumentBuilder {
         extractor = new Extractor();
     }
 
+    @Override
+    public Field[] createDescriptorFields(BufferedImage image) {
+        Field[] result = null;
+        try {
+            // extract features from image:
+            List<Feature> features = extractor.computeSiftFeatures(image);
+            result = new Field[features.size()];
+            int count = 0;
+            // create new document:
+            for (Iterator<Feature> fit = features.iterator(); fit.hasNext(); ) {
+                Feature f = fit.next();
+                result[count] = new StoredField(DocumentBuilder.FIELD_NAME_SIFT, f.getByteArrayRepresentation());
+                count++;
+            }
+        } catch (IOException e) {
+            logger.severe(e.getMessage());
+        }
+        return result;
+    }
+
     public Document createDocument(BufferedImage image, String identifier) {
         Document doc = null;
         try {
@@ -76,10 +100,10 @@ public class SiftDocumentBuilder extends AbstractDocumentBuilder {
             for (Iterator<Feature> fit = features.iterator(); fit.hasNext(); ) {
                 Feature f = fit.next();
                 // add each feature to the document:
-                doc.add(new Field(DocumentBuilder.FIELD_NAME_SIFT, f.getByteArrayRepresentation()));
+                doc.add(new StoredField(DocumentBuilder.FIELD_NAME_SIFT, f.getByteArrayRepresentation()));
             }
             if (identifier != null)
-                doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
         } catch (IOException e) {
             logger.severe(e.getMessage());
         }
