@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 08:43
+ * Updated: 21.04.13 08:12
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -281,7 +281,8 @@ public class ParallelIndexer implements Runnable {
         public void run() {
             BufferedImage tmpImage;
             for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
-                File next = new File(iterator.next());
+                String pathname = iterator.next();
+                File next = new File(pathname);
                 try {
                     tmpImage = ImageIO.read(next);
                     int tmpSize = 1;
@@ -297,7 +298,8 @@ public class ParallelIndexer implements Runnable {
                         e.printStackTrace();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.err.println("Could not open " + pathname + ". " + e.getMessage());
+//                    e.printStackTrace();
                 }
             }
             synchronized (images) {
