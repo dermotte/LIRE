@@ -296,8 +296,8 @@ public class ParallelIndexer implements Runnable {
                         images.notifyAll();
                     }
                     try {
-                        if (tmpSize > 100) Thread.sleep(100);
-                        else Thread.sleep(3);
+                        if (tmpSize > 500) Thread.sleep(100);
+                        // else Thread.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
