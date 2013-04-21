@@ -7,6 +7,7 @@ CHANGES for LIRE
   - Update net.semanticmetadata.lire.impl.SurfDocumentBuilder
   - Updated DocumentBuilder interface to allow for creation of Fields without Document
   - Updated ChainedDocumentBuilder to save Space (less "new" operators).
+  - Fixed bug in BitSamplingImageSearcher.
 
 2013-04-20
 ==========
