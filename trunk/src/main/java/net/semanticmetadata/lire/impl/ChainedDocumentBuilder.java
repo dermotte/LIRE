@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 21.04.13 09:06
  */
 
 package net.semanticmetadata.lire.impl;
@@ -44,30 +46,42 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.index.IndexableField;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 /**
- * User: mlux
- * Date: 20.02.2007
- * Time: 15:11:59
+ * Chaining of DocumentBuilder. If you need several different feature, create a ChainedDocumentBuilder and add
+ * different DocumentBuilder instances with {@link ChainedDocumentBuilder#addBuilder(net.semanticmetadata.lire.DocumentBuilder)}
+ * @author Mathias Lux, mathias@juggle.at, 20.02.2007
  */
 public class ChainedDocumentBuilder extends AbstractDocumentBuilder {
     private LinkedList<DocumentBuilder> builders;
     private boolean docsCreated = false;
 
+    /**
+     * Creates a new, empty ChainedDocumentBuilder.
+     */
     public ChainedDocumentBuilder() {
         builders = new LinkedList<DocumentBuilder>();
     }
 
+    /**
+     * Adds DocumentBuilder instances to the ChainedDocumentBuilder. Note that after Document instances have been
+     * created with {@link ChainedDocumentBuilder#createDocument(java.awt.image.BufferedImage, String)} no new
+     * DocumentBuilder instances can be added.
+     * @param builder the DocumentBuilder instance to add.
+     */
     public void addBuilder(DocumentBuilder builder) {
         if (docsCreated)
             throw new UnsupportedOperationException("Cannot modify chained builder after documents have been created!");
         builders.add(builder);
+    }
+
+    @Override
+    public Field[] createDescriptorFields(BufferedImage image) {
+        throw new UnsupportedOperationException("This is not meant to be used within this class.");
     }
 
     public Document createDocument(BufferedImage image, String identifier) throws FileNotFoundException {
@@ -75,15 +89,12 @@ public class ChainedDocumentBuilder extends AbstractDocumentBuilder {
         Document doc = new Document();
         if (identifier != null)
             doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, StringField.TYPE_STORED));
-        // this is unfortunately rather slow, but however it works :)
         if (builders.size() >= 1) {
             for (DocumentBuilder builder : builders) {
-                Document d = builder.createDocument(image, identifier);
-                for (Iterator<IndexableField> iterator = d.getFields().iterator(); iterator.hasNext(); ) {
-                    Field f = (Field) iterator.next();
-                    if (!f.name().equals(DocumentBuilder.FIELD_NAME_IDENTIFIER)) {
-                        doc.add(f);
-                    }
+                Field[] fields = builder.createDescriptorFields(image);
+                for (int i = 0; i < fields.length; i++) {
+                    Field field = fields[i];
+                    doc.add(field);
                 }
             }
         }

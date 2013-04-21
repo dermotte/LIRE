@@ -32,16 +32,17 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.04.13 18:32
+ * Updated: 21.04.13 08:56
  */
 
 package net.semanticmetadata.lire;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -113,6 +114,13 @@ public interface DocumentBuilder {
     public static final String  FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
     public static final String  FIELD_NAME_PHOG = "featPHOG";
 
+
+    /**
+     * Creates the feature fields for a Lucene Document without creating the document itself.
+     * @param image the image to analyze.
+     * @return the fields resulting from the analysis.
+     */
+    public Field[] createDescriptorFields(BufferedImage image);
 
     /**
      * Creates a new Lucene document from a BufferedImage. The identifier can be used like an id

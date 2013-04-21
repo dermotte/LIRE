@@ -32,11 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.04.13 18:32
+ * Updated: 21.04.13 08:52
  */
 
 package net.semanticmetadata.lire;
@@ -44,7 +44,6 @@ package net.semanticmetadata.lire;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericFastDocumentBuilder;
 
 /**
  * Use DocumentBuilderFactory to create a DocumentBuilder, which
@@ -91,7 +90,7 @@ public class DocumentBuilderFactory {
      * @return the document builder.
      */
     public static DocumentBuilder getColorLayoutBuilder() {
-        return new GenericFastDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT);
+        return new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT);
     }
 
     /**
@@ -100,7 +99,7 @@ public class DocumentBuilderFactory {
      * @return the document builder.
      */
     public static DocumentBuilder getEdgeHistogramBuilder() {
-        return new GenericFastDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM);
+        return new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM);
     }
 
     /**
@@ -109,7 +108,7 @@ public class DocumentBuilderFactory {
      * @return the document builder.
      */
     public static DocumentBuilder getScalableColorBuilder() {
-        return new GenericFastDocumentBuilder(ScalableColor.class, DocumentBuilder.FIELD_NAME_SCALABLECOLOR);
+        return new GenericDocumentBuilder(ScalableColor.class, DocumentBuilder.FIELD_NAME_SCALABLECOLOR);
     }
 
     /**
@@ -192,7 +191,7 @@ public class DocumentBuilderFactory {
      * @return the created DocumentBuilder
      */
     public static DocumentBuilder getJCDDocumentBuilder() {
-        return new GenericFastDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD);
+        return new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD);
     }
 
     /**
@@ -228,7 +227,7 @@ public class DocumentBuilderFactory {
      * @return the created Tamura feature DocumentBuilder.
      */
     public static DocumentBuilder getTamuraDocumentBuilder() {
-        return new GenericFastDocumentBuilder(Tamura.class, DocumentBuilder.FIELD_NAME_TAMURA);
+        return new GenericDocumentBuilder(Tamura.class, DocumentBuilder.FIELD_NAME_TAMURA);
     }
 
     /**
@@ -240,7 +239,7 @@ public class DocumentBuilderFactory {
      * @return the created Tamura feature DocumentBuilder.
      */
     public static DocumentBuilder getGaborDocumentBuilder() {
-        return new GenericFastDocumentBuilder(Gabor.class, DocumentBuilder.FIELD_NAME_GABOR);
+        return new GenericDocumentBuilder(Gabor.class, DocumentBuilder.FIELD_NAME_GABOR);
     }
 
     /**

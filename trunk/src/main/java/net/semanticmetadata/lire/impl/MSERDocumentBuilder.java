@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 08:43
+ * Updated: 21.04.13 09:01
  */
 package net.semanticmetadata.lire.impl;
 
@@ -66,6 +66,11 @@ public class MSERDocumentBuilder extends AbstractDocumentBuilder {
 
     public MSERDocumentBuilder() {
         extractor = new MSER();
+    }
+
+    @Override
+    public Field[] createDescriptorFields(BufferedImage image) {
+        throw new UnsupportedOperationException("createDescriptorFields(BufferedImage image) not implemented for MSER!");
     }
 
     public Document createDocument(BufferedImage image, String identifier) {
