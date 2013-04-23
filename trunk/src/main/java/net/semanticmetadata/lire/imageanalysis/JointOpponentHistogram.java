@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 23.04.13 11:34
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -58,6 +60,11 @@ public class JointOpponentHistogram extends Histogram implements LireFeature {
     final double sq3 = Math.sqrt(6d);
 
     double o1, o2, o3;
+    int tmp;
+
+    public JointOpponentHistogram() {
+        descriptor = new double[64 * 9];
+    }
 
     public void extract(BufferedImage bimg) {
         // extract:
@@ -96,7 +103,7 @@ public class JointOpponentHistogram extends Histogram implements LireFeature {
                 histogram[colorPos][rank]++;
             }
         }
-        // normalize with max norm & quantize to [0,127]:
+        // normalize with max norm & quantize to [0,7]:
         descriptor = new double[64 * 9];
         double max = 0;
         for (int i = 0; i < histogram.length; i++) {
@@ -106,7 +113,7 @@ public class JointOpponentHistogram extends Histogram implements LireFeature {
         }
         for (int i = 0; i < histogram.length; i++) {
             for (int j = 0; j < histogram[i].length; j++) {
-                descriptor[i + 64 * j] = Math.floor(127d * (histogram[i][j] / max));
+                descriptor[i + 64 * j] = Math.floor(7d * (histogram[i][j] / max));
             }
         }
     }
@@ -143,37 +150,30 @@ public class JointOpponentHistogram extends Histogram implements LireFeature {
 
     }
 
-    /**
-     * Provides a much faster way of serialization.
-     *
-     * @return a byte array that can be read with the corresponding method.
-     * @see CEDD#setByteArrayRepresentation(byte[])
-     */
+
     public byte[] getByteArrayRepresentation() {
-        byte[] result = new byte[descriptor.length];
+        byte[] result = new byte[descriptor.length/2];
         for (int i = 0; i < result.length; i++) {
-            result[i] = (byte) descriptor[i];
+            tmp = ((int) (descriptor[(i << 1)] * 2)) << 4;
+            tmp = (tmp | ((int) (descriptor[(i << 1) + 1] * 2)));
+            result[i] = (byte) (tmp-128);
         }
         return result;
     }
 
-    /**
-     * Reads descriptor from a byte array. Much faster than the String based method.
-     *
-     * @param in byte array from corresponding method
-     * @see CEDD#getByteArrayRepresentation
-     */
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = new double[in.length];
-        for (int i = 0; i < descriptor.length; i++) {
-            descriptor[i] = in[i];
+        for (int i = 0; i < in.length; i++) {
+            tmp = in[i]+128;
+            descriptor[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            descriptor[i << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = new double[length];
         for (int i = offset; i < length; i++) {
-            descriptor[i] = in[i];
+            tmp = in[i]+128;
+            descriptor[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            descriptor[i << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 
