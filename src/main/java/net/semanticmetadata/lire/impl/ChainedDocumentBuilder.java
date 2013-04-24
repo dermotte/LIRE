@@ -45,7 +45,7 @@ import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilder;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.StoredField;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -88,7 +88,7 @@ public class ChainedDocumentBuilder extends AbstractDocumentBuilder {
         docsCreated = true;
         Document doc = new Document();
         if (identifier != null)
-            doc.add(new Field(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, StringField.TYPE_STORED));
+            doc.add(new StoredField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier));
         if (builders.size() >= 1) {
             for (DocumentBuilder builder : builders) {
                 Field[] fields = builder.createDescriptorFields(image);

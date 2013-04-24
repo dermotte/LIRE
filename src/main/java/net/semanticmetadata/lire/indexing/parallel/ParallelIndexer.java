@@ -290,7 +290,8 @@ public class ParallelIndexer implements Runnable {
                     synchronized (images) {
                         path = next.getCanonicalPath();
                         // TODO: add re-write rule for path here!
-                        // path = path.replace("some/path", "new/path");
+                        path = path.replace("E:\\WIPO-conv\\convert", "");
+                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
                         images.add(new WorkItem(path, tmpImage));
                         tmpSize = images.size();
                         images.notifyAll();
