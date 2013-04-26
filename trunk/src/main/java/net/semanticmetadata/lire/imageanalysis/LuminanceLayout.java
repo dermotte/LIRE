@@ -32,11 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 06.04.13 09:54
+ * Updated: 26.04.13 14:46
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -60,7 +60,7 @@ public class LuminanceLayout implements LireFeature {
     int tmp;
     static ColorConvertOp grayscale = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY),
             new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR));
-    private int sideLength = 16;
+    private int sideLength = 8;
 
     public void extract(BufferedImage bimg) {
         BufferedImage gray = grayscale.filter(bimg, null);
@@ -75,6 +75,7 @@ public class LuminanceLayout implements LireFeature {
         if (w < sideLength) x = (sideLength - w) / 2;
         if (h < sideLength) y = (sideLength - h) / 2;
         small.getGraphics().fillRect(0, 0, sideLength, sideLength);
+//        small.getGraphics().drawImage(gray, 0, 0, 8, 8, null);
         small.getGraphics().drawImage(gray, x, y, w, h, null);
 
         histogram = new double[sideLength * sideLength];
@@ -82,25 +83,26 @@ public class LuminanceLayout implements LireFeature {
         for (int i = 0; i < histogram.length; i++) {
             histogram[i] = Math.floor(histogram[i] / 8d); // quantize colors to 32 steps ...
         }
+//        histogram = jpgDct(histogram);
     }
 
     private void enhanceContrast(BufferedImage gray) {
         int[] tmp = {0};
         double val;
-        int min =255, max=0;
+        int min = 255, max = 0;
         for (int x = 0; x < gray.getWidth(); x++) { // check ...
             for (int y = 0; y < gray.getHeight(); y++) {
-                gray.getRaster().getPixel(x,y, tmp);
+                gray.getRaster().getPixel(x, y, tmp);
                 min = Math.min(tmp[0], min);
                 max = Math.max(tmp[0], max);
             }
         }
         if (max < 255 || min > 0) { // enhance ...
-            double scale = (((double) max) - ((double) min))/255d;
+            double scale = (((double) max) - ((double) min)) / 255d;
             for (int x = 0; x < gray.getWidth(); x++) { // check ...
                 for (int y = 0; y < gray.getHeight(); y++) {
-                    gray.getRaster().getPixel(x,y, tmp);
-                    val = Math.floor(((double) (tmp[0] - min))/scale);
+                    gray.getRaster().getPixel(x, y, tmp);
+                    val = Math.floor(((double) (tmp[0] - min)) / scale);
                     tmp[0] = (int) val;
                     gray.getRaster().setPixel(x, y, tmp);
                 }
@@ -137,7 +139,7 @@ public class LuminanceLayout implements LireFeature {
 
 
     public float getDistance(LireFeature feature) {
-        return (float) MetricsUtils.jsd(histogram, ((LuminanceLayout) feature).histogram);
+        return (float) MetricsUtils.distL1(histogram, ((LuminanceLayout) feature).histogram);
     }
 
     public String getStringRepresentation() {
@@ -145,5 +147,57 @@ public class LuminanceLayout implements LireFeature {
     }
 
     public void setStringRepresentation(String s) {
+    }
+
+    // just a 8x8 jpeg dct ...
+    private double[] jpgDct(double[] histogram) {
+        int[] zickzack = new int[]    { 0,  1,  8, 16,  9,  2,  3, 10, 17, 24, 32, 25, 18, 11,  4,  5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13,  6,  7, 14, 21, 28, 35, 42, 49, 56};
+        double[] quant = new double[] {16, 5, 6, 7, 6, 5, 8, 7, 7, 7, 9, 8, 8, 9, 12, 20, 13, 12, 11, 11, 12, 25, 18, 18, 15, 20, 28, 25, 30, 30, 28, 25, 28, 27, 32, 36};
+//        double[] quant = new double[] {16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40, 58, 51, 61, 60, 57, 51, 56, 55, 64, 72};
+        double[] coeffs = new double[histogram.length];
+        int u, v;
+        double au, av;
+        for (int i = 0; i < coeffs.length; i++) {
+            u = i % 8;
+            v = i / 8;
+            au = Math.sqrt(2d/6d);
+            av = Math.sqrt(2d/6d);
+            if (u==0) au = Math.sqrt(1d/6d);
+            if (v==0) av = Math.sqrt(1d/6d);
+            coeffs[i] = 0;
+            for (int x = 0; x < 8; x++) {
+                for (int y = 0; y < 8; y++) {
+                    coeffs[i] += au*av*(histogram[i]-127)*Math.cos((Math.PI/8d)*(x+0.5)*u)*Math.cos((Math.PI/8d)*(y+0.5)*v);
+                }
+            }
+//            coeffs[i] = Math.floor(coeffs[i]);
+        }
+        double[] result = new double[zickzack.length];
+        for (int i = 0; i < zickzack.length; i++) {
+//            result[i] = Math.round(coeffs[zickzack[i]]] / quant[i]);
+            result[i] = Math.round(coeffs[zickzack[i]] );
+
+        }
+        return result;
+    }
+
+    private double[] dct(double[] histogram) {
+        double[] coeffs = new double[histogram.length / 8];
+        double N = histogram.length;
+        double min = 0, max = 0;
+        for (int i = 0; i < coeffs.length; i++) {
+            coeffs[i] = 0;
+            for (int j = 0; j < N; j++) {
+                coeffs[i] += histogram[j] * Math.cos((Math.PI / N) * (j + 0.5) * (i + 0.5));
+            }
+            min = Math.min(min, coeffs[i]);
+            max = Math.max(max, coeffs[i]);
+//            result[i] = Math.round(result[i]/1000d);
+        }
+        double factor = Math.max(max, Math.abs(min));
+        for (int i = 0; i < coeffs.length; i++) {
+            coeffs[i] = Math.floor(coeffs[i] / factor * 63d + 63d);
+        }
+        return coeffs;
     }
 }

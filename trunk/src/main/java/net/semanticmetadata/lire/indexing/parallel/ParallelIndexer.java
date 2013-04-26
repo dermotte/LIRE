@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 10:22
+ * Updated: 26.04.13 13:50
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -78,8 +78,9 @@ public class ParallelIndexer implements Runnable {
     IndexWriter writer;
     File imageList = null;
     boolean ended = false;
+    boolean threadFinished = false;
     private List<String> files;
-    int overallCount = 0;
+    int overallCount = 0, numImages = -1;
     private IndexWriterConfig.OpenMode openMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND;
     // all xx seconds a status message will be displayed
     private int monitoringInterval = 30;
@@ -92,11 +93,11 @@ public class ParallelIndexer implements Runnable {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("-i")) {  // index
-                if ((i+1) < args.length) {
-                    indexPath = args[i+1];
+                if ((i + 1) < args.length) {
+                    indexPath = args[i + 1];
                 }
             } else if (arg.startsWith("-n")) { // number of Threads
-                if ((i+1) < args.length) {
+                if ((i + 1) < args.length) {
                     try {
                         numThreads = Integer.parseInt(args[i + 1]);
                     } catch (NumberFormatException e) {
@@ -105,17 +106,17 @@ public class ParallelIndexer implements Runnable {
                 }
             } else if (arg.startsWith("-l")) { // list of images in a file ...
                 imageDirectory = null;
-                if ((i+1) < args.length) {
-                    imageList = new File(args[i+1]);
+                if ((i + 1) < args.length) {
+                    imageList = new File(args[i + 1]);
                     if (!imageList.exists()) {
-                        System.err.println(args[i+1] + " does not exits!");
+                        System.err.println(args[i + 1] + " does not exits!");
                         printHelp();
                         System.exit(-1);
                     }
                 }
             } else if (arg.startsWith("-d")) { // image directory
-                if ((i+1) < args.length) {
-                    imageDirectory = args[i+1];
+                if ((i + 1) < args.length) {
+                    imageDirectory = args[i + 1];
                 }
             }
         }
@@ -123,12 +124,12 @@ public class ParallelIndexer implements Runnable {
         if (indexPath == null) {
             printHelp();
             System.exit(-1);
-        } else if (imageList == null && (imageDirectory ==null || !new File(imageDirectory).exists()) ) {
+        } else if (imageList == null && (imageDirectory == null || !new File(imageDirectory).exists())) {
             printHelp();
             System.exit(-1);
         }
         ParallelIndexer p;
-        if (imageList!=null) {
+        if (imageList != null) {
             p = new ParallelIndexer(numThreads, indexPath, imageList) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
@@ -174,10 +175,9 @@ public class ParallelIndexer implements Runnable {
     }
 
     /**
-     *
      * @param numberOfThreads
      * @param indexPath
-     * @param imageDirectory a directory containing all the images somewhere in the child hierarchy.
+     * @param imageDirectory  a directory containing all the images somewhere in the child hierarchy.
      */
     public ParallelIndexer(int numberOfThreads, String indexPath, String imageDirectory) {
         this.numberOfThreads = numberOfThreads;
@@ -189,7 +189,20 @@ public class ParallelIndexer implements Runnable {
      *
      * @param numberOfThreads
      * @param indexPath
-     * @param imageList a file containing a list of images, one per line
+     * @param imageDirectory
+     * @param overWrite overwrite (instead of append) the index.
+     */
+    public ParallelIndexer(int numberOfThreads, String indexPath, String imageDirectory, boolean overWrite) {
+        this.numberOfThreads = numberOfThreads;
+        this.indexPath = indexPath;
+        this.imageDirectory = imageDirectory;
+        if (overWrite) openMode = IndexWriterConfig.OpenMode.CREATE;
+    }
+
+    /**
+     * @param numberOfThreads
+     * @param indexPath
+     * @param imageList       a file containing a list of images, one per line
      */
     public ParallelIndexer(int numberOfThreads, String indexPath, File imageList) {
         this.numberOfThreads = numberOfThreads;
@@ -221,18 +234,19 @@ public class ParallelIndexer implements Runnable {
         IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer(LuceneUtils.LUCENE_VERSION));
         config.setOpenMode(openMode);
         try {
-            if (imageDirectory!=null) System.out.println("Getting all images in " + imageDirectory + ".");
+            if (imageDirectory != null) System.out.println("Getting all images in " + imageDirectory + ".");
             writer = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
-            if (imageList==null) {
+            if (imageList == null) {
                 files = FileUtils.getAllImages(new File(imageDirectory), true);
             } else {
                 files = new LinkedList<String>();
                 BufferedReader br = new BufferedReader(new FileReader(imageList));
                 String line = null;
-                while ((line = br.readLine()) !=null) {
-                    if (line.trim().length()>3) files.add(line.trim());
+                while ((line = br.readLine()) != null) {
+                    if (line.trim().length() > 3) files.add(line.trim());
                 }
             }
+            numImages = files.size();
             System.out.println("Indexing " + files.size() + " images.");
             Thread p = new Thread(new Producer());
             p.start();
@@ -252,6 +266,7 @@ public class ParallelIndexer implements Runnable {
             System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + l1 / overallCount + " ms each.");
             writer.commit();
             writer.close();
+            threadFinished = true;
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -259,20 +274,38 @@ public class ParallelIndexer implements Runnable {
         }
     }
 
+    /**
+     * Check is this thread is still running.
+     *
+     * @return
+     */
+    public boolean hasEnded() {
+        return threadFinished;
+    }
+
+    /**
+     * Returns how many of the images have been processed already.
+     *
+     * @return
+     */
+    public double getPercentageDone() {
+        return (double) overallCount / (double) numImages;
+    }
+
     class Monitoring implements Runnable {
         public void run() {
             long ms = System.currentTimeMillis();
             try {
-                Thread.sleep(1000* monitoringInterval); // wait xx seconds
+                Thread.sleep(1000 * monitoringInterval); // wait xx seconds
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             while (!ended) {
                 try {
                     // print the current status:
-                    long time  = System.currentTimeMillis() - ms;
+                    long time = System.currentTimeMillis() - ms;
                     System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each.");
-                    Thread.sleep(1000 * 10); // wait ten seconds
+                    Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 26.04.13 10:57
  */
 
 /*
@@ -895,7 +897,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel3.setText("Number of search results:");
 
-        textfieldNumSearchResults.setText("100");
+        textfieldNumSearchResults.setText("12");
         textfieldNumSearchResults.setToolTipText(bundle.getString("options.tooltip.numsearchresults")); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N

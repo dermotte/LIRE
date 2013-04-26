@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 21.04.13 21:48
+ * Updated: 26.04.13 14:48
  */
 
 package liredemo.indexing;
@@ -72,11 +72,9 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
         addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-
         addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
         addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
         addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-
         addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
@@ -117,5 +115,10 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
         }
 
         return d;
+    }
+
+    @Override
+    public Field[] createDescriptorFields(BufferedImage image) {
+        return super.createDescriptorFields(image);
     }
 }
