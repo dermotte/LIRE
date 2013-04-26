@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 09:21
+ * Updated: 26.04.13 10:22
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -49,7 +49,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -59,19 +58,38 @@ import java.util.Iterator;
  */
 
 public class JCDTest extends TestCase {
+    int bytes = 0, sum = 0;
+
     public void testExtraction() throws IOException {
         ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
         for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
             File next = iterator.next();
             BufferedImage image = ImageIO.read(next);
-            JCD jcd1 = new JCD();
-            JCD jcd2 = new JCD();
+            JCD f1 = new JCD();
+            JCD f2 = new JCD();
 
-            jcd1.extract(image);
-            System.out.println(Arrays.toString(jcd1.getDoubleHistogram()));
-            jcd2.setByteArrayRepresentation(jcd1.getByteArrayRepresentation());
-            System.out.println(Arrays.toString(jcd2.getDoubleHistogram()));
-            assertTrue(jcd2.getDistance(jcd1) == 0);
+            f1.extract(image);
+//            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            bytes += f1.getByteArrayRepresentation().length;
+            sum += 168/2;
+            f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
+//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+            double[] h = f2.getDoubleHistogram();
+            int pos = -1;
+            for (int i = 0; i < h.length; i++) {
+                double v = h[i];
+                if (pos == -1) {
+                    if (v == 0) pos = i;
+                } else if (pos > -1) {
+                    if (v != 0) pos = -1;
+                }
+            }
+//            System.out.println("save = " + (168 - pos));
+//            bytes += (168 - pos);
+            assertTrue(f2.getDistance(f1) == 0);
         }
+        double save = 1d - (double) bytes / (double) sum;
+        System.out.println(save * 100 + "% saved");
+
     }
 }

@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 21.04.13 08:36
+ * Updated: 26.04.13 10:22
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -80,6 +80,9 @@ public class ParallelIndexer implements Runnable {
     boolean ended = false;
     private List<String> files;
     int overallCount = 0;
+    private IndexWriterConfig.OpenMode openMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND;
+    // all xx seconds a status message will be displayed
+    private int monitoringInterval = 30;
 
     public static void main(String[] args) {
         String indexPath = null;
@@ -164,7 +167,7 @@ public class ParallelIndexer implements Runnable {
                 "\n" +
                 "$> ParallelIndexer -i <index> <-d <image-directory> | -l <image-list>> [-n <number of threads>]\n" +
                 "\n" +
-                "index             ... The directory of the index. Will be created and/or overwritten.\n" +
+                "index             ... The directory of the index. Will be appended or created if not existing.\n" +
                 "images-directory  ... The directory the images are found in. It's traversed recursively.\n" +
                 "image-list        ... A list of images in a file, one per line. Use instead of images-directory.\n" +
                 "number of threads ... The number of threads used for extracting features, e.g. # of CPU cores.");
@@ -216,9 +219,9 @@ public class ParallelIndexer implements Runnable {
 
     public void run() {
         IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer(LuceneUtils.LUCENE_VERSION));
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+        config.setOpenMode(openMode);
         try {
-            System.out.println("Getting all images in " + imageDirectory + ".");
+            if (imageDirectory!=null) System.out.println("Getting all images in " + imageDirectory + ".");
             writer = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
             if (imageList==null) {
                 files = FileUtils.getAllImages(new File(imageDirectory), true);
@@ -260,7 +263,7 @@ public class ParallelIndexer implements Runnable {
         public void run() {
             long ms = System.currentTimeMillis();
             try {
-                Thread.sleep(1000*10); // wait ten seconds
+                Thread.sleep(1000* monitoringInterval); // wait xx seconds
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -290,8 +293,8 @@ public class ParallelIndexer implements Runnable {
                     synchronized (images) {
                         path = next.getCanonicalPath();
                         // TODO: add re-write rule for path here!
-                        path = path.replace("E:\\WIPO-conv\\convert", "");
-                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
+//                        path = path.replace("E:\\WIPO-conv\\convert", "");
+//                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
                         images.add(new WorkItem(path, tmpImage));
                         tmpSize = images.size();
                         images.notifyAll();

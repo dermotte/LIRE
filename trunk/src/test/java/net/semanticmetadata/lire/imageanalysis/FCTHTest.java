@@ -32,19 +32,24 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 26.04.13 10:22
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -53,11 +58,36 @@ public class FCTHTest extends TestCase {
     private String testFilesPath = "./lire/src/test/resources/small/";
 
     public void testExtraction() throws IOException {
-        FCTH sch = new FCTH();
-        BufferedImage image = ImageIO.read(new FileInputStream(testFilesPath + testFiles[0]));
-        System.out.println("image = " + image.getWidth() + " x " + image.getHeight());
-        sch.extract(image);
-        System.out.println("sch = " + sch.getStringRepresentation());
+        int bytes = 0, sum = 0;
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+            File next = iterator.next();
+            BufferedImage image = ImageIO.read(next);
+            FCTH f1 = new FCTH();
+            FCTH f2 = new FCTH();
+
+            f1.extract(image);
+//            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            bytes += f1.getByteArrayRepresentation().length;
+            sum += 192/2;
+            f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
+//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+            double[] h = f2.getDoubleHistogram();
+            int pos = -1;
+            for (int i = 0; i < h.length; i++) {
+                double v = h[i];
+                if (pos == -1) {
+                    if (v == 0) pos = i;
+                }
+                else if (pos > -1) {
+                    if (v!=0) pos = -1;
+                }
+            }
+            System.out.println("save = " + (192-pos));
+            assertTrue(f2.getDistance(f1) == 0);
+        }
+        double save = 1d - (double) bytes / (double) sum;
+        System.out.println(save*100 + "% saved");
     }
 
     public void testRetrieval() throws Exception {

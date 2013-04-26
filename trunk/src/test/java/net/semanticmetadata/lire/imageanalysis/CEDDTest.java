@@ -32,19 +32,24 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 26.04.13 09:30
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -87,23 +92,37 @@ public class CEDDTest extends TestCase {
     }
 
     public void testSerialization() throws IOException {
-        CEDD[] c = new CEDD[testFiles.length];
-        LinkedList<String> vds = new LinkedList<String>();
-        LinkedList<byte[]> vdb = new LinkedList<byte[]>();
-        for (int i = 0; i < c.length; i++) {
-            System.out.println("Extracting from number " + i);
-            c[i] = new CEDD();
-            c[i].extract(ImageIO.read(new FileInputStream(testFilesPath + testFiles[i])));
-            vds.add(c[i].getStringRepresentation());
-            vdb.add(c[i].getByteArrayRepresentation());
-        }
+        int bytes = 0;
+        int sum = 0;
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+            File next = iterator.next();
+            BufferedImage image = ImageIO.read(next);
+            CEDD f1 = new CEDD();
+            CEDD f2 = new CEDD();
 
-        for (int i = 0; i < c.length; i++) {
-            CEDD a = new CEDD(), b = new CEDD();
-            a.setByteArrayRepresentation(vdb.get(i));
-            b.setStringRepresentation(vds.get(i));
-            assertTrue(a.getDistance(b) == 0);
+            f1.extract(image);
+//            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            bytes += f1.getByteArrayRepresentation().length;
+            sum += 144 / 2;
+            f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
+//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+            double[] h = f2.getDoubleHistogram();
+            int pos = -1;
+            for (int i = 0; i < h.length; i++) {
+                double v = h[i];
+                if (pos == -1) {
+                    if (v == 0) pos = i;
+                } else if (pos > -1) {
+                    if (v != 0) pos = -1;
+                }
+            }
+            System.out.println("save = " + (144 - pos));
+//            bytes += (168 - pos);
+            assertTrue(f2.getDistance(f1) == 0);
         }
+        double save = 1d - (double) bytes / (double) sum;
+        System.out.println(save * 100 + "% saved");
     }
 
     public void testNextSerialization() throws IOException {

@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 26.04.13 09:31
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -42,6 +44,7 @@ package net.semanticmetadata.lire.imageanalysis;
 import net.semanticmetadata.lire.imageanalysis.cedd.*;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -390,11 +393,24 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#setByteArrayRepresentation(byte[])
      */
     public byte[] getByteArrayRepresentation() {
-        byte[] result = new byte[data.length/2];
+        // find out the position of the beginning of the trailing zeros.
+        int position = -1;
+        for (int i = 0; i < data.length; i++) {
+            if (position == -1) {
+                if (data[i] == 0) position = i;
+            }
+            else if (position > -1) {
+                if (data[i]!=0) position = -1;
+            }
+        }
+        // find out the actual length. two values in one byte, so we have to round up.
+        int length = (position + 1)/2;
+        if ((position+1)%2==1) length = position/2+1;
+        byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
-            tmp = ((int) data[(i << 1)]) << 3;
-            tmp = (tmp | (int) data[(i << 1) +1]);
-            result[i] = (byte) tmp;
+            tmp = ((int) (data[(i << 1)] * 2)) << 4;
+            tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
+            result[i] = (byte) (tmp-128);
         }
         return result;
     }
@@ -406,18 +422,20 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
+        Arrays.fill(data, in.length * 2, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
-            tmp = in[i];
-            data[(i << 1) +1] = tmp & 0x0007;
-            data[i << 1] = (tmp >> 3);
+            tmp = in[i]+128;
+            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            data[i << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        Arrays.fill(data, in.length*2, data.length-1, 0);
         for (int i = offset; i < length; i++) {
-            tmp = in[i];
-            data[(i << 1) +1] = tmp & 0x0007;
-            data[i << 1] = (tmp >> 3);
+            tmp = in[i]+128;
+            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            data[i << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 

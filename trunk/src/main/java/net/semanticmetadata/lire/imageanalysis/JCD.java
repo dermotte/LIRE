@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 10:19
+ * Updated: 26.04.13 09:27
  */
 package net.semanticmetadata.lire.imageanalysis;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 /**
  * A joint descriptor joining CEDD and FCTH in one histogram.
@@ -81,11 +82,24 @@ public class JCD implements LireFeature {
 
     /**
      * Creates a small byte array from an JCD descriptor.
-     * Stuffs 2 numbers into one byte.
+     * Stuffs 2 numbers into one byte and cuts trailing zeros.
      * @return
      */
     public byte[] getByteArrayRepresentation() {
-        byte[] result = new byte[data.length/2];
+        // find out the position of the beginning of the trailing zeros.
+        int position = -1;
+        for (int i = 0; i < data.length; i++) {
+            if (position == -1) {
+                if (data[i] == 0) position = i;
+            }
+            else if (position > -1) {
+                if (data[i]!=0) position = -1;
+            }
+        }
+        // find out the actual length. two values in one byte, so we have to round up.
+        int length = (position + 1)/2;
+        if ((position+1)%2==1) length = position/2+1;
+        byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
             tmp = ((int) (data[(i << 1)] * 2)) << 4;
             tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
@@ -101,6 +115,7 @@ public class JCD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
+        Arrays.fill(data, in.length * 2, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i]+128;
             data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
@@ -109,6 +124,7 @@ public class JCD implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        Arrays.fill(data, in.length*2, data.length-1, 0);
         for (int i = offset; i < length; i++) {
             tmp = in[i]+128;
             data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
