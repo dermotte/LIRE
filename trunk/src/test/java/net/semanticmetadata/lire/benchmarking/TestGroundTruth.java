@@ -42,8 +42,13 @@
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -66,9 +71,9 @@ import java.io.IOException;
  */
 
 public class TestGroundTruth extends TestCase {
-    public String indexPath = "test-idx-large";
+    public String indexPath = "test-idx-large-hashed";
     private File fileList;
-    private File truth = new File("C:\\Temp\\Eval-WIPO\\trimmed.txt");
+    private File truth = new File("E:\\Eval-WIPO\\trimmed.txt");
 
     public void testAll() throws IOException {
         testIndexing();
@@ -76,37 +81,48 @@ public class TestGroundTruth extends TestCase {
     }
 
     public void testIndexing() {
-        fileList = new File("D:\\DataSets\\WIPO\\CA\\dir.txt");
+        fileList = new File("E:\\WIPO-conv\\dir.txt");
 //        fileList = new File("C:\\Temp\\Eval-WIPO\\all_converted.txt");
-        ParallelIndexer pin = new ParallelIndexer(8, indexPath, fileList) {
+        ParallelIndexer pin = new ParallelIndexer(12, indexPath, fileList) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+
+                builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
+                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
             }
         };
         pin.run();
         pin = new ParallelIndexer(4, indexPath, truth) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
+                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
             }
         };
         pin.run();
@@ -116,15 +132,26 @@ public class TestGroundTruth extends TestCase {
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
         System.out.println("Precision @ 20:");
 //        System.out.println("CEDD        " + getPrecision(ImageSearcherFactory.createCEDDImageSearcher(30), reader));
-        System.out.println("ColorLayout " + getPrecision(ImageSearcherFactory.createColorLayoutImageSearcher(30), reader));
-        System.out.println("PHOG        " + getPrecision(ImageSearcherFactory.createPHOGImageSearcher(30), reader));
+//        System.out.println("ColorLayout " + getPrecision(ImageSearcherFactory.createColorLayoutImageSearcher(30), reader));
+//        System.out.println("PHOG        " + getPrecision(ImageSearcherFactory.createPHOGImageSearcher(30), reader));
 //        System.out.println("FCTH        " + getPrecision(ImageSearcherFactory.createFCTHImageSearcher(30), reader));
-        System.out.println("JCD         " + getPrecision(ImageSearcherFactory.createJCDImageSearcher(30), reader));
-        System.out.println("EdgeHist    " + getPrecision(ImageSearcherFactory.createEdgeHistogramImageSearcher(30), reader));
+//        System.out.println("JCD         " + getPrecision(ImageSearcherFactory.createJCDImageSearcher(30), reader));
+//        System.out.println("EdgeHist    " + getPrecision(ImageSearcherFactory.createEdgeHistogramImageSearcher(30), reader));
 //        System.out.println("JointHist   " + getPrecision(ImageSearcherFactory.createJointHistogramImageSearcher(30), reader));
-        System.out.println("Lum.Lay.    " + getPrecision(ImageSearcherFactory.createLuminanceLayoutImageSearcher(30), reader));
+//        System.out.println("Lum.Lay.    " + getPrecision(ImageSearcherFactory.createLuminanceLayoutImageSearcher(30), reader));
 //        System.out.println("OpponentHis " + getPrecision(ImageSearcherFactory.createOpponentHistogramSearcher(30), reader));
 //        System.out.println("ColorHist   " + getPrecision(ImageSearcherFactory.createColorHistogramImageSearcher(30), reader));
+
+        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
+                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout()), reader));
+        System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
+                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG()), reader));
+        System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
+                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD()), reader));
+        System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
+                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram()), reader));
+        System.out.println("Lum.Lay.    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,
+                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout()), reader));
     }
 
     /**
