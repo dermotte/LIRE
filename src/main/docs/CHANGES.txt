@@ -1,6 +1,21 @@
 CHANGES for LIRE
 ================
 
+2013-04-26
+==========
+  - Updated FCTH serialization. Now uses 96 bytes instead of 768 bytes.
+    Also cut the trailing 0's in the byte serialization, which comes down to
+    another 41,8% space saved on the ferrari data set.
+  - Also cut trailing zeros for JCD, ~ 5% save for ferrari data set.
+  - Also cut trailing zeros for CEDD, ~ 7.2% save for ferrari data set.
+  - Changed ParallelIndexer to appending to an index instead or overwriting.
+  - Moved interval for monitoring to field in ParallelIndexer.
+
+2013-04-24
+==========
+  - Fixed FCTH distance function bug.
+  - Removed unnecessary status line form ParallelIndexer
+
 2013-04-21
 ==========
   - Removed GenericFastDocumentBuilder, it is completely replaced by GenericDocumentBuilder.

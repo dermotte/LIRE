@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 26.04.13 09:03
  */
 
 package net.semanticmetadata.lire.utils;
@@ -51,6 +53,7 @@ import java.util.StringTokenizer;
  * Time: 14:58:26
  */
 public class SerializationUtils {
+
     /**
      * Converts a byte array with 4 elements to an int. Used to put ints into a byte[] payload in a convenient
      * and fast way by shifting without using streams (which is kind of slow). <br/>
