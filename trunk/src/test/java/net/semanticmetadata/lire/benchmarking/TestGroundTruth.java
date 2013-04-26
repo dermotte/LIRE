@@ -143,15 +143,15 @@ public class TestGroundTruth extends TestCase {
 //        System.out.println("ColorHist   " + getPrecision(ImageSearcherFactory.createColorHistogramImageSearcher(30), reader));
 
         System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
-                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout()), reader));
+                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 2000), reader));
         System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
-                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG()), reader));
+                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 2000), reader));
         System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
-                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD()), reader));
+                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 2000), reader));
         System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
-                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram()), reader));
+                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 2000), reader));
         System.out.println("Lum.Lay.    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,
-                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout()), reader));
+                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 2000), reader));
     }
 
     /**
@@ -179,7 +179,7 @@ public class TestGroundTruth extends TestCase {
                 } else sb.append('.');
             }
             sb.append(" - " + line);
-            System.out.println(sb);
+//            System.out.println(sb);
             sb.delete(0, sb.length());
             count++;
         }
