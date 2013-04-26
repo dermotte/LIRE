@@ -83,6 +83,7 @@ public class JCD implements LireFeature {
     /**
      * Creates a small byte array from an JCD descriptor.
      * Stuffs 2 numbers into one byte and cuts trailing zeros.
+     *
      * @return
      */
     public byte[] getByteArrayRepresentation() {
@@ -91,19 +92,18 @@ public class JCD implements LireFeature {
         for (int i = 0; i < data.length; i++) {
             if (position == -1) {
                 if (data[i] == 0) position = i;
-            }
-            else if (position > -1) {
-                if (data[i]!=0) position = -1;
+            } else if (position > -1) {
+                if (data[i] != 0) position = -1;
             }
         }
         // find out the actual length. two values in one byte, so we have to round up.
-        int length = (position + 1)/2;
-        if ((position+1)%2==1) length = position/2+1;
+        int length = (position + 1) / 2;
+        if ((position + 1) % 2 == 1) length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
             tmp = ((int) (data[(i << 1)] * 2)) << 4;
             tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
-            result[i] = (byte) (tmp-128);
+            result[i] = (byte) (tmp - 128);
         }
         return result;
     }
@@ -115,20 +115,20 @@ public class JCD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        Arrays.fill(data, in.length * 2, data.length - 1, 0);
+        if (in.length * 2 < data.length) Arrays.fill(data, in.length * 2, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
-            tmp = in[i]+128;
-            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            data[i << 1] = ((double) (tmp >> 4))/2d;
+            tmp = in[i] + 128;
+            data[(i << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            data[i << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        Arrays.fill(data, in.length*2, data.length-1, 0);
+        if (in.length * 2 < data.length) Arrays.fill(data, in.length * 2, data.length - 1, 0);
         for (int i = offset; i < length; i++) {
-            tmp = in[i]+128;
-            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            data[i << 1] = ((double) (tmp >> 4))/2d;
+            tmp = in[i] + 128;
+            data[(i << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            data[i << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
