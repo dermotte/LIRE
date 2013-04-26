@@ -10,6 +10,7 @@ CHANGES for LIRE
   - Also cut trailing zeros for CEDD, ~ 7.2% save for ferrari data set.
   - Changed ParallelIndexer to appending to an index instead or overwriting.
   - Moved interval for monitoring to field in ParallelIndexer.
+  - LireDemo: Updated to ParallelIndexer
 
 2013-04-24
 ==========

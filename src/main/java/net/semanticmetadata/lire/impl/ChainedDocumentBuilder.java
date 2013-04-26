@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 21.04.13 09:06
+ * Updated: 26.04.13 13:43
  */
 
 package net.semanticmetadata.lire.impl;
@@ -81,7 +81,17 @@ public class ChainedDocumentBuilder extends AbstractDocumentBuilder {
 
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
-        throw new UnsupportedOperationException("This is not meant to be used within this class.");
+        docsCreated = true;
+        LinkedList<Field> resultList = new LinkedList<Field>();
+        if (builders.size() >= 1) {
+            for (DocumentBuilder builder : builders) {
+                Field[] fields = builder.createDescriptorFields(image);
+                for (int i = 0; i < fields.length; i++) {
+                    resultList.add(fields[i]);
+                }
+            }
+        }
+        return resultList.toArray(new Field[resultList.size()]);
     }
 
     public Document createDocument(BufferedImage image, String identifier) throws FileNotFoundException {

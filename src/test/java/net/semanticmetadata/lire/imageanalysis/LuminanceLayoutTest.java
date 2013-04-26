@@ -32,22 +32,25 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 06.04.13 10:18
+ * Updated: 26.04.13 14:27
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * This file is part of LIRE, a Java library for content based image retrieval.
@@ -56,15 +59,18 @@ import java.util.Arrays;
  */
 public class LuminanceLayoutTest extends TestCase {
     public void testExtraction() throws IOException {
-        BufferedImage img = ImageIO.read(new File("test.png"));
-//        BufferedImage img = ImageIO.read(new File("test.jpg"));
-        LuminanceLayout p = new LuminanceLayout();
-        p.extract(img);
-        System.out.println(Arrays.toString(p.getDoubleHistogram()));
-        byte[] bytes = p.getByteArrayRepresentation();
-        LuminanceLayout g = new LuminanceLayout();
-        g.setByteArrayRepresentation(bytes, 0, bytes.length);
-        float distance = p.getDistance(p);
-        System.out.println("distance = " + distance);
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+
+            BufferedImage img = ImageIO.read(iterator.next());
+            LuminanceLayout p = new LuminanceLayout();
+            p.extract(img);
+            System.out.println(Arrays.toString(p.getDoubleHistogram()));
+            byte[] bytes = p.getByteArrayRepresentation();
+            LuminanceLayout g = new LuminanceLayout();
+            g.setByteArrayRepresentation(bytes, 0, bytes.length);
+            float distance = p.getDistance(p);
+            System.out.println("distance = " + distance);
+        }
     }
 }
