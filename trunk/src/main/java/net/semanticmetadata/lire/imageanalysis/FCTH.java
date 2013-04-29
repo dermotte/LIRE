@@ -388,7 +388,7 @@ public class FCTH implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        Arrays.fill(histogram, in.length*2, histogram.length-1, 0);
+        if (in.length * 2 < histogram.length) Arrays.fill(histogram, in.length*2, histogram.length-1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i]+128;
             histogram[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
@@ -397,7 +397,7 @@ public class FCTH implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        Arrays.fill(histogram, in.length*2, histogram.length-1, 0);
+        if (in.length * 2 < histogram.length) Arrays.fill(histogram, in.length*2, histogram.length-1, 0);
         for (int i = offset; i < length; i++) {
             tmp = in[i]+128;
             histogram[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;

@@ -126,7 +126,7 @@ public class HashingIndexor extends Indexor {
             int[] hashes = BitSampling.generateHashes(feature.getDoubleHistogram());
             // System.out.println(Arrays.toString(hashes));
             // store hashes in index as terms
-            document.add(new TextField("Hashes", SerializationUtils.arrayToString(hashes), Field.Store.YES));
+            document.add(new TextField(featureFieldName+"_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
         }
         // add the specific feature
         document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
