@@ -422,7 +422,7 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        Arrays.fill(data, in.length * 2, data.length - 1, 0);
+        if (in.length * 2 < data.length) Arrays.fill(data, in.length * 2, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i]+128;
             data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
@@ -431,7 +431,7 @@ public class CEDD implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        Arrays.fill(data, in.length*2, data.length-1, 0);
+        if (in.length * 2 < data.length) Arrays.fill(data, in.length*2, data.length-1, 0);
         for (int i = offset; i < length; i++) {
             tmp = in[i]+128;
             data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
