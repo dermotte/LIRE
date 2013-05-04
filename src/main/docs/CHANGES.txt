@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-05-04
+==========
+  - Added ParallelExtractor, Producer/Consumer based extraction utility.
+
 2013-04-26
 ==========
   - Updated FCTH serialization. Now uses 96 bytes instead of 768 bytes.
