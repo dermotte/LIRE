@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 10:10
+ * Updated: 04.05.13 10:56
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -75,7 +75,7 @@ import java.util.zip.GZIPOutputStream;
 public class ParallelExtractor implements Runnable {
     Stack<WorkItem> images = new Stack<WorkItem>();
     boolean ended = false;
-    int overallCount=0;
+    int overallCount = 0;
     BufferedOutputStream dos = null;
 
     public static final String[] features = new String[]{
@@ -287,6 +287,7 @@ public class ParallelExtractor implements Runnable {
         }
 
     }
+
     class Monitoring implements Runnable {
         public void run() {
             long ms = System.currentTimeMillis();
@@ -309,7 +310,6 @@ public class ParallelExtractor implements Runnable {
     }
 
 
-
     class Producer implements Runnable {
         public void run() {
             int tmpSize = 0;
@@ -320,7 +320,12 @@ public class ParallelExtractor implements Runnable {
                 File next = null;
                 while ((file = br.readLine()) != null) {
                     next = new File(file);
-                    BufferedImage img = ImageIO.read(next);
+                    BufferedImage img = null;
+                    try {
+                        img = ImageIO.read(next);
+                    } catch (IOException e) {
+                        System.err.println("Could not read image " + file + ": " + e.getMessage());
+                    }
                     synchronized (images) {
                         String path = next.getCanonicalPath();
                         images.add(new WorkItem(path, img));
