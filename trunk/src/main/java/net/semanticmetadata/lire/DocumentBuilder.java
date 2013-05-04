@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 21.04.13 08:56
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire;
@@ -124,7 +124,7 @@ public interface DocumentBuilder {
 
     /**
      * Creates a new Lucene document from a BufferedImage. The identifier can be used like an id
-     * (e.g. the file name or the url of the image)
+     * (e.g. the file hashFunctionsFileName or the url of the image)
      *
      * @param image      the image to index. Cannot be NULL.
      * @param identifier an id for the image, for instance the filename or an URL. Can be NULL.
@@ -134,7 +134,7 @@ public interface DocumentBuilder {
 
     /**
      * Creates a new Lucene document from an InputStream. The identifier can be used like an id
-     * (e.g. the file name or the url of the image)
+     * (e.g. the file hashFunctionsFileName or the url of the image)
      *
      * @param image      the image to index. Cannot be NULL.
      * @param identifier an id for the image, for instance the filename or an URL. Can be NULL.

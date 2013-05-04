@@ -32,14 +32,18 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 13:15
  */
 
 package net.semanticmetadata.lire.indexing.hashing;
 
 import java.io.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * <p>Each feature vector v with dimension d gets k hashes from a hash bundle h(v) = (h^1(v), h^2(v), ..., h^k(v)) with
@@ -54,9 +58,9 @@ import java.io.*;
  */
 public class LocalitySensitiveHashing {
     private static String name = "lshHashFunctions.obj";
-    private static int dimensions = 512;           // max d
-    public static int numFunctionBundles = 25;     // k
-    public static double binLength = 0.01;         // w
+    private static int dimensions = 640;           // max d
+    public static int numFunctionBundles = 80;     // k
+    public static double binLength = 1;         // w
 
     private static double[][] hashA = null;      // a
     private static double[] hashB = null;        // b
@@ -68,15 +72,15 @@ public class LocalitySensitiveHashing {
      * @throws java.io.IOException
      */
     public static void generateHashFunctions() throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(name));
+        ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(name)));
         oos.writeInt(dimensions);
         oos.writeInt(numFunctionBundles);
         for (int c = 0; c < numFunctionBundles; c++) {
-            oos.writeDouble(Math.random() * binLength);
+            oos.writeFloat((float) (Math.random() * binLength));
         }
         for (int c = 0; c < numFunctionBundles; c++) {
             for (int j = 0; j < dimensions; j++) {
-                oos.writeDouble(drawNumber() * dilation);
+                oos.writeFloat((float) (drawNumber() * dilation));
             }
         }
         oos.close();
@@ -90,19 +94,23 @@ public class LocalitySensitiveHashing {
      * @see LocalitySensitiveHashing#generateHashFunctions()
      */
     public static double[][] readHashFunctions() throws IOException {
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(name));
-        int dimensions = ois.readInt();
-        int numFunctionBundles = ois.readInt();
+        return readHashFunctions(new FileInputStream(name));
+    }
+
+    public static double[][] readHashFunctions(InputStream in) throws IOException {
+        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(in));
+        dimensions = ois.readInt();
+        numFunctionBundles = ois.readInt();
         double[] tmpB = new double[numFunctionBundles];
         for (int k = 0; k < numFunctionBundles; k++) {
-            tmpB[k] = ois.readDouble();
+            tmpB[k] = ois.readFloat();
         }
         LocalitySensitiveHashing.hashB = tmpB;
         double[][] hashFunctions = new double[numFunctionBundles][dimensions];
         for (int i = 0; i < hashFunctions.length; i++) {
             double[] functionBundle = hashFunctions[i];
             for (int j = 0; j < functionBundle.length; j++) {
-                functionBundle[j] = ois.readDouble();
+                functionBundle[j] = ois.readFloat();
             }
         }
         LocalitySensitiveHashing.hashA = hashFunctions;
@@ -134,14 +142,21 @@ public class LocalitySensitiveHashing {
      * @return
      */
     private static double drawNumber() {
-        return Math.sqrt(-2 * Math.log(Math.random())) * Math.cos(2 * Math.PI * Math.random());
+        double u,v,s;
+        do {
+            u = Math.random()*2-1;
+            v = Math.random()*2-1;
+            s = u*u +v*v;
+        } while (s==0 || s>=1) ;
+        return u*Math.sqrt(-2d*Math.log(s)/s);
+//        return Math.sqrt(-2d * Math.log(Math.random())) * Math.cos(2d * Math.PI * Math.random());
     }
 
     public static void main(String[] args) {
         try {
             generateHashFunctions();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 

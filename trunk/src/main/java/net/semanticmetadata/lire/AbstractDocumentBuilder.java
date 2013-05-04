@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire;
@@ -59,7 +61,7 @@ import java.io.InputStream;
 public abstract class AbstractDocumentBuilder implements DocumentBuilder {
     /**
      * Creates a new Lucene document from an InputStream. The identifier can be used like an id
-     * (e.g. the file name or the url of the image). This is a simple implementation using
+     * (e.g. the file hashFunctionsFileName or the url of the image). This is a simple implementation using
      * javax.imageio.ImageIO
      *
      * @param image      the image to index. Please note that

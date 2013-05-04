@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 12:56
  */
 
 package net.semanticmetadata.lire.indexing.hashing;
@@ -54,9 +56,16 @@ import java.util.zip.GZIPOutputStream;
 public class BitSampling {
     private static int bits = 16, dimensions = 640;  // todo: reduce dimensions & numFunctionBundles ... test if recall changes too much.
     private static int numFunctionBundles = 40;
-    private static String name = "LshBitSampling.obj";
+    public static final String hashFunctionsFileName = "LshBitSampling.obj";
     private static double w = 4d;
     private static double[][][] hashes = null;
+    private static double[] lookUp = new double[32];
+
+    static {
+        for (int i = 0; i < lookUp.length; i++) {
+            lookUp[i] = Math.pow(2,i);
+        }
+    }
 
     /**
      * Generate new hash functions.
@@ -77,7 +86,7 @@ public class BitSampling {
      * @throws IOException
      */
     public static void generateHashFunctions() throws IOException {
-        File hashFile = new File(name);
+        File hashFile = new File(hashFunctionsFileName);
         if (!hashFile.exists()) {
             ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hashFile)));
             oos.writeInt(bits);
@@ -92,7 +101,7 @@ public class BitSampling {
             }
             oos.close();
         } else {
-            System.err.println("Hashes could not be written: " + name + " already exists");
+            System.err.println("Hashes could not be written: " + hashFunctionsFileName + " already exists");
         }
     }
 
@@ -105,7 +114,7 @@ public class BitSampling {
      * @throws IOException
      */
     public static double[][][] readHashFunctions() throws IOException {
-        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(BitSampling.class.getResourceAsStream(name)));
+        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(BitSampling.class.getResourceAsStream(hashFunctionsFileName)));
         int bits = ois.readInt();
         int dimensions = ois.readInt();
         int numFunctionBundles = ois.readInt();
@@ -132,7 +141,7 @@ public class BitSampling {
      * @throws IOException
      */
     public static double[][][] readHashFunctions(InputStream inputStream) throws IOException {
-        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(new FileInputStream(name)));
+        ObjectInputStream ois = new ObjectInputStream(new GZIPInputStream(inputStream));
         int bits = ois.readInt();
         int dimensions = ois.readInt();
         int numFunctionBundles = ois.readInt();
@@ -143,7 +152,7 @@ public class BitSampling {
             for (int j = 0; j < functionBundle.length; j++) {
                 double[] bitFunctions = functionBundle[j];
                 for (int k = 0; k < bitFunctions.length; k++) {
-                    bitFunctions[k] = ois.readDouble();
+                    bitFunctions[k] = ois.readFloat();
                 }
             }
         }
@@ -168,11 +177,17 @@ public class BitSampling {
                 for (int k = 0; k < histogram.length; k++) {
                     val += hashBit[k] * histogram[k];
                 }
-                hashResults[i] += Math.pow(2, j) * (Math.signum(val) < 0 ? 0 : 1);
+                hashResults[i] += lookUp[j] * (val < 0 ? 0 : 1);
             }
         }
         return hashResults;
     }
 
+    public static void setW(double w) {
+        BitSampling.w = w;
+    }
 
+    public static void setNumFunctionBundles(int numFunctionBundles) {
+        BitSampling.numFunctionBundles = numFunctionBundles;
+    }
 }

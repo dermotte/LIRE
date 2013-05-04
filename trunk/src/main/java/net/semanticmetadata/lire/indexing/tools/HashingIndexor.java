@@ -32,16 +32,19 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 13:45
  */
 
 package net.semanticmetadata.lire.indexing.tools;
 
-import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.PHOG;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
+import net.semanticmetadata.lire.indexing.hashing.LocalitySensitiveHashing;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -62,12 +65,13 @@ import java.io.IOException;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class HashingIndexor extends Indexor {
-    protected Class featureClass = CEDD.class;
+    protected Class featureClass = PHOG.class;
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
         HashingIndexor indexor = new HashingIndexor();
-//        BitSampling.generateHashFunctions();
         BitSampling.readHashFunctions();
+//        BitSampling.readHashFunctions(new FileInputStream(BitSampling.hashFunctionsFileName));
+        LocalitySensitiveHashing.readHashFunctions();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("-i") || arg.startsWith("--input-file")) {
@@ -93,6 +97,9 @@ public class HashingIndexor extends Indexor {
             } else if (arg.startsWith("-h")) {
                 // help
                 printHelp();
+            } else if (arg.startsWith("-s")) {
+                // silent ...
+                verbose = false;
             } else if (arg.startsWith("-c")) {
                 // list of input files within a file.
                 if ((i + 1) < args.length) {
@@ -121,13 +128,14 @@ public class HashingIndexor extends Indexor {
     }
 
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
-        if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
+//        if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
             // generate hashes here:
+//            int[] hashes = LocalitySensitiveHashing.generateHashes(feature.getDoubleHistogram());
             int[] hashes = BitSampling.generateHashes(feature.getDoubleHistogram());
-            // System.out.println(Arrays.toString(hashes));
+//            System.out.println(Arrays.toString(hashes));
             // store hashes in index as terms
             document.add(new TextField(featureFieldName+"_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
-        }
+//        }
         // add the specific feature
         document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
     }

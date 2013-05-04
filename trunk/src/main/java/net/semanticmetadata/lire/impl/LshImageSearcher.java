@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 13:45
+ * Updated: 04.05.13 12:47
  */
 
 package net.semanticmetadata.lire.impl;
@@ -46,11 +46,13 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageDuplicates;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.indexing.hashing.BitSampling;
+import net.semanticmetadata.lire.indexing.hashing.LocalitySensitiveHashing;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -65,7 +67,7 @@ import java.util.TreeSet;
  * @author Mathias Lux, mathias@juggle.at, 2013-04-12
  */
 
-public class BitSamplingImageSearcher extends AbstractImageSearcher {
+public class LshImageSearcher extends AbstractImageSearcher {
     private int maxResultsHashBased = 1000;
     private int maximumHits = 100;
     private String featureFieldName = DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM;
@@ -79,40 +81,40 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
      * @param hashesFieldName the field hashFunctionsFileName of the hashes.
      * @param feature an instance of the feature.
      */
-    public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
         this.feature = feature;
         try {
-            BitSampling.readHashFunctions();
+            LocalitySensitiveHashing.readHashFunctions();
         } catch (IOException e) {
             System.err.println("Error reading hash functions from default location.");
             e.printStackTrace();
         }
     }
 
-    public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, int numHashedResults) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, int numHashedResults) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
         this.feature = feature;
         maxResultsHashBased = numHashedResults;
         try {
-            BitSampling.readHashFunctions();
+            LocalitySensitiveHashing.readHashFunctions();
         } catch (IOException e) {
             System.err.println("Error reading hash functions from default location.");
             e.printStackTrace();
         }
     }
 
-    public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
         this.feature = feature;
         try {
-            BitSampling.readHashFunctions(hashes);
+            LocalitySensitiveHashing.readHashFunctions();
             hashes.close();
         } catch (IOException e) {
             System.err.println("Error reading has functions from given input stream.");
@@ -120,14 +122,14 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         }
     }
 
-    public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes, int numHashedResults) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes, int numHashedResults) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
         this.feature = feature;
         maxResultsHashBased = numHashedResults;
         try {
-            BitSampling.readHashFunctions(hashes);
+            LocalitySensitiveHashing.readHashFunctions();
             hashes.close();
         } catch (IOException e) {
             System.err.println("Error reading has functions from given input stream.");
@@ -139,7 +141,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         try {
             LireFeature queryFeature = feature.getClass().newInstance();
             queryFeature.extract(image);
-            int[] ints = BitSampling.generateHashes(queryFeature.getDoubleHistogram());
+            int[] ints = LocalitySensitiveHashing.generateHashes(queryFeature.getDoubleHistogram());
             String[] hashes = new String[ints.length];
             for (int i = 0; i < ints.length; i++) {
                 hashes[i] = Integer.toString(ints[i]);
@@ -167,6 +169,37 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
     private ImageSearchHits search(String[] hashes, LireFeature queryFeature, IndexReader reader) throws IOException {
         // first search by text:
         IndexSearcher searcher = new IndexSearcher(reader);
+        searcher.setSimilarity(new DefaultSimilarity(){
+            @Override
+            public float tf(float freq) {
+                return 1;
+            }
+
+            @Override
+            public float idf(long docFreq, long numDocs) {
+                return 1;
+            }
+
+            @Override
+            public float coord(int overlap, int maxOverlap) {
+                return 1;
+            }
+
+            @Override
+            public float queryNorm(float sumOfSquaredWeights) {
+                return 1;
+            }
+
+            @Override
+            public float sloppyFreq(int distance) {
+                return 1;
+            }
+
+            @Override
+            public float lengthNorm(FieldInvertState state) {
+                return 1;
+            }
+        });
         BooleanQuery query = new BooleanQuery();
         for (int i = 0; i < hashes.length; i++) {
             // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.

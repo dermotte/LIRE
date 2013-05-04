@@ -3,6 +3,8 @@ CHANGES for LIRE
 
 2013-05-04
 ==========
+  - Bug fix in Indexor: Did not close IndexWriter.
+  - Bug fix in BitSampling: Did not read Floats in alternative method.
   - Added ParallelExtractor, Producer/Consumer based extraction utility.
 
 2013-04-26

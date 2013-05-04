@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire.indexing;
@@ -72,10 +74,10 @@ public class ExtractorTest extends TestCase {
         File inputFile = new File("out.data");
         try {
             BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(new FileInputStream("out.data")));
-            // read file name length:
+            // read file hashFunctionsFileName length:
             while (in.read(tempInt, 0, 4) > 0) {
                 tmp = SerializationUtils.toInt(tempInt);
-                // read file name:
+                // read file hashFunctionsFileName:
                 in.read(temp, 0, tmp);
                 String filename = new String(temp, 0, tmp);
                 // normalize Filename to full path.

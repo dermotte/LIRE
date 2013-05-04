@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -356,10 +358,10 @@ class FileUtils {
     //-----------------------------------------------------------------------
 
     /**
-     * Construct a file from the set of name elements.
+     * Construct a file from the set of hashFunctionsFileName elements.
      *
      * @param directory the parent directory
-     * @param names     the name elements
+     * @param names     the hashFunctionsFileName elements
      * @return the file
      * @since 2.1
      */
@@ -378,9 +380,9 @@ class FileUtils {
     }
 
     /**
-     * Construct a file from the set of name elements.
+     * Construct a file from the set of hashFunctionsFileName elements.
      *
-     * @param names the name elements
+     * @param names the hashFunctionsFileName elements
      * @return the file
      * @since 2.1
      */

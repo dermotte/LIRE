@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 package net.semanticmetadata.lire.imageanalysis.sift;
 
@@ -45,9 +47,9 @@ public class ImageArrayConverter {
     public static boolean CUTOFF_VALUES = true;
     public static boolean NORM_VALUES = false;
 
-//    public static ImagePlus FloatArrayToImagePlus(FloatArray2D image, String name, float min, float max)
+//    public static ImagePlus FloatArrayToImagePlus(FloatArray2D image, String hashFunctionsFileName, float min, float max)
 //    {
-//        ImagePlus imp = IJ.createImage(name,"32-Bit Black", image.width, image.height, 1);
+//        ImagePlus imp = IJ.createImage(hashFunctionsFileName,"32-Bit Black", image.width, image.height, 1);
 //        FloatProcessor ip = (FloatProcessor)imp.getProcessor();
 //        FloatArrayToFloatProcessor(ip, image);
 //
