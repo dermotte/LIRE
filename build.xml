@@ -36,7 +36,7 @@
   ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
   ~  http://www.semanticmetadata.net/lire, http://www.lire-project.net
   ~
-  ~ Updated: 20.04.13 11:04
+  ~ Updated: 04.05.13 11:18
   -->
 
 <project name="Lire" default="compile" basedir=".">
@@ -154,12 +154,12 @@
         <!--zip destfile="${dist}/Lire-src-${versionstring}.zip">
             <fileset dir="src/main/java">
                 <patternset>
-                    <include name="**/*.*"/>
-                    <exclude name="**/CVS/*"/>
-                    <exclude name="**/.svn/*"/>
+                    <include hashFunctionsFileName="**/*.*"/>
+                    <exclude hashFunctionsFileName="**/CVS/*"/>
+                    <exclude hashFunctionsFileName="**/.svn/*"/>
                 </patternset>
             </fileset>
-            <filename name="build.xml"/>
+            <filename hashFunctionsFileName="build.xml"/>
         </zip-->
 
         <!--jar jarfile="${dist}/lire.jar" basedir="${build}" manifest="default.mf"/-->
@@ -187,7 +187,7 @@
             <fileset dir=".">
                 <patternset>
                     <include name="src/**"/>
-                    <!--include name="lib/**"/-->
+                    <!--include hashFunctionsFileName="lib/**"/-->
                     <include name="build.xml"/>
                     <include name="LICENSE.txt"/>
                     <include name="README.txt"/>

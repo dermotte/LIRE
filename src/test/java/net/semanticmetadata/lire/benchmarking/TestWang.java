@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 14:48
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -203,7 +203,7 @@ public class TestWang extends TestCase {
     }
 
     public void testMAP() throws IOException {
-        System.out.println("name\tmap\tp@10\terror rate");
+        System.out.println("hashFunctionsFileName\tmap\tp@10\terror rate");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L1;
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - L1");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L2;

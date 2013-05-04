@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire.indexing;
@@ -132,7 +134,7 @@ public class HashingTest extends TestCase {
             try {
                 BooleanQuery query = new BooleanQuery();
                 for (int i = 0; i < ints.length; i++) {
-                    // be aware that the name of the field must match the one you put the hashes in before.
+                    // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.
                     query.add(new BooleanClause(new TermQuery(new Term("Hashes", ints[i] + "")), BooleanClause.Occur.SHOULD));
                 }
                 long ms = System.currentTimeMillis();

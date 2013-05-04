@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire.indexing;
@@ -127,7 +129,7 @@ public class MetricSpacesTest extends TestCase {
     }
 
     private void showUrl(String url) {
-        String osName = System.getProperty("os.name");
+        String osName = System.getProperty("os.hashFunctionsFileName");
         // take linux settings
         String browserCmd = "firefox {url}";
         // or windows in case of windows :)

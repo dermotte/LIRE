@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 package net.semanticmetadata.lire.indexing;
 
@@ -97,7 +99,7 @@ public class MetricSpacesInvertedListIndexing {
 
     /**
      * @param featureClass     the feature being used for this new index (e.g. CEDD)
-     * @param featureFieldName the field name where to find the feature.
+     * @param featureFieldName the field hashFunctionsFileName where to find the feature.
      */
     public MetricSpacesInvertedListIndexing(Class<? extends LireFeature> featureClass, String featureFieldName) {
         this.featureClass = featureClass;
@@ -110,9 +112,9 @@ public class MetricSpacesInvertedListIndexing {
     }
 
     /**
-     * Creates a set of reference objects and stores it in a new index (name "<indexPath>-ro"). Then creates ordered
+     * Creates a set of reference objects and stores it in a new index (hashFunctionsFileName "<indexPath>-ro"). Then creates ordered
      * lists of reference object positions for each data item in the index with given feature.
-     * Finally a new index (name "<indexPath>-ms") is created where all the original documents as well as the new data
+     * Finally a new index (hashFunctionsFileName "<indexPath>-ms") is created where all the original documents as well as the new data
      * are stored.
      *
      * @param indexPath the path to the original index

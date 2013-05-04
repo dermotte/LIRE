@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:37
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -55,7 +57,7 @@ import java.util.LinkedList;
 import java.util.zip.GZIPInputStream;
 
 /**
- * The Indexor (yes, I know the name sounds weird, but it should match the Extractor class, and not
+ * The Indexor (yes, I know the hashFunctionsFileName sounds weird, but it should match the Extractor class, and not
  * the Lucene Indexing classes) reads data files created by the {@link Extractor}. They are added to
  * a given index. Note that the index is not overwritten, but the documents are appended.
  *
@@ -66,6 +68,8 @@ import java.util.zip.GZIPInputStream;
 public class Indexor {
     protected LinkedList<File> inputFiles = new LinkedList<File>();
     protected String indexPath = null;
+    private boolean overwriteIndex = true;
+    protected static boolean verbose=true;
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
         Indexor indexor = new Indexor();
@@ -84,6 +88,9 @@ public class Indexor {
             } else if (arg.startsWith("-h")) {
                 // help
                 printHelp();
+            } else if (arg.startsWith("-s")) {
+                // silent ...
+                verbose = false;
             } else if (arg.startsWith("-c")) {
                 // list of input files within a file.
                 if ((i + 1) < args.length) {
@@ -149,13 +156,14 @@ public class Indexor {
     public void run() {
         // do it ...
         try {
-            IndexWriter indexWriter = LuceneUtils.createIndexWriter(indexPath, false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+            IndexWriter indexWriter = LuceneUtils.createIndexWriter(indexPath, overwriteIndex, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
             for (Iterator<File> iterator = inputFiles.iterator(); iterator.hasNext(); ) {
                 File inputFile = iterator.next();
-                System.out.println("Processing " + inputFile.getPath() + ".");
+                if (verbose) System.out.println("Processing " + inputFile.getPath() + ".");
                 readFile(indexWriter, inputFile);
             }
             indexWriter.commit();
+            indexWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,11 +184,11 @@ public class Indexor {
         byte[] tempInt = new byte[4];
         int tmp, tmpFeature;
         byte[] temp = new byte[100*1024];
-        // read file name length:
+        // read file hashFunctionsFileName length:
         while (in.read(tempInt, 0, 4) > 0) {
             Document d = new Document();
             tmp = SerializationUtils.toInt(tempInt);
-            // read file name:
+            // read file hashFunctionsFileName:
             in.read(temp, 0, tmp);
             String filename = new String(temp, 0, tmp);
             // normalize Filename to full path.
@@ -209,7 +217,7 @@ public class Indexor {
      *
      * @param feature          the current feature.
      * @param document         the current document.
-     * @param featureFieldName the field name of the feature.
+     * @param featureFieldName the field hashFunctionsFileName of the feature.
      */
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
         document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));

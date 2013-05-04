@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 10:10
+ * Updated: 04.05.13 13:45
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -47,9 +47,13 @@ import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.indexing.hashing.BitSampling;
+import net.semanticmetadata.lire.indexing.hashing.LocalitySensitiveHashing;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
+import net.semanticmetadata.lire.indexing.tools.HashingIndexor;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -131,26 +135,27 @@ public class TestGroundTruth extends TestCase {
 
     public void testSearchBenchmark() throws IOException {
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
-        System.out.println("Precision @ 20:");
+        System.out.println("Precision @ 20 (linear):");
 //        System.out.println("CEDD        " + getPrecision(ImageSearcherFactory.createCEDDImageSearcher(30), reader));
-//        System.out.println("ColorLayout " + getPrecision(ImageSearcherFactory.createColorLayoutImageSearcher(30), reader));
+        System.out.println("ColorLayout " + getPrecision(ImageSearcherFactory.createColorLayoutImageSearcher(30), reader));
         System.out.println("PHOG        " + getPrecision(ImageSearcherFactory.createPHOGImageSearcher(30), reader));
 //        System.out.println("FCTH        " + getPrecision(ImageSearcherFactory.createFCTHImageSearcher(30), reader));
-//        System.out.println("JCD         " + getPrecision(ImageSearcherFactory.createJCDImageSearcher(30), reader));
-//        System.out.println("EdgeHist    " + getPrecision(ImageSearcherFactory.createEdgeHistogramImageSearcher(30), reader));
+        System.out.println("JCD         " + getPrecision(ImageSearcherFactory.createJCDImageSearcher(30), reader));
+        System.out.println("EdgeHist    " + getPrecision(ImageSearcherFactory.createEdgeHistogramImageSearcher(30), reader));
 //        System.out.println("JointHist   " + getPrecision(ImageSearcherFactory.createJointHistogramImageSearcher(30), reader));
 //        System.out.println("Lum.Lay.    " + getPrecision(ImageSearcherFactory.createLuminanceLayoutImageSearcher(30), reader));
 //        System.out.println("OpponentHis " + getPrecision(ImageSearcherFactory.createOpponentHistogramSearcher(30), reader));
 //        System.out.println("ColorHist   " + getPrecision(ImageSearcherFactory.createColorHistogramImageSearcher(30), reader));
 
-//        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
-//                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 2000), reader));
-//        System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
-//                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 2000), reader));
-//        System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
-//                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 2000), reader));
-//        System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
-//                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 2000), reader));
+        System.out.println("Precision @ 20 (hashed):");
+        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
+                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 2000), reader));
+        System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
+                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 2000), reader));
+        System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
+                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 2000), reader));
+        System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
+                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 2000), reader));
 //        System.out.println("Lum.Lay.    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,
 //                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 2000), reader));
     }
@@ -171,8 +176,8 @@ public class TestGroundTruth extends TestCase {
         while ((line = br.readLine()) != null) {
             BufferedImage bimg = ImageIO.read(new File(line));
             ImageSearchHits hits = is.search(bimg, reader);
-            saveImageResultsToPng("result", hits, line);
-            for (int i = 0; i < 20; i++) {
+//            saveImageResultsToPng("result", hits, line);
+            for (int i = 0; i < Math.min(20, hits.length()); i++) {
                 Document d = hits.doc(i);
                 String fileName = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
                 if (fileName.contains("swoosh")) {
@@ -227,5 +232,26 @@ public class TestGroundTruth extends TestCase {
             count++;
         }
         ImageIO.write(result, "PNG", new File(prefix + "_" + (System.currentTimeMillis() / 1000) + ".png"));
+    }
+
+    public void testBitSampling() throws IllegalAccessException, IOException, InstantiationException {
+//        double w = 4;
+//        for (int i=500; i <= 2000; i+=250) {
+//            for (int runs = 0; runs<100; runs++) {
+                File f = new File(BitSampling.hashFunctionsFileName);
+                if (f.exists()) f.delete();
+//                BitSampling.setNumFunctionBundles(80);
+                BitSampling.generateHashFunctions();
+                LocalitySensitiveHashing.generateHashFunctions();
+                String[] args = new String[]{"-c", "C:\\Temp\\Eval-WIPO\\2index.txt", "-l", indexPath};
+                HashingIndexor.main(args);
+                IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+                double precision = getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
+                        DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), new FileInputStream(BitSampling.hashFunctionsFileName), 500), reader);
+                System.out.println(precision);
+                f = new File(BitSampling.hashFunctionsFileName);
+//                f.renameTo(new File(runs + "_" + precision + "_" + BitSampling.hashFunctionsFileName));
+//            }
+//        }
     }
 }

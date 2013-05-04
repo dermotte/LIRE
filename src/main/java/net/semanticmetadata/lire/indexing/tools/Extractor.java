@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 04.05.13 11:18
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -60,8 +62,8 @@ import java.util.zip.GZIPOutputStream;
  * <p/>
  * File format is specified as: (12(345)+)+ with 1-5 being ...
  * <p/>
- * 1. Length of the file name [4 bytes], an int n giving the number of bytes for the file name
- * 2. File name, relative to the outfile [n bytes, see above]
+ * 1. Length of the file hashFunctionsFileName [4 bytes], an int n giving the number of bytes for the file hashFunctionsFileName
+ * 2. File hashFunctionsFileName, relative to the outfile [n bytes, see above]
  * 3. Feature index [1 byte], see static members
  * 4. Feature value length [4 bytes], an int k giving the number of bytes encoding the value
  * 5. Feature value [k bytes, see above]
