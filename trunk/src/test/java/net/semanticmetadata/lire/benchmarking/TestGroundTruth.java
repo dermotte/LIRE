@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 10:22
+ * Updated: 04.05.13 10:10
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -45,11 +45,12 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -58,11 +59,11 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * This file is part of LIRE, a Java library for content based image retrieval.
@@ -73,7 +74,7 @@ import java.io.IOException;
 public class TestGroundTruth extends TestCase {
     public String indexPath = "test-idx-large-hashed";
     private File fileList;
-    private File truth = new File("E:\\Eval-WIPO\\trimmed.txt");
+    private File truth = new File("C:\\Temp\\Eval-WIPO\\truth\\trimmed.txt");
 
     public void testAll() throws IOException {
         testIndexing();
@@ -81,7 +82,7 @@ public class TestGroundTruth extends TestCase {
     }
 
     public void testIndexing() {
-        fileList = new File("E:\\WIPO-conv\\dir.txt");
+        fileList = new File("C:\\Temp\\Eval-WIPO\\ca.txt");
 //        fileList = new File("C:\\Temp\\Eval-WIPO\\all_converted.txt");
         ParallelIndexer pin = new ParallelIndexer(12, indexPath, fileList) {
             @Override
@@ -133,7 +134,7 @@ public class TestGroundTruth extends TestCase {
         System.out.println("Precision @ 20:");
 //        System.out.println("CEDD        " + getPrecision(ImageSearcherFactory.createCEDDImageSearcher(30), reader));
 //        System.out.println("ColorLayout " + getPrecision(ImageSearcherFactory.createColorLayoutImageSearcher(30), reader));
-//        System.out.println("PHOG        " + getPrecision(ImageSearcherFactory.createPHOGImageSearcher(30), reader));
+        System.out.println("PHOG        " + getPrecision(ImageSearcherFactory.createPHOGImageSearcher(30), reader));
 //        System.out.println("FCTH        " + getPrecision(ImageSearcherFactory.createFCTHImageSearcher(30), reader));
 //        System.out.println("JCD         " + getPrecision(ImageSearcherFactory.createJCDImageSearcher(30), reader));
 //        System.out.println("EdgeHist    " + getPrecision(ImageSearcherFactory.createEdgeHistogramImageSearcher(30), reader));
@@ -142,16 +143,16 @@ public class TestGroundTruth extends TestCase {
 //        System.out.println("OpponentHis " + getPrecision(ImageSearcherFactory.createOpponentHistogramSearcher(30), reader));
 //        System.out.println("ColorHist   " + getPrecision(ImageSearcherFactory.createColorHistogramImageSearcher(30), reader));
 
-        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
-                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 2000), reader));
-        System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
-                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 2000), reader));
-        System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
-                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 2000), reader));
-        System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
-                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 2000), reader));
-        System.out.println("Lum.Lay.    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,
-                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 2000), reader));
+//        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
+//                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 2000), reader));
+//        System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
+//                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 2000), reader));
+//        System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
+//                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 2000), reader));
+//        System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
+//                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 2000), reader));
+//        System.out.println("Lum.Lay.    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,
+//                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 2000), reader));
     }
 
     /**
@@ -170,6 +171,7 @@ public class TestGroundTruth extends TestCase {
         while ((line = br.readLine()) != null) {
             BufferedImage bimg = ImageIO.read(new File(line));
             ImageSearchHits hits = is.search(bimg, reader);
+            saveImageResultsToPng("result", hits, line);
             for (int i = 0; i < 20; i++) {
                 Document d = hits.doc(i);
                 String fileName = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
@@ -184,5 +186,46 @@ public class TestGroundTruth extends TestCase {
             count++;
         }
         return sum / (20d * count);
+    }
+
+    public static void saveImageResultsToPng(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
+        LinkedList<BufferedImage> results = new LinkedList<BufferedImage>();
+        LinkedList<Boolean> isHit = new LinkedList<Boolean>();
+        int width = 0;
+        for (int i = 0; i < hits.length(); i++) {
+            // hits.score(i)
+            String name = hits.doc(i).get("descriptorImageIdentifier");
+            BufferedImage tmp = ImageIO.read(new FileInputStream(hits.doc(i).get("descriptorImageIdentifier")));
+//            if (tmp.getHeight() > 200) {
+            double factor = 200d / ((double) tmp.getHeight());
+            tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);
+//            }
+            width += tmp.getWidth() + 5;
+            results.add(tmp);
+            isHit.add(name.contains("swoosh"));
+        }
+        BufferedImage result = new BufferedImage(width, 220, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = (Graphics2D) result.getGraphics();
+        g2.setColor(Color.white);
+        g2.setBackground(Color.white);
+        g2.clearRect(0, 0, result.getWidth(), result.getHeight());
+        g2.setColor(Color.black);
+        g2.setFont(Font.decode("\"Arial\", Font.BOLD, 12"));
+        int offset = 0;
+        int count = 0;
+        Iterator<Boolean> it = isHit.iterator();
+        for (Iterator<BufferedImage> iterator = results.iterator(); iterator.hasNext(); ) {
+            BufferedImage next = iterator.next();
+            g2.drawImage(next, offset, 20, null);
+            g2.setColor(Color.black);
+            g2.drawString(hits.score(count) + "", offset + 5, 12);
+            if (it.next()) {
+                g2.setColor(Color.green);
+                g2.fillRect(offset, 20, next.getWidth(), 20);
+            }
+            offset += next.getWidth() + 5;
+            count++;
+        }
+        ImageIO.write(result, "PNG", new File(prefix + "_" + (System.currentTimeMillis() / 1000) + ".png"));
     }
 }
