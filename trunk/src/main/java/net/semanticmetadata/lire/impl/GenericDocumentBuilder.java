@@ -70,13 +70,13 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     final static Mode DEFAULT_MODE = Mode.Fast;
     Mode currentMode = DEFAULT_MODE;
     // private LireFeature lireFeature;
-    protected static HashingMode hashingMode = HashingMode.LSH;
+    protected static HashingMode hashingMode = HashingMode.BitSampling;
 
     static {
         // Let's try to read the hash functions right here and we don't have to care about it right now.
         try {
             BitSampling.readHashFunctions();
-            LocalitySensitiveHashing.readHashFunctions();
+//            LocalitySensitiveHashing.readHashFunctions();
         } catch (IOException e) {
             System.err.println("Could not read hashes from file when first creating a GenericDocumentBuilder instance.");
             e.printStackTrace();

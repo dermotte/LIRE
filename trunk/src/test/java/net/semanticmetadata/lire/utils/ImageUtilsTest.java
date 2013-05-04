@@ -53,7 +53,7 @@ import java.util.Iterator;
  */
 public class ImageUtilsTest extends TestCase {
     public void testCheckOpen() throws IOException {
-        ArrayList<File> allImageFiles = FileUtils.getAllImageFiles(new File("D:\\DataSets\\WIPO-CA"), true);
+        ArrayList<File> allImageFiles = FileUtils.getAllImageFiles(new File("D:\\DataSets\\Yahoo-GC"), true);
         BufferedWriter bw = new BufferedWriter(new FileWriter("faulty.txt"));
         long ms = System.currentTimeMillis();
         int count = 0;
