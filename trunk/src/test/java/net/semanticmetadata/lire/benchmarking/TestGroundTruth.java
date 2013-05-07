@@ -78,7 +78,7 @@ import java.util.LinkedList;
 public class TestGroundTruth extends TestCase {
     public String indexPath = "test-idx-large-hashed";
     private File fileList;
-    private File truth = new File("C:\\Temp\\Eval-WIPO\\truth\\trimmed.txt");
+    private File truth = new File("E:\\Eval-WIPO\\filtered.txt");
 
     public void testAll() throws IOException {
         testIndexing();
@@ -86,7 +86,7 @@ public class TestGroundTruth extends TestCase {
     }
 
     public void testIndexing() {
-        fileList = new File("C:\\Temp\\Eval-WIPO\\ca.txt");
+        fileList = new File("E:\\Eval-WIPO\\ca.txt");
 //        fileList = new File("C:\\Temp\\Eval-WIPO\\all_converted.txt");
         ParallelIndexer pin = new ParallelIndexer(12, indexPath, fileList) {
             @Override

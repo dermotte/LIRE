@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-05-07
+==========
+  - Bug fix in Canny Edge Detector
+  - Bug fix in PHOG
+
 2013-05-04
 ==========
   - Bug fix in Indexor: Did not close IndexWriter.
