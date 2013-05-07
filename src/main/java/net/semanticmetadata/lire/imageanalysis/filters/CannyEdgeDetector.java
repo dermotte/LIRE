@@ -47,7 +47,7 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 
- /**
+/**
  * This class is a simple implementation of a Canny Edge Detector.
  *
  * @author Mathias Lux, mathias@juggle.at, 05.04.13
@@ -197,9 +197,16 @@ public class CannyEdgeDetector {
         return (gray.getRaster().getPixel(x, y, tmpPixel)[0] > 0 && gray.getRaster().getPixel(x, y, tmpPixel)[0] < 255);
     }
 
+    /**
+     * Distinguishes between weak and strong edge points based on the thresholds given.
+     * @param x
+     * @param y
+     * @param gray
+     * @param v
+     */
     private void setPixel(int x, int y, BufferedImage gray, double v) {
-        if (v > thresholdHigh) gray.getRaster().setPixel(x, y, tmp000);
-        else if (v > thresholdLow) gray.getRaster().setPixel(x, y, tmp128);
+        if (v > thresholdLow) gray.getRaster().setPixel(x, y, tmp000);
+        else if (v > thresholdHigh) gray.getRaster().setPixel(x, y, tmp128);
         else gray.getRaster().setPixel(x, y, tmp255);
     }
 

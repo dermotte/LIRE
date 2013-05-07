@@ -56,7 +56,10 @@ import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -387,10 +390,8 @@ public class ParallelIndexer implements Runnable {
                 try {
                     Document d = builder.createDocument(tmp.getImage(), tmp.getFileName());
                     writer.addDocument(d);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    System.err.println("Could not handle file " + tmp.getFileName() + ": "  + e.getMessage());
                 }
             }
 //            System.out.println("Images analyzed: " + count);

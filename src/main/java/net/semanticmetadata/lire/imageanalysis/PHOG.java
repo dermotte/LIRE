@@ -275,8 +275,8 @@ public class PHOG implements LireFeature {
     }
 
     private void setPixel(int x, int y, BufferedImage gray, double v) {
-        if (v > thresholdHigh) gray.getRaster().setPixel(x, y, tmp000);
-        else if (v > thresholdLow) gray.getRaster().setPixel(x, y, tmp128);
+        if (v > thresholdLow) gray.getRaster().setPixel(x, y, tmp000);
+        else if (v > thresholdHigh) gray.getRaster().setPixel(x, y, tmp128);
         else gray.getRaster().setPixel(x, y, tmp255);
     }
 
