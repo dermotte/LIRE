@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 11:18
+ * Updated: 10.05.13 11:47
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -412,10 +412,10 @@ public class ParallelExtractor implements Runnable {
                         dos.write(myBuffer, 0, bufferCount);
                         dos.write(-1);
                     }
-                    bufferCount = 0;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                bufferCount = 0;
             }
         }
     }

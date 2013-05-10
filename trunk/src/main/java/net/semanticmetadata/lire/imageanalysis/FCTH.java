@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 10:22
+ * Updated: 10.05.13 11:55
  */
 package net.semanticmetadata.lire.imageanalysis;
 
@@ -388,7 +388,7 @@ public class FCTH implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if (in.length * 2 < histogram.length) Arrays.fill(histogram, in.length*2, histogram.length-1, 0);
+        if (in.length << 1 < histogram.length) Arrays.fill(histogram, in.length << 1, histogram.length-1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i]+128;
             histogram[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
@@ -397,11 +397,11 @@ public class FCTH implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if (in.length * 2 < histogram.length) Arrays.fill(histogram, in.length*2, histogram.length-1, 0);
-        for (int i = offset; i < length; i++) {
+        if (length << 1 < histogram.length) Arrays.fill(histogram, length << 1, histogram.length-1, 0);
+        for (int i = offset; i < offset+length; i++) {
             tmp = in[i]+128;
-            histogram[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            histogram[i << 1] = ((double) (tmp >> 4))/2d;
+            histogram[((i-offset) << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            histogram[(i-offset) << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 
