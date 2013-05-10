@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 09:31
+ * Updated: 10.05.13 11:56
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -422,7 +422,7 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if (in.length * 2 < data.length) Arrays.fill(data, in.length * 2, data.length - 1, 0);
+        if ((in.length << 1) < data.length) Arrays.fill(data, in.length << 1, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i]+128;
             data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
@@ -431,11 +431,11 @@ public class CEDD implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if (in.length * 2 < data.length) Arrays.fill(data, in.length*2, data.length-1, 0);
-        for (int i = offset; i < length; i++) {
+        if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length-1, 0);
+        for (int i = offset; i < offset+length; i++) {
             tmp = in[i]+128;
-            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            data[i << 1] = ((double) (tmp >> 4))/2d;
+            data[((i-offset) << 1) +1] = ((double) (tmp & 0x000F))/2d;
+            data[(i-offset) << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 

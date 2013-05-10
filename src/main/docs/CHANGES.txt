@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-05-10
+==========
+  - Bug fix in ParallelExtractor (tnx to M. Riegler)
+  - Bug fix in CEDD, FCTH and JCD serialization (tnx to M. Riegler)
+
 2013-05-07
 ==========
   - Bug fix in Canny Edge Detector
