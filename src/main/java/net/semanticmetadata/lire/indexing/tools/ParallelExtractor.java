@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 10.05.13 11:47
+ * Updated: 11.05.13 09:57
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -126,7 +126,7 @@ public class ParallelExtractor implements Runnable {
     LinkedList<LireFeature> listOfFeatures;
     File fileList = null;
     File outFile = null;
-    private int numberOfThreads = 4;
+    private static int numberOfThreads = 4;
     private int monitoringInterval = 10;
 
     public ParallelExtractor() {
@@ -180,6 +180,15 @@ public class ParallelExtractor implements Runnable {
             } else if (arg.startsWith("-h")) {
                 // help
                 printHelp();
+            } else if (arg.startsWith("-n")) {
+                if ((i + 1) < args.length)
+                    try {
+                        ParallelExtractor.numberOfThreads = Integer.parseInt(args[i+1]);
+                    } catch (Exception e1) {
+                        System.err.println("Could not set number of threads to \""+args[i+1]+"\".");
+                        e1.printStackTrace();
+                    }
+                else printHelp();
             } else if (arg.startsWith("-c")) {
                 // config file ...
                 Properties p = new Properties();
@@ -232,7 +241,7 @@ public class ParallelExtractor implements Runnable {
                 "\n" +
                 "1. Usage\n" +
                 "========\n" +
-                "$> Extractor -i <infile> [-o <outfile>] -c <configfile>\n" +
+                "$> Extractor -i <infile> [-o <outfile>] -c <configfile> [-n <threads>]\n" +
                 "\n" +
                 "Note: if you don't specify an outfile just \".data\" is appended to the infile for output.\n" +
                 "\n" +

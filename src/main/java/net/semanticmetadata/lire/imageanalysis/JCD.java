@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 10.05.13 11:56
+ * Updated: 11.05.13 09:46
  */
 package net.semanticmetadata.lire.imageanalysis;
 
@@ -50,6 +50,11 @@ import java.util.Arrays;
  */
 public class JCD implements LireFeature {
     int tmp;
+    double result = 0;
+    double temp1 = 0;
+    double temp2 = 0;
+    double TempCount1 = 0, TempCount2 = 0, TempCount3 = 0;
+
     protected double[] data = new double[168];
 
     public JCD(CEDD cedd, FCTH fcth) {
@@ -125,10 +130,10 @@ public class JCD implements LireFeature {
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length - 1, 0);
-        for (int i = offset; i < offset+length; i++) {
+        for (int i = offset; i < offset + length; i++) {
             tmp = in[i] + 128;
-            data[((i-offset) << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
-            data[(i-offset) << 1] = ((double) (tmp >> 4)) / 2d;
+            data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            data[(i - offset) << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
@@ -150,32 +155,32 @@ public class JCD implements LireFeature {
             throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
 
         // Tanimoto coefficient
-        double Result = 0;
-        double Temp1 = 0;
-        double Temp2 = 0;
+        result = 0;
+        temp1 = 0;
+        temp2 = 0;
 
-        double TempCount1 = 0, TempCount2 = 0, TempCount3 = 0;
+        TempCount1 = 0;
+        TempCount2 = 0;
+        TempCount3 = 0;
 
         for (int i = 0; i < ((JCD) vd).data.length; i++) {
-            Temp1 += ((JCD) vd).data[i];
-            Temp2 += data[i];
+            temp1 += ((JCD) vd).data[i];
+            temp2 += data[i];
         }
 
-        if (Temp1 == 0 || Temp2 == 0) Result = 100;
-        if (Temp1 == 0 && Temp2 == 0) Result = 0;
+        if (temp1 == 0 && temp2 == 0) return 0f;
+        if (temp1 == 0 || temp2 == 0) return 100f;
 
-        if (Temp1 > 0 && Temp2 > 0) {
-            for (int i = 0; i < ((JCD) vd).data.length; i++) {
-                TempCount1 += (((JCD) vd).data[i] / Temp1) * (data[i] / Temp2);
-                TempCount2 += (data[i] / Temp2) * (data[i] / Temp2);
-                TempCount3 += (((JCD) vd).data[i] / Temp1) * (((JCD) vd).data[i] / Temp1);
+        for (int i = 0; i < ((JCD) vd).data.length; i++) {
+            TempCount1 += (((JCD) vd).data[i] / temp1) * (data[i] / temp2);
+            TempCount2 += (data[i] / temp2) * (data[i] / temp2);
+            TempCount3 += (((JCD) vd).data[i] / temp1) * (((JCD) vd).data[i] / temp1);
 
-            }
-
-            Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
-                    - TempCount1))); //Tanimoto
         }
-        return (float) Result;
+
+        result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
+                - TempCount1))); //Tanimoto
+        return (float) result;
 
     }
 

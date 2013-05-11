@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 10:58
+ * Updated: 11.05.13 10:52
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -66,14 +66,14 @@ public class PHOG implements LireFeature {
     int[] tmp000 = {0};
     int[] tmpPixel = {0};
     // double thresholds for Canny edge detector
-    double thresholdLow = 60, thresholdHigh = 100;
+    double thresholdLow = 80, thresholdHigh = 100;
 
     // And now for PHOG:
     public static int bins = 30;
     double[] histogram = new double[bins + 4*bins + 4*4*bins];
 //    double[] histogram = new double[5 * bins + 4*4*bins + 4*4*4*bins];
     // used to quantize bins to [0, quantizationFactor]
-    private double quantizationFactor = 127d;
+    private double quantizationFactor = 63d;
 
 
     public void extract(BufferedImage bimg) {

@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 10.05.13 11:55
+ * Updated: 11.05.13 09:46
  */
 package net.semanticmetadata.lire.imageanalysis;
 
@@ -61,6 +61,15 @@ public class FCTH implements LireFeature {
 
     public boolean Compact = false;
     int tmp;
+
+    double distResult = 0;
+    double distTmp1 = 0;
+    double distTmp2 = 0;
+
+    double distTmpCnt1 = 0;
+    double distTmpCnt2 = 0;
+    double distTmpCnt3 = 0;
+
 
     // Constructor
     public FCTH() {
@@ -356,6 +365,7 @@ public class FCTH implements LireFeature {
     /**
      * Creates a small byte array from an FCTH descriptor.
      * Stuffs 2 numbers into one byte and omits all but 1 of the trailing 0's.
+     *
      * @return
      */
     public byte[] getByteArrayRepresentation() {
@@ -364,19 +374,18 @@ public class FCTH implements LireFeature {
         for (int i = 0; i < histogram.length; i++) {
             if (position == -1) {
                 if (histogram[i] == 0) position = i;
-            }
-            else if (position > -1) {
-                if (histogram[i]!=0) position = -1;
+            } else if (position > -1) {
+                if (histogram[i] != 0) position = -1;
             }
         }
         // find out the actual length. two values in one byte, so we have to round up.
-        int length = (position + 1)/2;
-        if ((position+1)%2==1) length = position/2+1;
+        int length = (position + 1) / 2;
+        if ((position + 1) % 2 == 1) length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
             tmp = ((int) (histogram[(i << 1)] * 2)) << 4;
             tmp = (tmp | ((int) (histogram[(i << 1) + 1] * 2)));
-            result[i] = (byte) (tmp-128);
+            result[i] = (byte) (tmp - 128);
         }
         return result;
     }
@@ -388,20 +397,20 @@ public class FCTH implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if (in.length << 1 < histogram.length) Arrays.fill(histogram, in.length << 1, histogram.length-1, 0);
+        if (in.length << 1 < histogram.length) Arrays.fill(histogram, in.length << 1, histogram.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
-            tmp = in[i]+128;
-            histogram[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            histogram[i << 1] = ((double) (tmp >> 4))/2d;
+            tmp = in[i] + 128;
+            histogram[(i << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            histogram[i << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if (length << 1 < histogram.length) Arrays.fill(histogram, length << 1, histogram.length-1, 0);
-        for (int i = offset; i < offset+length; i++) {
-            tmp = in[i]+128;
-            histogram[((i-offset) << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            histogram[(i-offset) << 1] = ((double) (tmp >> 4))/2d;
+        if (length << 1 < histogram.length) Arrays.fill(histogram, length << 1, histogram.length - 1, 0);
+        for (int i = offset; i < offset + length; i++) {
+            tmp = in[i] + 128;
+            histogram[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            histogram[(i - offset) << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
@@ -422,38 +431,31 @@ public class FCTH implements LireFeature {
             throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
 
         // Tanimoto coefficient
-        double Result = 0;
-        double Temp1 = 0;
-        double Temp2 = 0;
+        distResult = 0;
+        distTmp1 = 0;
+        distTmp2 = 0;
 
-        double TempCount1 = 0, TempCount2 = 0, TempCount3 = 0;
+        distTmpCnt1 = 0;
+        distTmpCnt2 = 0;
+        distTmpCnt3 = 0;
 
         for (int i = 0; i < ch.histogram.length; i++) {
-            Temp1 += ch.histogram[i];
-            Temp2 += histogram[i];
+            distTmp1 += ch.histogram[i];
+            distTmp2 += histogram[i];
         }
 
-        if (Temp1 == 0 && Temp2 == 0) {
-            Result = 0;
-            return (float) Result;
+        if (distTmp1 == 0 && distTmp2 == 0) return 0f;
+        if (distTmp1 == 0 || distTmp2 == 0) return 100f;
+
+        for (int i = 0; i < ch.histogram.length; i++) {
+            distTmpCnt1 += (ch.histogram[i] / distTmp1) * (histogram[i] / distTmp2);
+            distTmpCnt2 += (histogram[i] / distTmp2) * (histogram[i] / distTmp2);
+            distTmpCnt3 += (ch.histogram[i] / distTmp1) * (ch.histogram[i] / distTmp1);
+
         }
-        if (Temp1 == 0 || Temp2 == 0) {
-            Result = 100;
-            return (float) Result;
-        }
 
-//        if (Temp1 > 0 && Temp2 > 0) {
-            for (int i = 0; i < ch.histogram.length; i++) {
-                TempCount1 += (ch.histogram[i] / Temp1) * (histogram[i] / Temp2);
-                TempCount2 += (histogram[i] / Temp2) * (histogram[i] / Temp2);
-                TempCount3 += (ch.histogram[i] / Temp1) * (ch.histogram[i] / Temp1);
-
-            }
-
-            Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
-                    - TempCount1))); //Tanimoto
-//        }
-        return (float) Result;
+        distResult = (100 - 100 * (distTmpCnt1 / (distTmpCnt2 + distTmpCnt3 - distTmpCnt1)));
+        return (float) distResult;
 
     }
 

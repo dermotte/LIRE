@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 11:18
+ * Updated: 11.05.13 10:06
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -93,16 +93,16 @@ public class TestWang extends TestCase {
         sampleQueries = new int[1000];
         for (int i = 0; i < sampleQueries.length; i++) {
             sampleQueries[i] = i;
-
         }
+        indexPath += "-" + System.currentTimeMillis()%(1000*60*60*24*7);
         // Setting up DocumentBuilder:
 //        parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive);
-        parallelIndexer = new ParallelIndexer(5, indexPath, testExtensive, true){
+        parallelIndexer = new ParallelIndexer(4, indexPath, testExtensive, true){
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
@@ -220,8 +220,8 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
-//        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
-        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
+        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
+//        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
 //        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "jop"), "JointOp Hist");
