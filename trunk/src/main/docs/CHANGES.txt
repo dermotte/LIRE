@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2013-05-11
+==========
+  - Optimization in GenericImageSearcher
+  - Optimizations in FCTH, CEDD and JCD Tanimoto coefficient implementations
+  - Added "-n" option to ParallelExtractor
+
 2013-05-10
 ==========
   - Bug fix in ParallelExtractor (tnx to M. Riegler)

@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 10.05.13 11:56
+ * Updated: 11.05.13 09:46
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -335,19 +335,16 @@ public class CEDD implements LireFeature {
         if (Temp1 == 0 && Temp2 == 0) return 0f;
         if (Temp1 == 0 || Temp2 == 0) return 100f;
 
-//        if (Temp1 > 0 && Temp2 > 0) {
-            for (int i = 0; i < tmpFeature.data.length; i++) {
-                iTmp1 = tmpFeature.data[i] / Temp1;
-                iTmp2 = data[i] / Temp2;
-                TempCount1 += iTmp1 * iTmp2;
-                TempCount2 += iTmp2 * iTmp2;
-                TempCount3 += iTmp1 * iTmp1;
+        for (int i = 0; i < tmpFeature.data.length; i++) {
+            iTmp1 = tmpFeature.data[i] / Temp1;
+            iTmp2 = data[i] / Temp2;
+            TempCount1 += iTmp1 * iTmp2;
+            TempCount2 += iTmp2 * iTmp2;
+            TempCount3 += iTmp1 * iTmp1;
 
-            }
+        }
 
-            Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
-                    - TempCount1))); //Tanimoto
-//        }
+        Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3 - TempCount1)));
         return (float) Result;
 
     }
@@ -398,19 +395,18 @@ public class CEDD implements LireFeature {
         for (int i = 0; i < data.length; i++) {
             if (position == -1) {
                 if (data[i] == 0) position = i;
-            }
-            else if (position > -1) {
-                if (data[i]!=0) position = -1;
+            } else if (position > -1) {
+                if (data[i] != 0) position = -1;
             }
         }
         // find out the actual length. two values in one byte, so we have to round up.
-        int length = (position + 1)/2;
-        if ((position+1)%2==1) length = position/2+1;
+        int length = (position + 1) / 2;
+        if ((position + 1) % 2 == 1) length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
             tmp = ((int) (data[(i << 1)] * 2)) << 4;
             tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
-            result[i] = (byte) (tmp-128);
+            result[i] = (byte) (tmp - 128);
         }
         return result;
     }
@@ -424,18 +420,18 @@ public class CEDD implements LireFeature {
     public void setByteArrayRepresentation(byte[] in) {
         if ((in.length << 1) < data.length) Arrays.fill(data, in.length << 1, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
-            tmp = in[i]+128;
-            data[(i << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            data[i << 1] = ((double) (tmp >> 4))/2d;
+            tmp = in[i] + 128;
+            data[(i << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            data[i << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length-1, 0);
-        for (int i = offset; i < offset+length; i++) {
-            tmp = in[i]+128;
-            data[((i-offset) << 1) +1] = ((double) (tmp & 0x000F))/2d;
-            data[(i-offset) << 1] = ((double) (tmp >> 4))/2d;
+        if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length - 1, 0);
+        for (int i = offset; i < offset + length; i++) {
+            tmp = in[i] + 128;
+            data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
+            data[(i - offset) << 1] = ((double) (tmp >> 4)) / 2d;
         }
     }
 
