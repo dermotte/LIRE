@@ -40,6 +40,7 @@
 package net.semanticmetadata.lire.utils;
 
 import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.imageanalysis.ColorLayout;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.TopDocs;
 
@@ -377,7 +378,9 @@ public class FileUtils {
     public static boolean isImageFileCompatible(File f) {
         boolean result = true;
         try {
-            ImageIO.read(f);
+            BufferedImage img = ImageIO.read(f);
+            ColorLayout cl = new ColorLayout();
+            cl.extract(img);
         } catch (Exception e) {
             result = false;
         }

@@ -378,7 +378,7 @@ public class AutoColorCorrelogram implements LireFeature {
 
     public float getDistance(LireFeature vd) {
         if (!(vd instanceof AutoColorCorrelogram)) return -1;
-        return l1(((AutoColorCorrelogram) vd).correlogram);
+        return jsd(((AutoColorCorrelogram) vd).correlogram);
     }
 
     private float l1(float[][] vdCorrelogram) {
@@ -386,8 +386,19 @@ public class AutoColorCorrelogram implements LireFeature {
         for (int i = 0; i < correlogram.length; i++) {
             float[] ints = correlogram[i];
             for (int j = 0; j < ints.length; j++) {
-                float v = Math.abs(correlogram[i][j] - vdCorrelogram[i][j]);
-                result += v;
+                result += Math.abs(correlogram[i][j] - vdCorrelogram[i][j]);
+            }
+        }
+        return result;
+    }
+
+    private float jsd(float[][] vdCorrelogram) {
+        float result = 0;
+        for (int i = 0; i < correlogram.length; i++) {
+            float[] ints = correlogram[i];
+            for (int j = 0; j < ints.length; j++) {
+                result += (correlogram[i][j] > 0 ? (correlogram[i][j] / 2f) * Math.log((2f * correlogram[i][j]) / (correlogram[i][j] + vdCorrelogram[i][j])) : 0) +
+                        (vdCorrelogram[i][j] > 0 ? (vdCorrelogram[i][j] / 2f) * Math.log((2f * vdCorrelogram[i][j]) / (correlogram[i][j] + vdCorrelogram[i][j])) : 0);
             }
         }
         return result;

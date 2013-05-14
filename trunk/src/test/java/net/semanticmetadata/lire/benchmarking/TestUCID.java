@@ -1,0 +1,209 @@
+/*
+ * This file is part of the LIRE project: http://www.semanticmetadata.net/lire
+ * LIRE is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * LIRE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with LIRE; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * We kindly ask you to refer the any or one of the following publications in
+ * any publication mentioning or employing Lire:
+ *
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+ * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
+ * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
+ * URL: http://doi.acm.org/10.1145/1459359.1459577
+ *
+ * Lux Mathias. Content Based Image Retrieval with LIRE. In proceedings of the
+ * 19th ACM International Conference on Multimedia, pp. 735-738, Scottsdale,
+ * Arizona, USA, 2011
+ * URL: http://dl.acm.org/citation.cfm?id=2072432
+ *
+ * Mathias Lux, Oge Marques. Visual Information Retrieval using Java and LIRE
+ * Morgan & Claypool, 2013
+ * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
+ *
+ * Copyright statement:
+ * --------------------
+ * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
+ *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ */
+
+package net.semanticmetadata.lire.benchmarking;
+
+import junit.framework.TestCase;
+import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.RAMDirectory;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: mlux
+ * Date: 14.05.13
+ * Time: 10:56
+ */
+public class TestUCID extends TestCase {
+    private String indexPath = "ucid-index";
+    // if you don't have the images you can get them here: http://wang.ist.psu.edu/docs/related.shtml
+    private String testExtensive = "E:\\ucid.v2\\png";
+    private ChainedDocumentBuilder builder;
+    private HashMap<String, List<String>> queries;
+    ParallelIndexer parallelIndexer;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+//        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
+        // Setting up DocumentBuilder:
+        parallelIndexer = new ParallelIndexer(4, indexPath, testExtensive, true) {
+            @Override
+            public void addBuilders(ChainedDocumentBuilder builder) {
+//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
+//                builder.addBuilder(new GenericDocumentBuilder(JointOpponentHistogram.class, "jop"));
+//                builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
+//                builder.addBuilder(new SurfDocumentBuilder());
+//                builder.addBuilder(new MSERDocumentBuilder());
+//                builder.addBuilder(new SiftDocumentBuilder());
+            }
+        };
+
+        // Getting the queries:
+        String queryFile = "E:\\ucid.v2\\ucid.v2.groundtruth.txt";
+        BufferedReader br = new BufferedReader(new FileReader(queryFile));
+        String line;
+        queries = new HashMap<String, List<String>>(260);
+        String currentQuery = null;
+        LinkedList<String> results = null;
+        while ((line = br.readLine()) != null) {
+            line = line.trim();
+            if (line.startsWith("#") || line.length() < 4)
+                continue;
+            else {
+                if (line.endsWith(":")) {
+                    if (currentQuery != null) {
+                        queries.put(currentQuery, results);
+                    }
+                    currentQuery = line.replace(':', ' ').trim();
+                    results = new LinkedList<String>();
+                } else {
+                    results.add(line);
+                }
+            }
+        }
+        queries.put(currentQuery, results);
+    }
+
+    public void testMAP() throws IOException {
+        // INDEXING ...
+//        parallelIndexer.run();
+//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1400, 100);
+//        sh.index();
+
+        // SEARCHING
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+
+        System.out.println("Feature\tMAP\tp@10\tER");
+//        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1400), "CEDD", reader);
+//        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1400), "FCTH", reader);
+//        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1400), "JCD", reader);
+//        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1400), "PHOG", reader);
+//        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1400), "Color Layout", reader);
+//        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1400), "Edge Histogram", reader);
+//        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1400), "Scalable Color", reader);
+//        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1400), "Joint Histogram", reader);
+//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1400), "Opponent Histogram", reader);
+//        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1400), "Color Histogram", reader);
+        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1400), "Color Correlation", reader);
+//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
+//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
+//        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW", reader);
+    }
+
+    private void computeMAP(ImageSearcher searcher, String prefix, IndexReader reader) throws IOException {
+        double queryCount = 0d;
+        double errorRate = 0;
+        double map = 0;
+        double p10 = 0;
+        for (int i = 0; i < reader.maxDoc(); i++) {
+            String fileName = getIDfromFileName(reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+            if (queries.keySet().contains(fileName)) {
+                queryCount += 1d;
+                // ok, we've got a query here for a document ...
+                Document queryDoc = reader.document(i);
+                ImageSearchHits hits = searcher.search(queryDoc, reader);
+                int rank = 0;
+                double avgPrecision = 0;
+                double found = 0;
+                double tmpP10 = 0;
+                for (int y = 0; y < hits.length(); y++) {
+                    String hitFile = getIDfromFileName(hits.doc(y).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+                    if (!hitFile.equals(fileName)) {
+                        rank++;
+                        if (queries.get(fileName).contains(hitFile)) { // it's a hit.
+                            found++;
+                            // TODO: Compute error rate, etc. here.
+                            avgPrecision += found/rank;
+//                            if (rank<=60) System.out.print('X');
+                            if (rank <= 10) tmpP10++;
+                        } else {
+                            if (rank==1) errorRate += 1d;
+//                            if (rank<=60) System.out.print('-');
+                        }
+                    }
+                }
+//                System.out.println();
+                avgPrecision /= (double) queries.get(fileName).size();
+                assertTrue(found - queries.get(fileName).size() == 0);
+                map+=avgPrecision;
+                p10 += tmpP10/3d;
+            }
+        }
+        errorRate = errorRate / queryCount;
+        map /= queryCount;
+        p10 /= queryCount;
+        System.out.print(prefix);
+        System.out.format("\t%.5f\t%.5f\t%.5f\n", map, p10, errorRate);
+    }
+
+    private String getIDfromFileName(String path) {
+        // That's the one for Windows. Change for Linux ...
+        return path.substring(path.lastIndexOf('\\') + 1).replace(".png", ".tif");
+    }
+
+
+}

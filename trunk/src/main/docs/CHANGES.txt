@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2013-05-14
+==========
+  - Fixed bugs in CEDD, FCTH and JCD (serialization)
+  - Added benchmarking for the UCID data set.
+  - Clean up in AutoColorCorrelogram & change to jsd as default metric.
+
 2013-05-11
 ==========
   - Optimization in GenericImageSearcher

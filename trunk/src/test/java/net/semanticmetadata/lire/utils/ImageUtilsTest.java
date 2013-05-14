@@ -53,17 +53,22 @@ import java.util.Iterator;
  */
 public class ImageUtilsTest extends TestCase {
     public void testCheckOpen() throws IOException {
-        ArrayList<File> allImageFiles = FileUtils.getAllImageFiles(new File("D:\\DataSets\\Yahoo-GC"), true);
+        ArrayList<File> allImageFiles = FileUtils.getAllImageFiles(new File("D:\\DataSets\\Yahoo-GC\\test"), true);
+        System.out.println("Checking " + allImageFiles.size() + " files for compatibility.");
         BufferedWriter bw = new BufferedWriter(new FileWriter("faulty.txt"));
         long ms = System.currentTimeMillis();
         int count = 0;
         for (Iterator<File> iterator = allImageFiles.iterator(); iterator.hasNext(); ) {
             File next = iterator.next();
             if (!FileUtils.isImageFileCompatible(next)) {
-                bw.write(next.getCanonicalPath() + "\n");
+                String s = next.getCanonicalPath();
+                bw.write(s + "\n");
+                System.out.println(s);
             }
             count++;
-            if (count%5000 == 0) System.out.println(count + " images analyzed, " + (System.currentTimeMillis()-ms)/count + " ms / image");
+            if (count==50) System.out.println("** - " + count + " images analyzed, " + (System.currentTimeMillis()-ms)/count + " ms / image");
+            if (count==100) System.out.println("** - " + count + " images analyzed, " + (System.currentTimeMillis()-ms)/count + " ms / image");
+            if (count%1000 == 0) System.out.println("** - " + count + " images analyzed, " + (System.currentTimeMillis()-ms)/count + " ms / image");
         }
         bw.close();
     }
