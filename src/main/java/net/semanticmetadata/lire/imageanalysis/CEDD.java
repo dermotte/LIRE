@@ -399,13 +399,14 @@ public class CEDD implements LireFeature {
                 if (data[i] != 0) position = -1;
             }
         }
+        if (position<0) position = 143;
         // find out the actual length. two values in one byte, so we have to round up.
         int length = (position + 1) / 2;
         if ((position + 1) % 2 == 1) length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
-            tmp = ((int) (data[(i << 1)] * 2)) << 4;
-            tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
+            tmp = ((int) (data[(i << 1)])) << 4;
+            tmp = (tmp | ((int) (data[(i << 1) + 1])));
             result[i] = (byte) (tmp - 128);
         }
         return result;
@@ -421,8 +422,8 @@ public class CEDD implements LireFeature {
         if ((in.length << 1) < data.length) Arrays.fill(data, in.length << 1, data.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i] + 128;
-            data[(i << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
-            data[i << 1] = ((double) (tmp >> 4)) / 2d;
+            data[(i << 1) + 1] = ((double) (tmp & 0x000F));
+            data[i << 1] = ((double) (tmp >> 4));
         }
     }
 
@@ -430,8 +431,8 @@ public class CEDD implements LireFeature {
         if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length - 1, 0);
         for (int i = offset; i < offset + length; i++) {
             tmp = in[i] + 128;
-            data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
-            data[(i - offset) << 1] = ((double) (tmp >> 4)) / 2d;
+            data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F));
+            data[(i - offset) << 1] = ((double) (tmp >> 4));
         }
     }
 

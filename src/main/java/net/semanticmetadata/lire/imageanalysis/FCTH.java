@@ -378,6 +378,7 @@ public class FCTH implements LireFeature {
                 if (histogram[i] != 0) position = -1;
             }
         }
+        if (position <0) position = histogram.length -1;
         // find out the actual length. two values in one byte, so we have to round up.
         int length = (position + 1) / 2;
         if ((position + 1) % 2 == 1) length = position / 2 + 1;

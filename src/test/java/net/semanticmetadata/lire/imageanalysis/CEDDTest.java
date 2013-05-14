@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -91,6 +92,18 @@ public class CEDDTest extends TestCase {
         }
     }
 
+    public void testSingleFile() throws IOException {
+        CEDD c = new CEDD();
+        BufferedImage img = ImageIO.read(new File("C:\\Java\\Projects\\LireSVN\\testdata\\wang-1000\\652.jpg"));
+        c.extract(img);
+        String s = Arrays.toString(c.data);
+        System.out.println("s = " + s);
+        byte[] b = c.getByteArrayRepresentation();
+        CEDD d = new CEDD();
+        d.setByteArrayRepresentation(b);
+        System.out.println(d.getDistance(c));
+    }
+
     public void testSerialization() throws IOException {
         int bytes = 0;
         int sum = 0;
@@ -120,6 +133,11 @@ public class CEDDTest extends TestCase {
             System.out.println("save = " + (144 - pos));
 //            bytes += (168 - pos);
             assertTrue(f2.getDistance(f1) == 0);
+            boolean isSame = true;
+            for (int i = 0; i < f2.data.length; i++) {
+                if (f1.data[i] != f2.data[i]) isSame=false;
+            }
+            assertTrue(isSame);
         }
         double save = 1d - (double) bytes / (double) sum;
         System.out.println(save * 100 + "% saved");

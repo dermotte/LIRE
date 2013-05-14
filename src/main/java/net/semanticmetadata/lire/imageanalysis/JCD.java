@@ -101,6 +101,7 @@ public class JCD implements LireFeature {
                 if (data[i] != 0) position = -1;
             }
         }
+        if (position <0) position = data.length -1;
         // find out the actual length. two values in one byte, so we have to round up.
         int length = (position + 1) / 2;
         if ((position + 1) % 2 == 1) length = position / 2 + 1;
