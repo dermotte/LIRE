@@ -43,11 +43,15 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.imageanalysis.correlogram.DynamicProgrammingAutoCorrelogramExtraction;
 import net.semanticmetadata.lire.imageanalysis.correlogram.MLuxAutoCorrelogramExtraction;
 import net.semanticmetadata.lire.imageanalysis.correlogram.NaiveAutoCorrelogramExtraction;
+import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -172,4 +176,31 @@ public class AutoColorCorrelogramTest extends TestCase {
             count++;
         }
     }
+
+    public void testSerialization() throws IOException {
+        int bytes = 0;
+        int sum = 0;
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+            File next = iterator.next();
+            BufferedImage image = ImageIO.read(next);
+            AutoColorCorrelogram f1 = new AutoColorCorrelogram();
+            AutoColorCorrelogram f2 = new AutoColorCorrelogram();
+
+            f1.extract(image);
+            System.out.println("f1.getDoubleHistogram().length = " + f1.getDoubleHistogram().length);
+            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
+//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+            assertTrue(f2.getDistance(f1) == 0);
+//            boolean isSame = true;
+//            for (int i = 0; i < f2..length; i++) {
+//                if (f1.data[i] != f2.data[i]) isSame=false;
+//            }
+//            assertTrue(isSame);
+        }
+        double save = 1d - (double) bytes / (double) sum;
+        System.out.println(save * 100 + "% saved");
+    }
+
 }
