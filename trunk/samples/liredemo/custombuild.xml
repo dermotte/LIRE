@@ -74,7 +74,7 @@
     <property name="src" value="src"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9.3"/>
+    <property name="versionstring" value="0.9.4_beta"/>
 
     <!-- define the classpath  -->
     <path id="classpath.path">

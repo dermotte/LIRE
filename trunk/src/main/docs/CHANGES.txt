@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-05-15
+==========
+  - LireDemo 0.9.4 beta release.
+
 2013-05-14
 ==========
   - Fixed bugs in CEDD, FCTH and JCD (serialization)
