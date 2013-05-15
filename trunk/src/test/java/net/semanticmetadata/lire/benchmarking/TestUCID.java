@@ -76,19 +76,19 @@ public class TestUCID extends TestCase {
         super.setUp();
 //        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
-        parallelIndexer = new ParallelIndexer(4, indexPath, testExtensive, true) {
+        parallelIndexer = new ParallelIndexer(12, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
@@ -130,7 +130,7 @@ public class TestUCID extends TestCase {
 
     public void testMAP() throws IOException {
         // INDEXING ...
-//        parallelIndexer.run();
+        parallelIndexer.run();
 //        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1400, 100);
 //        sh.index();
 
@@ -146,7 +146,7 @@ public class TestUCID extends TestCase {
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1400), "Edge Histogram", reader);
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1400), "Scalable Color", reader);
 //        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1400), "Joint Histogram", reader);
-//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1400), "Opponent Histogram", reader);
+        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1400), "Opponent Histogram", reader);
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1400), "Color Histogram", reader);
         computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1400), "Color Correlation", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
