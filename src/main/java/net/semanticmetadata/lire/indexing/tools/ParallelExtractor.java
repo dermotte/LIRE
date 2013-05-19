@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.05.13 09:57
+ * Updated: 19.05.13 13:05
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -387,39 +387,41 @@ public class ParallelExtractor implements Runnable {
                     if (images.empty() && ended)
                         locallyEnded = true;
                     // well the last thing we want is an exception in the very last round.
-                    if (!images.empty()) {
+                    if (!images.empty() && !locallyEnded) {
                         tmp = images.pop();
                         count++;
                         overallCount++;
                     }
                 }
                 try {
-                    BufferedImage img = tmp.getImage();
-                    byte[] tmpBytes = tmp.getFileName().getBytes();
-                    // everything is written to a buffer and only if no exception is thrown, the image goes to index.
-                    System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, 0, 4);
-                    bufferCount += 4;
-                    // dos.write(SerializationUtils.toBytes(tmpBytes.length));
-                    System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
-                    bufferCount += tmpBytes.length;
-                    // dos.write(tmpBytes);
-                    for (LireFeature feature : features) {
-                        feature.extract(img);
-                        myBuffer[bufferCount] = (byte) feature2index.get(feature.getClass().getName()).intValue();
-                        bufferCount++;
-                        // dos.write(feature2index.get(feature.getClass().getName()));
-                        tmpBytes = feature.getByteArrayRepresentation();
-                        System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, bufferCount, 4);
+                    if (!locallyEnded) {
+                        BufferedImage img = tmp.getImage();
+                        byte[] tmpBytes = tmp.getFileName().getBytes();
+                        // everything is written to a buffer and only if no exception is thrown, the image goes to index.
+                        System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, 0, 4);
                         bufferCount += 4;
                         // dos.write(SerializationUtils.toBytes(tmpBytes.length));
                         System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
                         bufferCount += tmpBytes.length;
                         // dos.write(tmpBytes);
-                    }
-                    // finally write everything to the stream - in case no exception was thrown..
-                    synchronized (dos) {
-                        dos.write(myBuffer, 0, bufferCount);
-                        dos.write(-1);
+                        for (LireFeature feature : features) {
+                            feature.extract(img);
+                            myBuffer[bufferCount] = (byte) feature2index.get(feature.getClass().getName()).intValue();
+                            bufferCount++;
+                            // dos.write(feature2index.get(feature.getClass().getName()));
+                            tmpBytes = feature.getByteArrayRepresentation();
+                            System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, bufferCount, 4);
+                            bufferCount += 4;
+                            // dos.write(SerializationUtils.toBytes(tmpBytes.length));
+                            System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
+                            bufferCount += tmpBytes.length;
+                            // dos.write(tmpBytes);
+                        }
+                        // finally write everything to the stream - in case no exception was thrown..
+                        synchronized (dos) {
+                            dos.write(myBuffer, 0, bufferCount);
+                            dos.write(-1);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

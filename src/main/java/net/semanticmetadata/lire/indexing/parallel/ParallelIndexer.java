@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 13:50
+ * Updated: 19.05.13 13:05
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -336,8 +336,8 @@ public class ParallelIndexer implements Runnable {
                         images.notifyAll();
                     }
                     try {
-                        if (tmpSize > 500) Thread.sleep(100);
-                        // else Thread.sleep(2);
+                        if (tmpSize > 500) Thread.sleep(50);
+                        else Thread.sleep(10);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -381,15 +381,17 @@ public class ParallelIndexer implements Runnable {
                     if (images.empty() && ended)
                         locallyEnded = true;
                     // well the last thing we want is an exception in the very last round.
-                    if (!images.empty()) {
+                    if (!images.empty() && !locallyEnded) {
                         tmp = images.pop();
                         count++;
                         overallCount++;
                     }
                 }
                 try {
-                    Document d = builder.createDocument(tmp.getImage(), tmp.getFileName());
-                    writer.addDocument(d);
+                    if (!locallyEnded) {
+                        Document d = builder.createDocument(tmp.getImage(), tmp.getFileName());
+                        writer.addDocument(d);
+                    }
                 } catch (Exception e) {
                     System.err.println("Could not handle file " + tmp.getFileName() + ": "  + e.getMessage());
                 }

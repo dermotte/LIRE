@@ -32,23 +32,32 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 19.05.13 13:53
  */
 
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.SPCEDD;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Bits;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -66,8 +75,11 @@ import java.util.List;
  */
 public class TestUCID extends TestCase {
     private String indexPath = "ucid-index";
-    // if you don't have the images you can get them here: http://wang.ist.psu.edu/docs/related.shtml
-    private String testExtensive = "E:\\ucid.v2\\png";
+    // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
+    // I converted all images to PNG (lossless) to save time, space & troubles with Java.
+    private String testExtensive = "C:\\Temp\\UCID\\png";
+    private final String groundTruth = "C:\\Temp\\UCID\\ucid.v2.groundtruth.txt";
+
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
     ParallelIndexer parallelIndexer;
@@ -76,20 +88,21 @@ public class TestUCID extends TestCase {
         super.setUp();
 //        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
-        parallelIndexer = new ParallelIndexer(12, indexPath, testExtensive, true) {
+        parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+
 //                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
@@ -99,12 +112,12 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new SurfDocumentBuilder());
 //                builder.addBuilder(new MSERDocumentBuilder());
 //                builder.addBuilder(new SiftDocumentBuilder());
+                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
             }
         };
 
         // Getting the queries:
-        String queryFile = "E:\\ucid.v2\\ucid.v2.groundtruth.txt";
-        BufferedReader br = new BufferedReader(new FileReader(queryFile));
+        BufferedReader br = new BufferedReader(new FileReader(groundTruth));
         String line;
         queries = new HashMap<String, List<String>>(260);
         String currentQuery = null;
@@ -146,9 +159,11 @@ public class TestUCID extends TestCase {
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1400), "Edge Histogram", reader);
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1400), "Scalable Color", reader);
 //        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1400), "Joint Histogram", reader);
-        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1400), "Opponent Histogram", reader);
-//        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1400), "Color Histogram", reader);
-        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1400), "Color Correlation", reader);
+//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1400), "Opponent Histogram", reader);
+//        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1400), "RGB Color Histogram", reader);
+//        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1400), "Color Correlation", reader);
+
+        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, "spcedd"), "SPCEDD", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW", reader);
@@ -159,7 +174,11 @@ public class TestUCID extends TestCase {
         double errorRate = 0;
         double map = 0;
         double p10 = 0;
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
+
         for (int i = 0; i < reader.maxDoc(); i++) {
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
             String fileName = getIDfromFileName(reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
             if (queries.keySet().contains(fileName)) {
                 queryCount += 1d;
@@ -177,20 +196,22 @@ public class TestUCID extends TestCase {
                         if (queries.get(fileName).contains(hitFile)) { // it's a hit.
                             found++;
                             // TODO: Compute error rate, etc. here.
-                            avgPrecision += found/rank;
+                            avgPrecision += found / rank;
 //                            if (rank<=60) System.out.print('X');
                             if (rank <= 10) tmpP10++;
                         } else {
-                            if (rank==1) errorRate += 1d;
+                            if (rank == 1) errorRate += 1d;
 //                            if (rank<=60) System.out.print('-');
                         }
                     }
                 }
 //                System.out.println();
                 avgPrecision /= (double) queries.get(fileName).size();
+                if (found - queries.get(fileName).size() != 0)
+                    System.err.println("huhu");
                 assertTrue(found - queries.get(fileName).size() == 0);
-                map+=avgPrecision;
-                p10 += tmpP10/3d;
+                map += avgPrecision;
+                p10 += tmpP10 / 3d;
             }
         }
         errorRate = errorRate / queryCount;

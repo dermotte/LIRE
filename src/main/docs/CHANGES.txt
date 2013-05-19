@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-05-19
+==========
+  - Fixed bug in ParallelIndexer and ParallelExtractor
+  - Added SPCEDD
+
 2013-05-15
 ==========
   - LireDemo 0.9.4 beta release.

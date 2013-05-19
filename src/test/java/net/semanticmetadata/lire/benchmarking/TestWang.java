@@ -36,19 +36,25 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.05.13 10:06
+ * Updated: 19.05.13 13:53
  */
 
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.FCTH;
 import net.semanticmetadata.lire.imageanalysis.JCD;
+import net.semanticmetadata.lire.imageanalysis.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.impl.ParallelImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -94,32 +100,36 @@ public class TestWang extends TestCase {
         for (int i = 0; i < sampleQueries.length; i++) {
             sampleQueries[i] = i;
         }
-        indexPath += "-" + System.currentTimeMillis()%(1000*60*60*24*7);
+        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
 //        parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive);
-        parallelIndexer = new ParallelIndexer(4, indexPath, testExtensive, true){
+        parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+
 //        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
-        builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //        builder.addBuilder(new GenericDocumentBuilder(JointOpponentHistogram.class, "jop"));
 //        builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
 //        builder.addBuilder(new SurfDocumentBuilder());
 //        builder.addBuilder(new MSERDocumentBuilder());
 //        builder.addBuilder(new SiftDocumentBuilder());
+                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
             }
         };
     }
@@ -128,8 +138,8 @@ public class TestWang extends TestCase {
 //        for (int i = 30; i<50; i+=5) {
 //            PHOG.bins = i;
 //            System.out.println(PHOG.bins + " bins > ------------------------");
-            testIndexWang();
-            testMAP();
+        testIndexWang();
+        testMAP();
 //        }
     }
 
@@ -211,22 +221,25 @@ public class TestWang extends TestCase {
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.JSD;
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - JSD");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.TANIMOTO;
-//        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - Tanimoto");
+
+//        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
+//        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1000), "Color Correlogram");
+//        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1000), "Color Layout");
+//        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
+//        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1000), "FCTH");
+//        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1000), "JCD");
 //        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1000), "Joint Histogram");
+//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram");
+//        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
+//        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "RGB Color Histogram");
+//        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
+
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura");
 //        computeMAP(ImageSearcherFactory.createGaborImageSearcher(1000), "Gabor");
-        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1000), "Color Correlogram");
-//        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1000), "Color Layout");
-//        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
-//        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
-//        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1000), "CEDD");
-//        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
 //        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
-//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "jop"), "JointOp Hist");
-//        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1000), "JCD");
-//        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1000), "FCTH");
+        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, "spcedd"), "SPCEDD");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");
