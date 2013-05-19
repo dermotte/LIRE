@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 19.05.13 11:24
  */
 
 package net.semanticmetadata.lire.utils;
@@ -161,8 +163,8 @@ public class MetricsUtils {
             tmp2 += h2[i];
         }
 
-        if (tmp1 == 0 || tmp2 == 0) result = 100;
-        if (tmp1 == 0 && tmp2 == 0) result = 0;
+        if (tmp1 == 0 && tmp2 == 0) return 0;
+        if (tmp1 == 0 || tmp2 == 0) return 100;
 
         if (tmp1 > 0 && tmp2 > 0) {
             for (int i = 0; i < h1.length; i++) {
@@ -190,8 +192,8 @@ public class MetricsUtils {
             tmp2 += h2[i];
         }
 
-        if (tmp1 == 0 || tmp2 == 0) result = 100;
-        if (tmp1 == 0 && tmp2 == 0) result = 0;
+        if (tmp1 == 0 && tmp2 == 0) return 0;
+        if (tmp1 == 0 || tmp2 == 0) return 100;
 
         if (tmp1 > 0 && tmp2 > 0) {
             for (int i = 0; i < h1.length; i++) {
@@ -219,8 +221,8 @@ public class MetricsUtils {
             tmp2 += h2[i];
         }
 
-        if (tmp1 == 0 || tmp2 == 0) result = 100;
-        if (tmp1 == 0 && tmp2 == 0) result = 0;
+        if (tmp1 == 0 && tmp2 == 0) return 0;
+        if (tmp1 == 0 || tmp2 == 0) return 100;
 
         if (tmp1 > 0 && tmp2 > 0) {
             for (int i = 0; i < h1.length; i++) {
@@ -230,8 +232,7 @@ public class MetricsUtils {
 
             }
 
-            result = (100 - 100 * (tmpCnt1 / (tmpCnt2 + tmpCnt3
-                    - tmpCnt1))); //Tanimoto
+            result = (100 - 100 * (tmpCnt1 / (tmpCnt2 + tmpCnt3 - tmpCnt1))); //Tanimoto
         }
         return result;
     }
