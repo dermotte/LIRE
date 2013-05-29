@@ -43,7 +43,6 @@ import net.semanticmetadata.lire.imageanalysis.correlogram.IAutoCorrelogramFeatu
 import net.semanticmetadata.lire.imageanalysis.correlogram.MLuxAutoCorrelogramExtraction;
 import net.semanticmetadata.lire.imageanalysis.correlogram.NaiveAutoCorrelogramExtraction;
 import net.semanticmetadata.lire.utils.ConversionUtils;
-import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -240,16 +239,30 @@ public class AutoColorCorrelogram implements LireFeature {
     }
 
     public byte[] getByteArrayRepresentation() {
+        byte[] result = new byte[correlogram.length * correlogram[0].length / 2];
+        int position = 0;
+        for (int i = 0; i < correlogram.length; i++) {
+            float[] floats = correlogram[i];
+            for (int j = 0; j < floats.length-1; j+=2) {
+                int tmp = ((int) (floats[(j)])) << 4;
+                tmp = (tmp | ((int) (floats[j + 1])));
+                result[position] = (byte) (tmp - 128);
+                position++;
+            }
+        }
+        /*
         byte[] result = new byte[correlogram.length * correlogram[0].length * 4 + 5];
         for (int i = 0; i < correlogram.length; i++) {
             System.arraycopy(SerializationUtils.toByteArray(correlogram[i]), 0, result, i * correlogram[i].length * 4, correlogram[i].length * 4);
         }
         System.arraycopy(SerializationUtils.toBytes(numBins), 0, result, result.length - 5, 4);
         result[result.length - 1] = (byte) distanceSet.length;
+         */
         return result;
     }
 
     public void setByteArrayRepresentation(byte[] in) {
+        /*
         byte[] numBinsBytes = new byte[4];
         numBinsBytes[0] = in[in.length - 5];
         numBinsBytes[1] = in[in.length - 4];
@@ -266,10 +279,22 @@ public class AutoColorCorrelogram implements LireFeature {
         for (int i = 0; i < distanceSet.length; i++) {
             distanceSet[i] = i + 1;
         }
+        */
+        setByteArrayRepresentation(in, 0, in.length);
     }
 
     @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        correlogram = new float[numBins][4];
+        int count = 0;
+        for (int i = offset; i < offset+length; i++) {
+            int tmp = in[i] + 128;
+            correlogram[count/4][count%4] = (tmp >> 4);
+            count++;
+            correlogram[count/4][count%4] = (tmp & 0x000F);
+            count++;
+        }
+        /*
         byte[] numBinsBytes = new byte[4];
         numBinsBytes[0] = in[offset + length - 5];
         numBinsBytes[1] = in[offset + length - 4];
@@ -286,6 +311,7 @@ public class AutoColorCorrelogram implements LireFeature {
         for (int i = 0; i < distanceSet.length; i++) {
             distanceSet[i] = i + 1;
         }
+        */
     }
 
     public double[] getDoubleHistogram() {
@@ -299,6 +325,7 @@ public class AutoColorCorrelogram implements LireFeature {
         }
         return result;
     }
+
 
     public void extract(int[][][] img) {
         final int W = img.length;

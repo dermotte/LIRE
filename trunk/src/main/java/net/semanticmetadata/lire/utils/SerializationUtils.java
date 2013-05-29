@@ -341,13 +341,6 @@ public class SerializationUtils {
      */
     public static String arrayToString(int[] array) {
         return Arrays.toString(array).replace('[', ' ').replace(']', ' ').replace(',', ' ');
-
-//        StringBuilder sb = new StringBuilder(256);
-//        for (int i = 0; i < array.length; i++) {
-//            sb.append(array[i]);
-//            sb.append(' ');
-//        }
-//        return sb.toString().trim();
     }
 
     /**

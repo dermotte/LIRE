@@ -135,7 +135,7 @@ public class CEDDTest extends TestCase {
             assertTrue(f2.getDistance(f1) == 0);
             boolean isSame = true;
             for (int i = 0; i < f2.data.length; i++) {
-                if (f1.data[i] != f2.data[i]) isSame=false;
+                if (f1.data[i] != f2.data[i]) isSame = false;
             }
             assertTrue(isSame);
         }
@@ -157,4 +157,59 @@ public class CEDDTest extends TestCase {
         System.out.println("tmp = " + (tmp & 0x0007));
     }
 
+    /**
+     * Storing zeros run length coded: one zero is "8", two zeros are "9", ... etc.
+     * @throws IOException
+     */
+    public void testRLE() throws IOException {
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        int sum = 0, saved = 0;
+        for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
+            File next = iterator.next();
+            BufferedImage image = ImageIO.read(next);
+            CEDD f1 = new CEDD();
+            f1.extract(image);
+            double[] hist = f1.getDoubleHistogram();
+            int[] rep = new int[hist.length];
+            int actualLength = 0;
+            for (int i = 0; i < hist.length; i++) {
+//                hist[i];
+                if (hist[i] == 0) {
+                    int count = 0;
+                    while (i + count < hist.length && hist[i + count] == 0 && count < 8) count++;
+                    if (count == 0) rep[actualLength] = 0;
+                    else {
+                        rep[actualLength] = 7 + count;
+                        i += count-1;
+                    }
+                } else {
+                    rep[actualLength] = (int) hist[i];
+                }
+                actualLength++;
+            }
+            for (int i = 0; i < actualLength; i++) {
+                System.out.print(rep[i] + " ");
+            }
+            System.out.println();
+            // decoding ...
+            double[] hist2 = new double[144];
+            int pos = 0;
+            for (int i = 0; i < actualLength; i++) {
+                if (rep[i] < 8) {
+                    hist2[pos] = rep[i];
+                    pos++;
+                } else {
+                    for (int j = 7; j < rep[i]; j++) {
+                        hist2[pos] = 0;
+                        pos++;
+                    }
+                }
+            }
+            sum += 144;
+            saved += actualLength;
+            assertTrue(Arrays.equals(hist2, f1.getDoubleHistogram()));
+        }
+        System.out.println("sum of dimensions = " + sum);
+        System.out.println("actual dimensions = " + saved);
+    }
 }

@@ -39,8 +39,10 @@
  * Updated: 19.05.13 13:45
  */
 
-package net.semanticmetadata.lire.imageanalysis;
+package net.semanticmetadata.lire.imageanalysis.spatialpyramid;
 
+import net.semanticmetadata.lire.imageanalysis.JCD;
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -52,8 +54,9 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at, 19.05.13
  */
 
-public class SPCEDD implements LireFeature {
-    int histogramSize = 144 * 5 + 144*4*4;
+public class SPJCD implements LireFeature {
+    private int histLength = 168;
+    int histogramSize = histLength * 5 + histLength * 4 * 4;
     double[] histogram = new double[histogramSize];
 
     // Temp:
@@ -62,28 +65,28 @@ public class SPCEDD implements LireFeature {
     @Override
     public void extract(BufferedImage bimg) {
         // level 0:
-        CEDD cedd = new CEDD();
-        cedd.extract(bimg);
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 0, 144);
+        JCD jcd = new JCD();
+        jcd.extract(bimg);
+        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, 0, histLength);
         // level 1:
         int w = bimg.getWidth() / 2;
         int h = bimg.getHeight() / 2;
-        cedd.extract(bimg.getSubimage(0, 0, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 1, 144);
-        cedd.extract(bimg.getSubimage(w, 0, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 2, 144);
-        cedd.extract(bimg.getSubimage(0, h, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 3, 144);
-        cedd.extract(bimg.getSubimage(w, h, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 4, 144);
+        jcd.extract(bimg.getSubimage(0, 0, w, h));
+        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 1, histLength);
+        jcd.extract(bimg.getSubimage(w, 0, w, h));
+        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 2, histLength);
+        jcd.extract(bimg.getSubimage(0, h, w, h));
+        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 3, histLength);
+        jcd.extract(bimg.getSubimage(w, h, w, h));
+        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 4, histLength);
         // level 2:
-        int wstep = bimg.getWidth()  / 4;
-        int hstep = bimg.getHeight()  / 4;
+        int wstep = bimg.getWidth() / 4;
+        int hstep = bimg.getHeight() / 4;
         int binPos = 5; // the next free section in the histogram
-        for (int i = 0; i< 4; i++) {
-            for (int j=0; j<4; j++) {
-                cedd.extract(bimg.getSubimage(i*wstep, j*hstep, wstep, hstep));
-                System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * binPos, 144);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                jcd.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));
+                System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * binPos, histLength);
                 binPos++;
             }
         }
@@ -94,7 +97,7 @@ public class SPCEDD implements LireFeature {
      * Provides a faster way of serialization.
      *
      * @return a byte array that can be read with the corresponding method.
-     * @see SPCEDD#setByteArrayRepresentation(byte[])
+     * @see net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD#setByteArrayRepresentation(byte[])
      */
     public byte[] getByteArrayRepresentation() {
         // find out the position of the beginning of the trailing zeros.
@@ -112,8 +115,8 @@ public class SPCEDD implements LireFeature {
         if ((position + 1) % 2 == 1) length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
-            tmp = ((int) (histogram[(i << 1)])) << 4;
-            tmp = (tmp | ((int) (histogram[(i << 1) + 1])));
+            tmp = ((int) (histogram[(i << 1)]*2)) << 4;
+            tmp = (tmp | ((int) (histogram[(i << 1) + 1]*2)));
             result[i] = (byte) (tmp - 128);
         }
         return result;
@@ -123,25 +126,25 @@ public class SPCEDD implements LireFeature {
      * Reads descriptor from a byte array. Much faster than the String based method.
      *
      * @param in byte array from corresponding method
-     * @see SPCEDD#getByteArrayRepresentation
+     * @see net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
         if ((in.length << 1) < histogram.length)
-                Arrays.fill(histogram, in.length << 1, histogram.length - 1, 0);
+            Arrays.fill(histogram, in.length << 1, histogram.length - 1, 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i] + 128;
-            histogram[(i << 1) + 1] = ((double) (tmp & 0x000F));
-            histogram[i << 1] = ((double) (tmp >> 4));
+            histogram[(i << 1) + 1] = ((double) (tmp & 0x000F)) /2d;
+            histogram[i << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         if ((length << 1) < histogram.length)
-                Arrays.fill(histogram, length << 1, histogram.length - 1, 0);
+            Arrays.fill(histogram, length << 1, histogram.length - 1, 0);
         for (int i = offset; i < offset + length; i++) {
             tmp = in[i] + 128;
-            histogram[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F));
-            histogram[(i - offset) << 1] = ((double) (tmp >> 4));
+            histogram[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F))/2d;
+            histogram[(i - offset) << 1] = ((double) (tmp >> 4))/2d;
         }
     }
 
@@ -152,7 +155,7 @@ public class SPCEDD implements LireFeature {
 
     @Override
     public float getDistance(LireFeature feature) {
-        if (!(feature instanceof SPCEDD)) return -1;
+        if (!(feature instanceof SPJCD)) return -1;
         return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
     }
 

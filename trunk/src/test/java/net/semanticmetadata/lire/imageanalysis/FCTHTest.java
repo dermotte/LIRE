@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -67,7 +68,7 @@ public class FCTHTest extends TestCase {
             FCTH f2 = new FCTH();
 
             f1.extract(image);
-//            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
             bytes += f1.getByteArrayRepresentation().length;
             sum += 192/2;
             f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
