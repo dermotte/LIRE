@@ -71,11 +71,12 @@ public class AutoColorCorrelogramTest extends TestCase {
         AutoColorCorrelogram ac2 = new AutoColorCorrelogram();
         ac2.setStringRepresentation(acc.getStringRepresentation());
         float distance = acc.getDistance(ac2);
-        System.out.println("distance = " + distance);
+//        System.out.println("distance = " + distance);
         // testing byte array representation:
         ac2 = new AutoColorCorrelogram();
         ac2.setByteArrayRepresentation(acc.getByteArrayRepresentation());
         distance = acc.getDistance(ac2);
+        System.out.println("ac2 = " + ac2.getStringRepresentation());
         System.out.println("distance = " + distance);
     }
 

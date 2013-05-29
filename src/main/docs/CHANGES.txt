@@ -1,6 +1,20 @@
 CHANGES for LIRE
 ================
 
+2013-05-28
+==========
+  - Changed quantization and serialization of AutoColorCorrelogram. It now just takes 512 bytes for
+    a descriptor instead of 4096 with the same (even slightly better) retrieval performance.
+
+2013-05-28
+==========
+  - Added SPFCTH
+  - Fixed serialization of SPJCD
+
+2013-05-27
+==========
+  - Added SPJCD
+
 2013-05-19
 ==========
   - Fixed bug in ParallelIndexer and ParallelExtractor

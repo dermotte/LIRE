@@ -45,11 +45,16 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.SPCEDD;
+import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
+import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -59,13 +64,12 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 
+import javax.imageio.ImageIO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -77,8 +81,8 @@ public class TestUCID extends TestCase {
     private String indexPath = "ucid-index";
     // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
-    private String testExtensive = "C:\\Temp\\UCID\\png";
-    private final String groundTruth = "C:\\Temp\\UCID\\ucid.v2.groundtruth.txt";
+    private String testExtensive = "E:\\ucid.v2\\png";
+    private final String groundTruth = "E:\\ucid.v2\\ucid.v2.groundtruth.txt";
 
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
@@ -112,7 +116,10 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new SurfDocumentBuilder());
 //                builder.addBuilder(new MSERDocumentBuilder());
 //                builder.addBuilder(new SiftDocumentBuilder());
-                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
+                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
             }
         };
 
@@ -163,7 +170,10 @@ public class TestUCID extends TestCase {
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1400), "RGB Color Histogram", reader);
 //        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1400), "Color Correlation", reader);
 
-        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, "spcedd"), "SPCEDD", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, "spcedd"), "SPCEDD", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, "spjcd"), "SPJCD", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, SPFCTH.class, "spfcth"), "SPFCTH", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, "spacc"), "SPACC ", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW", reader);
@@ -224,6 +234,67 @@ public class TestUCID extends TestCase {
     private String getIDfromFileName(String path) {
         // That's the one for Windows. Change for Linux ...
         return path.substring(path.lastIndexOf('\\') + 1).replace(".png", ".tif");
+    }
+
+    public void testIndexingSpeed() throws IOException {
+        ArrayList<String> images = FileUtils.getAllImages(new File(testExtensive), false);
+//        testFeatureSpeed(images, new AutoColorCorrelogram());
+//        testFeatureSpeed(images, new CEDD());
+//        testFeatureSpeed(images, new FCTH());
+//        testFeatureSpeed(images, new JCD());
+        testFeatureSpeed(images, new SPACC());
+        testFeatureSpeed(images, new SPCEDD());
+        testFeatureSpeed(images, new SPFCTH());
+        testFeatureSpeed(images, new SPJCD());
+    }
+
+    public void testSearchSpeed() throws IOException {
+        ArrayList<String> images = FileUtils.getAllImages(new File(testExtensive), false);
+        testSearchSpeed(images, AutoColorCorrelogram.class);
+        testSearchSpeed(images, CEDD.class);
+        testSearchSpeed(images, FCTH.class);
+        testSearchSpeed(images, JCD.class);
+        testSearchSpeed(images, SPACC.class);
+        testSearchSpeed(images, SPCEDD.class);
+        testSearchSpeed(images, SPFCTH.class);
+        testSearchSpeed(images, SPJCD.class);
+    }
+
+    private void testSearchSpeed(ArrayList<String> images, final Class featureClass) throws IOException {
+        parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive, true) {
+            @Override
+            public void addBuilders(ChainedDocumentBuilder builder) {
+                builder.addBuilder(new GenericDocumentBuilder(featureClass, "feature"));
+            }
+        };
+        parallelIndexer.run();
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        double queryCount = 0d;
+        ImageSearcher searcher = new GenericFastImageSearcher(100, featureClass, "feature");
+        long ms = System.currentTimeMillis();
+        for (int i = 0; i < reader.maxDoc(); i++) {
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
+            String fileName = getIDfromFileName(reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+            if (queries.keySet().contains(fileName)) {
+                queryCount += 1d;
+                // ok, we've got a query here for a document ...
+                Document queryDoc = reader.document(i);
+                ImageSearchHits hits = searcher.search(queryDoc, reader);
+            }
+        }
+        ms = System.currentTimeMillis() - ms;
+        System.out.printf("%s \t %3.1f \n", featureClass.getName().substring(featureClass.getName().lastIndexOf('.')+1), (double) ms / queryCount);
+    }
+
+    private void testFeatureSpeed(ArrayList<String> images, LireFeature feature) throws IOException {
+        long ms = System.currentTimeMillis();
+        for (Iterator<String> iterator = images.iterator(); iterator.hasNext(); ) {
+            String s = iterator.next();
+            feature.extract(ImageIO.read(new File(s)));
+        }
+        ms = System.currentTimeMillis() - ms;
+        System.out.printf("%s \t %3.1f \n", feature.getClass().getName().substring(feature.getClass().getName().lastIndexOf('.')+1), (double) ms / (double) images.size());
     }
 
 

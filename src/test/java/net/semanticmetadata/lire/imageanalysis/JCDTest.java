@@ -49,6 +49,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -69,7 +70,7 @@ public class JCDTest extends TestCase {
             JCD f2 = new JCD();
 
             f1.extract(image);
-//            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
             bytes += f1.getByteArrayRepresentation().length;
             sum += 168/2;
             f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());

@@ -49,9 +49,9 @@ import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.FCTH;
 import net.semanticmetadata.lire.imageanalysis.JCD;
-import net.semanticmetadata.lire.imageanalysis.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
@@ -118,18 +118,23 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
 
-//        builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
-//        builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-//        builder.addBuilder(new GenericDocumentBuilder(JointOpponentHistogram.class, "jop"));
-//        builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
-//        builder.addBuilder(new SurfDocumentBuilder());
-//        builder.addBuilder(new MSERDocumentBuilder());
-//        builder.addBuilder(new SiftDocumentBuilder());
-                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
+//               builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
+//               builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
+//               builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+//               builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
+//               builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
+//               builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+//               builder.addBuilder(new GenericDocumentBuilder(JointOpponentHistogram.class, "jop"));
+//               builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
+//               builder.addBuilder(new SurfDocumentBuilder());
+//               builder.addBuilder(new MSERDocumentBuilder());
+//               builder.addBuilder(new SiftDocumentBuilder());
+
+//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
+                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
+
             }
         };
     }
@@ -239,7 +244,10 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "jop"), "JointOp Hist");
-        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, "spcedd"), "SPCEDD");
+//        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, "spcedd"), "SPCEDD");
+//        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, "spfcth"), "SPFCTH");
+//        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, "spjcd"), "SPJCD");
+        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, "spacc"), "SPACC");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");
