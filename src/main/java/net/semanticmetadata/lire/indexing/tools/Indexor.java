@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 11:37
+ * Updated: 01.06.13 15:06
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -69,7 +69,7 @@ public class Indexor {
     protected LinkedList<File> inputFiles = new LinkedList<File>();
     protected String indexPath = null;
     private boolean overwriteIndex = true;
-    protected static boolean verbose=true;
+    protected static boolean verbose = true;
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
         Indexor indexor = new Indexor();
@@ -122,7 +122,7 @@ public class Indexor {
                 File next = iterator.next();
                 if (!next.exists()) {
                     isConfigured = false;
-                        System.err.println("Input file " + next.getPath() + " does not exist.");
+                    System.err.println("Input file " + next.getPath() + " does not exist.");
                 }
             }
         }
@@ -182,8 +182,8 @@ public class Indexor {
     private void readFile(IndexWriter indexWriter, File inputFile) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inputFile)));
         byte[] tempInt = new byte[4];
-        int tmp, tmpFeature;
-        byte[] temp = new byte[100*1024];
+        int tmp, tmpFeature, count = 0;
+        byte[] temp = new byte[100 * 1024];
         // read file hashFunctionsFileName length:
         while (in.read(tempInt, 0, 4) > 0) {
             Document d = new Document();
@@ -208,6 +208,9 @@ public class Indexor {
 //                d.add(new StoredField(Extractor.featureFieldNames[tmpFeature], f.getByteArrayRepresentation()));
             }
             indexWriter.addDocument(d);
+            count++;
+//            if (count%1000==0) System.out.print('.');
+//            if (count%10000==0) System.out.println(" " + count);
         }
         in.close();
     }

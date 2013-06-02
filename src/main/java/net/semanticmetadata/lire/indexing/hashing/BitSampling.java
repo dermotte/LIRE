@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 12:56
+ * Updated: 01.06.13 19:05
  */
 
 package net.semanticmetadata.lire.indexing.hashing;
@@ -54,10 +54,21 @@ import java.util.zip.GZIPOutputStream;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class BitSampling {
-    private static int bits = 16, dimensions = 640;  // todo: reduce dimensions & numFunctionBundles ... test if recall changes too much.
-    private static int numFunctionBundles = 40;
+    /* Best values for PHOG: 3000 results include > 80% true positives after re-ranking in the 1str 20 results.
+    public static int bits = 16;
+    public static double w = 4d;
+    public static int numFunctionBundles = 100;
+    */
+    // Optimal for ColorLayout, 1000 hashed results should be fine and include > 90% true positives after re-ranking in the 1str 20 results.
+    public static int bits = 30;
+    public static double w = 4d;
+    public static int numFunctionBundles = 100;
+
+
+    // Dimensions should cover the maximum dimensions of descriptors used with bit sampling
+    public static int dimensions = 3100;
+
     public static final String hashFunctionsFileName = "LshBitSampling.obj";
-    private static double w = 4d;
     private static double[][][] hashes = null;
     private static double[] lookUp = new double[32];
 
@@ -86,6 +97,26 @@ public class BitSampling {
      * @throws IOException
      */
     public static void generateHashFunctions() throws IOException {
+        File hashFile = new File(hashFunctionsFileName);
+        if (!hashFile.exists()) {
+            ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hashFile)));
+            oos.writeInt(bits);
+            oos.writeInt(dimensions);
+            oos.writeInt(numFunctionBundles);
+            for (int c = 0; c < numFunctionBundles; c++) {
+                for (int i = 0; i < bits; i++) {
+                    for (int j = 0; j < dimensions; j++) {
+                        oos.writeFloat((float) (Math.random() * w - w / 2));
+                    }
+                }
+            }
+            oos.close();
+        } else {
+            System.err.println("Hashes could not be written: " + hashFunctionsFileName + " already exists");
+        }
+    }
+
+    public static void generateHashFunctions(String hashFunctionsFileName) throws IOException {
         File hashFile = new File(hashFunctionsFileName);
         if (!hashFile.exists()) {
             ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hashFile)));

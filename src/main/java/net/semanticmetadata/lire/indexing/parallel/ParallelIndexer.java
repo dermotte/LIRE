@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 19.05.13 13:05
+ * Updated: 01.06.13 11:38
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -213,6 +213,13 @@ public class ParallelIndexer implements Runnable {
         this.imageList = imageList;
     }
 
+    public ParallelIndexer(int numberOfThreads, String indexPath, File imageList, boolean overWrite) {
+        this.numberOfThreads = numberOfThreads;
+        this.indexPath = indexPath;
+        this.imageList = imageList;
+        if (overWrite) openMode = IndexWriterConfig.OpenMode.CREATE;
+    }
+
     /**
      * Overwrite this method to define the builders to be used within the Indexer.
      *
@@ -307,7 +314,7 @@ public class ParallelIndexer implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each.");
+                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each ("+images.size()+" images currently in queue).");
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -337,7 +344,8 @@ public class ParallelIndexer implements Runnable {
                     }
                     try {
                         if (tmpSize > 500) Thread.sleep(50);
-                        else Thread.sleep(10);
+                        else if (tmpSize > 1000) Thread.sleep(5000);
+                        else Thread.sleep(5);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

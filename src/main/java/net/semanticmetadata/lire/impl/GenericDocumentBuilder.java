@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 12:04
+ * Updated: 01.06.13 10:53
  */
 package net.semanticmetadata.lire.impl;
 
@@ -153,7 +153,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
             // if BitSampling is an issue we add a field with the given hashFunctionsFileName and the suffix "hash":
             if (hashingEnabled) {
                 // TODO: check eventually if there is a more compressed string version of the integers. i.e. the hex string
-                if (lireFeature.getDoubleHistogram().length <= 640) {
+                if (lireFeature.getDoubleHistogram().length <= 3100) {
                     int[] hashes;
                     if (hashingMode == HashingMode.BitSampling) {
                         hashes = BitSampling.generateHashes(lireFeature.getDoubleHistogram());

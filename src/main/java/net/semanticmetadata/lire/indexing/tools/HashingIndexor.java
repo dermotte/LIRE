@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 13:45
+ * Updated: 02.06.13 08:13
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -128,16 +128,18 @@ public class HashingIndexor extends Indexor {
     }
 
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
-//        if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
+        if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
             // generate hashes here:
 //            int[] hashes = LocalitySensitiveHashing.generateHashes(feature.getDoubleHistogram());
             int[] hashes = BitSampling.generateHashes(feature.getDoubleHistogram());
 //            System.out.println(Arrays.toString(hashes));
             // store hashes in index as terms
             document.add(new TextField(featureFieldName+"_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
-//        }
+            // add the specific feature
+            document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
+        }
         // add the specific feature
-        document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
+//        document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
     }
 
 
