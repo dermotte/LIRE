@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.06.13 08:13
+ * Updated: 02.06.13 14:36
  */
 
 package net.semanticmetadata.lire.impl;
@@ -47,9 +47,11 @@ import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.similarities.DefaultSimilarity;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -166,37 +168,68 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
     private ImageSearchHits search(String[] hashes, LireFeature queryFeature, IndexReader reader) throws IOException {
         // first search by text:
         IndexSearcher searcher = new IndexSearcher(reader);
+        // searcher.setSimilarity(new BaseSimilarity());
         BooleanQuery query = new BooleanQuery();
         for (int i = 0; i < hashes.length; i++) {
             // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.
             query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
         }
         TopDocs docs = searcher.search(query, maxResultsHashBased);
+//        System.out.println(docs.totalHits);
         // then re-rank
         TreeSet<SimpleResult> resultScoreDocs = new TreeSet<SimpleResult>();
-        float maxDistance = 0f;
-        float tmpScore = 0f;
+        float maxDistance = -1f;
+        float tmpScore;
         for (int i = 0; i < docs.scoreDocs.length; i++) {
             feature.setByteArrayRepresentation(reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).bytes,
                     reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).offset,
                     reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).length);
             tmpScore = queryFeature.getDistance(feature);
+            assert(tmpScore>=0);
             if (resultScoreDocs.size() < maximumHits) {
                 resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
                 maxDistance = Math.max(maxDistance, tmpScore);
             } else if (tmpScore < maxDistance) {
-                resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
-            }
-            while (resultScoreDocs.size() > maximumHits) {
+                // if it is nearer to the sample than at least one of the current set:
+                // remove the last one ...
                 resultScoreDocs.remove(resultScoreDocs.last());
+                // add the new one ...
+                resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
+                // and set our new distance border ...
                 maxDistance = resultScoreDocs.last().getDistance();
             }
-//            resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
         }
+        assert(resultScoreDocs.size()<=maximumHits);
         return new SimpleImageSearchHits(resultScoreDocs, maxDistance);
     }
 
     public ImageDuplicates findDuplicates(IndexReader reader) throws IOException {
         throw new UnsupportedOperationException("not implemented.");
+    }
+
+    class BaseSimilarity extends DefaultSimilarity {
+        public float tf(float freq) {
+            return freq;
+        }
+
+        public float idf(long docFreq, long numDocs) {
+            return 1;
+        }
+
+        public float coord(int overlap, int maxOverlap) {
+            return 1;
+        }
+
+        public float queryNorm(float sumOfSquaredWeights) {
+            return 1;
+        }
+
+        public float sloppyFreq(int distance) {
+            return 1;
+        }
+
+        public float lengthNorm(FieldInvertState state) {
+            return 1;
+        }
     }
 }

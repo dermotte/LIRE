@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 02.06.13 11:27
  */
 package net.semanticmetadata.lire.impl;
 
@@ -123,7 +125,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
      */
     protected float findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
         maxDistance = -1f;
-        overallMaxDistance = -1f;
+//        overallMaxDistance = -1f;
 
         // clear result set ...
         docs.clear();
@@ -139,9 +141,9 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
             tmpDistance = getDistance(d, lireFeature);
             assert (tmpDistance >= 0);
             // calculate the overall max distance to normalize score afterwards
-            if (overallMaxDistance < tmpDistance) {
-                overallMaxDistance = tmpDistance;
-            }
+//            if (overallMaxDistance < tmpDistance) {
+//                overallMaxDistance = tmpDistance;
+//            }
             // if it is the first document:
             if (maxDistance < 0) {
                 maxDistance = tmpDistance;

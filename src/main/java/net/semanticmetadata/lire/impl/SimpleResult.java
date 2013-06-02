@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 02.06.13 11:03
  */
 
 package net.semanticmetadata.lire.impl;
@@ -106,7 +108,7 @@ public class SimpleResult implements Comparable<SimpleResult> {
      */
     public int compareTo(SimpleResult o) {
         int compareValue = (int) Math.signum(distance - ((SimpleResult) o).distance);
-        if (compareValue==0 && !document.equals(o.document)) {
+        if (compareValue==0 && indexNumber != o.indexNumber) {
             return (int) Math.signum(indexNumber-o.indexNumber);
         }
         return compareValue;
