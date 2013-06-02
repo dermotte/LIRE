@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 11:18
+ * Updated: 01.06.13 13:23
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -90,7 +90,8 @@ public class Extractor implements Runnable {
             "net.semanticmetadata.lire.imageanalysis.SimpleColorHistogram",  // 11
             "net.semanticmetadata.lire.imageanalysis.Tamura",                // 12
             "net.semanticmetadata.lire.imageanalysis.LuminanceLayout",       // 13
-            "net.semanticmetadata.lire.imageanalysis.PHOG"                   // 14
+            "net.semanticmetadata.lire.imageanalysis.PHOG",                  // 14
+            "net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD"  // 15
     };
 
     public static final String[] featureFieldNames = new String[]{
@@ -108,7 +109,8 @@ public class Extractor implements Runnable {
             DocumentBuilder.FIELD_NAME_COLORHISTOGRAM,
             DocumentBuilder.FIELD_NAME_TAMURA,               // 12
             DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,     // 13
-            DocumentBuilder.FIELD_NAME_PHOG                  // 14
+            DocumentBuilder.FIELD_NAME_PHOG,                  // 14
+            "spcedd"                  // 14
     };
 
     static HashMap<String, Integer> feature2index;

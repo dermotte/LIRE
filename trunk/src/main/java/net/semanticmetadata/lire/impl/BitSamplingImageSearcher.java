@@ -36,13 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 13:45
+ * Updated: 02.06.13 08:13
  */
 
 package net.semanticmetadata.lire.impl;
 
 import net.semanticmetadata.lire.AbstractImageSearcher;
-import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageDuplicates;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
@@ -68,8 +67,8 @@ import java.util.TreeSet;
 public class BitSamplingImageSearcher extends AbstractImageSearcher {
     private int maxResultsHashBased = 1000;
     private int maximumHits = 100;
-    private String featureFieldName = DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM;
-    private LireFeature feature;
+    private String featureFieldName = null;
+    private LireFeature feature = null;
     private String hashesFieldName = null;
 
     /**

@@ -1,6 +1,15 @@
 CHANGES for LIRE
 ================
 
+2013-06-01
+==========
+  - Added TestHashing to test the performance of approximate search.
+  - Tuned ParallelIndexer to better cope with OutOfMemoryError problems.
+  - Investigated optimal parameters for BitSampling with an ColorLayout & OpponentHistogram index (works fine)
+    bits = 30, numFunctionBundles = 100, w = 4d;
+  - Investigated optimal parameters for BitSampling with an PHOG index (does not work too well)
+    bits = 16, numFunctionBundles = 100, w = 4d;
+
 2013-05-28
 ==========
   - Changed quantization and serialization of AutoColorCorrelogram. It now just takes 512 bytes for
