@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 13:15
+ * Updated: 02.06.13 10:27
  */
 
 package net.semanticmetadata.lire.indexing.hashing;
@@ -58,9 +58,9 @@ import java.util.zip.GZIPOutputStream;
  */
 public class LocalitySensitiveHashing {
     private static String name = "lshHashFunctions.obj";
-    private static int dimensions = 640;           // max d
-    public static int numFunctionBundles = 80;     // k
-    public static double binLength = 1;         // w
+    private static int dimensions = 250;           // max d
+    public static int numFunctionBundles = 50;     // k
+    public static double binLength = 10;           // w
 
     private static double[][] hashA = null;      // a
     private static double[] hashB = null;        // b
@@ -72,18 +72,43 @@ public class LocalitySensitiveHashing {
      * @throws java.io.IOException
      */
     public static void generateHashFunctions() throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(name)));
-        oos.writeInt(dimensions);
-        oos.writeInt(numFunctionBundles);
-        for (int c = 0; c < numFunctionBundles; c++) {
-            oos.writeFloat((float) (Math.random() * binLength));
-        }
-        for (int c = 0; c < numFunctionBundles; c++) {
-            for (int j = 0; j < dimensions; j++) {
-                oos.writeFloat((float) (drawNumber() * dilation));
+        File hashFile = new File(name);
+        if (!hashFile.exists()) {
+            ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hashFile)));
+            oos.writeInt(dimensions);
+            oos.writeInt(numFunctionBundles);
+            for (int c = 0; c < numFunctionBundles; c++) {
+                oos.writeFloat((float) (Math.random() * binLength));
             }
+            for (int c = 0; c < numFunctionBundles; c++) {
+                for (int j = 0; j < dimensions; j++) {
+                    oos.writeFloat((float) (drawNumber() * dilation));
+                }
+            }
+            oos.close();
+        } else {
+            System.err.println("Hashes could not be written: " + name + " already exists");
         }
-        oos.close();
+    }
+
+    public static void generateHashFunctions(String name) throws IOException {
+        File hashFile = new File(name);
+        if (!hashFile.exists()) {
+            ObjectOutputStream oos = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(hashFile)));
+            oos.writeInt(dimensions);
+            oos.writeInt(numFunctionBundles);
+            for (int c = 0; c < numFunctionBundles; c++) {
+                oos.writeFloat((float) (Math.random() * binLength));
+            }
+            for (int c = 0; c < numFunctionBundles; c++) {
+                for (int j = 0; j < dimensions; j++) {
+                    oos.writeFloat((float) (drawNumber() * dilation));
+                }
+            }
+            oos.close();
+        } else {
+            System.err.println("Hashes could not be written: " + name + " already exists");
+        }
     }
 
     /**
@@ -124,9 +149,10 @@ public class LocalitySensitiveHashing {
      * @return
      */
     public static int[] generateHashes(double[] histogram) {
-        double product = 0d;
+        double product;
         int[] result = new int[numFunctionBundles];
         for (int k = 0; k < numFunctionBundles; k++) {
+            product = 0;
             for (int i = 0; i < histogram.length; i++) {
                 product += histogram[i] * hashA[k][i];
             }
@@ -142,13 +168,13 @@ public class LocalitySensitiveHashing {
      * @return
      */
     private static double drawNumber() {
-        double u,v,s;
+        double u, v, s;
         do {
-            u = Math.random()*2-1;
-            v = Math.random()*2-1;
-            s = u*u +v*v;
-        } while (s==0 || s>=1) ;
-        return u*Math.sqrt(-2d*Math.log(s)/s);
+            u = Math.random() * 2 - 1;
+            v = Math.random() * 2 - 1;
+            s = u * u + v * v;
+        } while (s == 0 || s >= 1);
+        return u * Math.sqrt(-2d * Math.log(s) / s);
 //        return Math.sqrt(-2d * Math.log(Math.random())) * Math.cos(2d * Math.PI * Math.random());
     }
 

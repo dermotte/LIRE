@@ -3,6 +3,11 @@ CHANGES for LIRE
 
 2013-06-01
 ==========
+  - Additional tests and bug fixes in BitSamplingImageSearcher and GenericFastImageSearcher
+  - net.semanticmetadata.lire.indexing.tools.ProximityHashingIndexor added.
+
+2013-06-01
+==========
   - Added TestHashing to test the performance of approximate search.
   - Tuned ParallelIndexer to better cope with OutOfMemoryError problems.
   - Investigated optimal parameters for BitSampling with an ColorLayout & OpponentHistogram index (works fine)

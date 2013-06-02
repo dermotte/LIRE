@@ -36,24 +36,22 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.06.13 15:05
+ * Updated: 02.06.13 11:19
  */
 
 package net.semanticmetadata.lire.indexing.tools;
 
 import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.ColorLayout;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.impl.SimpleResult;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -65,12 +63,17 @@ import java.util.zip.GZIPInputStream;
  *         Date: 08.03.13
  *         Time: 14:28
  */
-public class Indexor {
+public class ProximityHashingIndexor {
     protected LinkedList<File> inputFiles = new LinkedList<File>();
     protected String indexPath = null;
     private boolean overwriteIndex = true;
     protected static boolean verbose = true;
-    protected int count;
+    int run = 0;
+    int docCount = 0;
+    HashSet<Integer> representativesID;
+    ArrayList<LireFeature> representatives;
+
+    protected Class featureClass = ColorLayout.class;
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
         ProximityHashingIndexor indexor = new ProximityHashingIndexor();
@@ -154,6 +157,10 @@ public class Indexor {
     }
 
 
+    public void setFeatureClass(Class featureClass) {
+        this.featureClass = featureClass;
+    }
+
     public void run() {
         // do it ...
         try {
@@ -161,6 +168,25 @@ public class Indexor {
             for (Iterator<File> iterator = inputFiles.iterator(); iterator.hasNext(); ) {
                 File inputFile = iterator.next();
                 if (verbose) System.out.println("Processing " + inputFile.getPath() + ".");
+                if (verbose) System.out.println("Counting images.");
+                run = 0;
+                readFile(indexWriter, inputFile);
+                if (verbose) System.out.printf("%d images found in the data file.\n", docCount);
+                int numReps = 1000;  // TODO: clever selection.
+                if (numReps > docCount / 10) numReps = docCount / 10;
+                if (verbose) System.out.printf("Selecting %d representative images for hashing.\n", numReps);
+                representativesID = new HashSet<Integer>(numReps);
+                while (representativesID.size() < numReps) {
+                    representativesID.add((int) Math.floor(Math.random() * (docCount - 1)));
+                }
+                representatives = new ArrayList<LireFeature>(numReps);
+                docCount = 0;
+                run = 1;
+                if (verbose) System.out.println("Now getting representatives from the data file.");
+                readFile(indexWriter, inputFile);
+                docCount = 0;
+                run = 2;
+                if (verbose) System.out.println("Finally we start the indexing process, please wait ...");
                 readFile(indexWriter, inputFile);
                 if (verbose) System.out.println("Indexing finished.");
             }
@@ -184,8 +210,7 @@ public class Indexor {
     private void readFile(IndexWriter indexWriter, File inputFile) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inputFile)));
         byte[] tempInt = new byte[4];
-        int tmp, tmpFeature;
-        count = 0;
+        int tmp, tmpFeature, count = 0;
         byte[] temp = new byte[100 * 1024];
         // read file hashFunctionsFileName length:
         while (in.read(tempInt, 0, 4) > 0) {
@@ -210,15 +235,11 @@ public class Indexor {
                 addToDocument(f, d, Extractor.featureFieldNames[tmpFeature]);
 //                d.add(new StoredField(Extractor.featureFieldNames[tmpFeature], f.getByteArrayRepresentation()));
             }
-            indexWriter.addDocument(d);
-            count++;
-//            if (count >= 20000) break;
-            if (verbose) {
-                if (count % 1000 == 0) System.out.print('.');
-                if (count % 10000 == 0) System.out.println(" " + count);
-            }
+            if (run == 2) indexWriter.addDocument(d);
+            docCount++;
+//            if (count%1000==0) System.out.print('.');
+//            if (count%10000==0) System.out.println(" " + count);
         }
-        if (verbose) System.out.println(" " + count);
         in.close();
     }
 
@@ -230,7 +251,50 @@ public class Indexor {
      * @param featureFieldName the field hashFunctionsFileName of the feature.
      */
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
-        document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
+        if (run == 0) {
+        } // just count documents
+        else if (run == 1) { // Select the representatives ...
+            if (representativesID.contains(docCount) && feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) { // it's a representative.
+                // put it into a temporary data structure ...
+                representatives.add(feature);
+            }
+        } else if (run == 2) {
+            if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) { // it's a feature to be hashed
+                document.add(new TextField(featureFieldName + "_hash", SerializationUtils.arrayToString(getHashes(feature)), Field.Store.YES));
+            }
+            document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
+        }
+    }
+
+    private int[] getHashes(LireFeature feature) {
+        int maximumHits = 50;
+        int[] result = new int[maximumHits];
+        TreeSet<SimpleResult> resultScoreDocs = new TreeSet<SimpleResult>();
+        float maxDistance = 0f;
+        float tmpScore = 0f;
+        int rep = 0;
+        for (Iterator<LireFeature> iterator = representatives.iterator(); iterator.hasNext(); ) {
+            LireFeature repFeature = iterator.next();
+            tmpScore = repFeature.getDistance(feature);
+            if (resultScoreDocs.size() < maximumHits) {
+                resultScoreDocs.add(new SimpleResult(tmpScore, null, rep));
+                maxDistance = Math.max(maxDistance, tmpScore);
+            } else if (tmpScore < maxDistance) {
+                resultScoreDocs.add(new SimpleResult(tmpScore, null, rep));
+            }
+            while (resultScoreDocs.size() > maximumHits) {
+                resultScoreDocs.remove(resultScoreDocs.last());
+                maxDistance = resultScoreDocs.last().getDistance();
+            }
+            rep++;
+        }
+        rep = 0;
+        for (Iterator<SimpleResult> iterator = resultScoreDocs.iterator(); iterator.hasNext(); ) {
+            SimpleResult next = iterator.next();
+            result[rep] = next.getIndexNumber();
+            rep++;
+        }
+        return result;
     }
 
     public void addInputFile(File inputFile) {

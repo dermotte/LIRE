@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.06.13 19:05
+ * Updated: 02.06.13 15:05
  */
 
 package net.semanticmetadata.lire.indexing.hashing;
@@ -59,10 +59,10 @@ public class BitSampling {
     public static double w = 4d;
     public static int numFunctionBundles = 100;
     */
-    // Optimal for ColorLayout, 1000 hashed results should be fine and include > 90% true positives after re-ranking in the 1str 20 results.
-    public static int bits = 30;
+    // Optimal for ColorLayout, 1000 hashed results should be fine and include > 90% true positives after re-ranking in the 1st 20 results.
+    public static int bits = 12;
     public static double w = 4d;
-    public static int numFunctionBundles = 100;
+    public static int numFunctionBundles = 150;
 
 
     // Dimensions should cover the maximum dimensions of descriptors used with bit sampling
@@ -74,7 +74,7 @@ public class BitSampling {
 
     static {
         for (int i = 0; i < lookUp.length; i++) {
-            lookUp[i] = Math.pow(2,i);
+            lookUp[i] = Math.pow(2, i);
         }
     }
 
@@ -167,6 +167,7 @@ public class BitSampling {
     /**
      * Reads a file from a given InputStream, where the hash bundles are specified. Make sure to generate it first
      * and make sure to re-use it for search.
+     *
      * @param inputStream to access the data, most likely a File on a hard disk
      * @return
      * @throws IOException
