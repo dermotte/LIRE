@@ -60,9 +60,9 @@ public class BitSampling {
     public static int numFunctionBundles = 100;
     */
     // Optimal for ColorLayout, 1000 hashed results should be fine and include > 90% true positives after re-ranking in the 1st 20 results.
-    public static int bits = 12;
-    public static double w = 4d;
-    public static int numFunctionBundles = 150;
+    private static int bits = 12;
+    private static double w = 4d;
+    private static int numFunctionBundles = 150;
 
 
     // Dimensions should cover the maximum dimensions of descriptors used with bit sampling
@@ -221,5 +221,21 @@ public class BitSampling {
 
     public static void setNumFunctionBundles(int numFunctionBundles) {
         BitSampling.numFunctionBundles = numFunctionBundles;
+    }
+
+    public static int getBits() {
+        return bits;
+    }
+
+    public static void setBits(int bits) {
+        BitSampling.bits = bits;
+    }
+
+    public static double getW() {
+        return w;
+    }
+
+    public static int getNumFunctionBundles() {
+        return numFunctionBundles;
     }
 }

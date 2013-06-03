@@ -1,7 +1,11 @@
 CHANGES for LIRE
 ================
 
-2013-06-01
+2013-06-03
+==========
+  - Changed BitSampling member access to getters & setters.
+
+2013-06-02
 ==========
   - Additional tests and bug fixes in BitSamplingImageSearcher and GenericFastImageSearcher
   - net.semanticmetadata.lire.indexing.tools.ProximityHashingIndexor added.
