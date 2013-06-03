@@ -99,7 +99,7 @@ public class TestHashingIndex extends TestCase {
     }
 
     public void testHashing() throws IOException, IllegalAccessException, InstantiationException {
-        BitSampling.bits = 12;
+        BitSampling.setBits(12);
         BitSampling.setNumFunctionBundles(150);
         testHashing(JCD.class, DocumentBuilder.FIELD_NAME_JCD);
         testHashing(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
@@ -186,7 +186,7 @@ public class TestHashingIndex extends TestCase {
         System.out.println(featureClass.getName().substring(featureClass.getName().lastIndexOf('.') + 1));
         System.out.println("Number of queries: " + maxQueries);
         System.out.println("Time taken for linear search: " + (time / maxQueries));
-        System.out.printf("numFunctionBundles: %d, numBits: %d, w: %2.2f, dimensions: %d\n", BitSampling.numFunctionBundles, BitSampling.bits, BitSampling.w, BitSampling.dimensions);
+        System.out.printf("numFunctionBundles: %d, numBits: %d, w: %2.2f, dimensions: %d\n", BitSampling.getNumFunctionBundles(), BitSampling.getBits(), BitSampling.getW(), BitSampling.dimensions);
         System.out.println("#hashedResults\ttrue pos.\t#results\tms per search\tprecision");
 
         for (int j = 100; j <= 3000; j += 100) {
