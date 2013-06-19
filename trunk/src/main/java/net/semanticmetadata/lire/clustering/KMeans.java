@@ -88,16 +88,16 @@ public class KMeans {
         }
         // --- check if there are (i) enough images and (ii) enough features
         if (images.size() < 500) {
-            System.err.println("Please note that this approach has been implemented for big data and *a lot of images*. " +
+            System.err.println("WARNING: Please note that this approach has been implemented for big data and *a lot of images*. " +
                     "You might not get appropriate results with a small number of images employed for constructing the visual vocabulary.");
         }
         if (features.size() < numClusters*2) {
-            System.err.println("Please note that the number of local features, in this case " + features.size() + ", is" +
+            System.err.println("WARNING: Please note that the number of local features, in this case " + features.size() + ", is" +
                     "smaller than the recommended minimum number, which is two times the number of visual words, in your case 2*" + numClusters +
                     ". Please adapt your data and either use images with more local features or more images for creating the visual vocabulary.");
         }
         if (features.size() < numClusters + 1) {
-            System.err.println("The number of features is smaller than the number of clusters. This cannot work as there has to be at least one " +
+            System.err.println("CRITICAL: The number of features is smaller than the number of clusters. This cannot work as there has to be at least one " +
                     "feature per cluster. Aborting process now.");
             System.out.println("images: " + images.size());
             System.out.println("features: " + features.size());
