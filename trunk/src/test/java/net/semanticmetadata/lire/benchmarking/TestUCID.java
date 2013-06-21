@@ -46,10 +46,7 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
@@ -119,7 +116,10 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
-                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
+                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
             }
         };
 
@@ -173,7 +173,10 @@ public class TestUCID extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, "spcedd"), "SPCEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, "spjcd"), "SPJCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, SPFCTH.class, "spfcth"), "SPFCTH", reader);
-        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, "spacc"), "SPACC ", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, "spacc"), "SPACC ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatterns.class, "lbp"), "LBP ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPLBP.class, "splbp"), "SPLBP ", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW", reader);
