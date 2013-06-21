@@ -40,12 +40,6 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.indexing.hashing.BitSampling;
-import net.semanticmetadata.lire.utils.SerializationUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.TextField;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -54,32 +48,36 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * User: mlux
- * Date: 18.12.12
- * Time: 13:17
+ * Basic tests of the local binary patterns feature.
+ * User: Mathias Lux
+ * Time: 21.06.13, 14:10
  */
-public class OpponentHistogramTest extends TestCase {
+public class LocalBinaryPatternsTest extends TestCase {
+    private String[] testFiles = new String[]{"img01.jpg", "img02.jpg", "img03.jpg", "img04.jpg", "img05.jpg", "img06.jpg", "img07.jpg", "img08.jpg", "img09.jpg", "img10.jpg"};
+    private String testFilesPath = "src/test/resources/small/";
+
     public void testExtraction() throws IOException {
-        BufferedImage img = ImageIO.read(new FileInputStream("src\\test\\resources\\images\\test_image.png"));
-        OpponentHistogram oh = new OpponentHistogram();
-        oh.extract(img);
-        System.out.println(Arrays.toString(oh.getDoubleHistogram()));
-        OpponentHistogram oh2 = new OpponentHistogram();
-        oh2.setByteArrayRepresentation(oh.getByteArrayRepresentation());
-        System.out.println("oh2.getDistance(oh) = " + oh2.getDistance(oh));
+        LocalBinaryPatterns feature = new LocalBinaryPatterns();
+        BufferedImage image = ImageIO.read(new FileInputStream(testFilesPath + testFiles[0]));
+        System.out.println("image = " + image.getWidth() + " x " + image.getHeight());
+        feature.extract(image);
+//        for (int i = 0; i < feature.getDoubleHistogram().length; i++) {
+//            double v = feature.getDoubleHistogram()[i];
+//            if (v>0) System.out.println(i);
+//        }
+        System.out.println("feature = " + Arrays.toString(feature.getDoubleHistogram()));
     }
 
-    public void testFromString() {
-        String  q = "0-0-0-0-0-12-8-0-0-62-5a-0-0-0-0-0-0-0-0-0-0-48-8-0-0-29-2b-0-0-0-0-0-0-0-0-0-0-58-4-0-0-b-7f-0-0-0-0-0-0-0-0-0-0-16-b-0-0-2-72-0-0-0-0-0";
-        String[] tmp = q.split("-");
-        byte[] tmpByte = new byte[tmp.length];
-        for (int i = 0; i < tmp.length; i++) {
-            tmpByte[i] = Byte.parseByte(tmp[i], 16);
+    public void testSerialization() throws IOException {
+        LocalBinaryPatterns feature = new LocalBinaryPatterns();
+        LocalBinaryPatterns feature2 = new LocalBinaryPatterns();
+        for (int i = 0; i < testFiles.length; i++) {
+            String testFile = testFiles[i];
+            BufferedImage image = ImageIO.read(new FileInputStream(testFilesPath + testFile));
+            feature.extract(image);
+            feature2.setByteArrayRepresentation(feature.getByteArrayRepresentation());
+            assertTrue(feature.getDistance(feature2) == 0);
+//            System.out.println("feature = " + Arrays.toString(feature.getDoubleHistogram()));
         }
-        OpponentHistogram o = new OpponentHistogram();
-        o.setByteArrayRepresentation(tmpByte);
-        Document d = new Document();
-        d.add(new StoredField("featOpHist", o.getByteArrayRepresentation()));
-        d.add(new TextField("featOpHist" + "_hash", SerializationUtils.arrayToString(BitSampling.generateHashes(o.getDoubleHistogram())), Field.Store.YES));
     }
 }
