@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.06.13 11:27
+ * Updated: 23.06.13 18:37
  */
 package net.semanticmetadata.lire.impl;
 
@@ -75,9 +75,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
 
     private int maxHits = 10;
     protected TreeSet<SimpleResult> docs;
-    private byte[] tempBinaryValue;
     private float maxDistance;
-    private float overallMaxDistance;
 
     public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName) {
         this.maxHits = maxHits;
@@ -140,10 +138,6 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
             d = reader.document(i);
             tmpDistance = getDistance(d, lireFeature);
             assert (tmpDistance >= 0);
-            // calculate the overall max distance to normalize score afterwards
-//            if (overallMaxDistance < tmpDistance) {
-//                overallMaxDistance = tmpDistance;
-//            }
             // if it is the first document:
             if (maxDistance < 0) {
                 maxDistance = tmpDistance;
