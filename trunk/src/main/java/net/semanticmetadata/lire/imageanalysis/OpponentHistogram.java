@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 23.06.13 16:47
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -75,6 +77,8 @@ public class OpponentHistogram extends Histogram implements LireFeature {
     final double sq3 = Math.sqrt(6d);
 
     double o1, o2, o3;
+
+    double tmpVal, tmpSum;
 
     @Override
     public void extract(BufferedImage bimg) {
@@ -142,6 +146,26 @@ public class OpponentHistogram extends Histogram implements LireFeature {
         if (!(feature instanceof OpponentHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
         return (float) MetricsUtils.jsd(((OpponentHistogram) feature).descriptor, descriptor);
+    }
+
+    public double getDistance(byte[] h1, byte[] h2) {
+        return getDistance(h1, 0, h1.length, h2, 0, h2.length);
+    }
+
+    public double getDistance(byte[] h1, int offset1, int length1, byte[] h2, int offset2, int length2) {
+//        double sum = 0f;
+//        for (int i = 0; i < h1.length; i++) {
+//            sum += (h1[i] > 0 ? (h1[i] / 2f) * Math.log((2f * h1[i]) / (h1[i] + h2[i])) : 0) +
+//                    (h2[i] > 0 ? (h2[i] / 2f) * Math.log((2f * h2[i]) / (h1[i] + h2[i])) : 0);
+//        }
+//        return (float) sum;
+        tmpSum = 0;
+        for (int i = 0; i < length1; i++) {
+            tmpVal = (double) (h1[i+offset1] + h2[i+offset2]);
+            tmpSum += (h1[i+offset1] > 0 ? ((double) h1[i+offset1] / 2d) * Math.log((2d * h1[i+offset1]) / tmpVal) : 0) +
+                    (h2[i+offset2] > 0 ? ((double) h2[i+offset2] / 2d) * Math.log((2d * h2[i+offset2]) / tmpVal) : 0);
+        }
+        return tmpSum;
     }
 
     public String getStringRepresentation() {

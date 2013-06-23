@@ -36,23 +36,20 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 19.05.13 13:53
+ * Updated: 23.06.13 18:16
  */
 
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.ImageSearcherFactory;
-import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+import net.semanticmetadata.lire.imageanalysis.FCTH;
+import net.semanticmetadata.lire.imageanalysis.JCD;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPLBP;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.impl.FastOpponentImageSearcher;
 import net.semanticmetadata.lire.impl.ParallelImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -111,7 +108,7 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
@@ -132,9 +129,9 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
-                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
+//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+//                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
+//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
 
             }
         };
@@ -235,7 +232,14 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1000), "FCTH");
 //        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1000), "JCD");
 //        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1000), "Joint Histogram");
-//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram");
+        long ms = System.currentTimeMillis();
+        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram");
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("ms = " + ms);
+        ms = System.currentTimeMillis();
+        computeMAP(new FastOpponentImageSearcher(1000), "FastOpponentHistogram");
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("ms = " + ms);
 //        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "RGB Color Histogram");
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
@@ -251,7 +255,7 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, "spacc"), "SPACC");
 //        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp"), "LBP");
 //        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP");
-        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, "splbp"), "SPLBP");
+//        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, "splbp"), "SPLBP");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");

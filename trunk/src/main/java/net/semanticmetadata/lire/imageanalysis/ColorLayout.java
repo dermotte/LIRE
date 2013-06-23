@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 10:19
+ * Updated: 22.06.13 11:43
  */
 package net.semanticmetadata.lire.imageanalysis;
 
@@ -67,12 +67,6 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
             result[2 + numYCoeff + i] = (byte) CbCoeff[i];
             result[2 + numYCoeff + numCCoeff + i] = (byte) CrCoeff[i];
         }
-//        byte[] result = new byte[2 * 4 + numYCoeff * 4 + 2 * numCCoeff * 4];
-//        System.arraycopy(SerializationUtils.toBytes(numYCoeff), 0, result, 0, 4);
-//        System.arraycopy(SerializationUtils.toBytes(numCCoeff), 0, result, 4, 4);
-//        System.arraycopy(SerializationUtils.toByteArray(YCoeff), 0, result, 8, numYCoeff * 4);
-//        System.arraycopy(SerializationUtils.toByteArray(CbCoeff), 0, result, numYCoeff * 4 + 8, numCCoeff * 4);
-//        System.arraycopy(SerializationUtils.toByteArray(CrCoeff), 0, result, numYCoeff * 4 + numCCoeff * 4 + 8, numCCoeff * 4);
         return result;
     }
 
@@ -92,15 +86,6 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
             CbCoeff[i] = in[i + 2 + numYCoeff];
             CrCoeff[i] = in[i + 2 + numYCoeff + numCCoeff];
         }
-//        int[] data = SerializationUtils.toIntArray(in);
-//        numYCoeff = data[0];
-//        numCCoeff = data[1];
-//        YCoeff = new int[numYCoeff];
-//        CbCoeff = new int[numCCoeff];
-//        CrCoeff = new int[numCCoeff];
-//        System.arraycopy(data, 2, YCoeff, 0, numYCoeff);
-//        System.arraycopy(data, 2 + numYCoeff, CbCoeff, 0, numCCoeff);
-//        System.arraycopy(data, 2 + numYCoeff + numCCoeff, CrCoeff, 0, numCCoeff);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
