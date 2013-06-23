@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 18:16
+ * Updated: 23.06.13 19:40
  */
 package net.semanticmetadata.lire.impl;
 
@@ -54,6 +54,8 @@ import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
@@ -64,6 +66,8 @@ import java.util.logging.Logger;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
+
+// TODO: Generify the caching approach to a general image searcher.
 public class FastOpponentImageSearcher extends AbstractImageSearcher {
     protected Logger logger = Logger.getLogger(getClass().getName());
     private OpponentHistogram cachedInstance = null;
@@ -74,10 +78,24 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
     private double maxDistance;
     private float overallMaxDistance;
 
-    public FastOpponentImageSearcher(int maxHits) {
+    private LinkedList<byte[]> cache;
+
+    public FastOpponentImageSearcher(int maxHits, IndexReader reader) {
         this.maxHits = maxHits;
         docs = new TreeSet<SimpleResult>();
         this.cachedInstance = new OpponentHistogram();
+        cache = new LinkedList<byte[]>();
+        Document d;
+        for (int i = 0; i < reader.maxDoc(); i++) {
+            try {
+                d = reader.document(i);
+                byte[] bytes = new byte[d.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().length];
+                System.arraycopy(d.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().bytes, d.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().offset, bytes, 0, bytes.length);
+                cache.add(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
     }
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
@@ -112,8 +130,36 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
         Bits liveDocs = MultiFields.getLiveDocs(reader);
         Document d;
         double tmpDistance;
-        int docs = reader.numDocs();
+        int doc = 0;
         byte[] histogram = lireFeature.getByteArrayRepresentation();
+        for (Iterator<byte[]> iterator = cache.iterator(); iterator.hasNext(); ) {
+            byte[] next = iterator.next();
+            tmpDistance = cachedInstance.getDistance(histogram, next);
+            assert (tmpDistance >= 0);
+            // calculate the overall max distance to normalize score afterwards
+//            if (overallMaxDistance < tmpDistance) {
+//                overallMaxDistance = tmpDistance;
+//            }
+            // if it is the first document:
+//            if (maxDistance < 0) {
+//                maxDistance = tmpDistance;
+//            }
+            // if the array is not full yet:
+            if (this.docs.size() < maxHits) {
+                this.docs.add(new SimpleResult((float) tmpDistance, reader.document(doc), doc));
+                if (tmpDistance > maxDistance) maxDistance = tmpDistance;
+            } else if (tmpDistance < maxDistance) {
+                // if it is nearer to the sample than at least on of the current set:
+                // remove the last one ...
+                this.docs.remove(this.docs.last());
+                // add the new one ...
+                this.docs.add(new SimpleResult((float) tmpDistance, reader.document(doc), doc));
+                // and set our new distance border ...
+                maxDistance = this.docs.last().getDistance();
+            }
+            doc++;
+        }
+        /*
         for (int i = 0; i < docs; i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
@@ -125,9 +171,9 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
 //                overallMaxDistance = tmpDistance;
 //            }
             // if it is the first document:
-            if (maxDistance < 0) {
-                maxDistance = tmpDistance;
-            }
+//            if (maxDistance < 0) {
+//                maxDistance = tmpDistance;
+//            }
             // if the array is not full yet:
             if (this.docs.size() < maxHits) {
                 this.docs.add(new SimpleResult((float) tmpDistance, d, i));
@@ -142,6 +188,7 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
                 maxDistance = this.docs.last().getDistance();
             }
         }
+        */
         return maxDistance;
     }
 

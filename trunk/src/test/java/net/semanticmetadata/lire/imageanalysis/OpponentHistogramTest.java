@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 18:16
+ * Updated: 23.06.13 19:42
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -117,16 +117,20 @@ public class OpponentHistogramTest extends TestCase {
         IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File("./index-fast")));
         System.out.println("ir.maxDoc() = " + ir.maxDoc());
 
-        ImageSearcher is = ImageSearcherFactory.createOpponentHistogramSearcher(100);
         long ms = System.currentTimeMillis();
-        for (int i = 0; i < 50; i++) is.search(ir.document(i), ir);
+        ImageSearcher is = new FastOpponentImageSearcher(50, ir);
         ms = System.currentTimeMillis() - ms;
-        System.out.println("ms = " + ms);
+        System.out.println("init ms = " + ms);
 
-        is = new FastOpponentImageSearcher(100);
         ms = System.currentTimeMillis();
-        for (int i = 0; i < 50; i++) is.search(ir.document(i), ir);
+        for (int i = 0; i < 100; i++) is.search(ir.document(i), ir);
         ms = System.currentTimeMillis() - ms;
-        System.out.println("ms = " + ms);
+        System.out.println("cached ms = " + ms);
+
+        is = ImageSearcherFactory.createOpponentHistogramSearcher(50);
+        ms = System.currentTimeMillis();
+        for (int i = 0; i < 100; i++) is.search(ir.document(i), ir);
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("read from Lucene ms = " + ms);
     }
 }

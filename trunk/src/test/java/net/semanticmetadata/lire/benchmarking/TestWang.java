@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 18:16
+ * Updated: 23.06.13 19:37
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -237,7 +237,7 @@ public class TestWang extends TestCase {
         ms = System.currentTimeMillis() - ms;
         System.out.println("ms = " + ms);
         ms = System.currentTimeMillis();
-        computeMAP(new FastOpponentImageSearcher(1000), "FastOpponentHistogram");
+        computeMAP(new FastOpponentImageSearcher(1000, null), "FastOpponentHistogram");
         ms = System.currentTimeMillis() - ms;
         System.out.println("ms = " + ms);
 //        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");

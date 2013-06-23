@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.06.13 10:53
+ * Updated: 23.06.13 18:57
  */
 package net.semanticmetadata.lire.impl;
 
@@ -148,6 +148,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
 //            featureString = vd.getStringRepresentation();
             logger.fine("Extraction finished [" + descriptorClass.getName() + "].");
 
+            // TODO: Stored field is compressed and upon search decompression takes a lot of time (> 50% with a small index with 50k images). Find something else ...
             result[0] = new StoredField(fieldName, lireFeature.getByteArrayRepresentation());
 
             // if BitSampling is an issue we add a field with the given hashFunctionsFileName and the suffix "hash":
