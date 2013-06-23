@@ -1,6 +1,18 @@
 CHANGES for LIRE
 ================
 
+2013-06-23
+==========
+  -  Added a new distance routine to OpponentHistogram, that could prove faster when reading from an index.
+
+2013-06-22
+==========
+  -  Tested LocalBinaryPatterns in TestGroundTruth
+
+2013-06-22
+==========
+  - Added local binary patterns implementation & tests
+
 2013-06-03
 ==========
   - Changed BitSampling member access to getters & setters.

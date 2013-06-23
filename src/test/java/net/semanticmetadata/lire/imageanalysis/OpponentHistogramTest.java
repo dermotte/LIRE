@@ -32,23 +32,32 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 23.06.13 18:16
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.ImageSearcher;
+import net.semanticmetadata.lire.ImageSearcherFactory;
+import net.semanticmetadata.lire.impl.FastOpponentImageSearcher;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.MMapDirectory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -66,11 +75,25 @@ public class OpponentHistogramTest extends TestCase {
         System.out.println(Arrays.toString(oh.getDoubleHistogram()));
         OpponentHistogram oh2 = new OpponentHistogram();
         oh2.setByteArrayRepresentation(oh.getByteArrayRepresentation());
+        long ms = System.currentTimeMillis();
+        for (int i = 0; i < 1000000; i++)
+            oh2.getDistance(oh);
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("double distance ms = " + ms);
+        byte[] h1 = oh.getByteArrayRepresentation();
+        byte[] h2 = oh2.getByteArrayRepresentation();
+        ms = System.currentTimeMillis();
+        for (int i = 0; i < 1000000; i++) {
+            oh.getDistance(h1, h2);
+        }
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("byte[] distance ms = " + ms);
         System.out.println("oh2.getDistance(oh) = " + oh2.getDistance(oh));
+        System.out.println("oh2.getDistance(oh) = " + oh.getDistance(oh.getByteArrayRepresentation(), oh2.getByteArrayRepresentation()));
     }
 
     public void testFromString() {
-        String  q = "0-0-0-0-0-12-8-0-0-62-5a-0-0-0-0-0-0-0-0-0-0-48-8-0-0-29-2b-0-0-0-0-0-0-0-0-0-0-58-4-0-0-b-7f-0-0-0-0-0-0-0-0-0-0-16-b-0-0-2-72-0-0-0-0-0";
+        String q = "0-0-0-0-0-12-8-0-0-62-5a-0-0-0-0-0-0-0-0-0-0-48-8-0-0-29-2b-0-0-0-0-0-0-0-0-0-0-58-4-0-0-b-7f-0-0-0-0-0-0-0-0-0-0-16-b-0-0-2-72-0-0-0-0-0";
         String[] tmp = q.split("-");
         byte[] tmpByte = new byte[tmp.length];
         for (int i = 0; i < tmp.length; i++) {
@@ -81,5 +104,29 @@ public class OpponentHistogramTest extends TestCase {
         Document d = new Document();
         d.add(new StoredField("featOpHist", o.getByteArrayRepresentation()));
         d.add(new TextField("featOpHist" + "_hash", SerializationUtils.arrayToString(BitSampling.generateHashes(o.getDoubleHistogram())), Field.Store.YES));
+    }
+
+    public void testFastSearch() throws IOException {
+//        ParallelIndexer pin = new ParallelIndexer(3, "./index-fast", "D:\\DataSets\\WIPO\\CA\\converted-4") {
+//            @Override
+//            public void addBuilders(ChainedDocumentBuilder builder) {
+//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+//            }
+//        };
+//        pin.run();
+        IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File("./index-fast")));
+        System.out.println("ir.maxDoc() = " + ir.maxDoc());
+
+        ImageSearcher is = ImageSearcherFactory.createOpponentHistogramSearcher(100);
+        long ms = System.currentTimeMillis();
+        for (int i = 0; i < 50; i++) is.search(ir.document(i), ir);
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("ms = " + ms);
+
+        is = new FastOpponentImageSearcher(100);
+        ms = System.currentTimeMillis();
+        for (int i = 0; i < 50; i++) is.search(ir.document(i), ir);
+        ms = System.currentTimeMillis() - ms;
+        System.out.println("ms = " + ms);
     }
 }

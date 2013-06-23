@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.06.13 08:13
+ * Updated: 23.06.13 18:16
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -47,10 +47,9 @@ import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.ColorLayout;
-import net.semanticmetadata.lire.imageanalysis.EdgeHistogram;
-import net.semanticmetadata.lire.imageanalysis.JCD;
 import net.semanticmetadata.lire.imageanalysis.PHOG;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
+import net.semanticmetadata.lire.imageanalysis.RotationInvariantLocalBinaryPatterns;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPLBP;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
@@ -94,7 +93,7 @@ public class TestGroundTruth extends TestCase {
     public void testIndexing() {
 //        fileList = new File("E:\\Eval-WIPO\\ca.txt");
         fileList = new File("C:\\Temp\\Eval-WIPO\\ca.txt");
-        ParallelIndexer pin = new ParallelIndexer(8, indexPath, fileList, true) {
+        ParallelIndexer pin = new ParallelIndexer(3, indexPath, fileList, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
@@ -109,16 +108,17 @@ public class TestGroundTruth extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 
                 builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
-                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
-                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+//                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+//                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+//                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
 //                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
 
-                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
+                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
+//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
             }
         };
         pin.run();
-        pin = new ParallelIndexer(4, indexPath, truth, false) {
+        pin = new ParallelIndexer(3, indexPath, truth, false) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
@@ -132,12 +132,13 @@ public class TestGroundTruth extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
                 builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
-                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
-                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+//                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+//                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+//                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
 //                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
 
-                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
+                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "lbp", true));
+//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
             }
         };
         pin.run();
@@ -148,7 +149,7 @@ public class TestGroundTruth extends TestCase {
         System.out.println("Precision @ 20 (linear):");
 //        System.out.println("CEDD        " + getPrecision(ImageSearcherFactory.createCEDDImageSearcher(30), reader));
         System.out.println("ColorLayout " + getPrecision(ImageSearcherFactory.createColorLayoutImageSearcher(30), reader));
-        System.out.println("SPCEDD      " + getPrecision(new GenericFastImageSearcher(30, SPCEDD.class, "spcedd"), reader));
+//        System.out.println("SPCEDD      " + getPrecision(new GenericFastImageSearcher(30, SPCEDD.class, "spcedd"), reader));
 //        System.out.println("PHOG        " + getPrecision(ImageSearcherFactory.createPHOGImageSearcher(30), reader));
 //        System.out.println("FCTH        " + getPrecision(ImageSearcherFactory.createFCTHImageSearcher(30), reader));
 //        System.out.println("JCD         " + getPrecision(ImageSearcherFactory.createJCDImageSearcher(30), reader));
@@ -157,6 +158,8 @@ public class TestGroundTruth extends TestCase {
 //        System.out.println("Lum.Lay.    " + getPrecision(ImageSearcherFactory.createLuminanceLayoutImageSearcher(30), reader));
 //        System.out.println("OpponentHis " + getPrecision(ImageSearcherFactory.createOpponentHistogramSearcher(30), reader));
 //        System.out.println("ColorHist   " + getPrecision(ImageSearcherFactory.createColorHistogramImageSearcher(30), reader));
+        System.out.println("LBP      " + getPrecision(new GenericFastImageSearcher(30, SPLBP.class, "lbp"), reader));
+
 
 //        System.out.println("Precision @ 20 (hashed):");
 //        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
