@@ -42,11 +42,15 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.FastOpponentImageSearcher;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
+import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.SerializationUtils;
+import org.apache.lucene.codecs.Codec;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
@@ -107,18 +111,20 @@ public class OpponentHistogramTest extends TestCase {
     }
 
     public void testFastSearch() throws IOException {
-//        ParallelIndexer pin = new ParallelIndexer(3, "./index-fast", "D:\\DataSets\\WIPO\\CA\\converted-4") {
-//            @Override
-//            public void addBuilders(ChainedDocumentBuilder builder) {
-//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-//            }
-//        };
-//        pin.run();
-        IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File("./index-fast")));
+        Codec.forName("LireCustomCodec");
+//        ParallelIndexer pin = new ParallelIndexer(7, "./index-fast-3", "testdata/wang-1000") {
+        ParallelIndexer pin = new ParallelIndexer(7, "./index-fast-3", "D:\\DataSets\\Flickrphotos\\01", true) {
+            @Override
+            public void addBuilders(ChainedDocumentBuilder builder) {
+                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+            }
+        };
+        pin.run();
+        IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File("./index-fast-3")));
         System.out.println("ir.maxDoc() = " + ir.maxDoc());
 
         long ms = System.currentTimeMillis();
-        ImageSearcher is = new FastOpponentImageSearcher(50, ir);
+        ImageSearcher is = new FastOpponentImageSearcher(50);
         ms = System.currentTimeMillis() - ms;
         System.out.println("init ms = " + ms);
 

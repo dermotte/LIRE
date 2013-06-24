@@ -46,6 +46,7 @@ import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.indexing.LireCustomCodec;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -243,6 +244,7 @@ public class ParallelIndexer implements Runnable {
     public void run() {
         IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer(LuceneUtils.LUCENE_VERSION));
         config.setOpenMode(openMode);
+        config.setCodec(new LireCustomCodec());
         try {
             if (imageDirectory != null) System.out.println("Getting all images in " + imageDirectory + ".");
             writer = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
