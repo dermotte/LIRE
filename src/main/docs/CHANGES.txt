@@ -3,6 +3,11 @@ CHANGES for LIRE
 
 2013-06-23
 ==========
+  - Added net.semanticmetadata.lire.indexing.LireCustomCodec to allow for faster linear search
+    It still has to be activated by the user in the IndexWriterConfig.
+
+2013-06-23
+==========
   - Added a new distance routine to OpponentHistogram, that could prove faster when reading from an index.
   - Profiled search and found that the compressed stored fields made search awfully slow. Decompression
     takes up to 60% search time.

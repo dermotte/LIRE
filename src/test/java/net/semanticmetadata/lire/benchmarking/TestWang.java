@@ -237,7 +237,7 @@ public class TestWang extends TestCase {
         ms = System.currentTimeMillis() - ms;
         System.out.println("ms = " + ms);
         ms = System.currentTimeMillis();
-        computeMAP(new FastOpponentImageSearcher(1000, null), "FastOpponentHistogram");
+        computeMAP(new FastOpponentImageSearcher(1000), "FastOpponentHistogram");
         ms = System.currentTimeMillis() - ms;
         System.out.println("ms = " + ms);
 //        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
