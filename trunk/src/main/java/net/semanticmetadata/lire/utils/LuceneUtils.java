@@ -39,6 +39,7 @@
 
 package net.semanticmetadata.lire.utils;
 
+import net.semanticmetadata.lire.indexing.LireCustomCodec;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
@@ -115,6 +116,8 @@ public class LuceneUtils {
         else
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // create new if none is there, append otherwise.
 
+        config.setCodec(new LireCustomCodec());
+
         return new IndexWriter(directory, config);
     }
 
@@ -131,6 +134,7 @@ public class LuceneUtils {
         else
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // create new if none is there, append otherwise.
         config.setRAMBufferSizeMB(RAMBufferSize);
+        config.setCodec(new LireCustomCodec());
         return new IndexWriter(directory, config);
     }
 

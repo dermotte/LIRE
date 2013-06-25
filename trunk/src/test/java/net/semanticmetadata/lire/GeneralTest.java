@@ -43,6 +43,7 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.filter.LsaFilter;
 import net.semanticmetadata.lire.filter.RerankFilter;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
@@ -53,12 +54,13 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.MMapDirectory;
 
 import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 
 /**
@@ -288,6 +290,70 @@ public class GeneralTest extends TestCase {
         FileUtils.saveImageResultsToPng("GeneralTest_rerank_1_new", hits, reader.document(queryDocID).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
         hits = lsa.filter(hits, reader.document(queryDocID));
         FileUtils.saveImageResultsToPng("GeneralTest_rerank_2_lsa", hits, reader.document(queryDocID).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+    }
+
+    public void testClassify() throws IOException {
+        String[] classes = {"2012", "beach", "food", "london", "music", "nature", "people", "sky", "travel", "wedding"};
+        // CONFIG
+        String fieldName = DocumentBuilder.FIELD_NAME_PHOG;
+        LireFeature feature = new PHOG();
+        String indexPath = "E:\\acmgc-phog-idx";
+        System.out.println("Tests for feature " + fieldName + " with k=3");
+        System.out.println("========================================");
+        for (int c = 0; c < 10; c++) {
+            String classIdentifier = classes[c];
+            String listFiles = "D:\\DataSets\\Yahoo-GC\\test\\" + classIdentifier + ".txt";
+
+            // INIT
+            int[] confusion = new int[10];
+            Arrays.fill(confusion, 0);
+            HashMap<String, Integer> class2id = new HashMap<String, Integer>(10);
+            for (int i = 0; i < classes.length; i++)
+                class2id.put(classes[i], i);
+
+            BufferedReader br = new BufferedReader(new FileReader(listFiles));
+            String line;
+            IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
+            BitSamplingImageSearcher bis = new BitSamplingImageSearcher(3, fieldName, fieldName + "_hash", feature, 1000);
+            ImageSearchHits hits;
+            int count = 0, countCorrect = 0;
+            long ms = System.currentTimeMillis();
+            while ((line = br.readLine()) != null && count < 1000) {
+                try {
+                    hits = bis.search(ImageIO.read(new File(line)), ir);
+                    String tag1 = getTag(hits.doc(0));
+                    String tag2 = getTag(hits.doc(1));
+                    String tag3 = getTag(hits.doc(2));
+                    //                System.out.printf("%10s %10s %10s\n", tag1, tag2, tag3);
+                    if (tag2.equals(tag3)) tag1 = tag2;
+                    count++;
+                    if (tag1.equals(classIdentifier)) countCorrect++;
+                    // confusion:
+                    confusion[class2id.get(tag1)]++;
+//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", tag1, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+                } catch (Exception e) {
+                    System.err.println(e.getMessage());
+                }
+            }
+            System.out.println("Results for class " + classIdentifier);
+            System.out.printf("Avg. Precision\tCount Test Images\tms per test\n");
+            System.out.printf("%4.5f\t%10d\t%4d\n", ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+            System.out.printf("Confusion\n");
+            for (int i = 0; i < classes.length; i++) {
+                System.out.printf("%s\t", classes[i]);
+            }
+            System.out.println();
+            for (int i = 0; i < classes.length; i++) {
+                System.out.printf("%d\t", confusion[i]);
+            }
+            System.out.println();
+        }
+    }
+
+    private String getTag(Document d) {
+        StringBuilder ab = new StringBuilder(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].replace("E:\\I:\\ACM_complete_dataset\\", ""));
+        return ab.substring(0, ab.indexOf("\\")).toString();
+
     }
 
 }

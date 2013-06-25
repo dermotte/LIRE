@@ -43,13 +43,17 @@ package net.semanticmetadata.lire.indexing.tools;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.indexing.LireCustomCodec;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.FSDirectory;
 
 import java.io.*;
 import java.util.Iterator;
@@ -68,12 +72,12 @@ import java.util.zip.GZIPInputStream;
 public class Indexor {
     protected LinkedList<File> inputFiles = new LinkedList<File>();
     protected String indexPath = null;
-    private boolean overwriteIndex = true;
+//    private boolean overwriteIndex = true;
     protected static boolean verbose = true;
     protected int count;
 
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException {
-        ProximityHashingIndexor indexor = new ProximityHashingIndexor();
+        Indexor indexor = new Indexor();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("-i") || arg.startsWith("--input-file")) {
@@ -157,7 +161,11 @@ public class Indexor {
     public void run() {
         // do it ...
         try {
-            IndexWriter indexWriter = LuceneUtils.createIndexWriter(indexPath, overwriteIndex, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+//            IndexWriter indexWriter = LuceneUtils.createIndexWriter(indexPath, overwriteIndex, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+            IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+            config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+            config.setCodec(new LireCustomCodec());
+            IndexWriter indexWriter = new IndexWriter(FSDirectory.open(new File(indexPath)), config);
             for (Iterator<File> iterator = inputFiles.iterator(); iterator.hasNext(); ) {
                 File inputFile = iterator.next();
                 if (verbose) System.out.println("Processing " + inputFile.getPath() + ".");
