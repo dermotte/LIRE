@@ -51,6 +51,7 @@ import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.StatsUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.MultiFields;
@@ -108,7 +109,7 @@ public class TestNister extends TestCase {
         // first: copy index to a new location.
         FileUtils.copyDirectory(new File("nisterindex"), new File(pathName));
         System.out.println("Index copied to " + pathName + ".");
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(pathName)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(pathName)));
 //        SiftFeatureHistogramBuilder sfh = new SiftFeatureHistogramBuilder(reader, 1000, numVisualWords);
         SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(reader, 2000, numVisualWords);
         sfh.index();
@@ -120,7 +121,7 @@ public class TestNister extends TestCase {
 //        ImageSearcher vis = new GenericFastImageSearcher(4, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
 //        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
         VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(pathName)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(pathName)));
 
         int queryID, resultID;
         int countSearches = 0, countTruePositives = 0;
@@ -201,7 +202,7 @@ public class TestNister extends TestCase {
             df[i] = 0;
         for (int i = 0; i < len.length; i++)
             len[i] = 0;
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(pathName)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(pathName)));
         for (int i = 0; i < reader.numDocs(); i++) {
 //            if (!reader.isDeleted(i)) {
             String s = reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];

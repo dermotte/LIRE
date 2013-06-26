@@ -49,6 +49,7 @@ import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -140,7 +141,7 @@ public class LocalitySensitiveHashingTest extends TestCase {
     }
 
     public double singleSearch(int docNum) throws IOException, InstantiationException, IllegalAccessException {
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
 
         // -----------
 
@@ -186,7 +187,7 @@ public class LocalitySensitiveHashingTest extends TestCase {
     }
 
     public void testOutputSearchResults() throws IOException, InstantiationException, IllegalAccessException {
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         int docNum = 0; // doc to search for.
         // -----------
 

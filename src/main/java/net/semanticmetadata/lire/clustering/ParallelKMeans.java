@@ -112,7 +112,8 @@ public class ParallelKMeans extends KMeans {
         return clusters[index];
     }
 
-    private void recomputeMeanOfCluster(int clusterIndex) {
+    @SuppressWarnings("unused")
+	private void recomputeMeanOfCluster(int clusterIndex) {
         int length = features.get(0).length;
         Cluster cluster = getCluster(clusterIndex);
         double[] mean = cluster.mean;

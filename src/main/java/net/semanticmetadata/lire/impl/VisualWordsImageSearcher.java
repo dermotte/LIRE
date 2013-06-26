@@ -127,7 +127,8 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
     /**
      * This implementation has shown formidable results with the Nister UKBench data set.
      */
-    private static class MySimilarity extends DefaultSimilarity {
+    @SuppressWarnings("unused")
+	private static class MySimilarity extends DefaultSimilarity {
         public float tf(float freq) {
 //            return (float) Math.log(freq);
             return 1.0f;

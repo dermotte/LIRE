@@ -86,7 +86,8 @@ public class LuminanceLayout implements LireFeature {
 //        histogram = jpgDct(histogram);
     }
 
-    private void enhanceContrast(BufferedImage gray) {
+    @SuppressWarnings("unused")
+	private void enhanceContrast(BufferedImage gray) {
         int[] tmp = {0};
         double val;
         int min = 255, max = 0;
@@ -150,7 +151,8 @@ public class LuminanceLayout implements LireFeature {
     }
 
     // just a 8x8 jpeg dct ...
-    private double[] jpgDct(double[] histogram) {
+    @SuppressWarnings("unused")
+	private double[] jpgDct(double[] histogram) {
         int[] zickzack = new int[]    { 0,  1,  8, 16,  9,  2,  3, 10, 17, 24, 32, 25, 18, 11,  4,  5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13,  6,  7, 14, 21, 28, 35, 42, 49, 56};
         double[] quant = new double[] {16, 5, 6, 7, 6, 5, 8, 7, 7, 7, 9, 8, 8, 9, 12, 20, 13, 12, 11, 11, 12, 25, 18, 18, 15, 20, 28, 25, 30, 30, 28, 25, 28, 27, 32, 36};
 //        double[] quant = new double[] {16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40, 58, 51, 61, 60, 57, 51, 56, 55, 64, 72};
@@ -181,7 +183,8 @@ public class LuminanceLayout implements LireFeature {
         return result;
     }
 
-    private double[] dct(double[] histogram) {
+    @SuppressWarnings("unused")
+	private double[] dct(double[] histogram) {
         double[] coeffs = new double[histogram.length / 8];
         double N = histogram.length;
         double min = 0, max = 0;

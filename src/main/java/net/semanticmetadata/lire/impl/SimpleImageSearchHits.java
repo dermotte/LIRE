@@ -111,7 +111,8 @@ public class SimpleImageSearchHits implements ImageSearchHits {
         return results.get(position).getIndexNumber();
     }
 
-    private float sigmoid(float f) {
+    @SuppressWarnings("unused")
+	private float sigmoid(float f) {
         double result = 0f;
         result = -1d + 2d / (1d + Math.exp(-2d * f / 0.6));
         return (float) (1d - result);

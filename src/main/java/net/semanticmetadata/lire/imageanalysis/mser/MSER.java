@@ -792,7 +792,8 @@ public class MSER {
         }
     }
 
-    private void printArray(String name, double[] array) {
+    @SuppressWarnings("unused")
+	private void printArray(String name, double[] array) {
         System.out.println("ARRAY " + name + ":");
         for (int i = 0; i < array.length; i++) {
             System.out.print(array[i]);

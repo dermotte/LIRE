@@ -287,13 +287,13 @@ public class MetricSpacesInvertedListIndexing {
             return scoreDocs(d.getValues("ro-order")[0], DirectoryReader.open(FSDirectory.open(new File(indexPath))));
         else { // if not we just create it :)
             ImageSearcher searcher = new GenericImageSearcher(numReferenceObjectsUsed, featureClass, featureFieldName);
-            ImageSearchHits hits = searcher.search(d, IndexReader.open(FSDirectory.open(new File(indexPath + "-ro"))));
+            ImageSearchHits hits = searcher.search(d, DirectoryReader.open(FSDirectory.open(new File(indexPath + "-ro"))));
             StringBuilder sb = new StringBuilder(numReferenceObjectsUsed * 4);
             for (int j = 0; j < numReferenceObjectsUsed; j++) {
                 sb.append(hits.doc(j).getValues("ro-id")[0]);
                 sb.append(' ');
             }
-            return scoreDocs(sb.toString(), IndexReader.open(FSDirectory.open(new File(indexPath))));
+            return scoreDocs(sb.toString(), DirectoryReader.open(FSDirectory.open(new File(indexPath))));
         }
     }
 
@@ -364,7 +364,7 @@ public class MetricSpacesInvertedListIndexing {
      * @throws IOException
      */
     public IndexReader getIndexReader(String indexPath) throws IOException {
-        return IndexReader.open(FSDirectory.open(new File(indexPath)));
+        return DirectoryReader.open(FSDirectory.open(new File(indexPath)));
     }
 
     public ProgressIndicator getProgress() {

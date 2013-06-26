@@ -163,7 +163,8 @@ public class CreateIndexTest extends TestCase {
         iw.close();
     }
 
-    private void indexFilesMultithreaded(ArrayList<String> images, DocumentBuilder builder, String indexPath) throws IOException {
+    @SuppressWarnings("unused")
+	private void indexFilesMultithreaded(ArrayList<String> images, DocumentBuilder builder, String indexPath) throws IOException {
         System.out.println(">> Indexing " + images.size() + " files.");
         IndexWriter iw = LuceneUtils.createIndexWriter(indexPath, true);
         SynchronizedWriter sw = new SynchronizedWriter(iw);

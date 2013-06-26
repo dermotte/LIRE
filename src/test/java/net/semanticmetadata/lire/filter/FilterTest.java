@@ -47,6 +47,7 @@ import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
@@ -64,6 +65,7 @@ import java.util.Iterator;
  * Created 03.08.11, 11:09 <br/>
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @author sangupta, sandy.pec@gmail.com (fixed deprecation)
  */
 public class FilterTest extends TestCase {
 
@@ -82,7 +84,7 @@ public class FilterTest extends TestCase {
         // indexFiles();
         // search
         System.out.println("---< searching >-------------------------");
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         Document document = reader.document(0);
         ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(100);
         ImageSearchHits hits = searcher.search(document, reader);
@@ -100,7 +102,7 @@ public class FilterTest extends TestCase {
 //        indexFiles();
         // search
         System.out.println("---< searching >-------------------------");
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         Document document = reader.document(0);
         ImageSearcher searcher = ImageSearcherFactory.createCEDDImageSearcher(100);
         ImageSearchHits hits = searcher.search(document, reader);
@@ -113,7 +115,8 @@ public class FilterTest extends TestCase {
         FileUtils.saveImageResultsToHtml("filtertest", hits, document.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
     }
 
-    private Document indexFiles() throws IOException {
+    @SuppressWarnings("unused")
+	private Document indexFiles() throws IOException {
         System.out.println("---< indexing >-------------------------");
         int count = 0;
         DocumentBuilder builder = getDocumentBuilder();
