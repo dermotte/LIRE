@@ -1,5 +1,10 @@
 CHANGES for LIRE
 ================
+2013-06-25
+==========
+  - Mavenization of the project (Sandeep Gupta twitter.com/sangupta)
+  - Removed all warnings of resource leaks (Sandeep Gupta twitter.com/sangupta)
+  - Implemented type-safety by using generics than raw types. (Sandeep Gupta twitter.com/sangupta) - only partial patch
 
 2013-06-23
 ==========

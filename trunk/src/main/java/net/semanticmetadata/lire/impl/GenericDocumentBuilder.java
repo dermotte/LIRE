@@ -59,6 +59,7 @@ import java.util.logging.Logger;
  * Time: 14:32:15
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @author sangupta, sandy.pec@gmail.com (fixed null pointer exception)
  */
 public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     enum HashingMode {BitSampling, LSH}
@@ -181,13 +182,20 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
      */
     public Document createDocument(BufferedImage image, String identifier) {
         assert (image != null);
-        Document doc = null;
-        if (identifier != null)
+        
+        // sangupta: create a new document else code below
+        // will throw a NPE
+        Document doc = new Document();
+        
+        if (identifier != null) {
             doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
+        }
+        
         Field[] fields = createDescriptorFields(image);
         for (int i = 0; i < fields.length; i++) {
             doc.add(fields[i]);
         }
+        
         return doc;
     }
 }

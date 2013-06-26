@@ -408,7 +408,8 @@ public class AutoColorCorrelogram implements LireFeature {
         return jsd(((AutoColorCorrelogram) vd).correlogram);
     }
 
-    private float l1(float[][] vdCorrelogram) {
+    @SuppressWarnings("unused")
+	private float l1(float[][] vdCorrelogram) {
         float result = 0;
         for (int i = 0; i < correlogram.length; i++) {
             float[] ints = correlogram[i];

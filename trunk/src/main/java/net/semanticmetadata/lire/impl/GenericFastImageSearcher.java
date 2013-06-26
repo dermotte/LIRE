@@ -53,10 +53,7 @@ import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,6 +69,10 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
     Class<?> descriptorClass;
     String fieldName;
     private LireFeature cachedInstance = null;
+    private boolean isCaching = false;
+
+    private LinkedList<byte[]> featureCache;
+    private IndexReader reader;
 
     private int maxHits = 10;
     protected TreeSet<SimpleResult> docs;
@@ -89,6 +90,42 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         } catch (IllegalAccessException e) {
             logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
         }
+        init();
+    }
+
+    private void init() {
+        // put all respective features into an in-memory cache ...
+        if (isCaching && reader != null) {
+            int docs = reader.numDocs();
+            featureCache = new LinkedList<byte[]>();
+            try {
+                Document d;
+                for (int i = 0; i < docs; i++) {
+                    d = reader.document(i);
+                    cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+                    featureCache.add(cachedInstance.getByteArrayRepresentation());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName, boolean isCaching, IndexReader reader) {
+        this.isCaching = isCaching;
+        this.maxHits = maxHits;
+        docs = new TreeSet<SimpleResult>();
+        this.descriptorClass = descriptorClass;
+        this.fieldName = fieldName;
+        try {
+            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
+        } catch (InstantiationException e) {
+            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
+        } catch (IllegalAccessException e) {
+            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
+        }
+        this.reader = reader;
+        init();
     }
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
@@ -132,28 +169,61 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         Document d;
         float tmpDistance;
         int docs = reader.numDocs();
-        for (int i = 0; i < docs; i++) {
-            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
+        if (!isCaching) {
+            for (int i = 0; i < docs; i++) {
+                if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
-            d = reader.document(i);
-            tmpDistance = getDistance(d, lireFeature);
-            assert (tmpDistance >= 0);
-            // if it is the first document:
-            if (maxDistance < 0) {
-                maxDistance = tmpDistance;
+                d = reader.document(i);
+                tmpDistance = getDistance(d, lireFeature);
+                assert (tmpDistance >= 0);
+                // if it is the first document:
+                if (maxDistance < 0) {
+                    maxDistance = tmpDistance;
+                }
+                // if the array is not full yet:
+                if (this.docs.size() < maxHits) {
+                    this.docs.add(new SimpleResult(tmpDistance, d, i));
+                    if (tmpDistance > maxDistance) maxDistance = tmpDistance;
+                } else if (tmpDistance < maxDistance) {
+                    // if it is nearer to the sample than at least on of the current set:
+                    // remove the last one ...
+                    this.docs.remove(this.docs.last());
+                    // add the new one ...
+                    this.docs.add(new SimpleResult(tmpDistance, d, i));
+                    // and set our new distance border ...
+                    maxDistance = this.docs.last().getDistance();
+                }
             }
-            // if the array is not full yet:
-            if (this.docs.size() < maxHits) {
-                this.docs.add(new SimpleResult(tmpDistance, d, i));
-                if (tmpDistance > maxDistance) maxDistance = tmpDistance;
-            } else if (tmpDistance < maxDistance) {
-                // if it is nearer to the sample than at least on of the current set:
-                // remove the last one ...
-                this.docs.remove(this.docs.last());
-                // add the new one ...
-                this.docs.add(new SimpleResult(tmpDistance, d, i));
-                // and set our new distance border ...
-                maxDistance = this.docs.last().getDistance();
+        } else {
+            int count = 0;
+            for (Iterator<byte[]> iterator = featureCache.iterator(); iterator.hasNext(); ) {
+                cachedInstance.setByteArrayRepresentation(iterator.next());
+                if (reader.hasDeletions() && !liveDocs.get(count)) {
+                    count++;
+                    continue; // if it is deleted, just ignore it.
+                } else {
+//                    cachedInstance.setByteArrayRepresentation(next);
+                    tmpDistance = lireFeature.getDistance(cachedInstance);
+                    assert (tmpDistance >= 0);
+                    // if it is the first document:
+                    if (maxDistance < 0) {
+                        maxDistance = tmpDistance;
+                    }
+                    // if the array is not full yet:
+                    if (this.docs.size() < maxHits) {
+                        this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
+                        if (tmpDistance > maxDistance) maxDistance = tmpDistance;
+                    } else if (tmpDistance < maxDistance) {
+                        // if it is nearer to the sample than at least on of the current set:
+                        // remove the last one ...
+                        this.docs.remove(this.docs.last());
+                        // add the new one ...
+                        this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
+                        // and set our new distance border ...
+                        maxDistance = this.docs.last().getDistance();
+                    }
+                    count++;
+                }
             }
         }
         return maxDistance;

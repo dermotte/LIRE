@@ -170,7 +170,8 @@ public class EdgeHistogramImplementation {
      * @throws Exception indicates conditions that a reasonable application might want to catch.
      */
 
-    private void setBinCounts(int[] bins) throws Exception {
+    @SuppressWarnings("unused")
+	private void setBinCounts(int[] bins) throws Exception {
         for (int i = 0; i <= EdgeHistogramImplementation.BIN_COUNT - 1; i++) {
             this.bins[i] = bins[i];
         }
@@ -522,7 +523,8 @@ public class EdgeHistogramImplementation {
         return (float) result;
     }
 
-    private static int[] RGB2YCRCB(int[] pixel, int[] result) {
+    @SuppressWarnings("unused")
+	private static int[] RGB2YCRCB(int[] pixel, int[] result) {
         double yy = (0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2]) / 256.0;
         result[0] = (int) (219.0 * yy + 16.5);
         result[1] = (int) (224.0 * 0.564 * (pixel[2] / 256.0 * 1.0 - yy) + 128.5);

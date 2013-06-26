@@ -349,7 +349,8 @@ public class CEDD implements LireFeature {
 
     }
 
-    private double scalarMult(double[] a, double[] b) {
+    @SuppressWarnings("unused")
+	private double scalarMult(double[] a, double[] b) {
         double sum = 0.0;
         for (int i = 0; i < a.length; i++) {
             sum += a[i] * b[i];

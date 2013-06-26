@@ -45,6 +45,7 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
@@ -178,7 +179,7 @@ public class MetricSpacesTest extends TestCase {
         MetricSpacesInvertedListIndexing.numReferenceObjects = 50;
 
         TopDocs docs = ms.search(ImageIO.read(new FileInputStream("wang-data-1000/10.jpg")), smallIdx);
-        IndexReader ir = IndexReader.open(FSDirectory.open(new File(smallIdx)));
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File(smallIdx)));
         for (int i = 0; i < docs.scoreDocs.length; i++) {
             ScoreDoc scoreDoc = docs.scoreDocs[i];
             String identifier = ir.document(scoreDoc.doc).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];

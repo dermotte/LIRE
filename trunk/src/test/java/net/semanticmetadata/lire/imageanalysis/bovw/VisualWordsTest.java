@@ -45,6 +45,7 @@ import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
 
@@ -60,7 +61,7 @@ import java.io.IOException;
  */
 public class VisualWordsTest extends TestCase {
     public void testCreateQuery() throws IOException {
-        IndexReader reader = IndexReader.open(FSDirectory.open(new File("./index-mirflickr")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("./index-mirflickr")));
         BufferedImage image = ImageIO.read(new File("./wang-1000/0.jpg"));
         SurfDocumentBuilder sb = new SurfDocumentBuilder();
         Document d = sb.createDocument(image, "query");

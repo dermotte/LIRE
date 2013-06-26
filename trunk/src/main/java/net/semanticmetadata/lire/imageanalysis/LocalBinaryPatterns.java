@@ -91,7 +91,8 @@ public class LocalBinaryPatterns implements LireFeature {
         }
     }
 
-    private void extractWithRadiusTwo(BufferedImage image) {
+    @SuppressWarnings("unused")
+	private void extractWithRadiusTwo(BufferedImage image) {
         // first convert to intensity only.
         WritableRaster raster = ImageUtils.convertImageToGrey(image).getRaster();
         // cached pixel array

@@ -60,6 +60,7 @@ import java.util.zip.ZipOutputStream;
  * <br>Time: 09:44:49
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @author sangupta, sandy.pec@gmail.com (closed streams in finally clause)
  */
 public class FileUtils {
     enum FileTypes {JPG, GIF, TIF, PNG, PDF, UNKNOWN};
@@ -342,30 +343,38 @@ public class FileUtils {
      * @return the file type by enumeration FileTypes.
      * @throws IOException
      */
-    private static FileTypes identifyFileType(File file) throws IOException {
+    @SuppressWarnings("unused")
+	private static FileTypes identifyFileType(File file) throws IOException {
         byte[] buffer = new byte[8];
-        InputStream in = new FileInputStream(file);
-        in.read(buffer);
-        if ((buffer[0] == -119) && (buffer[1] == 0x50) && (buffer[2] == 0x4E) && (buffer[3] == 0x47)) {
-            // PNG: 89 50 4E 47 ...
-            return FileTypes.PNG;
-        } else if ((buffer[0] == 0xFF) && (buffer[1] == 0xD8)) {
-            // JPEG image files begin with FF D8 and end with FF D9
-            return FileTypes.JPG;
-        } else if ((buffer[0] == 0x25) && (buffer[1] == 0x50) && (buffer[2] == 0x44) && (buffer[3] == 0x46)) {
-            // PDF 25 50 44 46
-            return FileTypes.PDF;
-        } else if ((buffer[0] == 0x49) && (buffer[1] == 0x49) && (buffer[2] == 0x2A) && (buffer[3] == 0x00)) {
-            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
-            return FileTypes.TIF;
-        } else if ((buffer[0] == 0x4D) && (buffer[1] == 0x4D) && (buffer[2] == 0x00) && (buffer[3] == 0x2A)) {
-            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
-            return FileTypes.TIF;
-        } else if ((buffer[0] == 0x47) && (buffer[1] == 0x49) && (buffer[2] == 0x46) && (buffer[3] == 0x38)) {
-            // GIF: 47 49 46 38 ...
-            return FileTypes.GIF;
-        } else {
-            return FileTypes.UNKNOWN;
+        InputStream in = null;
+        try {
+			in = new FileInputStream(file);
+	        in.read(buffer);
+	        if ((buffer[0] == -119) && (buffer[1] == 0x50) && (buffer[2] == 0x4E) && (buffer[3] == 0x47)) {
+	            // PNG: 89 50 4E 47 ...
+	            return FileTypes.PNG;
+	        } else if ((buffer[0] == 0xFF) && (buffer[1] == 0xD8)) {
+	            // JPEG image files begin with FF D8 and end with FF D9
+	            return FileTypes.JPG;
+	        } else if ((buffer[0] == 0x25) && (buffer[1] == 0x50) && (buffer[2] == 0x44) && (buffer[3] == 0x46)) {
+	            // PDF 25 50 44 46
+	            return FileTypes.PDF;
+	        } else if ((buffer[0] == 0x49) && (buffer[1] == 0x49) && (buffer[2] == 0x2A) && (buffer[3] == 0x00)) {
+	            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
+	            return FileTypes.TIF;
+	        } else if ((buffer[0] == 0x4D) && (buffer[1] == 0x4D) && (buffer[2] == 0x00) && (buffer[3] == 0x2A)) {
+	            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
+	            return FileTypes.TIF;
+	        } else if ((buffer[0] == 0x47) && (buffer[1] == 0x49) && (buffer[2] == 0x46) && (buffer[3] == 0x38)) {
+	            // GIF: 47 49 46 38 ...
+	            return FileTypes.GIF;
+	        } else {
+	            return FileTypes.UNKNOWN;
+	        }
+        } finally {
+        	if(in != null) {
+        		in.close();
+        	}
         }
     }
 

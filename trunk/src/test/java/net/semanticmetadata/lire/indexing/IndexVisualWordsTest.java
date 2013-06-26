@@ -47,6 +47,7 @@ import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -81,7 +82,7 @@ public class IndexVisualWordsTest extends TestCase {
 //        SiftFeatureHistogramBuilder siftFeatureHistogramBuilder = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
 //        siftFeatureHistogramBuilder.index();
         System.out.println("-< Creating SURF based histograms >--------------");
-        SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
+        SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
         surfFeatureHistogramBuilder.index();
 //        System.out.println("-< Creating MSER based histograms >--------------");
 //        MSERFeatureHistogramBuilder mserFeatureHistogramBuilder = new MSERFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
@@ -124,7 +125,7 @@ public class IndexVisualWordsTest extends TestCase {
     public void testIndexMissingFiles() throws IOException {
         // first delete some of the existing ones ...
         System.out.println("Deleting visual words from docs ...");
-        IndexReader ir = IndexReader.open(FSDirectory.open(new File(index)));
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File(index)));
         IndexWriter iw = LuceneUtils.createIndexWriter(index, false);
         int maxDocs = ir.maxDoc();
         for (int i = 0; i < maxDocs / 10; i++) {
@@ -139,7 +140,7 @@ public class IndexVisualWordsTest extends TestCase {
         iw.close();
         ir.close();
         System.out.println("Creating new visual words ...");
-        SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
+        SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
         surfFeatureHistogramBuilder.indexMissing();
         System.out.println("Finished.");
     }

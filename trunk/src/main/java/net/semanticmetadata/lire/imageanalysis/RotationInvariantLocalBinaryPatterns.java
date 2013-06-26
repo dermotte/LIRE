@@ -166,7 +166,8 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
      * Extracts with a larger radius. Note that you'll need a larger histogram, i.e. 4096 bins, for this.
      * @param image
      */
-    private void extractWithRadiusTwo(BufferedImage image) {
+    @SuppressWarnings("unused")
+	private void extractWithRadiusTwo(BufferedImage image) {
         // first convert to intensity only.
         WritableRaster raster = ImageUtils.convertImageToGrey(image).getRaster();
         // cached pixel array

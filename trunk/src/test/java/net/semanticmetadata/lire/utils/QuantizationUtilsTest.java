@@ -139,11 +139,13 @@ public class QuantizationUtilsTest extends TestCase {
         }
     }
 
-    private int getPartition(int value) {
+    @SuppressWarnings("unused")
+	private int getPartition(int value) {
         return (int) Math.round((double) value / 85d);
     }
 
-    private int quant(int[] pixel) {
+    @SuppressWarnings("unused")
+	private int quant(int[] pixel) {
         double minDist = Math.pow((rgbPalette64[0][0] - pixel[0]), 2) + Math.pow((rgbPalette64[0][1] - pixel[1]), 2) + Math.pow((rgbPalette64[0][2] - pixel[2]), 2);
         int pos = 0;
         for (int i = 1; i < rgbPalette64.length; i++) {

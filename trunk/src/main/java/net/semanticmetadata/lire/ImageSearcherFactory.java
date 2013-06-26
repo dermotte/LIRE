@@ -310,7 +310,8 @@ public class ImageSearcherFactory {
      * @param f the weight to check
      * @return true if the weight is in [0,1], false otherwise
      */
-    private static boolean isAppropriateWeight(float f) {
+    @SuppressWarnings("unused")
+	private static boolean isAppropriateWeight(float f) {
         boolean result = false;
         if (f <= 1f && f >= 0) result = true;
         return result;

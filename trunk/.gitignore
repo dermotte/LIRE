@@ -1,0 +1,48 @@
+# Java noise
+*.class
+
+# SVN directories
+.svn
+
+# OSX noise
+.DS_Store
+*.pbxuser
+profile
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Windows noise
+desktop.ini
+
+# Eclipse/Flash Builder noise
+.actionScriptProperties
+.flexProperties
+.project
+.classpath
+bin/*
+bin-debug/*
+report/*
+bin-test/*
+docs/*
+.flexLibProperties
+
+# Maven noise
+target/*
+
+# Project specific
+.settings/*
+testindextest/*
+index-large-new/*
+*.obj
+duplicate__*
+bovw-test/*
+index-*/*
+test-*/*
+mserIndex/*
+out.png
+results-*/*
+textindextest/*
+wang-index-*/*
