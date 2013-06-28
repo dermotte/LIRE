@@ -43,6 +43,7 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.filter.LsaFilter;
 import net.semanticmetadata.lire.filter.RerankFilter;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
@@ -294,16 +295,17 @@ public class GeneralTest extends TestCase {
     public void testClassify() throws IOException {
         boolean weightByRank = true;
         String[] classes = {"2012", "beach", "food", "london", "music", "nature", "people", "sky", "travel", "wedding"};
-        int k = 20;
+        int k = 50;
         // CONFIG
-        String fieldName = DocumentBuilder.FIELD_NAME_PHOG;
-        LireFeature feature = new PHOG();
-        String indexPath = "E:\\acmgc-phog-idx";
+        String fieldName = DocumentBuilder.FIELD_NAME_COLORLAYOUT;
+        LireFeature feature = new ColorLayout();
+        String indexPath = "E:\\acmgc-cl-idx";
         System.out.println("Tests for feature " + fieldName + " with k="+k + " - weighting by rank sum: " + weightByRank);
         System.out.println("========================================");
         HashMap<String, Integer> tag2count = new HashMap<String, Integer>(k);
         HashMap<String, Double> tag2weight = new HashMap<String, Double>(k);
-        for (int c = 0; c < 10; c++) {
+        int c = 9;   // used for just one class ...
+//        for (int c = 0; c < 10; c++) {
             String classIdentifier = classes[c];
             String listFiles = "D:\\DataSets\\Yahoo-GC\\test\\" + classIdentifier + ".txt";
 
@@ -317,12 +319,14 @@ public class GeneralTest extends TestCase {
             BufferedReader br = new BufferedReader(new FileReader(listFiles));
             String line;
             IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
-            ImageSearcher bis = new GenericFastImageSearcher(k, feature.getClass(), fieldName, true, ir);
-//            BitSamplingImageSearcher bis = new BitSamplingImageSearcher(k, fieldName, fieldName + "_hash", feature, 1000);
+            // in-memory linear search
+//            ImageSearcher bis = new GenericFastImageSearcher(k, feature.getClass(), fieldName, true, ir);
+            // hashing based searcher
+            BitSamplingImageSearcher bis = new BitSamplingImageSearcher(k, fieldName, fieldName + "_hash", feature, 1000);
             ImageSearchHits hits;
             int count = 0, countCorrect = 0;
             long ms = System.currentTimeMillis();
-            while ((line = br.readLine()) != null && count < 1000) {
+            while ((line = br.readLine()) != null) {
                 try {
                     tag2count.clear();
                     tag2weight.clear();
@@ -370,7 +374,7 @@ public class GeneralTest extends TestCase {
                     if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     // confusion:
                     confusion[class2id.get(classifiedAs)]++;
-                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
@@ -387,7 +391,7 @@ public class GeneralTest extends TestCase {
                 System.out.printf("%d\t", confusion[i]);
             }
             System.out.println();
-        }
+//        }
     }
 
     private String getTag(Document d) {
