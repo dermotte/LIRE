@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.06.13 11:38
+ * Updated: 30.06.13 10:14
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -340,13 +340,18 @@ public class ParallelIndexer implements Runnable {
                         // TODO: add re-write rule for path here!
 //                        path = path.replace("E:\\WIPO-conv\\convert", "");
 //                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
-                        images.add(new WorkItem(path, tmpImage));
                         tmpSize = images.size();
                         images.notifyAll();
                     }
                     try {
+                        // it's actually hard to manage the amount of memory used to cache images.
+                        // On faster computers it turns out to be good to have a big cache, on
+                        // slower ones the cache poses a serious problem and leads to memory and GC exceptions.
+                        // iy you encounter still memory errors, then try to use more threads.
                         if (tmpSize > 500) Thread.sleep(50);
                         else if (tmpSize > 1000) Thread.sleep(5000);
+                        else if (tmpSize > 2000) Thread.sleep(10000);
+                        else if (tmpSize > 3000) Thread.sleep(100000);
                         else Thread.sleep(5);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
