@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.06.13 13:23
+ * Updated: 30.06.13 10:29
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -60,13 +60,14 @@ import java.util.zip.GZIPOutputStream;
  * and put the data files into one single index. Images are references relatively to the data file,
  * so it should work fine for network file systems.
  * <p/>
- * File format is specified as: (12(345)+)+ with 1-5 being ...
+ * File format is specified as: (12(345)+)+6 with 1-6 being ...
  * <p/>
- * 1. Length of the file hashFunctionsFileName [4 bytes], an int n giving the number of bytes for the file hashFunctionsFileName
- * 2. File hashFunctionsFileName, relative to the outfile [n bytes, see above]
+ * 1. Length of the file name [4 bytes], an int n giving the number of bytes for the file hashFunctionsFileName
+ * 2. File name, relative to the output file this data is written to [n bytes, see above]
  * 3. Feature index [1 byte], see static members
  * 4. Feature value length [4 bytes], an int k giving the number of bytes encoding the value
  * 5. Feature value [k bytes, see above]
+ * 6. One single byte with the value -1
  * <p/>
  * The file is sent through an GZIPOutputStream, so it's compressed in addition.
  *
