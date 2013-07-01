@@ -32,15 +32,18 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 01.07.13 16:56
  */
 
 package net.semanticmetadata.lire.utils;
 
 import junit.framework.TestCase;
 
+import javax.imageio.ImageIO;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -71,5 +74,9 @@ public class ImageUtilsTest extends TestCase {
             if (count%1000 == 0) System.out.println("** - " + count + " images analyzed, " + (System.currentTimeMillis()-ms)/count + " ms / image");
         }
         bw.close();
+    }
+
+    public void testTrim() throws IOException {
+        ImageIO.write(ImageUtils.trimWhiteSpace(ImageIO.read(new File("test_trim.png"))), "png", new File("out-trim.png"));
     }
 }

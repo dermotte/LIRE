@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 01.07.13 16:58
  */
 
 package net.semanticmetadata.lire.utils;
@@ -112,7 +114,7 @@ public class ImageUtils {
      *
      * @param image
      */
-    public static BufferedImage convertImageToGrey(BufferedImage image) {
+    public static BufferedImage getGrayscaleImage(BufferedImage image) {
         BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
         result.getGraphics().drawImage(image, 0, 0, null);
         return result;
@@ -157,7 +159,7 @@ public class ImageUtils {
     }
 
     /**
-     * Trims the white (and respective the black) border around an image.
+     * Trims the white border around an image.
      *
      * @param img
      * @return a new image, hopefully trimmed.
@@ -165,72 +167,85 @@ public class ImageUtils {
     public static BufferedImage trimWhiteSpace(BufferedImage img) {
         // idea is to scan lines of an image starting from each side.
         // As soon as a scan line encounters non-white (or non-black) pixels we know there is actual image content.
-        WritableRaster raster = img.getRaster();
-        boolean hasWhite = true;
-        int ymin = 0, ymax = raster.getHeight() - 1, xmin = 0, xmax = raster.getWidth() - 1;
-        int[] pixels = new int[3 * raster.getWidth()];
-        int thresholdWhite = 250;
-        int thresholdBlack = 5;
-        while (hasWhite) {
-            raster.getPixels(0, ymin, raster.getWidth(), 1, pixels);
-            for (int i = 0; i < pixels.length; i++) {
-                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+        WritableRaster raster = getGrayscaleImage(img).getRaster();
+        int[] pixels = new int[Math.max(raster.getWidth(), raster.getHeight())];
+        int thresholdWhite = 253;
+        int trimTop = 0, trimBottom = 0, trimLeft = 0, trimRight = 0;
+        boolean white = true;
+        while (white) {
+            raster.getPixels(0, trimTop, raster.getWidth(), 1, pixels);
+            for (int i = 0; i < raster.getWidth(); i++) {
+                if (pixels[i] < thresholdWhite) white = false;
             }
-            if (hasWhite) ymin++;
-        }
-        hasWhite = true;
-        while (hasWhite && ymax > ymin) {
-            raster.getPixels(0, ymax, raster.getWidth(), 1, pixels);
-            for (int i = 0; i < pixels.length; i++) {
-                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+            if (white) {
+                trimTop++;
             }
-            if (hasWhite) ymax--;
         }
-        pixels = new int[3 * raster.getHeight()];
-        hasWhite = true;
-        while (hasWhite) {
-            raster.getPixels(xmin, 0, 1, raster.getHeight(), pixels);
-            for (int i = 0; i < pixels.length; i++) {
-                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+        // bottom:
+        white = true;
+        while (white) {
+            raster.getPixels(0, raster.getHeight() - 1 - trimBottom, raster.getWidth(), 1, pixels);
+            for (int i = 0; i < raster.getWidth(); i++) {
+                if (pixels[i] < thresholdWhite) white = false;
             }
-            if (hasWhite) xmin++;
-        }
-        hasWhite = true;
-        while (hasWhite && xmax > xmin) {
-            raster.getPixels(xmax, 0, 1, raster.getHeight(), pixels);
-            for (int i = 0; i < pixels.length; i++) {
-                if (pixels[i] < thresholdWhite && pixels[i] > thresholdBlack) hasWhite = false;
+            if (white) {
+                trimBottom++;
             }
-            if (hasWhite) xmax--;
         }
-        BufferedImage result = new BufferedImage(xmax - xmin, ymax - ymin, BufferedImage.TYPE_INT_RGB);
-        result.getGraphics().drawImage(img, 0, 0, result.getWidth(), result.getHeight(),
-                xmin, ymin, xmax, ymax, null);
+        // left:
+        white = true;
+        while (white) {
+            raster.getPixels(trimLeft, 0, 1, raster.getHeight(), pixels);
+            for (int i = 0; i < raster.getHeight(); i++) {
+                if (pixels[i] < thresholdWhite) white = false;
+            }
+            if (white) {
+                trimLeft++;
+            }
+        }
+        // left:
+        white = true;
+        while (white) {
+            raster.getPixels(raster.getWidth() - 1 - trimRight, 0, 1, raster.getHeight(), pixels);
+            for (int i = 0; i < raster.getHeight(); i++) {
+                if (pixels[i] < thresholdWhite) white = false;
+            }
+            if (white) {
+                trimRight++;
+            }
+        }
+//        System.out.println("trimTop = " + trimTop);
+//        System.out.println("trimBottom = " + trimBottom);
+//        System.out.println("trimLeft = " + trimLeft);
+//        System.out.println("trimRight = " + trimRight);
+        BufferedImage result = new BufferedImage(raster.getWidth() - (trimLeft + trimRight), raster.getHeight() - (trimTop + trimBottom), BufferedImage.TYPE_INT_RGB);
+        result.getGraphics().drawImage(img, 0, 0, result.getWidth(), result.getHeight(), trimLeft, trimTop, img.getWidth() - trimRight, img.getHeight() - trimBottom, null);
         return result;
     }
 
-    /** creates a Gaussian kernel for ConvolveOp for blurring an image
+    /**
+     * creates a Gaussian kernel for ConvolveOp for blurring an image
      *
      * @param radius the radius, i.e. 5
      * @param sigma  sigma, i.e. 1.4f
      * @return
      */
     public static float[] makeGaussianKernel(int radius, float sigma) {
-            float[] kernel = new float[radius * radius];
-            float sum = 0;
-            for (int y = 0; y < radius; y++) {
-                for (int x = 0; x < radius; x++) {
-                    int off = y * radius + x;
-                    int xx = x - radius / 2;
-                    int yy = y - radius / 2;
-                    kernel[off] = (float) Math.pow(Math.E, -(xx * xx + yy * yy)
-                            / (2 * (sigma * sigma)));
-                    sum += kernel[off];
-                }
+        float[] kernel = new float[radius * radius];
+        float sum = 0;
+        for (int y = 0; y < radius; y++) {
+            for (int x = 0; x < radius; x++) {
+                int off = y * radius + x;
+                int xx = x - radius / 2;
+                int yy = y - radius / 2;
+                kernel[off] = (float) Math.pow(Math.E, -(xx * xx + yy * yy)
+                        / (2 * (sigma * sigma)));
+                sum += kernel[off];
             }
-            for (int i = 0; i < kernel.length; i++)
-                kernel[i] /= sum;
-            return kernel;
+        }
+        for (int i = 0; i < kernel.length; i++)
+            kernel[i] /= sum;
+        return kernel;
     }
 
 }

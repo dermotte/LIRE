@@ -32,16 +32,17 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.04.13 18:32
+ * Updated: 01.07.13 16:15
  */
 
 package net.semanticmetadata.lire;
 
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 
@@ -264,11 +265,11 @@ public class ImageSearcherFactory {
 
 
     /**
-     * Creates a new ImageSearcher instance based on the class {@link net.semanticmetadata.lire.imageanalysis.JointHistogram}.
+     * Creates a new ImageSearcher instance based on the class {@link net.semanticmetadata.lire.imageanalysis.joint.JointHistogram}.
      *
      * @param maximumHits
      * @return a new searcher instance
-     * @see net.semanticmetadata.lire.imageanalysis.JointHistogram
+     * @see net.semanticmetadata.lire.imageanalysis.joint.JointHistogram
      */
     public static ImageSearcher createJointHistogramImageSearcher(int maximumHits) {
         return new GenericFastImageSearcher(maximumHits, JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
