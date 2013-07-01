@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 30.06.13 10:29
+ * Updated: 01.07.13 16:15
  */
 
 package net.semanticmetadata.lire.indexing.tools;
@@ -80,7 +80,7 @@ public class Extractor implements Runnable {
             "net.semanticmetadata.lire.imageanalysis.CEDD",                  // 0
             "net.semanticmetadata.lire.imageanalysis.FCTH",                  // 1
             "net.semanticmetadata.lire.imageanalysis.OpponentHistogram",     // 2
-            "net.semanticmetadata.lire.imageanalysis.JointHistogram",        // 3
+            "net.semanticmetadata.lire.imageanalysis.joint.JointHistogram",        // 3
             "net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram",  // 4
             "net.semanticmetadata.lire.imageanalysis.ColorLayout",           // 5
             "net.semanticmetadata.lire.imageanalysis.EdgeHistogram",         // 6
