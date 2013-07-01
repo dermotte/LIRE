@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 04.05.13 11:18
+ * Updated: 01.07.13 12:18
  */
 
 package net.semanticmetadata.lire;
@@ -110,13 +110,16 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_BASIC_FEATURES = "featureBasic";
     public static final String FIELD_NAME_JPEGCOEFFS = "featureJpegCoeffs";
     public static final String FIELD_NAME_JOINT_HISTOGRAM = "featureJointHist";
-    public static final String  FIELD_NAME_OPPONENT_HISTOGRAM = "featOpHist";
-    public static final String  FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
-    public static final String  FIELD_NAME_PHOG = "featPHOG";
+    public static final String FIELD_NAME_OPPONENT_HISTOGRAM = "featOpHist";
+    public static final String FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
+    public static final String FIELD_NAME_PHOG = "featPHOG";
+    public static final String FIELD_NAME_LOCAL_BINARY_PATTERNS = "featLBP";
+    public static final String FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS = "featRILBP";
 
 
     /**
      * Creates the feature fields for a Lucene Document without creating the document itself.
+     *
      * @param image the image to analyze.
      * @return the fields resulting from the analysis.
      */

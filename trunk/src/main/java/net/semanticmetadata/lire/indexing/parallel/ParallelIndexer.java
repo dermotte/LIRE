@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 30.06.13 10:14
+ * Updated: 01.07.13 12:09
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -275,7 +275,7 @@ public class ParallelIndexer implements Runnable {
                 iterator.next().join();
             }
             long l1 = System.currentTimeMillis() - l;
-            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + l1 / overallCount + " ms each.");
+            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + ((overallCount>0)?(l1 / overallCount):"n.a.") + " ms each.");
             writer.commit();
             writer.close();
             threadFinished = true;
@@ -316,7 +316,7 @@ public class ParallelIndexer implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each ("+images.size()+" images currently in queue).");
+                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+images.size()+" images currently in queue).");
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -340,6 +340,7 @@ public class ParallelIndexer implements Runnable {
                         // TODO: add re-write rule for path here!
 //                        path = path.replace("E:\\WIPO-conv\\convert", "");
 //                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
+                        images.add(new WorkItem(path, tmpImage));
                         tmpSize = images.size();
                         images.notifyAll();
                     }
