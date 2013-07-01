@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 30.06.13 11:11
+ * Updated: 01.07.13 12:09
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -67,6 +67,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -79,8 +80,9 @@ import java.util.LinkedList;
 public class TestGroundTruth extends TestCase {
     public String indexPath = "test-idx-large-hashed";
     private File fileList;
-//    private File truth = new File("E:\\Eval-WIPO\\filtered.txt");
-    private File truth = new File("C:\\Temp\\Eval-WIPO\\truth\\trimmed.txt");
+    //    private File truth = new File("E:\\Eval-WIPO\\filtered.txt");
+    private File truth = new File("C:\\Temp\\Eval-WIPO\\swoosh.txt");
+    private HashSet<String> truthFiles = new HashSet<String>();
 
     public void testAll() throws IOException {
         testIndexing();
@@ -89,7 +91,7 @@ public class TestGroundTruth extends TestCase {
 
     public void testIndexing() {
 //        fileList = new File("E:\\Eval-WIPO\\ca.txt");
-        fileList = new File("C:\\Temp\\Eval-WIPO\\ca.txt");
+        fileList = new File("C:\\Temp\\Eval-WIPO\\ca-5000.txt");
         ParallelIndexer pin = new ParallelIndexer(6, indexPath, fileList, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
@@ -107,6 +109,9 @@ public class TestGroundTruth extends TestCase {
                 builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
                 builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
                 builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
+                builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
                 builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
                 builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
 
@@ -132,6 +137,9 @@ public class TestGroundTruth extends TestCase {
                 builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
                 builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
                 builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
+                builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
                 builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
                 builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
 
@@ -143,35 +151,31 @@ public class TestGroundTruth extends TestCase {
     }
 
     public void testSearchBenchmark() throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(truth));
+        String line;
+        while ((line = br.readLine()) != null) {
+            truthFiles.add(line);
+        }
+        System.out.printf("%s\t%s\t%s\t%s\t%s\t%s\n", "Test", "recall@5", "recall@10", "recall@20", "recall@30", "recall@50");
         IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
-        System.out.println("Precision @ 20 (linear):");
-//        System.out.println("CEDD        " + getPrecision(ImageSearcherFactory.createCEDDImageSearcher(30), reader));
-        System.out.println("ColorLayout " + getPrecision(new GenericFastImageSearcher(30, ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true, reader), reader));
-//        System.out.println("SPCEDD      " + getPrecision(new GenericFastImageSearcher(30, SPCEDD.class, "spcedd"), reader));
-        System.out.println("PHOG        " + getPrecision(new GenericFastImageSearcher(30, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), reader));
-//        System.out.println("FCTH        " + getPrecision(ImageSearcherFactory.createFCTHImageSearcher(30), reader));
-        System.out.println("JCD         " + getPrecision(new GenericFastImageSearcher(30, JCD.class, DocumentBuilder.FIELD_NAME_JCD, true, reader), reader));
-        System.out.println("EdgeHist    " + getPrecision(new GenericFastImageSearcher(30, EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true, reader), reader));
-//        System.out.println("JointHist   " + getPrecision(ImageSearcherFactory.createJointHistogramImageSearcher(30), reader));
-        System.out.println("Lum.Lay.    " + getPrecision(new GenericFastImageSearcher(30, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true, reader), reader));
-//        System.out.println("OpponentHis " + getPrecision(ImageSearcherFactory.createOpponentHistogramSearcher(30), reader));
-//        System.out.println("ColorHist   " + getPrecision(ImageSearcherFactory.createColorHistogramImageSearcher(30), reader));
-//        System.out.println("LBP      " + getPrecision(new GenericFastImageSearcher(30, SPLBP.class, "lbp"), reader));
+        getRecall("ColorLayout (linear)", new GenericFastImageSearcher(50, ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true, reader), reader);
+        getRecall("PHOG (linear)", new GenericFastImageSearcher(50, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), reader);
+        getRecall("JCD (linear)", new GenericFastImageSearcher(50, JCD.class, DocumentBuilder.FIELD_NAME_JCD, true, reader), reader);
+        getRecall("CEDD (linear)", new GenericFastImageSearcher(50, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true, reader), reader);
+        getRecall("JointHistogram (linear)", new GenericFastImageSearcher(50, JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true, reader), reader);
+        getRecall("LocalBinaryPatterns (linear)", new GenericFastImageSearcher(50, LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true, reader), reader);
+        getRecall("EdgeHistogram (linear)", new GenericFastImageSearcher(50, EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true, reader), reader);
+        getRecall("Luminance Layout (linear)", new GenericFastImageSearcher(50, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true, reader), reader);
+//
 
-
-        System.out.println("Precision @ 20 (hashed):");
-        System.out.println("ColorLayout " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_COLORLAYOUT,
-                DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 1000), reader));
-//        System.out.println("SPCEDD      " + getPrecision(new BitSamplingImageSearcher(30, "spcedd",
-//                "spcedd_hash", new SPCEDD(), 500), reader));
-        System.out.println("PHOG        " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
-                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 3000), reader));
-        System.out.println("JCD         " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_JCD,
-                DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 1000), reader));
-        System.out.println("EdgeHist    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,
-                DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 3000), reader));
-        System.out.println("Lum.Lay.    " + getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,
-                DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader));
+        getRecall("ColorLayout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_COLORLAYOUT, DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 1000), reader);
+        getRecall("PHOG (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_PHOG, DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 1000), reader);
+        getRecall("JCD (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_JCD, DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 1000), reader);
+        getRecall("CEDD (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_CEDD, DocumentBuilder.FIELD_NAME_CEDD + "_hash", new JCD(), 1000), reader);
+        getRecall("JointHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM + "_hash", new JointHistogram(), 1000), reader);
+        getRecall("LocalBinaryPatterns (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "_hash", new LocalBinaryPatterns(), 1000), reader);
+        getRecall("EdgeHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 1000), reader);
+        getRecall("Luminance Layout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader);
     }
 
     /**
@@ -182,28 +186,36 @@ public class TestGroundTruth extends TestCase {
      * @return
      * @throws IOException
      */
-    private double getPrecision(ImageSearcher is, IndexReader reader) throws IOException {
+    private double getRecall(String prefix, ImageSearcher is, IndexReader reader) throws IOException {
         BufferedReader br = new BufferedReader(new FileReader(truth));
         String line = null;
         StringBuilder sb = new StringBuilder(128);
         double count = 0, sum = 0;
+        double p5=0, p10=0, p20=0, p30=0, p50=0;
         while ((line = br.readLine()) != null) {
+            sum = 0;
             BufferedImage bimg = ImageIO.read(new File(line));
             ImageSearchHits hits = is.search(bimg, reader);
 //            saveImageResultsToPng("result-" + line.substring(line.lastIndexOf("\\")+1, line.length()-4), hits, line);
-            for (int i = 0; i < Math.min(20, hits.length()); i++) {
+            for (int i = 0; i < Math.min(50, hits.length()); i++) {
                 Document d = hits.doc(i);
                 String fileName = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
-                if (fileName.contains("swoosh")) {
+                if (truthFiles.contains(fileName)) {
                     sum += 1;
                     sb.append('*');
                 } else sb.append('.');
+                if (i + 1 == 5)  p5 += sum / (double) truthFiles.size();
+                if (i + 1 == 10) p10 += sum / (double) truthFiles.size();
+                if (i + 1 == 20) p20 += sum / (double) truthFiles.size();
+                if (i + 1 == 30) p30 += sum / (double) truthFiles.size();
+                if (i + 1 == 50) p50 += sum / (double) truthFiles.size();
             }
             sb.append(" - " + line);
 //            System.out.println(sb);
             sb.delete(0, sb.length());
             count++;
         }
+        System.out.printf("%s\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n", prefix, p5/count, p10/count, p20/count, p30/count, p50/count);
         return sum / (20d * count);
     }
 
@@ -245,25 +257,25 @@ public class TestGroundTruth extends TestCase {
             offset += next.getWidth() + 5;
             count++;
         }
-        ImageIO.write(result, "PNG", new File(((System.currentTimeMillis()%(1000*60*60*24)) / 1000) + prefix + "-" + ".png"));
+        ImageIO.write(result, "PNG", new File(((System.currentTimeMillis() % (1000 * 60 * 60 * 24)) / 1000) + prefix + "-" + ".png"));
     }
 
     public void testBitSampling() throws IllegalAccessException, IOException, InstantiationException {
 //        double w = 4;
 //        for (int i=500; i <= 2000; i+=250) {
 //            for (int runs = 0; runs<100; runs++) {
-                File f = new File(BitSampling.hashFunctionsFileName);
-                if (f.exists()) f.delete();
+        File f = new File(BitSampling.hashFunctionsFileName);
+        if (f.exists()) f.delete();
 //                BitSampling.setNumFunctionBundles(80);
-                BitSampling.generateHashFunctions();
-                LocalitySensitiveHashing.generateHashFunctions();
-                String[] args = new String[]{"-c", "C:\\Temp\\Eval-WIPO\\2index.txt", "-l", indexPath};
-                HashingIndexor.main(args);
-                IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
-                double precision = getPrecision(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
-                        DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), new FileInputStream(BitSampling.hashFunctionsFileName), 500), reader);
-                System.out.println(precision);
-                f = new File(BitSampling.hashFunctionsFileName);
+        BitSampling.generateHashFunctions();
+        LocalitySensitiveHashing.generateHashFunctions();
+        String[] args = new String[]{"-c", "C:\\Temp\\Eval-WIPO\\2index.txt", "-l", indexPath};
+        HashingIndexor.main(args);
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+//        double precision = getRecall(new BitSamplingImageSearcher(30, DocumentBuilder.FIELD_NAME_PHOG,
+//                DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), new FileInputStream(BitSampling.hashFunctionsFileName), 500), reader);
+//        System.out.println(precision);
+        f = new File(BitSampling.hashFunctionsFileName);
 //                f.renameTo(new File(runs + "_" + precision + "_" + BitSampling.hashFunctionsFileName));
 //            }
 //        }
