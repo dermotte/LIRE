@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 15:48
+ * Updated: 01.07.13 16:15
  */
 
-package net.semanticmetadata.lire.imageanalysis;
+package net.semanticmetadata.lire.imageanalysis.joint;
 
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -53,10 +54,14 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at
  * Time: 21.06.13 13:51
  */
-public class RotationInvariantLocalBinaryPatterns implements LireFeature {
-    double[] histogram = new double[36];
+public class LocalBinaryPatternsAndOpponent implements LireFeature {
+    final static double sq2 = Math.sqrt(2d);
+    final static double sq6 = Math.sqrt(3d);
+    final static double sq3 = Math.sqrt(6d);
+    double[] histogram = new double[36*8];
     // used to find the right bin for the class of rotated LBP features.
     static int[] binTranslate = new int[256];
+
 
     static {
         Arrays.fill(binTranslate, 0);
@@ -108,11 +113,15 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
      * @param image
      */
     private void extractWithRadiusOne(BufferedImage image) {
+        double o1,o2,o3;
+        int colorPos = 0;
         // first convert to intensity only.
         WritableRaster raster = ImageUtils.getGrayscaleImage(image).getRaster();
+        WritableRaster rasterColor = image.getRaster();
         // cached pixel array
         int[] pixel = new int[9];
         int[] pattern = new int[8];
+        int[] px = new int[3];
         // now fill histogram according to LBP definition.
         for (int x = 0; x < raster.getWidth() - 2; x++) {
             for (int y = 0; y < raster.getHeight() - 2; y++) {
@@ -126,7 +135,18 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
                 if (pixel[7] >= pixel[4]) pattern[5] = 1;
                 if (pixel[6] >= pixel[4]) pattern[6] = 1;
                 if (pixel[3] >= pixel[4]) pattern[7] = 1;
-                histogram[getBin(pattern)]++;
+
+                rasterColor.getPixel(x,y,px);
+                o1 = (double) (px[0] - px[1]) / sq2;
+                o2 = (double) (px[0] + px[1] - 2 * px[2]) / sq6;
+                o3 = (double) (px[0] + px[1] + px[2]) / sq3;
+                // Normalize ... easier to handle.
+                o1 = (o1 + 255d / sq2) / (510d / sq2);
+                o2 = (o2 + 510d / sq6) / (1020d / sq6);
+                o3 = o3 / (3d * 255d / sq3);
+                // get the array position.
+                colorPos = (int) Math.min(Math.floor(o1 * 2d), 1d) + (int) Math.min(Math.floor(o2 * 2d), 1d) * 2 + (int) Math.min(Math.floor(o3 * 2d), 1d) * 2* 2;
+                histogram[colorPos*36+getBin(pattern)]++;
             }
         }
         // normalize & quantize histogram.
@@ -135,7 +155,7 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
             max = Math.max(histogram[i], max);
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = Math.floor((histogram[i] / max) * 128);
+            histogram[i] = Math.floor((histogram[i] / max) * 8);
         }
     }
 
@@ -191,7 +211,7 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
 
     @Override
     public float getDistance(LireFeature feature) {
-        return (float) MetricsUtils.distL1(histogram, feature.getDoubleHistogram());
+        return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
     }
 
     @Override
