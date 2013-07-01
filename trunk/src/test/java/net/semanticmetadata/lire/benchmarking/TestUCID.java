@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 18:16
+ * Updated: 01.07.13 16:15
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.benchmarking;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
@@ -109,7 +110,7 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
-//                builder.addBuilder(new GenericDocumentBuilder(JointOpponentHistogram.class, "jop"));
+//                builder.addBuilder(new GenericDocumentBuilder(RankAndOpponent.class, "jop"));
 //                builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
 //                builder.addBuilder(new SurfDocumentBuilder());
 //                builder.addBuilder(new MSERDocumentBuilder());
@@ -118,7 +119,8 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
-//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
             }
@@ -175,7 +177,8 @@ public class TestUCID extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, "spjcd"), "SPJCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, SPFCTH.class, "spfcth"), "SPFCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, "spacc"), "SPACC ", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatterns.class, "lbp"), "LBP ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, SPLBP.class, "splbp"), "SPLBP ", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);

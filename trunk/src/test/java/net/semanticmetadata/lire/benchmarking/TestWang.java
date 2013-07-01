@@ -36,21 +36,18 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 19:37
+ * Updated: 01.07.13 16:15
  */
 
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.*;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.FCTH;
-import net.semanticmetadata.lire.imageanalysis.JCD;
+import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.FastOpponentImageSearcher;
-import net.semanticmetadata.lire.impl.ParallelImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
+import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
@@ -60,8 +57,7 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.IOContext;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.Bits;
 
 import java.io.*;
@@ -119,7 +115,7 @@ public class TestWang extends TestCase {
 //               builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //               builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //               builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-//               builder.addBuilder(new GenericDocumentBuilder(JointOpponentHistogram.class, "jop"));
+//               builder.addBuilder(new GenericDocumentBuilder(RankAndOpponent.class, "jop"));
 //               builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
 //               builder.addBuilder(new SurfDocumentBuilder());
 //               builder.addBuilder(new MSERDocumentBuilder());
@@ -129,7 +125,8 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
-//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
 
@@ -216,6 +213,9 @@ public class TestWang extends TestCase {
     }
 
     public void testMAP() throws IOException {
+        // copy index to ram to be much faster ...
+        IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
+
         System.out.println("hashFunctionsFileName\tmap\tp@10\terror rate");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L1;
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - L1");
@@ -231,15 +231,7 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1000), "FCTH");
 //        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1000), "JCD");
-//        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1000), "Joint Histogram");
-        long ms = System.currentTimeMillis();
-        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram");
-        ms = System.currentTimeMillis() - ms;
-        System.out.println("ms = " + ms);
-        ms = System.currentTimeMillis();
-        computeMAP(new FastOpponentImageSearcher(1000), "FastOpponentHistogram");
-        ms = System.currentTimeMillis() - ms;
-        System.out.println("ms = " + ms);
+        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram", reader);
 //        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "RGB Color Histogram");
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
@@ -248,12 +240,13 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createGaborImageSearcher(1000), "Gabor");
 //        computeMAP(ImageSearcherFactory.createLuminanceLayoutImageSearcher(1000), "LumLay");
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
-//        computeMAP(new GenericFastImageSearcher(1000, JointOpponentHistogram.class, "jop"), "JointOp Hist");
+//        computeMAP(new GenericFastImageSearcher(1000, RankAndOpponent.class, "jop"), "JointOp Hist");
 //        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, "spcedd"), "SPCEDD");
 //        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, "spfcth"), "SPFCTH");
 //        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, "spjcd"), "SPJCD");
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, "spacc"), "SPACC");
-//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp"), "LBP");
+        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp", true, reader), "LBP", reader);
+        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "jhl", reader );
 //        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP");
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, "splbp"), "SPLBP");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
@@ -263,10 +256,7 @@ public class TestWang extends TestCase {
 
     }
 
-    public void computeMAP(ImageSearcher searcher, String prefix) throws IOException {
-        // copy index to ram to be much faster ...
-        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
-
+    public void computeMAP(ImageSearcher searcher, String prefix, IndexReader reader) throws IOException {
         Pattern p = Pattern.compile("([0-9]+).jpg");
         double map = 0;
         double errorRate = 0d;

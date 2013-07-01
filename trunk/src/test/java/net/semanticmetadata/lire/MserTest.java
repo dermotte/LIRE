@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 08:43
+ * Updated: 01.07.13 15:48
  */
 
 package net.semanticmetadata.lire;
@@ -124,7 +124,7 @@ public class MserTest extends TestCase {
 //        String file = "C:\\Temp\\testImagelogos\\xml\\00\\00\\72330000.gif";
         String file = "C:\\Temp\\test.png";
         BufferedImage image = ImageUtils.createWorkingCopy(ImageIO.read(new FileInputStream(file)));
-        BufferedImage image1 = ImageUtils.convertImageToGrey(image);
+        BufferedImage image1 = ImageUtils.getGrayscaleImage(image);
         // extract features from image:
         MSER extractor = new MSER();
         List<MSERFeature> features = extractor.computeMSERFeatures(image1);
