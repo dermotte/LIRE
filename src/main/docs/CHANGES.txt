@@ -1,5 +1,12 @@
 CHANGES for LIRE
 ================
+
+2013-07-01
+==========
+  - Re-organized joint histograms
+  - Re-organized getGrayscaleImage(...)
+  - Re-coded trimWhiteSpace(...) in ImageUtils
+
 2013-06-25
 ==========
   - Mavenization of the project (Sandeep Gupta twitter.com/sangupta)
