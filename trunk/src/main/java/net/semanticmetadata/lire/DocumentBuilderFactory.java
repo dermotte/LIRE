@@ -36,12 +36,13 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 21.04.13 08:52
+ * Updated: 01.07.13 16:15
  */
 
 package net.semanticmetadata.lire;
 
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 
@@ -243,10 +244,10 @@ public class DocumentBuilderFactory {
     }
 
     /**
-     * Returns a new DocumentBuilder instance for the {@link net.semanticmetadata.lire.imageanalysis.JointHistogram} feature
+     * Returns a new DocumentBuilder instance for the {@link net.semanticmetadata.lire.imageanalysis.joint.JointHistogram} feature
      *
      * @return a new instance of the respective Builder
-     * @see net.semanticmetadata.lire.imageanalysis.JointHistogram
+     * @see net.semanticmetadata.lire.imageanalysis.joint.JointHistogram
      */
     public static DocumentBuilder getJointHistogramDocumentBuilder() {
         return new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM);
