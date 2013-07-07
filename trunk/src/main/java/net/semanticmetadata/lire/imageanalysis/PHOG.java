@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.05.13 10:52
+ * Updated: 07.07.13 09:05
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -57,9 +57,6 @@ import java.awt.image.Kernel;
  * @author Mathias Lux, mathias@juggle.at, 05.04.13
  */
 public class PHOG implements LireFeature {
-    static ConvolveOp sobelX = new ConvolveOp(new Kernel(3, 3, new float[]{1, 0, -1, 2, 0, -2, 1, 0, -1}));
-    static ConvolveOp sobelY = new ConvolveOp(new Kernel(3, 3, new float[]{1, 2, 1, 0, 0, 0, -1, -2, -1}));
-    static ConvolveOp gaussian = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 1.4f)));
     static ColorConvertOp grayscale = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
     int[] tmp255 = {255};
     int[] tmp128 = {128};
@@ -247,7 +244,8 @@ public class PHOG implements LireFeature {
         if (max > 0d) {
             for (int i = 0; i < result.length; i++) {
                 // quantize single values to xx steps to compress feature a little bit.
-                result[i] = Math.round(quantizationFactor * result[i] / max);
+                result[i] = Math.floor(quantizationFactor * result[i] / max);
+                result[i] = Math.min(quantizationFactor, result[i]);
             }
         }
         return result;

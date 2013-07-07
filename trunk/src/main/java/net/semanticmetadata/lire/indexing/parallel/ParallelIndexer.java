@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 07.07.13 08:52
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -410,7 +410,8 @@ public class ParallelIndexer implements Runnable {
                         writer.addDocument(d);
                     }
                 } catch (Exception e) {
-                    System.err.println("Could not handle file " + tmp.getFileName() + ": "  + e.getMessage());
+                    System.err.println("[ParallelIndexer] Could not handle file " + tmp.getFileName() + ": "  + e.getMessage());
+                    e.printStackTrace();
                 }
             }
 //            System.out.println("Images analyzed: " + count);

@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 07.07.13 09:27
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -82,7 +82,7 @@ public class TestGroundTruth extends TestCase {
     public String indexPath = "test-idx-large-hashed";
     private File fileList;
     //    private File truth = new File("E:\\Eval-WIPO\\filtered.txt");
-    private File truth = new File("C:\\Temp\\Eval-WIPO\\swoosh.txt");
+    private File truth = new File("C:\\Temp\\Eval-WIPO\\puma.txt");
     private HashSet<String> truthFiles = new HashSet<String>();
 
     public void testAll() throws IOException {
@@ -115,6 +115,7 @@ public class TestGroundTruth extends TestCase {
                 builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
                 builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
                 builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
+                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
 
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
@@ -143,6 +144,7 @@ public class TestGroundTruth extends TestCase {
                 builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
                 builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
                 builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
+                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
 
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
@@ -167,6 +169,7 @@ public class TestGroundTruth extends TestCase {
         getRecall("LocalBinaryPatterns (linear)", new GenericFastImageSearcher(50, LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true, reader), reader);
         getRecall("EdgeHistogram (linear)", new GenericFastImageSearcher(50, EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true, reader), reader);
         getRecall("Luminance Layout (linear)", new GenericFastImageSearcher(50, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true, reader), reader);
+        getRecall("BinaryPatternsPyramid (linear)", new GenericFastImageSearcher(50, BinaryPatternsPyramid.class, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, true, reader), reader);
 //
 
         getRecall("ColorLayout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_COLORLAYOUT, DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 1000), reader);
@@ -177,6 +180,7 @@ public class TestGroundTruth extends TestCase {
         getRecall("LocalBinaryPatterns (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "_hash", new LocalBinaryPatterns(), 1000), reader);
         getRecall("EdgeHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 1000), reader);
         getRecall("Luminance Layout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader);
+        getRecall("BinaryPatternsPyramid (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID + "_hash",new LocalBinaryPatterns(), 1000), reader);
     }
 
     /**

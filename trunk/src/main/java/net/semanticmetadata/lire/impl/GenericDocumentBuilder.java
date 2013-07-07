@@ -36,13 +36,14 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 18:57
+ * Updated: 07.07.13 08:47
  */
 package net.semanticmetadata.lire.impl;
 
 import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
 import net.semanticmetadata.lire.indexing.hashing.LocalitySensitiveHashing;
 import net.semanticmetadata.lire.utils.ImageUtils;
@@ -51,6 +52,7 @@ import org.apache.lucene.document.*;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
@@ -73,6 +75,9 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     // private LireFeature lireFeature;
     protected static HashingMode hashingMode = HashingMode.BitSampling;
 
+    public static HashMap<Class, String> fieldForClass = new HashMap<Class, String>();
+
+
     static {
         // Let's try to read the hash functions right here and we don't have to care about it right now.
         try {
@@ -82,6 +87,26 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
             System.err.println("Could not read hashes from file when first creating a GenericDocumentBuilder instance.");
             e.printStackTrace();
         }
+
+        // Setting up the class 2 field relation:
+        fieldForClass.put(AutoColorCorrelogram.class, FIELD_NAME_AUTOCOLORCORRELOGRAM);
+        fieldForClass.put(BinaryPatternsPyramid.class, FIELD_NAME_BINARY_PATTERNS_PYRAMID);
+        fieldForClass.put(CEDD.class, FIELD_NAME_CEDD);
+        fieldForClass.put(SimpleColorHistogram.class, FIELD_NAME_COLORHISTOGRAM);
+        fieldForClass.put(ColorLayout.class, FIELD_NAME_COLORLAYOUT);
+        fieldForClass.put(EdgeHistogram.class, FIELD_NAME_EDGEHISTOGRAM);
+        fieldForClass.put(FCTH.class, FIELD_NAME_FCTH);
+        fieldForClass.put(Gabor.class, FIELD_NAME_GABOR);
+        fieldForClass.put(JCD.class, FIELD_NAME_JCD);
+        fieldForClass.put(JointHistogram.class, FIELD_NAME_JOINT_HISTOGRAM);
+        fieldForClass.put(JpegCoefficientHistogram.class, FIELD_NAME_JPEGCOEFFS);
+        fieldForClass.put(LocalBinaryPatterns.class, FIELD_NAME_LOCAL_BINARY_PATTERNS);
+        fieldForClass.put(LuminanceLayout.class, FIELD_NAME_LUMINANCE_LAYOUT);
+        fieldForClass.put(OpponentHistogram.class, FIELD_NAME_OPPONENT_HISTOGRAM);
+        fieldForClass.put(PHOG.class, FIELD_NAME_PHOG);
+        fieldForClass.put(RotationInvariantLocalBinaryPatterns.class, FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS);
+        fieldForClass.put(ScalableColor.class, FIELD_NAME_SCALABLECOLOR);
+        fieldForClass.put(Tamura.class, FIELD_NAME_TAMURA);
     }
 
     // Decide between byte array version (fast) or string version (slow)
@@ -98,6 +123,30 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, String fieldName) {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldName;
+    }
+
+    /**
+     * Creating a new DocumentBuilder based on a class based on the interface
+     * {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     *
+     * @param descriptorClass has to implement {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     */
+    public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass) {
+        this.descriptorClass = descriptorClass;
+        this.fieldName = fieldForClass.get(descriptorClass);
+    }
+
+    /**
+     * Creating a new DocumentBuilder based on a class based on the interface
+     * {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     *
+     * @param descriptorClass has to implement {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
+     * @param hashing         set to true is you want to create an additional field for hashes based on BitSampling.
+     */
+    public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, boolean hashing) {
+        this.descriptorClass = descriptorClass;
+        this.fieldName = fieldForClass.get(descriptorClass);
+        hashingEnabled = hashing;
     }
 
     /**

@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 06.07.13 13:20
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -46,7 +46,6 @@ import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
 import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -104,8 +103,8 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
 
@@ -125,8 +124,9 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
+//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, "whog"));
+//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
 
@@ -231,8 +231,8 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1000), "Edge Histogram");
 //        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1000), "FCTH");
 //        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1000), "JCD");
-        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram", reader);
-//        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1000), "PHOG");
+//        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1000), "OpponentHistogram", reader);
+        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), "PHOG", reader);
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "RGB Color Histogram");
 //        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1000), "Scalable Color");
 
@@ -245,8 +245,8 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, "spfcth"), "SPFCTH");
 //        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, "spjcd"), "SPJCD");
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, "spacc"), "SPACC");
-        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp", true, reader), "LBP", reader);
-        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "jhl", reader );
+        computeMAP(new GenericFastImageSearcher(1000, BinaryPatternsPyramid.class, "whog", true, reader), "whog", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "jhl", reader );
 //        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP");
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, "splbp"), "SPLBP");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
