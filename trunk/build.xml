@@ -36,17 +36,17 @@
   ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
   ~  http://www.semanticmetadata.net/lire, http://www.lire-project.net
   ~
-  ~ Updated: 10.05.13 08:58
+  ~ Updated: 07.07.13 17:40
   -->
 
 <project name="Lire" default="compile" basedir=".">
     <description>
-        This buildfile is used to build and package the LIRE library.
+        This build file is used to build and package the LIRE library.
         The LIRE library allows the creation of a Lucene Index for
         content based image retrieval (CBIR). Furthermore methods
         for searching the index are provided.
 
-        This library is part of the Caliph and Emir project and aims
+        This library was part of the Caliph and Emir project and aims
         to provide the CBIR features to other Java projects in an
         easy and light weight way.
 
@@ -60,7 +60,7 @@
     <property name="config" value="src/main/config"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9.3"/>
+    <property name="versionstring" value="0.9.4 beta"/>
     <!-- path to test files -->
     <property name="test" value="test"/>
     <!-- path to documentation like README or CHANGES -->

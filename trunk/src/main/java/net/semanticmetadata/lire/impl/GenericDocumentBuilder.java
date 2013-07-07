@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.07.13 08:47
+ * Updated: 07.07.13 16:43
  */
 package net.semanticmetadata.lire.impl;
 
@@ -65,6 +65,7 @@ import java.util.logging.Logger;
  */
 public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     enum HashingMode {BitSampling, LSH}
+
     private boolean hashingEnabled = false;
     private Logger logger = Logger.getLogger(getClass().getName());
     public static final int MAX_IMAGE_DIMENSION = 1024;
@@ -76,6 +77,10 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     protected static HashingMode hashingMode = HashingMode.BitSampling;
 
     public static HashMap<Class, String> fieldForClass = new HashMap<Class, String>();
+    public static HashMap<String, Class> classForField = new HashMap<String, Class>();
+
+    public static final String HASH_FIELD_SUFFIX = "_hash";
+
 
 
     static {
@@ -107,6 +112,26 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         fieldForClass.put(RotationInvariantLocalBinaryPatterns.class, FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS);
         fieldForClass.put(ScalableColor.class, FIELD_NAME_SCALABLECOLOR);
         fieldForClass.put(Tamura.class, FIELD_NAME_TAMURA);
+
+        // Setting up the field 2 class relation:
+        classForField.put(FIELD_NAME_AUTOCOLORCORRELOGRAM, AutoColorCorrelogram.class);
+        classForField.put(FIELD_NAME_BINARY_PATTERNS_PYRAMID, BinaryPatternsPyramid.class);
+        classForField.put(FIELD_NAME_CEDD, CEDD.class);
+        classForField.put(FIELD_NAME_COLORHISTOGRAM, SimpleColorHistogram.class);
+        classForField.put(FIELD_NAME_COLORLAYOUT, ColorLayout.class);
+        classForField.put(FIELD_NAME_EDGEHISTOGRAM, EdgeHistogram.class);
+        classForField.put(FIELD_NAME_FCTH, FCTH.class);
+        classForField.put(FIELD_NAME_GABOR, Gabor.class);
+        classForField.put(FIELD_NAME_JCD, JCD.class);
+        classForField.put(FIELD_NAME_JOINT_HISTOGRAM, JointHistogram.class);
+        classForField.put(FIELD_NAME_JPEGCOEFFS, JpegCoefficientHistogram.class);
+        classForField.put(FIELD_NAME_LOCAL_BINARY_PATTERNS, LocalBinaryPatterns.class);
+        classForField.put(FIELD_NAME_LUMINANCE_LAYOUT, LuminanceLayout.class);
+        classForField.put(FIELD_NAME_OPPONENT_HISTOGRAM, OpponentHistogram.class);
+        classForField.put(FIELD_NAME_PHOG, PHOG.class);
+        classForField.put(FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS, RotationInvariantLocalBinaryPatterns.class);
+        classForField.put(FIELD_NAME_SCALABLECOLOR, ScalableColor.class);
+        classForField.put(FIELD_NAME_TAMURA, Tamura.class);
     }
 
     // Decide between byte array version (fast) or string version (slow)
@@ -211,7 +236,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
                     } else {
                         hashes = LocalitySensitiveHashing.generateHashes(lireFeature.getDoubleHistogram());
                     }
-                    result[1] = new TextField(fieldName + "_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES);
+                    result[1] = new TextField(fieldName + HASH_FIELD_SUFFIX, SerializationUtils.arrayToString(hashes), Field.Store.YES);
                 } else
                     System.err.println("Could not create hashes, feature vector too long: " + lireFeature.getDoubleHistogram().length + " (" + lireFeature.getClass().getName() + ")");
             }
@@ -225,26 +250,27 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
 
     /**
      * Creates a fully fledged Document to be added to a Lucene index.
+     *
      * @param image      the image to index. Cannot be NULL.
      * @param identifier an id for the image, for instance the filename or an URL. Can be NULL.
      * @return
      */
     public Document createDocument(BufferedImage image, String identifier) {
         assert (image != null);
-        
+
         // sangupta: create a new document else code below
         // will throw a NPE
         Document doc = new Document();
-        
+
         if (identifier != null) {
             doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
         }
-        
+
         Field[] fields = createDescriptorFields(image);
         for (int i = 0; i < fields.length; i++) {
             doc.add(fields[i]);
         }
-        
+
         return doc;
     }
 }
