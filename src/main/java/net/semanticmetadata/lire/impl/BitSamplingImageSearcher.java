@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.06.13 14:36
+ * Updated: 07.07.13 16:44
  */
 
 package net.semanticmetadata.lire.impl;
@@ -63,6 +63,7 @@ import java.util.TreeSet;
  * HashingMode. First a number of candidates is retrieved from the index, then the candidates are re-ranked.
  * The number of candidates can be tuned with the numHashedResults parameter in the constructor. The higher
  * this parameter, the better the results, but the slower the search.
+ *
  * @author Mathias Lux, mathias@juggle.at, 2013-04-12
  */
 
@@ -75,16 +76,57 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
 
     /**
      * Creates a new searcher for BitSampling based hashes.
-     * @param maximumHits how many hits the searcher shall return.
+     *
+     * @param maximumHits      how many hits the searcher shall return.
      * @param featureFieldName the field hashFunctionsFileName of the feature.
-     * @param hashesFieldName the field hashFunctionsFileName of the hashes.
-     * @param feature an instance of the feature.
+     * @param hashesFieldName  the field hashFunctionsFileName of the hashes.
+     * @param feature          an instance of the feature.
      */
     public BitSamplingImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
         this.feature = feature;
+        try {
+            BitSampling.readHashFunctions();
+        } catch (IOException e) {
+            System.err.println("Error reading hash functions from default location.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates a new searcher for BitSampling based hashes. The field names are inferred from the entries in {@link GenericDocumentBuilder}
+     *
+     * @param maximumHits how many hits the searcher shall return.
+     * @param feature     an instance of the feature.
+     */
+    public BitSamplingImageSearcher(int maximumHits, LireFeature feature) {
+        this.maximumHits = maximumHits;
+        this.featureFieldName = GenericDocumentBuilder.fieldForClass.get(feature.getClass());
+        this.hashesFieldName = featureFieldName + GenericDocumentBuilder.HASH_FIELD_SUFFIX;
+        this.feature = feature;
+        try {
+            BitSampling.readHashFunctions();
+        } catch (IOException e) {
+            System.err.println("Error reading hash functions from default location.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates a new searcher for BitSampling based hashes. The field names are inferred from the entries in {@link GenericDocumentBuilder}
+     *
+     * @param maximumHits      how many hits the searcher shall return.
+     * @param feature          an instance of the feature.
+     * @param numHashedResults the number of candidate results retrieved from the index before re-ranking.
+     */
+    public BitSamplingImageSearcher(int maximumHits, LireFeature feature, int numHashedResults) {
+        this.maximumHits = maximumHits;
+        this.featureFieldName = GenericDocumentBuilder.fieldForClass.get(feature.getClass());
+        this.hashesFieldName = featureFieldName + GenericDocumentBuilder.HASH_FIELD_SUFFIX;
+        this.feature = feature;
+        maxResultsHashBased = numHashedResults;
         try {
             BitSampling.readHashFunctions();
         } catch (IOException e) {
@@ -185,7 +227,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
                     reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).offset,
                     reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).length);
             tmpScore = queryFeature.getDistance(feature);
-            assert(tmpScore>=0);
+            assert (tmpScore >= 0);
             if (resultScoreDocs.size() < maximumHits) {
                 resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
                 maxDistance = Math.max(maxDistance, tmpScore);
@@ -199,7 +241,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
                 maxDistance = resultScoreDocs.last().getDistance();
             }
         }
-        assert(resultScoreDocs.size()<=maximumHits);
+        assert (resultScoreDocs.size() <= maximumHits);
         return new SimpleImageSearchHits(resultScoreDocs, maxDistance);
     }
 
