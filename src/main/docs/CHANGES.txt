@@ -1,6 +1,16 @@
 CHANGES for LIRE
 ================
 
+2013-07-07
+==========
+  - Added new, easier constructor to GenericDocumentBuilder.
+  - Fixed bug in quantization of PHOG histograms.
+  - Updated to commons math 3.2
+
+2013-07-06
+==========
+  - Added BinaryPatternsPyramid
+
 2013-07-01
 ==========
   - Re-organized joint histograms

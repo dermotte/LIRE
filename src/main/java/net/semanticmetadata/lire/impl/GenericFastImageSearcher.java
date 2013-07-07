@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 18:37
+ * Updated: 07.07.13 09:09
  */
 package net.semanticmetadata.lire.impl;
 
@@ -170,6 +170,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         float tmpDistance;
         int docs = reader.numDocs();
         if (!isCaching) {
+            // we read each and every document from the index and then we compare it to the query.
             for (int i = 0; i < docs; i++) {
                 if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
@@ -195,6 +196,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
                 }
             }
         } else {
+            // we use the in-memory cache to find the matching docs from the index.
             int count = 0;
             for (Iterator<byte[]> iterator = featureCache.iterator(); iterator.hasNext(); ) {
                 cachedInstance.setByteArrayRepresentation(iterator.next());
@@ -202,7 +204,6 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
                     count++;
                     continue; // if it is deleted, just ignore it.
                 } else {
-//                    cachedInstance.setByteArrayRepresentation(next);
                     tmpDistance = lireFeature.getDistance(cachedInstance);
                     assert (tmpDistance >= 0);
                     // if it is the first document:

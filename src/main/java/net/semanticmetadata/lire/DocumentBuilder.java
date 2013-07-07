@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 12:18
+ * Updated: 07.07.13 08:40
  */
 
 package net.semanticmetadata.lire;
@@ -48,6 +48,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * <h2>Creating an Index</h2>
@@ -86,35 +87,35 @@ import java.io.InputStream;
 public interface DocumentBuilder {
     public static final int MAX_IMAGE_SIDE_LENGTH = 800;
 
-    public static final String FIELD_NAME_SCALABLECOLOR = "descriptorScalableColor";
+    public static final String FIELD_NAME_AUTOCOLORCORRELOGRAM = "featureAutoColorCorrelogram";
+    public static final String FIELD_NAME_BINARY_PATTERNS_PYRAMID ="feat_bpp";
+    public static final String FIELD_NAME_CEDD = "featureCEDD";
+    public static final String FIELD_NAME_COLORHISTOGRAM = "featureColorHistogram";
     public static final String FIELD_NAME_COLORLAYOUT = "descriptorColorLayout";
     public static final String FIELD_NAME_EDGEHISTOGRAM = "descriptorEdgeHistogram";
-    public static final String FIELD_NAME_AUTOCOLORCORRELOGRAM = "featureAutoColorCorrelogram";
-    public static final String FIELD_NAME_COLORHISTOGRAM = "featureColorHistogram";
-    public static final String FIELD_NAME_CEDD = "featureCEDD";
     public static final String FIELD_NAME_FCTH = "featureFCTH";
-    public static final String FIELD_NAME_JCD = "featureJCD";
-    public static final String FIELD_NAME_TAMURA = "featureTAMURA";
     public static final String FIELD_NAME_GABOR = "featureGabor";
+    public static final String FIELD_NAME_IDENTIFIER = "descriptorImageIdentifier";
+    public static final String FIELD_NAME_JCD = "featureJCD";
+    public static final String FIELD_NAME_JOINT_HISTOGRAM = "featureJointHist";
+    public static final String FIELD_NAME_JPEGCOEFFS = "featureJpegCoeffs";
+    public static final String FIELD_NAME_LOCAL_BINARY_PATTERNS = "featLBP";
+    public static final String FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
+    public static final String FIELD_NAME_MSER = "featureMSER";
+    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM = "featureMSERHistogram";
+    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureMSERHistogramVWords";
+    public static final String FIELD_NAME_OPPONENT_HISTOGRAM = "featOpHist";
+    public static final String FIELD_NAME_PHOG = "featPHOG";
+    public static final String FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS = "featRILBP";
+    public static final String FIELD_NAME_SCALABLECOLOR = "descriptorScalableColor";
     public static final String FIELD_NAME_SIFT = "featureSift";
     public static final String FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM = "featureSiftHistogram";
     public static final String FIELD_NAME_SIFT_VISUAL_WORDS = "featureSiftHistogramVWords";
-    public static final String FIELD_NAME_IDENTIFIER = "descriptorImageIdentifier";
-    public static final String FIELD_NAME_COLORLAYOUT_FAST = "featureColorLayoutfast";
     public static final String FIELD_NAME_SURF = "featureSurf";
     public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSURFHistogram";
     public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
-    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM = "featureMSERHistogram";
-    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureMSERHistogramVWords";
-    public static final String FIELD_NAME_MSER = "featureMSER";
-    public static final String FIELD_NAME_BASIC_FEATURES = "featureBasic";
-    public static final String FIELD_NAME_JPEGCOEFFS = "featureJpegCoeffs";
-    public static final String FIELD_NAME_JOINT_HISTOGRAM = "featureJointHist";
-    public static final String FIELD_NAME_OPPONENT_HISTOGRAM = "featOpHist";
-    public static final String FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
-    public static final String FIELD_NAME_PHOG = "featPHOG";
-    public static final String FIELD_NAME_LOCAL_BINARY_PATTERNS = "featLBP";
-    public static final String FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS = "featRILBP";
+    public static final String FIELD_NAME_TAMURA = "featureTAMURA";
+
 
 
     /**
