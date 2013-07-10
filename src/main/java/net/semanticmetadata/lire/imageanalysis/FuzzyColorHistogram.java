@@ -130,8 +130,12 @@ public class FuzzyColorHistogram implements LireFeature {
         descriptorValues = SerializationUtils.toIntArray(in, offset, length);
     }
 
+    /**
+     * by patch contributed by Franz Graf, franz.graf@gmail.com
+     * @return the feature vector as double[]
+     */
     public double[] getDoubleHistogram() {
-        throw new UnsupportedOperationException("Not implemented!");
+        return SerializationUtils.toDoubleArray(descriptorValues);
     }
 
 
