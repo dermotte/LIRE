@@ -376,5 +376,19 @@ public class SerializationUtils {
         }
         return result;
     }
+
+    /**
+     * Create a double[] from an int[]<br/>
+     * by patch contributed by Franz Graf, franz.graf@gmail.com
+     * @param ints the int array
+     * @return a new array of doubles
+     */
+    public static double[] toDoubleArray(int[] ints) {
+        double[] result = new double[ints.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = (double) ints[i];
+}
+        return result;
+    }
 }
 

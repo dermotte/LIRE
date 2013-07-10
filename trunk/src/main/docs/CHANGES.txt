@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-07-10
+==========
+  - Added getDoubleHistogram to FuzzyColorHistogram (by patch contributed by Franz Graf, franz.graf@gmail.com)
+
 2013-07-07
 ==========
   - Added new, easier constructor to GenericDocumentBuilder.
