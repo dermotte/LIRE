@@ -49,6 +49,8 @@ import net.semanticmetadata.lire.utils.LuceneUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.Bits;
 
@@ -150,7 +152,7 @@ public abstract class LocalFeatureHistogramBuilder {
             pm.setProgress(5);
             pm.setNote("Starting clustering");
         }
-        if (features.size() < numClusters) {
+        if (k.getFeatureCount() < numClusters) {
             // this cannot work. You need more data points than clusters.
             throw new UnsupportedOperationException("Only " + features.size() + " features found to cluster in " + numClusters + ". Try to use less clusters or more images.");
         }
@@ -269,8 +271,9 @@ public abstract class LocalFeatureHistogramBuilder {
                     f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
                     tmpHist[clusterForFeature((Histogram) f)]++;
                 }
-                d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
-                d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.NO));
+                normalize(tmpHist);
+                d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+                d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
                 // now write the new one. we use the identifier to update ;)
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
             }
@@ -298,10 +301,21 @@ public abstract class LocalFeatureHistogramBuilder {
             f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
             tmpHist[clusterForFeature((Histogram) f)]++;
         }
-        d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
-        d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.NO));
+        normalize(tmpHist);
+        d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+        d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
         d.removeFields(localFeatureFieldName);
         return d;
+    }
+
+    private void normalize(int[] histogram) {
+        int max = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            max = Math.max(max, histogram[i]);
+        }
+        for (int i = 0; i < histogram.length; i++) {
+            histogram[i] = (int) Math.floor(((double) histogram[i]*15d)/(double) max);
+        }
     }
 
     /**
@@ -400,8 +414,9 @@ public abstract class LocalFeatureHistogramBuilder {
                         f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
                         tmpHist[clusterForFeature((Histogram) f)]++;
                     }
-                    d.add(new Field(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.NO, Field.Index.ANALYZED));
-                    d.add(new Field(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES, Field.Index.ANALYZED));
+                    normalize(tmpHist);
+                    d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+                    d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
 
                     // remove local features to save some space if requested:
                     if (DELETE_LOCAL_FEATURES) {
@@ -432,4 +447,5 @@ public abstract class LocalFeatureHistogramBuilder {
     public void setProgressMonitor(ProgressMonitor pm) {
         this.pm = pm;
     }
+
 }

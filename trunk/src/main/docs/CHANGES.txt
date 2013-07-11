@@ -7,6 +7,7 @@ CHANGES for LIRE
   - Updated GenericDocumentBuilder and GenericFastImageSearcher to reflect the changes
   - Updated documentation in several classes
   - deprecated GenericImageSearcher
+  - Added histogram quantization to LocalFeatureHistogramBuilder & fixed bug in feature counting.
 
 2013-07-10
 ==========
