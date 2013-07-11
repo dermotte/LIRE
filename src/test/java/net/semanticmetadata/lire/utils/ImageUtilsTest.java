@@ -44,6 +44,8 @@ package net.semanticmetadata.lire.utils;
 import junit.framework.TestCase;
 
 import javax.imageio.ImageIO;
+import java.awt.color.ColorSpace;
+import java.awt.image.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -78,6 +80,34 @@ public class ImageUtilsTest extends TestCase {
 
     public void testTrim() throws IOException {
         ImageIO.write(ImageUtils.trimWhiteSpace(ImageIO.read(new File("test_trim.png"))), "png", new File("out-trim.png"));
+    }
+
+    public void testSobel() throws IOException {
+        float[] sobelX = {
+                -1, 0, 1,
+                -2, 0, 2,
+                -1, 0, 1,
+        };
+        BufferedImage image = ImageIO.read(new File("test.jpg"));
+        ColorConvertOp grayScaleOp = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
+        BufferedImage grayImage = grayScaleOp.filter(image, null);
+        BufferedImageOp op = new ConvolveOp( new Kernel(3, 3, sobelX) );
+        BufferedImage result = op.filter(grayImage, null);
+        WritableRaster r = result.getRaster();
+        int[] pixel = new int[r.getWidth()];
+        double countEdgePixels = 0;
+        for (int y = 0; y<r.getHeight();y++) {
+//            System.out.println("y = " + y);
+            r.getPixels(0, y, r.getWidth(),1, pixel);
+            for (int i = 0; i < pixel.length; i++) {
+                // create some stat out of the energy ...
+                if (pixel[i] > 128) {
+                    countEdgePixels++;
+                }
+            }
+        }
+        System.out.printf("Edge pixel ratio = %4.4f\n", countEdgePixels/(double) (r.getWidth()*r.getHeight()));
+        ImageIO.write(result, "png", new File("out.png"));
     }
 
     public void testThreshold() throws IOException {
