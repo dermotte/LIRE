@@ -32,12 +32,15 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 11.07.13 10:27
  */
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.correlogram.DynamicProgrammingAutoCorrelogramExtraction;
 import net.semanticmetadata.lire.imageanalysis.correlogram.IAutoCorrelogramFeatureExtractor;
 import net.semanticmetadata.lire.imageanalysis.correlogram.MLuxAutoCorrelogramExtraction;
@@ -456,5 +459,15 @@ public class AutoColorCorrelogram implements LireFeature {
                 correlogram[i][j] = Float.parseFloat(st.nextToken());
             }
         }
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Auto Color Correlogram";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM;
     }
 }

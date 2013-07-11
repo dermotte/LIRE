@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 19.05.13 13:45
+ * Updated: 11.07.13 10:39
  */
 
 package net.semanticmetadata.lire.imageanalysis.spatialpyramid;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.JCD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
@@ -167,5 +168,15 @@ public class SPJCD implements LireFeature {
     @Override
     public void setStringRepresentation(String s) {
         throw new UnsupportedOperationException("Not implemented!");
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "JCD Spatial Pyramid";
+    }
+
+    @Override
+    public String getFieldName() {
+        return "f_spjcd";
     }
 }

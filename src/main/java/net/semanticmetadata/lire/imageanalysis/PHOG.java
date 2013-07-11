@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.07.13 09:05
+ * Updated: 11.07.13 10:07
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -369,5 +370,15 @@ public class PHOG implements LireFeature {
     @Override
     public void setStringRepresentation(String s) {
 
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "PHOG";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_PHOG;
     }
 }

@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 11.07.13 10:38
  */
 
 package net.semanticmetadata.lire.imageanalysis.joint;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
@@ -183,5 +184,13 @@ public class JointHistogram extends Histogram implements LireFeature {
         return MetricsUtils.jsd(((JointHistogram) feature).descriptor, descriptor);
     }
 
+    @Override
+    public String getFeatureName() {
+        return "Joint Histogram Rank RBG";
+    }
 
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM;
+    }
 }

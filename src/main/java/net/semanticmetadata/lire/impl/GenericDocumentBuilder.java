@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.07.13 16:43
+ * Updated: 11.07.13 10:51
  */
 package net.semanticmetadata.lire.impl;
 
@@ -159,6 +159,13 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass) {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldForClass.get(descriptorClass);
+        if (fieldName == null) {
+            try {
+                fieldName = descriptorClass.newInstance().getFieldName();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -171,6 +178,13 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, boolean hashing) {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldForClass.get(descriptorClass);
+        if (fieldName == null) {
+            try {
+                fieldName = descriptorClass.newInstance().getFieldName();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         hashingEnabled = hashing;
     }
 

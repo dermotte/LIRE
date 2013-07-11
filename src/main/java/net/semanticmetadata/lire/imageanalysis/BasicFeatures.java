@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 11.07.13 10:34
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -282,4 +284,13 @@ public class BasicFeatures implements LireFeature {
         energy = Float.parseFloat(values[7]);
     }
 
+    @Override
+    public String getFeatureName() {
+        return "BasicFeatures";
+    }
+
+    @Override
+    public String getFieldName() {
+        return "f_baf";
+    }
 }

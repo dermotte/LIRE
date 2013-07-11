@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.05.13 09:46
+ * Updated: 11.07.13 10:51
  */
 package net.semanticmetadata.lire.impl;
 
@@ -66,6 +66,7 @@ import java.util.logging.Logger;
  * <br>Time: 00:17:02
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @deprecated
  */
 public class GenericImageSearcher extends AbstractImageSearcher {
     protected Logger logger = Logger.getLogger(getClass().getName());

@@ -36,9 +36,11 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.05.13 09:46
+ * Updated: 11.07.13 10:32
  */
 package net.semanticmetadata.lire.imageanalysis;
+
+import net.semanticmetadata.lire.DocumentBuilder;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -226,5 +228,13 @@ public class JCD implements LireFeature {
 
     }
 
+    @Override
+    public String getFeatureName() {
+        return "JCD";
+    }
 
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_JCD;
+    }
 }

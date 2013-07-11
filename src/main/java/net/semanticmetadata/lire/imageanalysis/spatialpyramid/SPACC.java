@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 11.07.13 10:41
  */
 
 package net.semanticmetadata.lire.imageanalysis.spatialpyramid;
@@ -145,5 +147,15 @@ public class SPACC implements LireFeature {
     @Override
     public void setStringRepresentation(String s) {
         throw new UnsupportedOperationException("Not implemented!");
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Auto Color Correlogram Spatial Pyramid";
+    }
+
+    @Override
+    public String getFieldName() {
+        return "f_spacc";
     }
 }
