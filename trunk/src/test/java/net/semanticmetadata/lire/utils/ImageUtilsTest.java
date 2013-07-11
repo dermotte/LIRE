@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:56
+ * Updated: 11.07.13 09:32
  */
 
 package net.semanticmetadata.lire.utils;
@@ -79,4 +79,9 @@ public class ImageUtilsTest extends TestCase {
     public void testTrim() throws IOException {
         ImageIO.write(ImageUtils.trimWhiteSpace(ImageIO.read(new File("test_trim.png"))), "png", new File("out-trim.png"));
     }
+
+    public void testThreshold() throws IOException {
+        ImageIO.write(ImageUtils.thresholdImage(ImageIO.read(new File("testdata/wang-1000/0.jpg")), 128), "png", new File("out.png"));
+    }
+
 }

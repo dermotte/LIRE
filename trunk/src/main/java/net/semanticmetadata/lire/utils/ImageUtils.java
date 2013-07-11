@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:58
+ * Updated: 11.07.13 09:32
  */
 
 package net.semanticmetadata.lire.utils;
@@ -246,6 +246,28 @@ public class ImageUtils {
         for (int i = 0; i < kernel.length; i++)
             kernel[i] /= sum;
         return kernel;
+    }
+
+    /**
+     * Converts an image (RGB, RGBA, ... whatever) to a binary one based on given threshold
+     * @param image the image to convert. Remains untouched.
+     * @param threshold the threshold in [0,255]
+     * @return a new BufferedImage instance of TYPE_BYTE_GRAY with only 0'S and 255's
+     */
+    public static BufferedImage thresholdImage(BufferedImage image, int threshold) {
+        BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        result.getGraphics().drawImage(image, 0, 0, null);
+        WritableRaster raster = result.getRaster();
+        int[] pixels = new int[image.getWidth()];
+        for (int y = 0; y < image.getHeight(); y++) {
+            raster.getPixels(0, y, image.getWidth(), 1, pixels);
+            for (int i = 0; i < pixels.length; i++) {
+                if (pixels[i] < threshold) pixels[i] = 0;
+                else pixels[i] = 255;
+            }
+            raster.setPixels(0, y, image.getWidth(), 1, pixels);
+        }
+        return result;
     }
 
 }
