@@ -7,6 +7,10 @@ CHANGES for LIRE
 
 2013-07-07
 ==========
+  - Added thresholding in ImageUtils
+
+2013-07-07
+==========
   - Added new, easier constructor to GenericDocumentBuilder.
   - Fixed bug in quantization of PHOG histograms.
   - Updated to commons math 3.2
