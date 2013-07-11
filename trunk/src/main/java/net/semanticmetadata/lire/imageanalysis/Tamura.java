@@ -32,13 +32,16 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 11.07.13 10:33
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -354,5 +357,15 @@ public class Tamura implements LireFeature {
                 throw new IndexOutOfBoundsException("Too few numbers in string representation.");
             histogram[i] = Double.parseDouble(st.nextToken());
         }
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Tamura Features";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_TAMURA;
     }
 }

@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 23.06.13 16:47
+ * Updated: 11.07.13 10:36
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -192,5 +193,15 @@ public class OpponentHistogram extends Histogram implements LireFeature {
             descriptor[i] = Integer.parseInt(st.nextToken());
         }
 
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "OpponentHistogram";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM;
     }
 }

@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 14:46
+ * Updated: 11.07.13 10:45
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.*;
@@ -202,5 +203,15 @@ public class LuminanceLayout implements LireFeature {
             coeffs[i] = Math.floor(coeffs[i] / factor * 63d + 63d);
         }
         return coeffs;
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Luminance Layout";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT;
     }
 }

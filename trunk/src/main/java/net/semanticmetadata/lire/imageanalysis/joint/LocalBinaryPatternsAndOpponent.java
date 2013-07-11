@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 11.07.13 10:36
  */
 
 package net.semanticmetadata.lire.imageanalysis.joint;
@@ -222,5 +222,15 @@ public class LocalBinaryPatternsAndOpponent implements LireFeature {
     @Override
     public void setStringRepresentation(String s) {
         throw new UnsupportedOperationException("Not implemented!");
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "LBP Opponent Joint Histogram";
+    }
+
+    @Override
+    public String getFieldName() {
+        return "f_jhlbpopp";
     }
 }

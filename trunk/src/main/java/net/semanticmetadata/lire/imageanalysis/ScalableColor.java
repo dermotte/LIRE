@@ -32,13 +32,16 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 11.07.13 10:38
  */
 package net.semanticmetadata.lire.imageanalysis;
 
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.mpeg7.ScalableColorImpl;
 import net.semanticmetadata.lire.utils.ConversionUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
@@ -100,5 +103,15 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
             result[i] = haarTransformedHistogram[i];
         }
         return ConversionUtils.toDouble(result);
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "MPEG-7 Scalable Color";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_SCALABLECOLOR;
     }
 }

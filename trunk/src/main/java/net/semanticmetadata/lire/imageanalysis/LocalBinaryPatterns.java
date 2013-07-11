@@ -36,14 +36,16 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 15:48
+ * Updated: 11.07.13 10:31
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
+import javax.swing.event.DocumentEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
@@ -168,5 +170,15 @@ public class LocalBinaryPatterns implements LireFeature {
     @Override
     public void setStringRepresentation(String s) {
         throw new UnsupportedOperationException("Not implemented!");
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Local Binary Patterns";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS;
     }
 }

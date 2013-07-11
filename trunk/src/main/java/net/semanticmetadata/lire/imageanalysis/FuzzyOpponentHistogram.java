@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 15:48
+ * Updated: 11.07.13 10:33
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -243,5 +244,15 @@ public class FuzzyOpponentHistogram extends Histogram implements LireFeature {
             descriptor[i] = Integer.parseInt(st.nextToken());
         }
 
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Fuzzy Opponent Histogram";
+    }
+
+    @Override
+    public String getFieldName() {
+        return "f_fuzopphis";
     }
 }

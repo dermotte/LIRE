@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 20.04.13 10:19
+ * Updated: 11.07.13 10:31
  */
 package net.semanticmetadata.lire.imageanalysis;
 
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.mpeg7.EdgeHistogramImplementation;
 import net.semanticmetadata.lire.utils.ConversionUtils;
 
@@ -109,5 +110,15 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
  */
     public double[] getDoubleHistogram() {
         return ConversionUtils.toDouble(edgeHistogram);
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "MPEG-7 Edge Histogram";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM;
     }
 }

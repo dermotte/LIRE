@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 11.07.13 09:58
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -50,19 +52,77 @@ import java.awt.image.BufferedImage;
  * @author Mathias Lux, mathias@juggle.at
  */
 public interface LireFeature {
-    public void extract(BufferedImage bimg);
+    /**
+     * Gives a descriptive name of the feature, i.e. a name to show up in benchmarks, menus, UIs, etc.
+     * @return the name of the feature.
+     */
+    public String getFeatureName();
 
+    /**
+     * Returns the preferred field name for indexing.
+     * @return the field name preferred for indexing in a Lucene index.
+     */
+    public String getFieldName();
+
+    /**
+     * Extracts the feature vector from a BufferedImage.
+     * @param image the source image
+     */
+    public void extract(BufferedImage image);
+
+    /**
+     * Returns a compact byte[] based representation of the feature vector.
+     * @return a compact byte[] array containing the feature vector.
+     * @see net.semanticmetadata.lire.imageanalysis.LireFeature#setByteArrayRepresentation(byte[])
+     */
     public byte[] getByteArrayRepresentation();
 
-    public void setByteArrayRepresentation(byte[] in);
+    /**
+     * Sets the feature vector values based on the byte[] data. Use
+     * {@link net.semanticmetadata.lire.imageanalysis.LireFeature#getByteArrayRepresentation()}
+     * to generate a compatible byte[] array.
+     * @param featureData the byte[] data.
+     * @see net.semanticmetadata.lire.imageanalysis.LireFeature#getByteArrayRepresentation()
+     */
+    public void setByteArrayRepresentation(byte[] featureData);
 
-    public void setByteArrayRepresentation(byte[] in, int offset, int length);
+    /**
+     * Sets the feature vector values based on the byte[] data.
+     * Use {@link net.semanticmetadata.lire.imageanalysis.LireFeature#getByteArrayRepresentation()}
+     * to generate a compatible byte[] array.
+     * @param featureData the byte[] array containing the data.
+     * @param offset the offset, i.e. where the feature vector starts.
+     * @param length the length of the data representing the feature vector.
+     * @see net.semanticmetadata.lire.imageanalysis.LireFeature#getByteArrayRepresentation()
+     */
+    public void setByteArrayRepresentation(byte[] featureData, int offset, int length);
 
+    /**
+     * Convenience method to get the feature vector as double[] array. This method is used by
+     * classifiers, etc.
+     * @return the feature vector as a double[] array.
+     */
     public double[] getDoubleHistogram();
 
+    /**
+     * The distance function for this type of feature
+     * @param feature the feature vector to compare the current instance to.
+     * @return the distance (or dissimilarity) between the instance and the parameter.
+     */
     float getDistance(LireFeature feature);
 
+    /**
+     * Legacy method from a time, when feature vectors were stored as Strings in Lucene. This is not
+     * recommended, as Strings are immutable and therefore a lot of uneccessary object instances are created.
+     * @return the feature vector as String.
+     */
     java.lang.String getStringRepresentation();
 
-    void setStringRepresentation(java.lang.String s);
+    /**
+     * Legacy method from a time, when feature vectors were stored as Strings in Lucene. This is not
+     * recommended, as Strings are immutable and therefore a lot of uneccessary object instances are created.
+     * @param featureVector
+     * @see net.semanticmetadata.lire.imageanalysis.LireFeature#getStringRepresentation()
+     */
+    void setStringRepresentation(java.lang.String featureVector);
 }

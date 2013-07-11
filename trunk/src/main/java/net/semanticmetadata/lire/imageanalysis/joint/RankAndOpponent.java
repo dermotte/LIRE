@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 11.07.13 10:36
  */
 
 package net.semanticmetadata.lire.imageanalysis.joint;
@@ -193,5 +193,13 @@ public class RankAndOpponent extends Histogram implements LireFeature {
         return MetricsUtils.jsd(((RankAndOpponent) feature).descriptor, descriptor);
     }
 
+    @Override
+    public String getFeatureName() {
+        return "Rank Opponent Joint Histogram";
+    }
 
+    @Override
+    public String getFieldName() {
+        return "f_jhropp";
+    }
 }

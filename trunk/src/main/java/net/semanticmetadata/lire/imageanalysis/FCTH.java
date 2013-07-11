@@ -36,10 +36,11 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.05.13 09:46
+ * Updated: 11.07.13 10:31
  */
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.fcth.*;
 
 import java.awt.image.BufferedImage;
@@ -378,7 +379,7 @@ public class FCTH implements LireFeature {
                 if (histogram[i] != 0) position = -1;
             }
         }
-        if (position <0) position = histogram.length -1;
+        if (position < 0) position = histogram.length - 1;
         // find out the actual length. two values in one byte, so we have to round up.
         int length = (position + 1) / 2;
         if ((position + 1) % 2 == 1) length = position / 2 + 1;
@@ -484,6 +485,16 @@ public class FCTH implements LireFeature {
                 throw new IndexOutOfBoundsException("Too few numbers in string representation.");
             histogram[i] = Integer.parseInt(st.nextToken());
         }
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "FCTH";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_FCTH;
     }
 }
 

@@ -36,11 +36,12 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 15:48
+ * Updated: 11.07.13 10:37
  */
 
 package net.semanticmetadata.lire.imageanalysis;
 
+import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -202,5 +203,15 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
     @Override
     public void setStringRepresentation(String s) {
         throw new UnsupportedOperationException("Not implemented!");
+    }
+
+    @Override
+    public String getFeatureName() {
+        return "Rotation Invariant LBP";
+    }
+
+    @Override
+    public String getFieldName() {
+        return DocumentBuilder.FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS;
     }
 }

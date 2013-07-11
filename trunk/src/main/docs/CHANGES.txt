@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2013-07-11
+==========
+  - Added name and field name methods to LireFeature interface to simplify creation of builders and searchers.
+  - Updated GenericDocumentBuilder and GenericFastImageSearcher to reflect the changes
+  - Updated documentation in several classes
+  - deprecated GenericImageSearcher
+
 2013-07-10
 ==========
   - Added getDoubleHistogram to FuzzyColorHistogram (by patch contributed by Franz Graf, franz.graf@gmail.com)
