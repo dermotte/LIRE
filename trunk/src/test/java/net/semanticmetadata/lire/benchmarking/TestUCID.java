@@ -78,8 +78,8 @@ public class TestUCID extends TestCase {
     private String indexPath = "ucid-index";
     // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
-    private String testExtensive = "E:\\ucid.v2\\png";
-    private final String groundTruth = "E:\\ucid.v2\\ucid.v2.groundtruth.txt";
+    private String testExtensive = "testdata/UCID/png";
+    private final String groundTruth = "testdata/UCID/ucid.v2.groundtruth.txt";
 
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
@@ -87,9 +87,9 @@ public class TestUCID extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-//        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
+        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
-        parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive, true) {
+        parallelIndexer = new ParallelIndexer(16, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
