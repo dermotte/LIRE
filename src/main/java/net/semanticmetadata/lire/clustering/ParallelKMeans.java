@@ -60,7 +60,7 @@ public class ParallelKMeans extends KMeans {
      * Re-shuffle all features.
      */
     protected void reOrganizeFeatures() {
-        int numThreads = 4;
+        int numThreads = 8;
         int step = features.size() / numThreads;
         LinkedList<FeatureToClass> tasks = new LinkedList<FeatureToClass>();
         LinkedList<Thread> threads = new LinkedList<Thread>();
@@ -80,7 +80,7 @@ public class ParallelKMeans extends KMeans {
             try {
                 next.join();
             } catch (InterruptedException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
         }
         for (Iterator<FeatureToClass> iterator = tasks.iterator(); iterator.hasNext(); ) {

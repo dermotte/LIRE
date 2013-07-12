@@ -43,6 +43,7 @@ package net.semanticmetadata.lire.imageanalysis.bovw;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
+import net.semanticmetadata.lire.clustering.ParallelKMeans;
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -83,11 +84,12 @@ public abstract class LocalFeatureHistogramBuilder {
     protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String clusterFile = "./clusters.dat";
     public static boolean DELETE_LOCAL_FEATURES = true;
+    private boolean useParallelClustering = true;
 
 
-    public LocalFeatureHistogramBuilder(IndexReader reader) {
-        this.reader = reader;
-    }
+//    public LocalFeatureHistogramBuilder(IndexReader reader) {
+//        this.reader = reader;
+//    }
 
     /**
      * Creates a new instance of the LocalFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
@@ -129,7 +131,9 @@ public abstract class LocalFeatureHistogramBuilder {
         df.setMaximumFractionDigits(3);
         // find the documents for building the vocabulary:
         HashSet<Integer> docIDs = selectVocabularyDocs();
-        KMeans k = new KMeans(numClusters);
+        KMeans k;
+        if (useParallelClustering) k = new ParallelKMeans(numClusters);
+        else k = new KMeans(numClusters);
         // fill the KMeans object:
         LinkedList<double[]> features = new LinkedList<double[]>();
         // Needed for check whether the document is deleted.
@@ -234,15 +238,17 @@ public abstract class LocalFeatureHistogramBuilder {
         }
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(95);
-            pm.setNote("Indexing finished");
+            pm.setNote("Indexing finished, optimizing index now.");
         }
 
         System.out.println(getDuration(time));
         iw.commit();
+        // this one does the "old" commit(), it removes the deleted SURF features.
+        iw.forceMerge(1);
         iw.close();
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(100);
-            pm.setNote("Indexing finished");
+            pm.setNote("Indexing & optimization finished");
             pm.close();
         }
         System.out.println("Finished.");
@@ -314,7 +320,7 @@ public abstract class LocalFeatureHistogramBuilder {
             max = Math.max(max, histogram[i]);
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = (int) Math.floor(((double) histogram[i]*15d)/(double) max);
+            histogram[i] = (int) Math.floor(((double) histogram[i] * 15d) / (double) max);
         }
     }
 
@@ -448,4 +454,21 @@ public abstract class LocalFeatureHistogramBuilder {
         this.pm = pm;
     }
 
+    /**
+     * Indicates whether parallel k-means is applied (true) or just the
+     * single threaded implementation (false)
+     * @return true is parallel k-means
+     */
+    public boolean getUseParallelClustering() {
+        return useParallelClustering;
+    }
+
+    /**
+     * Indicates whether parallel k-means is applied (true) or just the
+     * single threaded implementation (false)
+     * @param useParallelClustering set to true if parallel processing should be used.
+     */
+    public void setUseParallelClustering(boolean useParallelClustering) {
+        this.useParallelClustering = useParallelClustering;
+    }
 }

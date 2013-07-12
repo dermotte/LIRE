@@ -43,6 +43,7 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.ColorLayout;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -55,6 +56,7 @@ import java.util.logging.Logger;
  * <br>Time: 13:03:30
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @deprecated no longer needed, will be deleted.
  */
 public class DocumentFactory {
     // create the logger for this factory:
@@ -85,7 +87,7 @@ public class DocumentFactory {
         logger.fine("Extraction from image finished");
         Document doc = new Document();
         if (sc != null)
-            doc.add(new Field(DocumentBuilder.FIELD_NAME_COLORLAYOUT, sc, Field.Store.YES, Field.Index.NO));
+            doc.add(new StringField(DocumentBuilder.FIELD_NAME_COLORLAYOUT, sc, Field.Store.YES));
         return doc;
     }
 }

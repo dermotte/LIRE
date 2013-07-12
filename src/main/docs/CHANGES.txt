@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2013-07-12
+==========
+  - deprecated DocumentFactory
+  - Added forceMerge(1) to LocalFeatureHistogramBuilder (as reported to be needed by
+    James Charters, me@jamescharters.info)
+  - Set parallel k-means as default in LocalFeatureHistogramBuilder
+
 2013-07-11
 ==========
   - Added name and field name methods to LireFeature interface to simplify creation of builders and searchers.
