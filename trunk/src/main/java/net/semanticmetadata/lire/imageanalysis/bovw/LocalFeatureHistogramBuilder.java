@@ -87,9 +87,9 @@ public abstract class LocalFeatureHistogramBuilder {
     private boolean useParallelClustering = true;
 
 
-//    public LocalFeatureHistogramBuilder(IndexReader reader) {
-//        this.reader = reader;
-//    }
+    public LocalFeatureHistogramBuilder(IndexReader reader) {
+        this.reader = reader;
+    }
 
     /**
      * Creates a new instance of the LocalFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
