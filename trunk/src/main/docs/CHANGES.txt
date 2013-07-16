@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-07-16
+==========
+  - Fixed bug in JCD serialization.
+
 2013-07-12
 ==========
   - deprecated DocumentFactory

@@ -58,10 +58,11 @@ import java.util.Iterator;
  */
 public class PHOGTest extends TestCase {
     public void testExtraction() throws IOException {
-        BufferedImage img = ImageIO.read(new File("testdata\\ferrari\\black\\2828686873_2fa36f83d7_b.jpg"));
+        BufferedImage img = ImageIO.read(new File("munch.jpg"));
 //        BufferedImage img = ImageIO.read(new File("test.jpg"));
         PHOG p = new PHOG();
         p.extract(img);
+        System.out.println(Arrays.toString(p.getDoubleHistogram()));
         byte[] bytes = p.getByteArrayRepresentation();
         PHOG g = new PHOG();
         g.setByteArrayRepresentation(bytes, 0, bytes.length);

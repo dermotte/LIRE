@@ -93,4 +93,15 @@ public class JCDTest extends TestCase {
         System.out.println(save * 100 + "% saved");
 
     }
+
+    public void testSerialization() throws IOException {
+        JCD f = new JCD();
+        String testFile = "D:\\DataSets\\WIPO-CA\\converted-0\\1006049.png";
+        f.extract(ImageIO.read(new File(testFile)));
+        JCD f2 = new JCD();
+        f2.setByteArrayRepresentation(f.getByteArrayRepresentation());
+        System.out.println(Arrays.toString(f.getDoubleHistogram()));
+        System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+        System.out.println(f.getDistance(f2));
+    }
 }
