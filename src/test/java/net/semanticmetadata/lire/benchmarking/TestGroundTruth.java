@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.07.13 09:27
+ * Updated: 16.07.13 14:58
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -82,8 +82,13 @@ public class TestGroundTruth extends TestCase {
     public String indexPath = "test-idx-large-hashed";
     private File fileList;
     //    private File truth = new File("E:\\Eval-WIPO\\filtered.txt");
-    private File truth = new File("C:\\Temp\\Eval-WIPO\\puma.txt");
-    private HashSet<String> truthFiles = new HashSet<String>();
+    private File[] truths = {
+            new File("C:\\Temp\\Eval-WIPO\\landrover.txt"),
+            new File("C:\\Temp\\Eval-WIPO\\lidl.txt"),
+            new File("C:\\Temp\\Eval-WIPO\\puma.txt"),
+            new File("C:\\Temp\\Eval-WIPO\\sony.txt"),
+            new File("C:\\Temp\\Eval-WIPO\\swoosh.txt"),
+    };
 
     public void testAll() throws IOException {
         testIndexing();
@@ -93,7 +98,7 @@ public class TestGroundTruth extends TestCase {
     public void testIndexing() {
 //        fileList = new File("E:\\Eval-WIPO\\ca.txt");
         fileList = new File("C:\\Temp\\Eval-WIPO\\ca-5000.txt");
-        ParallelIndexer pin = new ParallelIndexer(6, indexPath, fileList, true) {
+        ParallelIndexer pin = new ParallelIndexer(4, indexPath, fileList, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
@@ -122,9 +127,10 @@ public class TestGroundTruth extends TestCase {
             }
         };
         pin.run();
-        pin = new ParallelIndexer(3, indexPath, truth, false) {
-            @Override
-            public void addBuilders(ChainedDocumentBuilder builder) {
+        for (File truth : truths) {
+            pin = new ParallelIndexer(3, indexPath, truth, false) {
+                @Override
+                public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
@@ -136,29 +142,26 @@ public class TestGroundTruth extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 
-                builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
-                builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
-                builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
-                builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
-                builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
-                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
-                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
+                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
+                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
+                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
+                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
+                    builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
 
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
-            }
-        };
-        pin.run();
+                }
+            };
+            pin.run();
+        }
     }
 
     public void testSearchBenchmark() throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(truth));
-        String line;
-        while ((line = br.readLine()) != null) {
-            truthFiles.add(line);
-        }
+
         System.out.printf("%s\t%s\t%s\t%s\t%s\t%s\n", "Test", "recall@5", "recall@10", "recall@20", "recall@30", "recall@50");
         IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
         getRecall("ColorLayout (linear)", new GenericFastImageSearcher(50, ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true, reader), reader);
@@ -171,7 +174,6 @@ public class TestGroundTruth extends TestCase {
         getRecall("Luminance Layout (linear)", new GenericFastImageSearcher(50, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true, reader), reader);
         getRecall("BinaryPatternsPyramid (linear)", new GenericFastImageSearcher(50, BinaryPatternsPyramid.class, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, true, reader), reader);
 //
-
         getRecall("ColorLayout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_COLORLAYOUT, DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 1000), reader);
         getRecall("PHOG (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_PHOG, DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 1000), reader);
         getRecall("JCD (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_JCD, DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 1000), reader);
@@ -180,7 +182,7 @@ public class TestGroundTruth extends TestCase {
         getRecall("LocalBinaryPatterns (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "_hash", new LocalBinaryPatterns(), 1000), reader);
         getRecall("EdgeHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 1000), reader);
         getRecall("Luminance Layout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader);
-        getRecall("BinaryPatternsPyramid (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID + "_hash",new LocalBinaryPatterns(), 1000), reader);
+        getRecall("BinaryPatternsPyramid (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID + "_hash", new LocalBinaryPatterns(), 1000), reader);
     }
 
     /**
@@ -191,37 +193,51 @@ public class TestGroundTruth extends TestCase {
      * @return
      * @throws IOException
      */
-    private double getRecall(String prefix, ImageSearcher is, IndexReader reader) throws IOException {
-        BufferedReader br = new BufferedReader(new FileReader(truth));
-        String line = null;
-        StringBuilder sb = new StringBuilder(128);
-        double count = 0, sum = 0;
-        double p5=0, p10=0, p20=0, p30=0, p50=0;
-        while ((line = br.readLine()) != null) {
-            sum = 0;
-            BufferedImage bimg = ImageIO.read(new File(line));
-            ImageSearchHits hits = is.search(bimg, reader);
-//            saveImageResultsToPng("result-" + line.substring(line.lastIndexOf("\\")+1, line.length()-4), hits, line);
-            for (int i = 0; i < Math.min(50, hits.length()); i++) {
-                Document d = hits.doc(i);
-                String fileName = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
-                if (truthFiles.contains(fileName)) {
-                    sum += 1;
-                    sb.append('*');
-                } else sb.append('.');
-                if (i + 1 == 5)  p5 += sum / (double) truthFiles.size();
-                if (i + 1 == 10) p10 += sum / (double) truthFiles.size();
-                if (i + 1 == 20) p20 += sum / (double) truthFiles.size();
-                if (i + 1 == 30) p30 += sum / (double) truthFiles.size();
-                if (i + 1 == 50) p50 += sum / (double) truthFiles.size();
+    private void getRecall(String prefix, ImageSearcher is, IndexReader reader) throws IOException {
+        double ap5 = 0, ap10 = 0, ap20 = 0, ap30 = 0, ap50 = 0;
+        for (File truth : truths) {
+            HashSet<String> truthFiles = new HashSet<String>();
+            BufferedReader br = new BufferedReader(new FileReader(truth));
+            String line;
+            while ((line = br.readLine()) != null) {
+                truthFiles.add(line);
             }
-            sb.append(" - " + line);
-//            System.out.println(sb);
-            sb.delete(0, sb.length());
-            count++;
+            br.close();
+
+            br = new BufferedReader(new FileReader(truth));
+            StringBuilder sb = new StringBuilder(128);
+            double count = 0, sum;
+            double p5 = 0, p10 = 0, p20 = 0, p30 = 0, p50 = 0;
+            while ((line = br.readLine()) != null) {
+                sum = 0;
+                BufferedImage bimg = ImageIO.read(new File(line));
+                ImageSearchHits hits = is.search(bimg, reader);
+//            saveImageResultsToPng("result-" + line.substring(line.lastIndexOf("\\")+1, line.length()-4), hits, line);
+                for (int i = 0; i < Math.min(50, hits.length()); i++) {
+                    Document d = hits.doc(i);
+                    String fileName = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+                    if (truthFiles.contains(fileName)) {
+                        sum += 1;
+                        sb.append('*');
+                    } else sb.append('.');
+                    if (i + 1 == 5) p5 += sum / (double) truthFiles.size();
+                    if (i + 1 == 10) p10 += sum / (double) truthFiles.size();
+                    if (i + 1 == 20) p20 += sum / (double) truthFiles.size();
+                    if (i + 1 == 30) p30 += sum / (double) truthFiles.size();
+                    if (i + 1 == 50) p50 += sum / (double) truthFiles.size();
+                }
+                sb.append(" - " + line);
+                sb.delete(0, sb.length());
+                count++;
+            }
+            ap5 += p5 / count;
+            ap10 += p10 / count;
+            ap20 += p20 / count;
+            ap30 += p30 / count;
+            ap50 += p50 / count;
         }
-        System.out.printf("%s\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n", prefix, p5/count, p10/count, p20/count, p30/count, p50/count);
-        return sum / (20d * count);
+        System.out.printf("%s\t%3.2f\t%3.2f\t%3.2f\t%3.2f\t%3.2f\n", prefix, ap5 / (double) truths.length, ap10 / (double) truths.length,
+                ap20 / (double) truths.length, ap30 / (double) truths.length, ap50 / (double) truths.length);
     }
 
     public static void saveImageResultsToPng(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
