@@ -105,13 +105,9 @@ public class JCD implements LireFeature {
         }
         if (position <0) position = data.length -1;
         // find out the actual length. two values in one byte, so we have to round up.
-        int length = (position + 1) / 2;
-        if ((position + 1) % 2 == 1) length = position / 2 + 1;
-        byte[] result = new byte[length];
-        for (int i = 0; i < result.length; i++) {
-            tmp = ((int) (data[(i << 1)] * 2)) << 4;
-            tmp = (tmp | ((int) (data[(i << 1) + 1] * 2)));
-            result[i] = (byte) (tmp - 128);
+        byte[] result = new byte[position];
+        for (int i = 0; i < position; i++) {
+            result[i] = (byte) (data[i]*2);
         }
         return result;
     }
@@ -123,20 +119,13 @@ public class JCD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if (in.length * 2 < data.length) Arrays.fill(data, in.length * 2, data.length - 1, 0);
-        for (int i = 0; i < in.length; i++) {
-            tmp = in[i] + 128;
-            data[(i << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
-            data[i << 1] = ((double) (tmp >> 4)) / 2d;
-        }
+        setByteArrayRepresentation(in, 0, in.length);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length - 1, 0);
+        if (length < data.length) Arrays.fill(data, length, data.length - 1, 0);
         for (int i = offset; i < offset + length; i++) {
-            tmp = in[i] + 128;
-            data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F)) / 2d;
-            data[(i - offset) << 1] = ((double) (tmp >> 4)) / 2d;
+            data[i] = ((double) in[i]) / 2;
         }
     }
 

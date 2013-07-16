@@ -49,9 +49,22 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class EdgeHistogramTest extends TestCase {
+
+    public void testSingleFile() throws IOException {
+        EdgeHistogram e = new EdgeHistogram();
+        e.extract(ImageIO.read(new File("wipo_us_ken.jpg")));
+        System.out.println(Arrays.toString(e.getDoubleHistogram()));
+        System.out.println(Arrays.toString(e.getByteArrayRepresentation()));
+
+        e.extract(ImageIO.read(new File("wipo_us_fita.jpg")));
+        System.out.println(Arrays.toString(e.getDoubleHistogram()));
+        System.out.println(Arrays.toString(e.getByteArrayRepresentation()));
+    }
+
     public void testExtraction() throws IOException {
         ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
         for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
@@ -64,6 +77,19 @@ public class EdgeHistogramTest extends TestCase {
             System.out.println(" = " + eh1.getStringRepresentation());
             eh2.setByteArrayRepresentation(eh1.getByteArrayRepresentation());
             assertTrue(eh2.getDistance(eh1) == 0);
+        }
+    }
+
+    public void testSerialization() throws IOException, IllegalAccessException, InstantiationException {
+        LireFeature f = new EdgeHistogram();
+        String[] testFiles = new String[]{"D:/DataSets/WIPO-CA/converted-0/1005695.png", "D:/DataSets/WIPO-CA/converted-0/1005630.png", "D:/DataSets/WIPO-CA/converted-0/1006004.png", "D:/DataSets/WIPO-CA/converted-0/1005308.png", "D:/DataSets/WIPO-CA/converted-0/1005278.png", "D:/DataSets/WIPO-CA/converted-0/1006651.png", "D:/DataSets/WIPO-CA/converted-0/1006378.png", "D:/DataSets/WIPO-CA/converted-0/1006632.png", "D:/DataSets/WIPO-CA/converted-0/1006319.png", "D:/DataSets/WIPO-CA/converted-0/1007021.png", "D:/DataSets/WIPO-CA/converted-0/1006098.png", "D:/DataSets/WIPO-CA/converted-0/1006137.png", "D:/DataSets/WIPO-CA/converted-0/1007031.png", "D:/DataSets/WIPO-CA/converted-0/1005937.png", "D:/DataSets/WIPO-CA/converted-0/1006049.png", "D:/DataSets/WIPO-CA/converted-0/1006924.png", "D:/DataSets/WIPO-CA/converted-0/1006802.png", "D:/DataSets/WIPO-CA/converted-0/1007111.png", "D:/DataSets/WIPO-CA/converted-0/1006414.png", "D:/DataSets/WIPO-CA/converted-0/1007145.png", "D:/DataSets/WIPO-CA/converted-0/1006519.png", "D:/DataSets/WIPO-CA/converted-0/1005212.png", "D:/DataSets/WIPO-CA/converted-0/1005197.png", "D:/DataSets/WIPO-CA/converted-0/1007491.png", "D:/DataSets/WIPO-CA/converted-0/1006857.png", "D:/DataSets/WIPO-CA/converted-0/1006965.png", "D:/DataSets/WIPO-CA/converted-0/1006476.png", "D:/DataSets/WIPO-CA/converted-0/1007877.png", "D:/DataSets/WIPO-CA/converted-0/1006686.png", "D:/DataSets/WIPO-CA/converted-0/1004292.png", "D:/DataSets/WIPO-CA/converted-0/1007058.png", "D:/DataSets/WIPO-CA/converted-0/1004147.png", "D:/DataSets/WIPO-CA/converted-0/1007882.png", "D:/DataSets/WIPO-CA/converted-0/1007481.png", "D:/DataSets/WIPO-CA/converted-0/1007331.png", "D:/DataSets/WIPO-CA/converted-0/1007823.png", "D:/DataSets/WIPO-CA/converted-0/1008111.png", "D:/DataSets/WIPO-CA/converted-0/1007062.png", "D:/DataSets/WIPO-CA/converted-0/1007748.png", "D:/DataSets/WIPO-CA/converted-0/1007480.png", "D:/DataSets/WIPO-CA/converted-0/1001747.png", "D:/DataSets/WIPO-CA/converted-0/1005164.png", "D:/DataSets/WIPO-CA/converted-0/1004069.png", "D:/DataSets/WIPO-CA/converted-0/1008277.png"};
+        for (String testFile : testFiles) {
+            f.extract(ImageIO.read(new File(testFile)));
+            LireFeature f2 = f.getClass().newInstance();
+            f2.setByteArrayRepresentation(f.getByteArrayRepresentation());
+//            System.out.println(Arrays.toString(f.getDoubleHistogram()));
+//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+            assertEquals(f2.getDistance(f), 0d, 0.000000001);
         }
     }
 }
