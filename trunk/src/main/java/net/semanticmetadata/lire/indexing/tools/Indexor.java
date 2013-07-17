@@ -190,7 +190,7 @@ public class Indexor {
      * @throws ClassNotFoundException
      */
     private void readFile(IndexWriter indexWriter, File inputFile) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        BufferedInputStream in = new BufferedInputStream(new GZIPInputStream(new FileInputStream(inputFile)));
+        InputStream in = new GZIPInputStream(new FileInputStream(inputFile));
         byte[] tempInt = new byte[4];
         int tmp, tmpFeature;
         count = 0;
@@ -203,7 +203,7 @@ public class Indexor {
             in.read(temp, 0, tmp);
             String filename = new String(temp, 0, tmp);
             // normalize Filename to full path.
-            filename = inputFile.getCanonicalPath().substring(0, inputFile.getCanonicalPath().lastIndexOf(inputFile.getName())) + filename;
+//            filename = inputFile.getCanonicalPath().substring(0, inputFile.getCanonicalPath().lastIndexOf(inputFile.getName())) + filename;
             d.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, filename, Field.Store.YES));
 //            System.out.print(filename);
             while ((tmpFeature = in.read()) < 255) {

@@ -75,11 +75,14 @@ public class GeneralTest extends TestCase {
             "img06.JPG", "img07.JPG", "img08.JPG", "error.jpg"};
     private String testFilesPath = "./src/test/resources/images/";
     private String indexPath = "test-index";
-    private String testExtensive = "./wang-1000";
+    private String testExtensive = "./testdata/wang-1000";
     private Class[] featureClasses = new Class[]{
             CEDD.class, FCTH.class, JCD.class, AutoColorCorrelogram.class, ColorLayout.class, EdgeHistogram.class,
             Gabor.class, JpegCoefficientHistogram.class,
-            ScalableColor.class, SimpleColorHistogram.class, Tamura.class, FuzzyColorHistogram.class, PHOG.class
+            ScalableColor.class,
+            SimpleColorHistogram.class,
+            OpponentHistogram.class, LocalBinaryPatterns.class, RotationInvariantLocalBinaryPatterns.class, BinaryPatternsPyramid.class, LuminanceLayout.class,
+            Tamura.class, FuzzyColorHistogram.class, PHOG.class
     };
 
     private DocumentBuilder[] builders = new DocumentBuilder[]{
@@ -300,97 +303,97 @@ public class GeneralTest extends TestCase {
         String fieldName = DocumentBuilder.FIELD_NAME_COLORLAYOUT;
         LireFeature feature = new ColorLayout();
         String indexPath = "E:\\acmgc-cl-idx";
-        System.out.println("Tests for feature " + fieldName + " with k="+k + " - weighting by rank sum: " + weightByRank);
+        System.out.println("Tests for feature " + fieldName + " with k=" + k + " - weighting by rank sum: " + weightByRank);
         System.out.println("========================================");
         HashMap<String, Integer> tag2count = new HashMap<String, Integer>(k);
         HashMap<String, Double> tag2weight = new HashMap<String, Double>(k);
         int c = 9;   // used for just one class ...
 //        for (int c = 0; c < 10; c++) {
-            String classIdentifier = classes[c];
-            String listFiles = "D:\\DataSets\\Yahoo-GC\\test\\" + classIdentifier + ".txt";
+        String classIdentifier = classes[c];
+        String listFiles = "D:\\DataSets\\Yahoo-GC\\test\\" + classIdentifier + ".txt";
 
-            // INIT
-            int[] confusion = new int[10];
-            Arrays.fill(confusion, 0);
-            HashMap<String, Integer> class2id = new HashMap<String, Integer>(10);
-            for (int i = 0; i < classes.length; i++)
-                class2id.put(classes[i], i);
+        // INIT
+        int[] confusion = new int[10];
+        Arrays.fill(confusion, 0);
+        HashMap<String, Integer> class2id = new HashMap<String, Integer>(10);
+        for (int i = 0; i < classes.length; i++)
+            class2id.put(classes[i], i);
 
-            BufferedReader br = new BufferedReader(new FileReader(listFiles));
-            String line;
-            IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
-            // in-memory linear search
+        BufferedReader br = new BufferedReader(new FileReader(listFiles));
+        String line;
+        IndexReader ir = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
+        // in-memory linear search
 //            ImageSearcher bis = new GenericFastImageSearcher(k, feature.getClass(), fieldName, true, ir);
-            // hashing based searcher
-            BitSamplingImageSearcher bis = new BitSamplingImageSearcher(k, fieldName, fieldName + "_hash", feature, 1000);
-            ImageSearchHits hits;
-            int count = 0, countCorrect = 0;
-            long ms = System.currentTimeMillis();
-            while ((line = br.readLine()) != null) {
-                try {
-                    tag2count.clear();
-                    tag2weight.clear();
-                    hits = bis.search(ImageIO.read(new File(line)), ir);
-                    // set tag weights and counts.
-                    for (int l = 0; l < k; l++) {
-                        String tag = getTag(hits.doc(l));
-                        if (tag2count.get(tag) == null) tag2count.put(tag, 1);
-                        else tag2count.put(tag, tag2count.get(tag) + 1);
-                        if (weightByRank) {
-                            if (tag2weight.get(tag) == null) tag2weight.put(tag, (double) l);
-                            else tag2weight.put(tag, (double) l + tag2weight.get(tag));
-                        } else {
-                            if (tag2weight.get(tag) == null) tag2weight.put(tag, Double.valueOf(hits.score(l)));
-                            else tag2weight.put(tag, (double) l + hits.score(l));
-                        }
+        // hashing based searcher
+        BitSamplingImageSearcher bis = new BitSamplingImageSearcher(k, fieldName, fieldName + "_hash", feature, 1000);
+        ImageSearchHits hits;
+        int count = 0, countCorrect = 0;
+        long ms = System.currentTimeMillis();
+        while ((line = br.readLine()) != null) {
+            try {
+                tag2count.clear();
+                tag2weight.clear();
+                hits = bis.search(ImageIO.read(new File(line)), ir);
+                // set tag weights and counts.
+                for (int l = 0; l < k; l++) {
+                    String tag = getTag(hits.doc(l));
+                    if (tag2count.get(tag) == null) tag2count.put(tag, 1);
+                    else tag2count.put(tag, tag2count.get(tag) + 1);
+                    if (weightByRank) {
+                        if (tag2weight.get(tag) == null) tag2weight.put(tag, (double) l);
+                        else tag2weight.put(tag, (double) l + tag2weight.get(tag));
+                    } else {
+                        if (tag2weight.get(tag) == null) tag2weight.put(tag, Double.valueOf(hits.score(l)));
+                        else tag2weight.put(tag, (double) l + hits.score(l));
                     }
-                    // find class:
-                    int maxCount = 0, maxima = 0;
-                    String classifiedAs = null;
+                }
+                // find class:
+                int maxCount = 0, maxima = 0;
+                String classifiedAs = null;
+                for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
+                    String tag = tagIterator.next();
+                    if (tag2count.get(tag) > maxCount) {
+                        maxCount = tag2count.get(tag);
+                        maxima = 1;
+                        classifiedAs = tag;
+                    } else if (tag2count.get(tag) == maxCount) {
+                        maxima++;
+                    }
+                }
+                // if there are two or more classes with the same number of results, then we take a look at the weights.
+                // else the class is alread given in classifiedAs.
+                if (maxima > 1) {
+                    double minWeight = Double.MAX_VALUE;
                     for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
                         String tag = tagIterator.next();
-                        if (tag2count.get(tag) > maxCount) {
-                            maxCount = tag2count.get(tag);
-                            maxima = 1;
+                        if (tag2weight.get(tag) < minWeight) {
+                            minWeight = tag2weight.get(tag);
                             classifiedAs = tag;
-                        } else if (tag2count.get(tag) == maxCount) {
-                            maxima++;
                         }
                     }
-                    // if there are two or more classes with the same number of results, then we take a look at the weights.
-                    // else the class is alread given in classifiedAs.
-                    if (maxima > 1) {
-                        double minWeight = Double.MAX_VALUE;
-                        for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
-                            String tag = tagIterator.next();
-                            if (tag2weight.get(tag) < minWeight) {
-                                minWeight = tag2weight.get(tag);
-                                classifiedAs = tag;
-                            }
-                        }
-                    }
-//                    if (tag2.equals(tag3)) tag1 = tag2;
-                    count++;
-                    if (classifiedAs.equals(classIdentifier)) countCorrect++;
-                    // confusion:
-                    confusion[class2id.get(classifiedAs)]++;
-//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
                 }
+//                    if (tag2.equals(tag3)) tag1 = tag2;
+                count++;
+                if (classifiedAs.equals(classIdentifier)) countCorrect++;
+                // confusion:
+                confusion[class2id.get(classifiedAs)]++;
+//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
+        }
 //            System.out.println("Results for class " + classIdentifier);
-            System.out.printf("Class\tAvg. Precision\tCount Test Images\tms per test\n");
-            System.out.printf("%s\t%4.5f\t%10d\t%4d\n", classIdentifier, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
-            System.out.printf("Confusion\t");
+        System.out.printf("Class\tAvg. Precision\tCount Test Images\tms per test\n");
+        System.out.printf("%s\t%4.5f\t%10d\t%4d\n", classIdentifier, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+        System.out.printf("Confusion\t");
 //            for (int i = 0; i < classes.length; i++) {
 //                System.out.printf("%s\t", classes[i]);
 //            }
 //            System.out.println();
-            for (int i = 0; i < classes.length; i++) {
-                System.out.printf("%d\t", confusion[i]);
-            }
-            System.out.println();
+        for (int i = 0; i < classes.length; i++) {
+            System.out.printf("%d\t", confusion[i]);
+        }
+        System.out.println();
 //        }
     }
 
@@ -398,5 +401,22 @@ public class GeneralTest extends TestCase {
         StringBuilder ab = new StringBuilder(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].replace("E:\\I:\\ACM_complete_dataset\\", ""));
         return ab.substring(0, ab.indexOf("\\")).toString();
     }
+
+    public void testReUse() throws IOException, IllegalAccessException, InstantiationException {
+        ArrayList<String> testFiles = FileUtils.getAllImages(new File("testdata/ferrari"), true);
+        for (Class c : featureClasses) {
+            LireFeature f1 = (LireFeature) c.newInstance();
+            System.out.println(c.getName());
+            for (String testFile : testFiles) {
+                f1.extract(ImageIO.read(new File(testFile)));
+                LireFeature f2 = (LireFeature) c.newInstance();
+                f2.extract(ImageIO.read(new File(testFile)));
+//                System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+//                System.out.println(Arrays.toString(f2.getDoubleHistogram()));
+                assertEquals(f2.getDistance(f1), 0d, 0.000000001);
+            }
+        }
+    }
+
 
 }

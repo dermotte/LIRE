@@ -78,8 +78,12 @@ public class JpegCoefficientHistogram implements LireFeature {
 
 
     public void extract(BufferedImage bimg) {
-        if (bimg.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB)
-            throw new UnsupportedOperationException("Invalid color space (need RGB)");
+        if (bimg.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB)  {
+            BufferedImage img = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_INT_RGB);
+            img.getGraphics().drawImage(bimg, 0, 0, null);
+            bimg = img;
+        }
+
 
         transform = createTransformArray();
 

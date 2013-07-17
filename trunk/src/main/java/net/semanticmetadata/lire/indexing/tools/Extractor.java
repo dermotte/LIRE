@@ -48,10 +48,7 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Properties;
+import java.util.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -92,7 +89,6 @@ public class Extractor implements Runnable {
             "net.semanticmetadata.lire.imageanalysis.Tamura",                // 12
             "net.semanticmetadata.lire.imageanalysis.LuminanceLayout",       // 13
             "net.semanticmetadata.lire.imageanalysis.PHOG",                  // 14
-            "net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD"  // 15
     };
 
     public static final String[] featureFieldNames = new String[]{
@@ -111,7 +107,6 @@ public class Extractor implements Runnable {
             DocumentBuilder.FIELD_NAME_TAMURA,               // 12
             DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,     // 13
             DocumentBuilder.FIELD_NAME_PHOG,                  // 14
-            "spcedd"                  // 14
     };
 
     static HashMap<String, Integer> feature2index;
@@ -263,15 +258,15 @@ public class Extractor implements Runnable {
         int bufferCount = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileList));
-            BufferedOutputStream dos = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outFile)));
+            OutputStream dos = new GZIPOutputStream(new FileOutputStream(outFile));
             String file = null;
             String outFilePath = outFile.getCanonicalPath();
-            outFilePath = outFilePath.substring(0, outFilePath.lastIndexOf(outFile.getName()));
+//            outFilePath = outFilePath.substring(0, outFilePath.lastIndexOf(outFile.getName()));
             long ms = System.currentTimeMillis();
             int count=0;
             while ((file = br.readLine()) != null) {
                 File input = new File(file);
-                String relFile = input.getCanonicalPath().substring(outFilePath.length());
+                String relFile = input.getCanonicalPath();//.substring(outFilePath.length());
                 try {
                     BufferedImage img = ImageIO.read(input);
                     byte[] tmpBytes = relFile.getBytes();
@@ -290,6 +285,7 @@ public class Extractor implements Runnable {
                         tmpBytes = feature.getByteArrayRepresentation();
                         System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, bufferCount, 4);
                         bufferCount += 4;
+                        System.out.println(file + ": " + Arrays.toString(feature.getDoubleHistogram()));
                         // dos.write(SerializationUtils.toBytes(tmpBytes.length));
                         System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
                         bufferCount += tmpBytes.length;

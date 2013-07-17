@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.imageanalysis.mpeg7;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -119,7 +120,7 @@ public class EdgeHistogramImplementation {
      */
 
 
-    private double Local_Edge_Histogram[] = new double[80];
+    private double[] Local_Edge_Histogram = new double[80];
     private int blockSize = -1;
     private BufferedImage image;
 
@@ -143,6 +144,11 @@ public class EdgeHistogramImplementation {
     }
 
     public void extract(BufferedImage image) {
+        bins = new int[80];
+        treshold = 11;
+        num_block = 1100;
+        Local_Edge_Histogram = new double[80];
+        blockSize = -1;
         this.image = image;
         width = image.getWidth();
         height = image.getHeight();
@@ -160,6 +166,11 @@ public class EdgeHistogramImplementation {
 
 
     public EdgeHistogramImplementation() {
+        bins = new int[80];
+        treshold = 11;
+        num_block = 1100;
+        Local_Edge_Histogram = new double[80];
+        blockSize = -1;
     }
 
 
@@ -425,6 +436,7 @@ public class EdgeHistogramImplementation {
      */
 
     public void extractFeature() {
+        Arrays.fill(Local_Edge_Histogram, 0d);
         makeGreyLevel();
         int sub_local_index = 0;
         int EdgeTypeOfBlock = 0;

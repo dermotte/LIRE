@@ -125,7 +125,7 @@ public class JCD implements LireFeature {
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         if (length < data.length) Arrays.fill(data, length, data.length - 1, 0);
         for (int i = offset; i < offset + length; i++) {
-            data[i] = ((double) in[i]) / 2;
+            data[i] = ((double) in[i]) / 2d;
         }
     }
 
