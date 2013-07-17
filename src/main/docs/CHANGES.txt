@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-07-17
+==========
+  - Fixed bug in EdgeHistogram Extraction.
+  - Added new test to find bugs in TestGeneral
+
 2013-07-16
 ==========
   - Fixed bug in JCD serialization.

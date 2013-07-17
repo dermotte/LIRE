@@ -127,13 +127,30 @@ public class HashingIndexor extends Indexor {
     }
 
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
+        // This is for debugging the image features.
+//        try {
+////            System.out.println(feature.getClass().getName());
+//            LireFeature f1 = new EdgeHistogram();
+//            f1.extract(ImageIO.read(new File(document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
+//            float distance = feature.getDistance(f1);
+//            if (distance != 0) {
+//                System.out.println("Extracted:" + Arrays.toString(f1.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
+//                        "Data     :" + Arrays.toString(feature.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
+//                        "Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance
+//                );
+////                System.out.println("Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
         if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
             // generate hashes here:
 //            int[] hashes = LocalitySensitiveHashing.generateHashes(feature.getDoubleHistogram());
             int[] hashes = BitSampling.generateHashes(feature.getDoubleHistogram());
 //            System.out.println(Arrays.toString(hashes));
             // store hashes in index as terms
-            document.add(new TextField(featureFieldName+"_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
+            document.add(new TextField(featureFieldName + "_hash", SerializationUtils.arrayToString(hashes), Field.Store.YES));
             // add the specific feature
             document.add(new StoredField(featureFieldName, feature.getByteArrayRepresentation()));
         }

@@ -80,16 +80,30 @@ public class EdgeHistogramTest extends TestCase {
         }
     }
 
-    public void testSerialization() throws IOException, IllegalAccessException, InstantiationException {
+    public void testSerializationAndReUse() throws IOException, IllegalAccessException, InstantiationException {
         LireFeature f = new EdgeHistogram();
-        String[] testFiles = new String[]{"D:/DataSets/WIPO-CA/converted-0/1005695.png", "D:/DataSets/WIPO-CA/converted-0/1005630.png", "D:/DataSets/WIPO-CA/converted-0/1006004.png", "D:/DataSets/WIPO-CA/converted-0/1005308.png", "D:/DataSets/WIPO-CA/converted-0/1005278.png", "D:/DataSets/WIPO-CA/converted-0/1006651.png", "D:/DataSets/WIPO-CA/converted-0/1006378.png", "D:/DataSets/WIPO-CA/converted-0/1006632.png", "D:/DataSets/WIPO-CA/converted-0/1006319.png", "D:/DataSets/WIPO-CA/converted-0/1007021.png", "D:/DataSets/WIPO-CA/converted-0/1006098.png", "D:/DataSets/WIPO-CA/converted-0/1006137.png", "D:/DataSets/WIPO-CA/converted-0/1007031.png", "D:/DataSets/WIPO-CA/converted-0/1005937.png", "D:/DataSets/WIPO-CA/converted-0/1006049.png", "D:/DataSets/WIPO-CA/converted-0/1006924.png", "D:/DataSets/WIPO-CA/converted-0/1006802.png", "D:/DataSets/WIPO-CA/converted-0/1007111.png", "D:/DataSets/WIPO-CA/converted-0/1006414.png", "D:/DataSets/WIPO-CA/converted-0/1007145.png", "D:/DataSets/WIPO-CA/converted-0/1006519.png", "D:/DataSets/WIPO-CA/converted-0/1005212.png", "D:/DataSets/WIPO-CA/converted-0/1005197.png", "D:/DataSets/WIPO-CA/converted-0/1007491.png", "D:/DataSets/WIPO-CA/converted-0/1006857.png", "D:/DataSets/WIPO-CA/converted-0/1006965.png", "D:/DataSets/WIPO-CA/converted-0/1006476.png", "D:/DataSets/WIPO-CA/converted-0/1007877.png", "D:/DataSets/WIPO-CA/converted-0/1006686.png", "D:/DataSets/WIPO-CA/converted-0/1004292.png", "D:/DataSets/WIPO-CA/converted-0/1007058.png", "D:/DataSets/WIPO-CA/converted-0/1004147.png", "D:/DataSets/WIPO-CA/converted-0/1007882.png", "D:/DataSets/WIPO-CA/converted-0/1007481.png", "D:/DataSets/WIPO-CA/converted-0/1007331.png", "D:/DataSets/WIPO-CA/converted-0/1007823.png", "D:/DataSets/WIPO-CA/converted-0/1008111.png", "D:/DataSets/WIPO-CA/converted-0/1007062.png", "D:/DataSets/WIPO-CA/converted-0/1007748.png", "D:/DataSets/WIPO-CA/converted-0/1007480.png", "D:/DataSets/WIPO-CA/converted-0/1001747.png", "D:/DataSets/WIPO-CA/converted-0/1005164.png", "D:/DataSets/WIPO-CA/converted-0/1004069.png", "D:/DataSets/WIPO-CA/converted-0/1008277.png"};
+        String[] testFiles = new String[]{"D:\\DataSets\\WIPO-CA\\converted-0\\1001557.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001714.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001816.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001651.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1002071.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001809.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001627.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001611.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001855.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1002011.png"};
         for (String testFile : testFiles) {
+//            f=new EdgeHistogram();
             f.extract(ImageIO.read(new File(testFile)));
-            LireFeature f2 = f.getClass().newInstance();
-            f2.setByteArrayRepresentation(f.getByteArrayRepresentation());
-//            System.out.println(Arrays.toString(f.getDoubleHistogram()));
-//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
-            assertEquals(f2.getDistance(f), 0d, 0.000000001);
+            LireFeature f2 = new EdgeHistogram();
+//            f2.setByteArrayRepresentation(f.getByteArrayRepresentation(), 0, f.getByteArrayRepresentation().length);
+            f2.extract(ImageIO.read(new File(testFile)));
+//            f2.getByteArrayRepresentation();
+            System.out.println(testFile);
+            System.out.println(Arrays.toString(f.getDoubleHistogram()).replaceAll("\\.0,",""));
+            System.out.println(Arrays.toString(f2.getDoubleHistogram()).replaceAll("\\.0,", ""));
+            System.out.println(f2.getDistance(f));
+//            assertEquals(f2.getDistance(f), 0d, 0.000000001);
         }
     }
 }

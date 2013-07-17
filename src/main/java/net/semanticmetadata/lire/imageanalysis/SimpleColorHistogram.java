@@ -48,6 +48,7 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -61,7 +62,7 @@ import java.util.StringTokenizer;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class SimpleColorHistogram implements LireFeature {
-    public static int DEFAULT_NUMBER_OF_BINS = 512;
+    public static int DEFAULT_NUMBER_OF_BINS = 64;
     public static HistogramType DEFAULT_HISTOGRAM_TYPE = HistogramType.RGB;
     public static DistanceFunction DEFAULT_DISTANCE_FUNCTION = DistanceFunction.JSD;
 
@@ -71,7 +72,7 @@ public class SimpleColorHistogram implements LireFeature {
             1, 8, 4, 4, 4, 4, 8, 2, 8, 1,            // Hue, Sum - subspace 0,1,2,3,4 for  64 levels
             1, 8, 4, 4, 4, 4, 4, 1, 4, 1};           // Hue, Sum - subspace 0,1,2,3,4 for  32 levels
 
-    public static int[][] rgbPalette64 = new int[][]{
+    public static final int[][] rgbPalette64 = new int[][]{
             new int[]{0, 0, 0},
             new int[]{0, 0, 85},
             new int[]{0, 0, 170},
@@ -139,48 +140,7 @@ public class SimpleColorHistogram implements LireFeature {
     };
 
     // upper borders for quantization.
-    public static int[] quant512 = new int[]{18, 55, 91, 128, 165, 201, 238, 256};
-
-//    public static int[][] rgbPalette512 = new int[512][3];
-//
-//    public static int[][][] quantTable512 = new int[256][256][256];
-
-//    static {
-//        System.out.println("Creating quantization tables ...");
-//        int count = 0;
-//        for (int i = 0; i < quant512.length; i++) {
-//            for (int j = 0; j < quant512.length; j++) {
-//                for (int k = 0; k < quant512.length; k++) {
-//                    rgbPalette512[count][0] = quant512[i];
-//                    rgbPalette512[count][1] = quant512[j];
-//                    rgbPalette512[count][2] = quant512[k];
-//                    count++;
-//                }
-//            }
-//        }
-//
-//        // Todo: This is a no go  ... check faster method ...
-//        System.out.println("Now the big one ...");
-//        for (int i = 0; i < 256; i++) {
-//            for (int j = 0; j < 256; j++) {
-//                for (int k = 0; k < 256; k++) {
-//                    double minDist = Math.abs((rgbPalette512[0][0] - i) + Math.abs((rgbPalette512[0][1] - j)) + Math.abs(rgbPalette512[0][2] - k));
-//                    int pos = 0;
-//                    for (int l = 1; l < rgbPalette512.length; l++) {
-//                        double tmp = Math.abs((rgbPalette512[l][0] - i) + Math.abs((rgbPalette512[l][1] - j)) + Math.abs(rgbPalette512[l][2] - k));
-//                        if (tmp <= minDist) {
-//                            minDist = tmp;
-//                            pos = l;
-//                        }
-//                        quantTable512[i][j][k] = pos;
-//                    }
-//                }
-//            }
-//            System.out.print('.');
-//        }
-//        System.out.println("static method finished");
-//
-//    }
+    public static final int[] quant512 = new int[]{18, 55, 91, 128, 165, 201, 238, 256};
 
     /**
      * Lists possible types for the histogram class
@@ -232,8 +192,12 @@ public class SimpleColorHistogram implements LireFeature {
      * @param image
      */
     public void extract(BufferedImage image) {
-        if (image.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB)
-            throw new UnsupportedOperationException("Color space not supported. Only RGB.");
+        if (image.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB) {
+            BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            img.getGraphics().drawImage(image, 0, 0, null);
+            image = img;
+        }
+        Arrays.fill(histogram, 0);
         WritableRaster raster = image.getRaster();
         for (int x = 0; x < image.getWidth(); x++) {
             for (int y = 0; y < image.getHeight(); y++) {
@@ -274,7 +238,7 @@ public class SimpleColorHistogram implements LireFeature {
             max = Math.max(histogram[i], max);
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = (histogram[i] * 256) / max;
+            histogram[i] = (histogram[i] * 255) / max;
         }
     }
 
@@ -373,7 +337,7 @@ public class SimpleColorHistogram implements LireFeature {
      * @param b
      * @param yuv
      */
-    public static void rgb2yuv(int r, int g, int b, int[] yuv) {
+    public void rgb2yuv(int r, int g, int b, int[] yuv) {
         int y = (int) (0.299 * r + 0.587 * g + 0.114 * b);
         int u = (int) ((b - y) * 0.492f);
         int v = (int) ((r - y) * 0.877f);
@@ -392,7 +356,7 @@ public class SimpleColorHistogram implements LireFeature {
      * @param b
      * @param hsv
      */
-    public static void rgb2hsv(int r, int g, int b, int hsv[]) {
+    public void rgb2hsv(int r, int g, int b, int hsv[]) {
 
         int min;    //Min. value of RGB
         int max;    //Max. value of RGB
@@ -437,7 +401,7 @@ public class SimpleColorHistogram implements LireFeature {
     /**
      * Adapted under GPL from VizIR: author was adis@ims.tuwien.ac.at
      */
-    private static int[] rgb2hmmd(int ir, int ig, int ib) {
+    private int[] rgb2hmmd(int ir, int ig, int ib) {
         int hmmd[] = new int[5];
 
         float max = (float) Math.max(Math.max(ir, ig), Math.max(ig, ib));

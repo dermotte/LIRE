@@ -64,9 +64,9 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[edgeHistogram.length/2];
         for (int i = 0; i < result.length; i++) {
-            tmp = (edgeHistogram[(i << 1)]) << 3;
-            tmp = (tmp | edgeHistogram[(i << 1) +1]);
-            result[i] = (byte) tmp;
+            tmp = ((int) (edgeHistogram[(i << 1)])) << 4;
+            tmp = (tmp | ((int) (edgeHistogram[(i << 1) + 1])));
+            result[i] = (byte) (tmp - 128);
         }
         return result;
     }
@@ -78,18 +78,14 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        for (int i = 0; i < in.length; i++) {
-            tmp = in[i];
-            edgeHistogram[(i << 1) +1] = tmp & 0x0007;
-            edgeHistogram[i << 1] = (tmp >> 3);
-        }
+        setByteArrayRepresentation(in, 0, in.length);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        for (int i = offset; i < length; i++) {
-            tmp = in[i];
-            edgeHistogram[(i << 1) +1] = tmp & 0x0007;
-            edgeHistogram[i << 1] = (tmp >> 3);
+        for (int i = 0; i < length; i++) {
+            tmp = in[offset+i] + 128;
+            edgeHistogram[(i << 1) + 1] = ((tmp & 0x000F));
+            edgeHistogram[i << 1] = ((tmp >> 4));
         }
     }
 
