@@ -318,7 +318,7 @@ public class ParallelExtractor implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + time / overallCount + " ms each.");
+                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+images.size()+" images currently in queue).");
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -344,7 +344,10 @@ public class ParallelExtractor implements Runnable {
                             String path = next.getCanonicalPath();
                             images.add(new WorkItem(path, img));
                             tmpSize = images.size();
-                            images.notifyAll();
+                            // if the cache is too crowded, then wait.
+                            if (tmpSize>1000) images.wait(1000);
+                            // if the cache is too small, dont' notify.
+                            if (tmpSize>50) images.notifyAll();
                         }
                     } catch (Exception e) {
                         System.err.println("Could not read image " + file + ": " + e.getMessage());
