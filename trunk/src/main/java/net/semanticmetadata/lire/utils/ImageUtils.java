@@ -42,6 +42,7 @@
 package net.semanticmetadata.lire.utils;
 
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
@@ -250,7 +251,8 @@ public class ImageUtils {
 
     /**
      * Converts an image (RGB, RGBA, ... whatever) to a binary one based on given threshold
-     * @param image the image to convert. Remains untouched.
+     *
+     * @param image     the image to convert. Remains untouched.
      * @param threshold the threshold in [0,255]
      * @return a new BufferedImage instance of TYPE_BYTE_GRAY with only 0'S and 255's
      */
@@ -268,6 +270,21 @@ public class ImageUtils {
             raster.setPixels(0, y, image.getWidth(), 1, pixels);
         }
         return result;
+    }
+
+    /**
+     * Check if the image is fail safe for color based features that are actually using 8 bits per pixel RGB.
+     * @param bufferedImage
+     * @return
+     */
+    public static BufferedImage get8BitRGBImage(BufferedImage bufferedImage) {
+        // check if it's (i) RGB and (ii) 8 bits per pixel.
+        if (bufferedImage.getType() != ColorSpace.TYPE_RGB || bufferedImage.getSampleModel().getSampleSize(0) != 8) {
+            BufferedImage img = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            img.getGraphics().drawImage(bufferedImage, 0, 0, null);
+            bufferedImage = img;
+        }
+        return bufferedImage;
     }
 
 }

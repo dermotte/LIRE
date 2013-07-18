@@ -42,10 +42,10 @@ package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ConversionUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
@@ -192,11 +192,7 @@ public class SimpleColorHistogram implements LireFeature {
      * @param image
      */
     public void extract(BufferedImage image) {
-        if (image.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB) {
-            BufferedImage img = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-            img.getGraphics().drawImage(image, 0, 0, null);
-            image = img;
-        }
+        image = ImageUtils.get8BitRGBImage(image);
         Arrays.fill(histogram, 0);
         WritableRaster raster = image.getRaster();
         for (int x = 0; x < image.getWidth(); x++) {

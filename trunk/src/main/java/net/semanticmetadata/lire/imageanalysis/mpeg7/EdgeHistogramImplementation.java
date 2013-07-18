@@ -42,6 +42,7 @@
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
 
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -149,7 +150,7 @@ public class EdgeHistogramImplementation {
         num_block = 1100;
         Local_Edge_Histogram = new double[80];
         blockSize = -1;
-        this.image = image;
+        this.image = ImageUtils.get8BitRGBImage(image);
         width = image.getWidth();
         height = image.getHeight();
         extractFeature();

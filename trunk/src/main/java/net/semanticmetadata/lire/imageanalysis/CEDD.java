@@ -43,6 +43,7 @@ package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.cedd.*;
+import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -89,6 +90,7 @@ public class CEDD implements LireFeature {
     // Apply filter
     // signature changed by mlux
     public void extract(BufferedImage image) {
+        image= ImageUtils.get8BitRGBImage(image);
         Fuzzy10Bin Fuzzy10 = new Fuzzy10Bin(false);
         Fuzzy24Bin Fuzzy24 = new Fuzzy24Bin(false);
         RGB2HSV HSVConverter = new RGB2HSV();
