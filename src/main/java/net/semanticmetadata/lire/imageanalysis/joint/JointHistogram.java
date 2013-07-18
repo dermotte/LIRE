@@ -60,6 +60,7 @@ public class JointHistogram extends Histogram implements LireFeature {
     private int[] tmpIntensity = new int[1];
 
     public void extract(BufferedImage bimg) {
+        bimg = ImageUtils.get8BitRGBImage(bimg);
         // extract:
         int[][] histogram = new int[64][9];
         for (int i = 0; i < histogram.length; i++) {
