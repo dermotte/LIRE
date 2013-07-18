@@ -129,13 +129,14 @@ public class HashingIndexor extends Indexor {
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
         // This is for debugging the image features.
 //        try {
-////            System.out.println(feature.getClass().getName());
-//            LireFeature f1 = new EdgeHistogram();
+//            System.out.println(feature.getClass().getName() + " " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+//            LireFeature f1 = feature.getClass().newInstance();
 //            f1.extract(ImageIO.read(new File(document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
 //            float distance = feature.getDistance(f1);
 //            if (distance != 0) {
-//                System.out.println("Extracted:" + Arrays.toString(f1.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
-//                        "Data     :" + Arrays.toString(feature.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
+//                Arrays Arrays;
+//                System.out.println("Extracted:" + java.util.Arrays.toString(f1.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
+//                        "Data     :" + java.util.Arrays.toString(feature.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
 //                        "Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance
 //                );
 ////                System.out.println("Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance);

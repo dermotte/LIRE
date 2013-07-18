@@ -77,12 +77,24 @@ public class GeneralTest extends TestCase {
     private String indexPath = "test-index";
     private String testExtensive = "./testdata/wang-1000";
     private Class[] featureClasses = new Class[]{
-            CEDD.class, FCTH.class, JCD.class, AutoColorCorrelogram.class, ColorLayout.class, EdgeHistogram.class,
-            Gabor.class, JpegCoefficientHistogram.class,
+            CEDD.class,
+            FCTH.class,
+            JCD.class,
+            AutoColorCorrelogram.class,
+            ColorLayout.class,
+            EdgeHistogram.class,
+            Gabor.class,
+            JpegCoefficientHistogram.class,
             ScalableColor.class,
             SimpleColorHistogram.class,
-            OpponentHistogram.class, LocalBinaryPatterns.class, RotationInvariantLocalBinaryPatterns.class, BinaryPatternsPyramid.class, LuminanceLayout.class,
-            Tamura.class, FuzzyColorHistogram.class, PHOG.class
+            OpponentHistogram.class,
+            LocalBinaryPatterns.class,
+            RotationInvariantLocalBinaryPatterns.class,
+            BinaryPatternsPyramid.class,
+            LuminanceLayout.class,
+            Tamura.class,
+            FuzzyColorHistogram.class,
+            PHOG.class
     };
 
     private DocumentBuilder[] builders = new DocumentBuilder[]{

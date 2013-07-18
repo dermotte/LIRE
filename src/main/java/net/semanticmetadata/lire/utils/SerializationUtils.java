@@ -83,6 +83,7 @@ public class SerializationUtils {
      * @see net.semanticmetadata.lire.utils.SerializationUtils#toInt(byte[])
      */
     public static byte[] toBytes(int data) {
+
         return new byte[]{
                 (byte) ((data >> 24) & 0xff),
                 (byte) ((data >> 16) & 0xff),
