@@ -3,6 +3,12 @@ CHANGES for LIRE
 
 2013-07-17
 ==========
+  - Removed the use of GZip Streams in Extractor and Indexor. It tended to mess up things.
+  - Added a fail-safe check for RBG images & non 8-bit-per-pixel images to OpponentHistogram,
+    CEDD, EdgeHistogram, ColorLayout, FCTH, JCD.
+
+2013-07-17
+==========
   - Fixed bug in EdgeHistogram Extraction.
   - Added new test to find bugs in TestGeneral
 

@@ -432,6 +432,7 @@ public class ParallelExtractor implements Runnable {
                         }
                     }
                 } catch (Exception e) {
+                    System.err.println("Error processing file " + tmp.getFileName());
                     e.printStackTrace();
                 }
                 bufferCount = 0;

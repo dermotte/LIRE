@@ -42,6 +42,7 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -83,6 +84,8 @@ public class OpponentHistogram extends Histogram implements LireFeature {
 
     @Override
     public void extract(BufferedImage bimg) {
+        // check if it's (i) RGB and (ii) 8 bits per pixel.
+        bimg = ImageUtils.get8BitRGBImage(bimg);
         // extract:
         double[] histogram = new double[64];
         for (int i = 0; i < histogram.length; i++) {

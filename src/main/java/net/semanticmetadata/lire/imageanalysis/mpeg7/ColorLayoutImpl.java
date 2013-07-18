@@ -40,6 +40,8 @@
  */
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
 
+import net.semanticmetadata.lire.utils.ImageUtils;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
@@ -125,12 +127,6 @@ public class ColorLayoutImpl {
         init();
     }
 
-    /**
-     * Uses the method {@link at.lux.imageanalysis.ColorLayoutImpl#setStringRepresentation(String)}
-     *
-     * @param descriptorValues
-     * @see at.lux.imageanalysis.ColorLayoutImpl#setStringRepresentation(String)
-     */
     public ColorLayoutImpl(String descriptorValues) {
         setStringRepresentation(descriptorValues);
     }
@@ -164,7 +160,7 @@ public class ColorLayoutImpl {
     }
 
     public void extract(BufferedImage bimg) {
-        this.img = bimg;
+        this.img = ImageUtils.get8BitRGBImage(bimg);
         imgYSize = img.getHeight();
         imgXSize = img.getWidth();
         init();

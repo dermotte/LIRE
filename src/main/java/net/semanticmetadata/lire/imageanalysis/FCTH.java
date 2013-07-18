@@ -42,6 +42,7 @@ package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.fcth.*;
+import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -360,6 +361,7 @@ public class FCTH implements LireFeature {
     }
 
     public void extract(BufferedImage bimg) {
+        bimg = ImageUtils.get8BitRGBImage(bimg);
         histogram = Apply(bimg);
     }
 
