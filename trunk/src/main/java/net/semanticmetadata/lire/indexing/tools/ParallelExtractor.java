@@ -50,7 +50,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * The Extractor is a configurable class that extracts multiple features from multiple images
@@ -76,7 +75,7 @@ public class ParallelExtractor implements Runnable {
     Stack<WorkItem> images = new Stack<WorkItem>();
     boolean ended = false;
     int overallCount = 0;
-    BufferedOutputStream dos = null;
+    OutputStream dos = null;
 
     public static final String[] features = new String[]{
             "net.semanticmetadata.lire.imageanalysis.CEDD",                  // 0
@@ -279,7 +278,7 @@ public class ParallelExtractor implements Runnable {
             return;
         }
         try {
-            dos = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outFile)));
+            dos = new FileOutputStream(outFile);
             Thread p = new Thread(new Producer());
             p.start();
             LinkedList<Thread> threads = new LinkedList<Thread>();
@@ -334,7 +333,6 @@ public class ParallelExtractor implements Runnable {
             int tmpSize = 0;
             try {
                 BufferedReader br = new BufferedReader(new FileReader(fileList));
-                BufferedOutputStream dos = new BufferedOutputStream(new GZIPOutputStream(new FileOutputStream(outFile)));
                 String file = null;
                 File next = null;
                 while ((file = br.readLine()) != null) {
@@ -352,7 +350,7 @@ public class ParallelExtractor implements Runnable {
                         System.err.println("Could not read image " + file + ": " + e.getMessage());
                     }
                     try {
-                        if (tmpSize > 500) Thread.sleep(100);
+                        if (tmpSize > 500) Thread.sleep(1000);
                         else Thread.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

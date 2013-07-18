@@ -72,7 +72,7 @@ public class JCDTest extends TestCase {
             f1.extract(image);
             System.out.println(Arrays.toString(f1.getDoubleHistogram()));
             bytes += f1.getByteArrayRepresentation().length;
-            sum += 168/2;
+            sum += 168 / 2;
             f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
 //            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
             double[] h = f2.getDoubleHistogram();
@@ -95,13 +95,33 @@ public class JCDTest extends TestCase {
     }
 
     public void testSerialization() throws IOException {
-        JCD f = new JCD();
-        String testFile = "D:\\DataSets\\WIPO-CA\\converted-0\\1006049.png";
-        f.extract(ImageIO.read(new File(testFile)));
-        JCD f2 = new JCD();
-        f2.setByteArrayRepresentation(f.getByteArrayRepresentation());
-        System.out.println(Arrays.toString(f.getDoubleHistogram()));
-        System.out.println(Arrays.toString(f2.getDoubleHistogram()));
-        System.out.println(f.getDistance(f2));
+        JCD f1 = new JCD();
+        String[] testFiles = {"D:\\DataSets\\WIPO-CA\\converted-0\\1000038.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000282.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000414.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000489.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000466.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000194.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000248.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1000009.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001816.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001809.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1002011.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1001855.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1002863.png",
+                "D:\\DataSets\\WIPO-CA\\converted-0\\1002896.png"};
+        for (String testFile : testFiles) {
+            f1.extract(ImageIO.read(new File(testFile)));
+            JCD f2 = new JCD();
+            f2.extract(ImageIO.read(new File(testFile)));
+            System.out.println(f1.getDistance(f2));
+//            f2 = new JCD();
+            byte[] tmp = new byte[200];
+            Arrays.fill(tmp, (byte) 0x000F);
+            byte[] bytes = f1.getByteArrayRepresentation();
+            System.arraycopy(bytes, 0, tmp, 12, bytes.length);
+            f2.setByteArrayRepresentation(tmp, 12, bytes.length);
+            System.out.println(f1.getDistance(f2));
+        }
     }
 }

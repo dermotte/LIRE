@@ -103,11 +103,11 @@ public class JCD implements LireFeature {
                 if (data[i] != 0) position = -1;
             }
         }
-        if (position <0) position = data.length -1;
+        if (position <0) position = data.length;
         // find out the actual length. two values in one byte, so we have to round up.
         byte[] result = new byte[position];
         for (int i = 0; i < position; i++) {
-            result[i] = (byte) (data[i]*2);
+            result[i] = (byte) (data[i] * 2d);
         }
         return result;
     }
@@ -123,9 +123,9 @@ public class JCD implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if (length < data.length) Arrays.fill(data, length, data.length - 1, 0);
-        for (int i = offset; i < offset + length; i++) {
-            data[i] = ((double) in[i]) / 2d;
+        Arrays.fill(data, 0, data.length, 0);
+        for (int i = 0; i < length; i++) {
+            if (in[offset+i]>0) data[i] = ((double) in[offset+i]) / 2d;
         }
     }
 

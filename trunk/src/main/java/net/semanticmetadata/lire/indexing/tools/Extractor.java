@@ -48,8 +48,10 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.*;
-import java.util.zip.GZIPOutputStream;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Properties;
 
 /**
  * The Extractor is a configurable class that extracts multiple features from multiple images
@@ -258,7 +260,7 @@ public class Extractor implements Runnable {
         int bufferCount = 0;
         try {
             BufferedReader br = new BufferedReader(new FileReader(fileList));
-            OutputStream dos = new GZIPOutputStream(new FileOutputStream(outFile));
+            OutputStream dos = new FileOutputStream(outFile);
             String file = null;
             String outFilePath = outFile.getCanonicalPath();
 //            outFilePath = outFilePath.substring(0, outFilePath.lastIndexOf(outFile.getName()));
@@ -284,8 +286,10 @@ public class Extractor implements Runnable {
                         // dos.write(feature2index.get(feature.getClass().getName()));
                         tmpBytes = feature.getByteArrayRepresentation();
                         System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, bufferCount, 4);
+//                        System.out.println(SerializationUtils.toInt(SerializationUtils.toBytes(tmpBytes.length)));
                         bufferCount += 4;
-                        System.out.println(file + ": " + Arrays.toString(feature.getDoubleHistogram()));
+//                        System.out.println(file + ": " + Arrays.toString(feature.getByteArrayRepresentation()));
+//                        System.out.println(file + ": " + Arrays.toString(feature.getDoubleHistogram()).replaceAll(", ", " "));
                         // dos.write(SerializationUtils.toBytes(tmpBytes.length));
                         System.arraycopy(tmpBytes, 0, myBuffer, bufferCount, tmpBytes.length);
                         bufferCount += tmpBytes.length;
@@ -303,6 +307,7 @@ public class Extractor implements Runnable {
                 if (count%100==0 && count > 0)
                     System.out.println(count + " files processed, " + (System.currentTimeMillis()-ms)/count + " ms per file.");
             }
+            dos.flush();
             dos.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
