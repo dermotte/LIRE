@@ -172,8 +172,8 @@ public class SerializationUtils {
     public static int[] toIntArray(byte[] in, int offset, int length) {
         int[] result = new int[(length >> 2)];
         byte[] tmp = new byte[4];
-        for (int i = offset; i < length >> 2; i++) {
-            System.arraycopy(in, offset + (i - offset) * 4, tmp, 0, 4);
+        for (int i = 0; i < length >> 2; i++) {
+            System.arraycopy(in, offset + (i* 4), tmp, 0, 4);
             result[i] = toInt(tmp);
         }
         return result;
@@ -326,8 +326,8 @@ public class SerializationUtils {
     public static double[] toDoubleArray(byte[] data, int offset, int length) {
         double[] result = new double[length / 8];
         byte[] tmp = new byte[8];
-        for (int i = offset; i < length / 8; i++) {
-            System.arraycopy(data, (i - offset) * 8 + offset, tmp, 0, 8);
+        for (int i = 0; i < result.length; i++) {
+            System.arraycopy(data, i * 8 +offset, tmp, 0, 8);
             result[i] = toDouble(tmp);
         }
         return result;

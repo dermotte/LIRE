@@ -42,14 +42,11 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
 
 /**
  * The PHOG descriptor is described in Anna Bosch, Andrew Zisserman & Xavier Munoz (2007) "Representing shape with a
@@ -340,8 +337,8 @@ public class PHOG implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        for (int i = offset; i < length; i++) {
-            histogram[i] = (double) in[i];
+        for (int i = 0; i < length; i++) {
+            histogram[i] = (double) in[i+offset];
         }
     }
 

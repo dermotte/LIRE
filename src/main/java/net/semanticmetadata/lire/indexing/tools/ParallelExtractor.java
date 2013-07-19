@@ -93,7 +93,6 @@ public class ParallelExtractor implements Runnable {
             "net.semanticmetadata.lire.imageanalysis.Tamura",                // 12
             "net.semanticmetadata.lire.imageanalysis.LuminanceLayout",       // 13
             "net.semanticmetadata.lire.imageanalysis.PHOG",                   // 14
-            "net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD"   // 15
     };
 
     public static final String[] featureFieldNames = new String[]{
@@ -112,7 +111,6 @@ public class ParallelExtractor implements Runnable {
             DocumentBuilder.FIELD_NAME_TAMURA,               // 12
             DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,     // 13
             DocumentBuilder.FIELD_NAME_PHOG,                 // 14
-            "spcedd"
     };
 
     static HashMap<String, Integer> feature2index;
@@ -237,7 +235,7 @@ public class ParallelExtractor implements Runnable {
             }
         } else if (outFile.exists()) {
             System.err.println(outFile.getName() + " already exists. Please delete or choose another outfile.");
-            configured = false;
+//            configured = false;
         }
         if (listOfFeatures.size() < 1) configured = false;
         return configured;
@@ -278,7 +276,7 @@ public class ParallelExtractor implements Runnable {
             return;
         }
         try {
-            dos = new FileOutputStream(outFile);
+            dos = new BufferedOutputStream(new FileOutputStream(outFile));
             Thread p = new Thread(new Producer());
             p.start();
             LinkedList<Thread> threads = new LinkedList<Thread>();
@@ -340,14 +338,14 @@ public class ParallelExtractor implements Runnable {
                     BufferedImage img = null;
                     try {
                         img = ImageIO.read(next);
+                        String path = next.getCanonicalPath();
                         synchronized (images) {
-                            String path = next.getCanonicalPath();
                             images.add(new WorkItem(path, img));
                             tmpSize = images.size();
                             // if the cache is too crowded, then wait.
-                            if (tmpSize>1000) images.wait(1000);
+                            if (tmpSize>500) images.wait(500);
                             // if the cache is too small, dont' notify.
-                            if (tmpSize>50) images.notifyAll();
+//                            if (tmpSize>50) images.notifyAll();
                         }
                     } catch (Exception e) {
                         System.err.println("Could not read image " + file + ": " + e.getMessage());
@@ -405,6 +403,7 @@ public class ParallelExtractor implements Runnable {
                     }
                 }
                 try {
+                    bufferCount = 0;
                     if (!locallyEnded) {
                         BufferedImage img = tmp.getImage();
                         byte[] tmpBytes = tmp.getFileName().getBytes();
@@ -432,13 +431,13 @@ public class ParallelExtractor implements Runnable {
                         synchronized (dos) {
                             dos.write(myBuffer, 0, bufferCount);
                             dos.write(-1);
+                            dos.flush();
                         }
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing file " + tmp.getFileName());
                     e.printStackTrace();
                 }
-                bufferCount = 0;
             }
         }
     }

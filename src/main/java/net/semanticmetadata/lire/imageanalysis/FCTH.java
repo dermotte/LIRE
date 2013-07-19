@@ -98,7 +98,6 @@ public class FCTH implements LireFeature {
 
         for (int R = 0; R < 192; R++) {
             FuzzyHistogram192[R] = 0;
-
         }
 
 
