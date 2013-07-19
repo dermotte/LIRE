@@ -72,6 +72,7 @@ import java.util.*;
  * @author Mathias Lux, mathias@juggle.at, 08.03.13
  */
 public class ParallelExtractor implements Runnable {
+    private static boolean force = false;
     Stack<WorkItem> images = new Stack<WorkItem>();
     boolean ended = false;
     int overallCount = 0;
@@ -184,6 +185,8 @@ public class ParallelExtractor implements Runnable {
                 if ((i + 1) < args.length)
                     e.setOutFile(new File(args[i + 1]));
                 else printHelp();
+            } else if (arg.startsWith("-f")) {
+                force = true;
             } else if (arg.startsWith("-h")) {
                 // help
                 printHelp();
@@ -233,9 +236,9 @@ public class ParallelExtractor implements Runnable {
             } catch (IOException e) {
                 configured = false;
             }
-        } else if (outFile.exists()) {
+        } else if (outFile.exists() && !force) {
             System.err.println(outFile.getName() + " already exists. Please delete or choose another outfile.");
-//            configured = false;
+            configured = false;
         }
         if (listOfFeatures.size() < 1) configured = false;
         return configured;
