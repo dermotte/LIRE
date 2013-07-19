@@ -137,8 +137,8 @@ public class OpponentHistogram extends Histogram implements LireFeature {
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         descriptor = new double[length];
-        for (int i = offset; i < length; i++) {
-            descriptor[i] = in[i];
+        for (int i = 0; i < length; i++) {
+            descriptor[i] = in[i+offset];
         }
     }
 

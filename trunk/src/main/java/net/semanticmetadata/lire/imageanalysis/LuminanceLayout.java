@@ -130,8 +130,8 @@ public class LuminanceLayout implements LireFeature {
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         histogram = new double[length];
-        for (int i = offset; i < length; i++) {
-            histogram[i] = (double) in[i];
+        for (int i = 0; i < length; i++) {
+            histogram[i] = (double) in[i+offset];
         }
     }
 

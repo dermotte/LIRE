@@ -426,6 +426,14 @@ public class GeneralTest extends TestCase {
 //                System.out.println(Arrays.toString(f1.getDoubleHistogram()));
 //                System.out.println(Arrays.toString(f2.getDoubleHistogram()));
                 assertEquals(f2.getDistance(f1), 0d, 0.000000001);
+                f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
+                assertEquals(f2.getDistance(f1), 0d, 0.000000001);
+                byte[] tmp = new byte[1024*100];
+                Arrays.fill(tmp, (byte) 0x000F);
+                byte[] bytes = f1.getByteArrayRepresentation();
+                System.arraycopy(bytes, 0, tmp, 12, bytes.length);
+                f2.setByteArrayRepresentation(tmp, 12, bytes.length);
+                assertEquals(f2.getDistance(f1), 0d, 0.000000001);
             }
         }
     }

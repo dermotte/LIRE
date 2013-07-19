@@ -136,7 +136,7 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
             max = Math.max(histogram[i], max);
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = Math.floor((histogram[i] / max) * 128);
+            histogram[i] = Math.floor((histogram[i] / max) * 127);
         }
     }
 

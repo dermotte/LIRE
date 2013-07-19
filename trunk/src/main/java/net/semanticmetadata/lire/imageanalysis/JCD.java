@@ -107,7 +107,7 @@ public class JCD implements LireFeature {
         // find out the actual length. two values in one byte, so we have to round up.
         byte[] result = new byte[position];
         for (int i = 0; i < position; i++) {
-            result[i] = (byte) (data[i] * 2d);
+            result[i] = (byte) (2d * data[i]);
         }
         return result;
     }
@@ -116,7 +116,7 @@ public class JCD implements LireFeature {
      * Reads descriptor from a byte array. Much faster than the String based method.
      *
      * @param in byte array from corresponding method
-     * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
+     * @see net.semanticmetadata.lire.imageanalysis.JCD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);

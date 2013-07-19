@@ -211,10 +211,10 @@ public class Indexor {
 //                System.out.println("tmpFeature=" + tmpFeature);
                 LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
                 // byte[] length ...
-                System.out.println(in.read(tempInt, 0, 4));
+                in.read(tempInt, 0, 4);
                 tmp = SerializationUtils.toInt(tempInt);
                 // read feature byte[]
-                System.out.println(tmp);
+//                System.out.println(tmp);
                 in.read(temp, 0, tmp);
                 f.setByteArrayRepresentation(temp, 0, tmp);
                 addToDocument(f, d, Extractor.featureFieldNames[tmpFeature]);
@@ -225,8 +225,8 @@ public class Indexor {
             count++;
 //            if (count >= 20000) break;
             if (verbose) {
-                if (count % 1000 == 0) System.out.print('.');
-                if (count % 10000 == 0) System.out.println(" " + count);
+                if (count % 100 == 0) System.out.print('.');
+                if (count % 1000 == 0) System.out.println(" " + count);
             }
         }
         if (verbose) System.out.println(" " + count);

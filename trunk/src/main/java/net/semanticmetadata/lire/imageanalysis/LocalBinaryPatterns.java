@@ -45,7 +45,6 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
-import javax.swing.event.DocumentEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
@@ -91,7 +90,7 @@ public class LocalBinaryPatterns implements LireFeature {
             max = Math.max(histogram[i], max);
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = Math.floor((histogram[i] / max) * 128);
+            histogram[i] = Math.floor((histogram[i] / max) * 127);
         }
     }
 
@@ -147,8 +146,8 @@ public class LocalBinaryPatterns implements LireFeature {
 
     @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        for (int i = offset; i < offset + length; i++) {
-            histogram[i - offset] = in[i];
+        for (int i = 0; i < length; i++) {
+            histogram[i] = in[i+offset];
         }
     }
 
