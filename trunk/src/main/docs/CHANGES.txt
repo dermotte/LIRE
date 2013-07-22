@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-07-22
+==========
+  - Fixed concurrency bug in FCTH & CEDD, eliminated therefore in JCD too.
+
 2013-07-17
 ==========
   - Fixed serialization bugs and quantization bugs in several classes

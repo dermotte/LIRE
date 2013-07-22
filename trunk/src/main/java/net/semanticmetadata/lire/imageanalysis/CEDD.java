@@ -59,11 +59,11 @@ import java.util.StringTokenizer;
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
 public class CEDD implements LireFeature {
-    public double T0;
-    public double T1;
-    public double T2;
-    public double T3;
-    public boolean Compact = false;
+    private double T0;
+    private double T1;
+    private double T2;
+    private double T3;
+    private boolean Compact = false;
     protected double[] data = new double[144];
     int tmp;
     // for tanimoto:
@@ -81,10 +81,10 @@ public class CEDD implements LireFeature {
     }
 
     public CEDD() {
-        this.T0 = 14;
-        this.T1 = 0.68;
-        this.T2 = 0.98;
-        this.T3 = 0.98;
+        this.T0 = 14d;
+        this.T1 = 0.68d;
+        this.T2 = 0.98d;
+        this.T3 = 0.98d;
     }
 
     // Apply filter

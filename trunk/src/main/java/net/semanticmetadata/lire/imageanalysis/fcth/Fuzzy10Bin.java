@@ -43,7 +43,7 @@ public class Fuzzy10Bin {
     public boolean KeepPreviuesValues = false;
 
 
-    protected static double[] HueMembershipValues = {0, 0, 5, 10,
+    protected double[] HueMembershipValues = {0, 0, 5, 10,
             5, 10, 35, 50,
             35, 50, 70, 85,
             70, 85, 150, 165,
@@ -52,22 +52,22 @@ public class Fuzzy10Bin {
             265, 280, 315, 330,
             315, 330, 360, 360}; // Table Dimensions= Number Of Triangles X 4 (Start - Stop)
 
-    protected static double[] SaturationMembershipValues = {0, 0, 10, 75,
+    protected double[] SaturationMembershipValues = {0, 0, 10, 75,
             10, 75, 255, 255};
 
-    protected static double[] ValueMembershipValues = {0, 0, 10, 75,
+    protected double[] ValueMembershipValues = {0, 0, 10, 75,
             10, 75, 180, 220,
             180, 220, 255, 255};
 
     //Vector fuzzy10BinRules = new Vector();
-    public static FuzzyRules[] Fuzzy10BinRules = new FuzzyRules[48];
+    public FuzzyRules[] Fuzzy10BinRules = new FuzzyRules[48];
 
     public double[] Fuzzy10BinHisto = new double[10];
-    public static double[] HueActivation = new double[8];
-    public static double[] SaturationActivation = new double[2];
-    public static double[] ValueActivation = new double[3];
+    public double[] HueActivation = new double[8];
+    public double[] SaturationActivation = new double[2];
+    public double[] ValueActivation = new double[3];
 
-    public static int[][] Fuzzy10BinRulesDefinition = {
+    public int[][] Fuzzy10BinRulesDefinition = {
             {0, 0, 0, 2},
             {0, 1, 0, 2},
             {0, 0, 2, 0},

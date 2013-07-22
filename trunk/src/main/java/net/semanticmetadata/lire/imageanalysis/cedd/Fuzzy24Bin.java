@@ -44,21 +44,21 @@ public class Fuzzy24Bin {
     public double[] Fuzzy24BinHisto = new double[24];
     public boolean KeepPreviusValues = false;
 
-    protected static double[] SaturationMembershipValues = {0, 0, 68, 188,
+    protected double[] SaturationMembershipValues = {0, 0, 68, 188,
             68, 188, 255, 255};
 
-    protected static double[] ValueMembershipValues = {0, 0, 68, 188,
+    protected double[] ValueMembershipValues = {0, 0, 68, 188,
             68, 188, 255, 255};
 
     //  protected static double[] ValueMembershipValues = new double[8] {  0,0,68, 188,  
     //        50,138,255, 255};
 
-    public static FuzzyRules[] Fuzzy24BinRules = new FuzzyRules[4];
+    public FuzzyRules[] Fuzzy24BinRules = new FuzzyRules[4];
 
-    public static double[] SaturationActivation = new double[2];
-    public static double[] ValueActivation = new double[2];
+    public double[] SaturationActivation = new double[2];
+    public double[] ValueActivation = new double[2];
 
-    public static int[][] Fuzzy24BinRulesDefinition = {
+    public int[][] Fuzzy24BinRulesDefinition = {
             {1, 1, 1},
             {0, 0, 2},
             {0, 1, 0},

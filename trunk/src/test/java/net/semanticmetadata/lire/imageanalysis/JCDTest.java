@@ -94,8 +94,8 @@ public class JCDTest extends TestCase {
 
     }
 
-    public void testSerialization() throws IOException {
-        JCD f1 = new JCD();
+    public void testSerialization() throws IOException, IllegalAccessException, InstantiationException {
+        LireFeature f1 = new JCD();
         String[] testFiles = {"D:\\DataSets\\WIPO-CA\\converted-0\\1000038.png",
                 "D:\\DataSets\\WIPO-CA\\converted-0\\1000282.png",
                 "D:\\DataSets\\WIPO-CA\\converted-0\\1000414.png",
@@ -112,16 +112,94 @@ public class JCDTest extends TestCase {
                 "D:\\DataSets\\WIPO-CA\\converted-0\\1002896.png"};
         for (String testFile : testFiles) {
             f1.extract(ImageIO.read(new File(testFile)));
-            JCD f2 = new JCD();
-            f2.extract(ImageIO.read(new File(testFile)));
-            System.out.println(f1.getDistance(f2));
-//            f2 = new JCD();
-            byte[] tmp = new byte[200];
+            LireFeature f2 = f1.getClass().newInstance();
+            for (int i = 0; i < 10; i++) {
+                f2.extract(ImageIO.read(new File(testFile)));
+                assertEquals(f1.getDistance(f2), 0, 0.000001f);
+            }
+            byte[] tmp = new byte[2048];
             Arrays.fill(tmp, (byte) 0x000F);
             byte[] bytes = f1.getByteArrayRepresentation();
             System.arraycopy(bytes, 0, tmp, 12, bytes.length);
             f2.setByteArrayRepresentation(tmp, 12, bytes.length);
-            System.out.println(f1.getDistance(f2));
+            assertEquals(f1.getDistance(f2), 0, 0.0000001f);
+
+
+        }
+
+
+    }
+
+    public void testConcurrentExtraction() throws IOException, IllegalAccessException, InstantiationException {
+        // concurrent extraction.
+        Class[] featureClasses = new Class[]{
+                CEDD.class,
+                FCTH.class,
+                JCD.class
+//                AutoColorCorrelogram.class,
+//                ColorLayout.class,
+//                EdgeHistogram.class,
+//                Gabor.class,
+//                JpegCoefficientHistogram.class,
+//                ScalableColor.class,
+//                SimpleColorHistogram.class,
+//                OpponentHistogram.class,
+//                LocalBinaryPatterns.class,
+//                RotationInvariantLocalBinaryPatterns.class,
+//                BinaryPatternsPyramid.class,
+//                LuminanceLayout.class,
+//                Tamura.class,
+//                FuzzyColorHistogram.class,
+//                PHOG.class
+        };
+
+        for (int j = 0; j < featureClasses.length; j++) {
+            Class featureClass = featureClasses[j];
+            LireFeature f1 = (LireFeature) featureClass.newInstance();
+            Thread t = null;
+            BufferedImage read = ImageIO.read(new File("src/test/resources/images/img01.JPG"));
+            f1.extract(read);
+            for (int i=0; i<16; i++) {
+                t = new Thread(new Extractor(read, f1));
+                t.start();
+            }
+            try {
+                t.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class Extractor implements Runnable {
+        private BufferedImage file;
+        private LireFeature feature;
+        private LireFeature truth;
+
+        Extractor(BufferedImage file, LireFeature truth) {
+            try {
+                this.file = file;
+                this.truth = truth.getClass().newInstance();
+                this.truth.setByteArrayRepresentation(truth.getByteArrayRepresentation());
+                feature = truth.getClass().newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void run() {
+            for (int i =0; i<100; i++) {
+                try {
+                    feature.extract(file);
+                    if (feature.getDistance(truth) != 0) {
+                        System.err.println(Thread.currentThread().getName() + " ("+feature.getFeatureName()+") : " + feature.getDistance(truth));
+                        break;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
