@@ -76,7 +76,7 @@ public class GeneralTest extends TestCase {
     private String testFilesPath = "./src/test/resources/images/";
     private String indexPath = "test-index";
     private String testExtensive = "./testdata/wang-1000";
-    private Class[] featureClasses = new Class[]{
+    public Class[] featureClasses = new Class[]{
             CEDD.class,
             FCTH.class,
             JCD.class,

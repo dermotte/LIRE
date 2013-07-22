@@ -50,20 +50,20 @@ package net.semanticmetadata.lire.imageanalysis.fcth;
 public class FuzzyFCTHpart {
     public double[] ResultsTable = new double[8];
 
-    public static double[] HorizontalMembershipValues = {0, 0, 20, 90, 20, 90, 255, 255};
+    public double[] HorizontalMembershipValues = {0, 0, 20, 90, 20, 90, 255, 255};
 
-    public static double[] VerticalMembershipValues = {0, 0, 20, 90, 20, 90, 255, 255};
+    public double[] VerticalMembershipValues = {0, 0, 20, 90, 20, 90, 255, 255};
 
-    public static double[] EnergyMembershipValues = {0, 0, 20, 80, 20, 80, 255, 255};
+    public double[] EnergyMembershipValues = {0, 0, 20, 80, 20, 80, 255, 255};
 
-    public static FuzzyRules[] TextureRules = new FuzzyRules[8];
+    public FuzzyRules[] TextureRules = new FuzzyRules[8];
 
     public double[] FCTH = new double[192];
-    public static double[] HActivation = new double[2];
-    public static double[] VActivation = new double[2];
-    public static double[] EActivation = new double[2];
+    public double[] HActivation = new double[2];
+    public double[] VActivation = new double[2];
+    public double[] EActivation = new double[2];
 
-    public static int[][] RulesDefinition = {
+    public int[][] RulesDefinition = {
             {0, 0, 0, 0},
             {0, 0, 1, 1},
             {0, 1, 0, 2},
