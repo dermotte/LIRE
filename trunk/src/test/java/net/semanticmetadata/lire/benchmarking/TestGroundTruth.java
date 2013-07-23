@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.07.13 14:58
+ * Updated: 16.07.13 15:31
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -97,8 +97,8 @@ public class TestGroundTruth extends TestCase {
 
     public void testIndexing() {
 //        fileList = new File("E:\\Eval-WIPO\\ca.txt");
-        fileList = new File("C:\\Temp\\Eval-WIPO\\ca-5000.txt");
-        ParallelIndexer pin = new ParallelIndexer(4, indexPath, fileList, true) {
+        fileList = new File("C:\\Temp\\Eval-WIPO\\ca.txt");
+        ParallelIndexer pin = new ParallelIndexer(6, indexPath, fileList, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());

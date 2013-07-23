@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.07.13 08:52
+ * Updated: 16.07.13 15:44
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -328,6 +328,7 @@ public class ParallelIndexer implements Runnable {
 
     class Producer implements Runnable {
         public void run() {
+            boolean leaveOneOut = false;
             BufferedImage tmpImage;
             int tmpSize = 0;
             for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
@@ -335,12 +336,13 @@ public class ParallelIndexer implements Runnable {
                 File next = new File(path);
                 try {
                     tmpImage = ImageIO.read(next);
-                    tmpSize = 1;
                     synchronized (images) {
                         path = next.getCanonicalPath();
                         // TODO: add re-write rule for path here!
 //                        path = path.replace("E:\\WIPO-conv\\convert", "");
 //                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
+                        // this helps a lot for slow computers ....
+                        if (images.size()>500) images.wait(5000);
                         images.add(new WorkItem(path, tmpImage));
                         tmpSize = images.size();
                         images.notifyAll();
@@ -352,8 +354,8 @@ public class ParallelIndexer implements Runnable {
                         // iy you encounter still memory errors, then try to use more threads.
                         if (tmpSize > 500) Thread.sleep(50);
                         else if (tmpSize > 1000) Thread.sleep(5000);
-                        else if (tmpSize > 2000) Thread.sleep(10000);
-                        else if (tmpSize > 3000) Thread.sleep(100000);
+                        else if (tmpSize > 2000) Thread.sleep(50000);
+                        else if (tmpSize > 3000) Thread.sleep(500000);
                         else Thread.sleep(5);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
