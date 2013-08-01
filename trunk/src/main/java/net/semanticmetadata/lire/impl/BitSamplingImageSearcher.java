@@ -73,6 +73,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
     private String featureFieldName = null;
     private LireFeature feature = null;
     private String hashesFieldName = null;
+    private boolean partialHashes = false;
 
     /**
      * Creates a new searcher for BitSampling based hashes.
@@ -106,6 +107,27 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         this.featureFieldName = GenericDocumentBuilder.fieldForClass.get(feature.getClass());
         this.hashesFieldName = featureFieldName + GenericDocumentBuilder.HASH_FIELD_SUFFIX;
         this.feature = feature;
+        try {
+            BitSampling.readHashFunctions();
+        } catch (IOException e) {
+            System.err.println("Error reading hash functions from default location.");
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates a new searcher for BitSampling based hashes. The field names are inferred from the entries in {@link GenericDocumentBuilder}
+     *
+     * @param maximumHits how many hits the searcher shall return.
+     * @param feature     an instance of the feature.
+     * @param useFastSearch if true it only uses a random sample of hashes for the query and speeds up the search significantly.
+     */
+    public BitSamplingImageSearcher(int maximumHits, LireFeature feature, boolean useFastSearch) {
+        this.maximumHits = maximumHits;
+        featureFieldName = GenericDocumentBuilder.fieldForClass.get(feature.getClass());
+        hashesFieldName = featureFieldName + GenericDocumentBuilder.HASH_FIELD_SUFFIX;
+        this.feature = feature;
+        partialHashes = useFastSearch;
         try {
             BitSampling.readHashFunctions();
         } catch (IOException e) {
@@ -214,7 +236,11 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         BooleanQuery query = new BooleanQuery();
         for (int i = 0; i < hashes.length; i++) {
             // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.
-            query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
+            if (partialHashes) {
+                if (Math.random() < 0.5)
+                    query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
+            } else
+                query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
         }
         TopDocs docs = searcher.search(query, maxResultsHashBased);
 //        System.out.println(docs.totalHits);

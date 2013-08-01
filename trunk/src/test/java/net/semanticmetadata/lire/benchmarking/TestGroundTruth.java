@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.07.13 15:31
+ * Updated: 16.07.13 14:58
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -45,8 +45,10 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
+import net.semanticmetadata.lire.imageanalysis.ColorLayout;
+import net.semanticmetadata.lire.imageanalysis.EdgeHistogram;
+import net.semanticmetadata.lire.imageanalysis.JCD;
+import net.semanticmetadata.lire.imageanalysis.PHOG;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
@@ -81,13 +83,14 @@ import java.util.LinkedList;
 public class TestGroundTruth extends TestCase {
     public String indexPath = "test-idx-large-hashed";
     private File fileList;
+    private String path = "E:\\Eval-WIPO\\";
     //    private File truth = new File("E:\\Eval-WIPO\\filtered.txt");
     private File[] truths = {
-            new File("C:\\Temp\\Eval-WIPO\\landrover.txt"),
-            new File("C:\\Temp\\Eval-WIPO\\lidl.txt"),
-            new File("C:\\Temp\\Eval-WIPO\\puma.txt"),
-            new File("C:\\Temp\\Eval-WIPO\\sony.txt"),
-            new File("C:\\Temp\\Eval-WIPO\\swoosh.txt"),
+            new File(path + "landrover.txt"),
+            new File(path + "lidl.txt"),
+            new File(path + "puma.txt"),
+            new File(path + "sony.txt"),
+            new File(path + "swoosh.txt"),
     };
 
     public void testAll() throws IOException {
@@ -97,8 +100,8 @@ public class TestGroundTruth extends TestCase {
 
     public void testIndexing() {
 //        fileList = new File("E:\\Eval-WIPO\\ca.txt");
-        fileList = new File("C:\\Temp\\Eval-WIPO\\ca.txt");
-        ParallelIndexer pin = new ParallelIndexer(6, indexPath, fileList, true) {
+        fileList = new File(path + "all.txt");
+        ParallelIndexer pin = new ParallelIndexer(16, indexPath, fileList, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
@@ -115,12 +118,12 @@ public class TestGroundTruth extends TestCase {
                 builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
                 builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
                 builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
-                builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
+//                builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
+//                builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
                 builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
-                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
-                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
+//                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
+//                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
 
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
@@ -145,12 +148,12 @@ public class TestGroundTruth extends TestCase {
                     builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
                     builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
                     builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true));
                     builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
-                    builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
+//                    builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
 
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
@@ -167,22 +170,22 @@ public class TestGroundTruth extends TestCase {
         getRecall("ColorLayout (linear)", new GenericFastImageSearcher(50, ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true, reader), reader);
         getRecall("PHOG (linear)", new GenericFastImageSearcher(50, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), reader);
         getRecall("JCD (linear)", new GenericFastImageSearcher(50, JCD.class, DocumentBuilder.FIELD_NAME_JCD, true, reader), reader);
-        getRecall("CEDD (linear)", new GenericFastImageSearcher(50, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true, reader), reader);
-        getRecall("JointHistogram (linear)", new GenericFastImageSearcher(50, JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true, reader), reader);
-        getRecall("LocalBinaryPatterns (linear)", new GenericFastImageSearcher(50, LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true, reader), reader);
         getRecall("EdgeHistogram (linear)", new GenericFastImageSearcher(50, EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true, reader), reader);
-        getRecall("Luminance Layout (linear)", new GenericFastImageSearcher(50, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true, reader), reader);
-        getRecall("BinaryPatternsPyramid (linear)", new GenericFastImageSearcher(50, BinaryPatternsPyramid.class, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, true, reader), reader);
+//        getRecall("CEDD (linear)", new GenericFastImageSearcher(50, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD, true, reader), reader);
+//        getRecall("JointHistogram (linear)", new GenericFastImageSearcher(50, JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true, reader), reader);
+//        getRecall("LocalBinaryPatterns (linear)", new GenericFastImageSearcher(50, LocalBinaryPatterns.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, true, reader), reader);
+//        getRecall("Luminance Layout (linear)", new GenericFastImageSearcher(50, LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true, reader), reader);
+//        getRecall("BinaryPatternsPyramid (linear)", new GenericFastImageSearcher(50, BinaryPatternsPyramid.class, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, true, reader), reader);
 //
         getRecall("ColorLayout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_COLORLAYOUT, DocumentBuilder.FIELD_NAME_COLORLAYOUT + "_hash", new ColorLayout(), 1000), reader);
         getRecall("PHOG (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_PHOG, DocumentBuilder.FIELD_NAME_PHOG + "_hash", new PHOG(), 1000), reader);
         getRecall("JCD (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_JCD, DocumentBuilder.FIELD_NAME_JCD + "_hash", new JCD(), 1000), reader);
-        getRecall("CEDD (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_CEDD, DocumentBuilder.FIELD_NAME_CEDD + "_hash", new JCD(), 1000), reader);
-        getRecall("JointHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM + "_hash", new JointHistogram(), 1000), reader);
-        getRecall("LocalBinaryPatterns (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "_hash", new LocalBinaryPatterns(), 1000), reader);
         getRecall("EdgeHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "_hash", new EdgeHistogram(), 1000), reader);
-        getRecall("Luminance Layout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader);
-        getRecall("BinaryPatternsPyramid (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID + "_hash", new LocalBinaryPatterns(), 1000), reader);
+//        getRecall("CEDD (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_CEDD, DocumentBuilder.FIELD_NAME_CEDD + "_hash", new JCD(), 1000), reader);
+//        getRecall("JointHistogram (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM + "_hash", new JointHistogram(), 1000), reader);
+//        getRecall("LocalBinaryPatterns (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "_hash", new LocalBinaryPatterns(), 1000), reader);
+//        getRecall("Luminance Layout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader);
+//        getRecall("BinaryPatternsPyramid (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID + "_hash", new LocalBinaryPatterns(), 1000), reader);
     }
 
     /**
