@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-08-01
+==========
+  - Added fast & dirty search method to BitSamplingImageSearcher.
+
 2013-07-22
 ==========
   - Fixed concurrency bug in FCTH & CEDD, eliminated therefore in JCD too.

@@ -355,7 +355,7 @@ public class ParallelExtractor implements Runnable {
                     }
                     try {
                         if (tmpSize > 500) Thread.sleep(1000);
-                        else Thread.sleep(2);
+//                        else Thread.sleep(2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
