@@ -67,7 +67,7 @@ public class PHOG implements LireFeature {
 
     // And now for PHOG:
     public static int bins = 30;
-    double[] tmpHistogram = new double[bins + 4*bins + 4*4*bins];
+    double[] tmpHistogram;
     byte[] histogram = new byte[bins + 4*bins + 4*4*bins];
 //    double[] histogram = new double[5 * bins + 4*4*bins + 4*4*4*bins];
     // used to quantize bins to [0, quantizationFactor]
