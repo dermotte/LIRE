@@ -70,27 +70,16 @@ public class JCDTest extends TestCase {
             JCD f2 = new JCD();
 
             f1.extract(image);
-            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
+            System.out.println(Arrays.toString(f1.getByteArrayRepresentation()));
+
             bytes += f1.getByteArrayRepresentation().length;
-            sum += 168 / 2;
+            sum += 168;
             f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
-//            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
-            double[] h = f2.getDoubleHistogram();
-            int pos = -1;
-            for (int i = 0; i < h.length; i++) {
-                double v = h[i];
-                if (pos == -1) {
-                    if (v == 0) pos = i;
-                } else if (pos > -1) {
-                    if (v != 0) pos = -1;
-                }
-            }
-//            System.out.println("save = " + (168 - pos));
-//            bytes += (168 - pos);
             assertTrue(f2.getDistance(f1) == 0);
         }
         double save = 1d - (double) bytes / (double) sum;
         System.out.println(save * 100 + "% saved");
+
 
     }
 

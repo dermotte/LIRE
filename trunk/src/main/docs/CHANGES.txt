@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2013-08-02
+==========
+  - Changed quantization & serialization of PHOG (smaller feature, half the size)
+  - Changed quantization of JCD for support of RLE with zero values (~56% less space)
+  - Fixed some debug code in HashingIndexor.
+  - Caught a division by zero in ParallelExtractor
+
 2013-08-01
 ==========
   - Added fast & dirty search method to BitSamplingImageSearcher.
