@@ -68,6 +68,8 @@ public class ClassifierTest extends TestCase {
         boolean weightByRank = true;
         String[] classes = {"2012", "beach", "food", "london", "music", "nature", "people", "sky", "travel", "wedding"};
         int k = 50;
+        String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+        String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
         // CONFIG
         String fieldName = DocumentBuilder.FIELD_NAME_COLORLAYOUT;
         LireFeature feature = new ColorLayout();
@@ -105,7 +107,7 @@ public class ClassifierTest extends TestCase {
                 hits = bis.search(ImageIO.read(new File(line)), ir);
                 // set tag weights and counts.
                 for (int l = 0; l < k; l++) {
-                    String tag = getTag(hits.doc(l));
+                    String tag = getTag(hits.doc(l),photosLocation);
                     if (tag2count.get(tag) == null) tag2count.put(tag, 1);
                     else tag2count.put(tag, tag2count.get(tag) + 1);
                     if (weightByRank) {
@@ -186,6 +188,8 @@ public class ClassifierTest extends TestCase {
             boolean createHTML = false;
             String[] classes = {"yes", "no"};
             int k = 3;
+            String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+            String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
 
             // CONFIG
             String fieldName = null;
@@ -251,7 +255,7 @@ public class ClassifierTest extends TestCase {
                     hits = bis.search(ImageIO.read(new File(line)), ir);
                     // set tag weights and counts.
                     for (int l = 0; l < k; l++) {
-                        String tag = getTag(hits.doc(l));
+                        String tag = getTag(hits.doc(l),photosLocation);
                         if (tag2count.get(tag) == null) tag2count.put(tag, 1);
                         else tag2count.put(tag, tag2count.get(tag) + 1);
                         if (weightByRank) {
@@ -294,15 +298,15 @@ public class ClassifierTest extends TestCase {
                     classesHTML.add(classifiedAs);
                     filesHTML.add(line);
                     //F1 Metric
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) {
                         countCorrect++;
                         countTp++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) countFp++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) countFp++;
 
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) {
                         countCorrect++;
                         countTn++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) countFn++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) countFn++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     // confusion:
@@ -429,6 +433,8 @@ public class ClassifierTest extends TestCase {
             boolean createHTML = false;
             String[] classes = {"yes", "no"};
             int k = 3;
+            String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+            String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
             // CONFIG
             String fieldName = null;
             try {
@@ -522,8 +528,8 @@ public class ClassifierTest extends TestCase {
 
                     // set tag weights and counts.
                     for (int l = 0; l < k; l++) {
-                        String tag = getTag(hits.doc(l));
-                        String tagSecond = getTag(hitsSecond.doc(l));
+                        String tag = getTag(hits.doc(l),photosLocation);
+                        String tagSecond = getTag(hitsSecond.doc(l),photosLocation);
 
                         //  if (tag2count.get(tag) == null) tag2count.put(tag, 1);
                         //  else tag2count.put(tag, tag2count.get(tag) + 1);
@@ -614,15 +620,15 @@ public class ClassifierTest extends TestCase {
                     filesHTML.add(line);
 
                     //F1 Metric
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) {
                         countCorrect++;
                         countTp++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) countFp++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) countFp++;
 
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) {
                         countCorrect++;
                         countTn++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) countFn++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) countFn++;
                     //if (classifiedAs.equals(getTagLine(line)))countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
@@ -764,6 +770,8 @@ public class ClassifierTest extends TestCase {
             boolean createHTML = false;
             String[] classes = {"yes", "no"};
             int k = 50;
+            String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+            String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
             // CONFIG
             String fieldName = null;
             try {
@@ -893,9 +901,9 @@ public class ClassifierTest extends TestCase {
 
                     // set tag weights and counts.
                     for (int l = 0; l < k; l++) {
-                        String tag = getTag(hits.doc(l));
-                        String tagSecond = getTag(hitsSecond.doc(l));
-                        String tagThird = getTag(hitsThird.doc(l));
+                        String tag = getTag(hits.doc(l),photosLocation);
+                        String tagSecond = getTag(hitsSecond.doc(l),photosLocation);
+                        String tagThird = getTag(hitsThird.doc(l),photosLocation);
 
                         //  if (tag2count.get(tag) == null) tag2count.put(tag, 1);
                         //  else tag2count.put(tag, tag2count.get(tag) + 1);
@@ -1017,15 +1025,15 @@ public class ClassifierTest extends TestCase {
                     filesHTML.add(line);
 
                     //F1 Metric
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) {
                         countCorrect++;
                         countTp++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) countFp++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) countFp++;
 
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) {
                         countCorrect++;
                         countTn++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) countFn++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) countFn++;
                     //if (classifiedAs.equals(getTagLine(line)))countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
@@ -1161,6 +1169,8 @@ public class ClassifierTest extends TestCase {
             boolean createHTML = false;
             String[] classes = {"yes", "no"};
             int k = 1;
+            String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+            String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
             // CONFIG
             String fieldName = null;
             try {
@@ -1290,9 +1300,9 @@ public class ClassifierTest extends TestCase {
 
                     // set tag weights and counts.
                     for (int l = 0; l < k; l++) {
-                        String tag = getTag(hits.doc(l));
-                        String tagSecond = getTag(hitsSecond.doc(l));
-                        String tagThird = getTag(hitsThird.doc(l));
+                        String tag = getTag(hits.doc(l),photosLocation);
+                        String tagSecond = getTag(hitsSecond.doc(l),photosLocation);
+                        String tagThird = getTag(hitsThird.doc(l),photosLocation);
 
                         //  if (tag2count.get(tag) == null) tag2count.put(tag, 1);
                         //  else tag2count.put(tag, tag2count.get(tag) + 1);
@@ -1414,15 +1424,15 @@ public class ClassifierTest extends TestCase {
                     filesHTML.add(line);
 
                     //F1 Metric
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) {
                         countCorrect++;
                         countTp++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) countFp++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) countFp++;
 
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) {
                         countCorrect++;
                         countTn++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) countFn++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) countFn++;
                     //if (classifiedAs.equals(getTagLine(line)))countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
@@ -1512,7 +1522,7 @@ public class ClassifierTest extends TestCase {
 
     public void testClassifyFashionAllCombinedFeatures() throws IOException {
 
-        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsallFeatureK700.txt")));
+        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsallFeatureK50.txt")));
 
         String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
         String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
@@ -1525,11 +1535,14 @@ public class ClassifierTest extends TestCase {
              boolean weightByRank = true;
             boolean createHTML = false;
             String[] classes = {"yes", "no"};
-            int k = 700;
+            int k = 50;
+            String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+            String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
+        //  String indexLocation = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index";
             // CONFIG
 
 
-            String f1 = null;
+        String f1 = null;
         String f2 = null;
         String f3 = null;
         String f4 = null;
@@ -1595,18 +1608,30 @@ public class ClassifierTest extends TestCase {
             }
 
 
-        String i1 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[0];
-        String i2 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[1];
-        String i3 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[2];
-        String i4 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[3];
-        String i5 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[4];
-        String i6 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[5];
-        String i7 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[6];
-        String i8 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[7];
-        String i9 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[8];
-        String i10 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[9];
-        String i11 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[10];
-        String i12 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[11];
+       // String i1 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[0];
+       // String i2 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[1];
+       // String i3 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[2];
+       // String i4 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[3];
+       // String i5 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[4];
+       // String i6 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[5];
+       // String i7 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[6];
+       // String i8 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[7];
+       // String i9 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[8];
+       // String i10 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[9];
+       // String i11 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[10];
+       // String i12 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index" + classArray[11];
+        String i1 = indexLocation + classArray[0];
+        String i2 = indexLocation + classArray[1];
+        String i3 = indexLocation + classArray[2];
+        String i4 = indexLocation + classArray[3];
+        String i5 = indexLocation + classArray[4];
+        String i6 = indexLocation + classArray[5];
+        String i7 = indexLocation + classArray[6];
+        String i8 = indexLocation + classArray[7];
+        String i9 = indexLocation + classArray[8];
+        String i10 = indexLocation + classArray[9];
+        String i11 = indexLocation + classArray[10];
+        String i12 = indexLocation + classArray[11];
 
 
             //  for (int ik = 0;ik<k;ik++)       {
@@ -1622,7 +1647,7 @@ public class ClassifierTest extends TestCase {
             int c = 0;   // used for just one class ...
             //        for (int c = 0; c < 10; c++) {
             String classIdentifier = classes[c];
-            String listFiles = "D:\\Datasets\\FashionTestFashionDataSet\\test.txt";
+            String listFiles = "D:\\Datasets\\FashionTestItemDataSet\\itemtest.txt";
             //"D:\\Datasets\\FashionTest\\fashion10000Test\\" + classIdentifier + ".txt";
 
             // INIT
@@ -1685,6 +1710,7 @@ public class ClassifierTest extends TestCase {
             long ms = System.currentTimeMillis();
             while ((line = br.readLine()) != null) {
 
+                System.out.println(line);
                 System.out.println(count);
 
                 try {
@@ -1711,18 +1737,20 @@ public class ClassifierTest extends TestCase {
 
                     // set tag weights and counts.
                     for (int l = 0; l < k; l++) {
-                        String tag1 = getTag(hits1.doc(l));
-                        String tag2 = getTag(hits2.doc(l));
-                        String tag3 = getTag(hits3.doc(l));
-                        String tag4 = getTag(hits4.doc(l));
-                        String tag5 = getTag(hits5.doc(l));
-                        String tag6 = getTag(hits6.doc(l));
-                        String tag7 = getTag(hits7.doc(l));
-                        String tag8 = getTag(hits8.doc(l));
-                        String tag9 = getTag(hits9.doc(l));
-                        String tag10 = getTag(hits10.doc(l));
-                        String tag11 = getTag(hits11.doc(l));
-                        String tag12 = getTag(hits12.doc(l));
+                        String tag1 = getTag(hits1.doc(l),photosLocation);
+                        String tag2 = getTag(hits2.doc(l),photosLocation);
+                        String tag3 = getTag(hits3.doc(l),photosLocation);
+                        String tag4 = getTag(hits4.doc(l),photosLocation);
+                        String tag5 = getTag(hits5.doc(l),photosLocation);
+                        String tag6 = getTag(hits6.doc(l),photosLocation);
+                        String tag7 = getTag(hits7.doc(l),photosLocation);
+                        String tag8 = getTag(hits8.doc(l),photosLocation);
+                        String tag9 = getTag(hits9.doc(l),photosLocation);
+                        String tag10 = getTag(hits10.doc(l),photosLocation);
+                        String tag11 = getTag(hits11.doc(l),photosLocation);
+                        String tag12 = getTag(hits12.doc(l),photosLocation);
+
+                      //  System.out.println(tag1);
 
 
 
@@ -1821,15 +1849,15 @@ public class ClassifierTest extends TestCase {
                     filesHTML.add(line);
 
                     //F1 Metric
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) {
                         countCorrect++;
                         countTp++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("yes")) countFp++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("yes")) countFp++;
 
-                    if (classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) {
+                    if (classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) {
                         countCorrect++;
                         countTn++;
-                    } else if (!classifiedAs.equals(getTagLine(line)) && classifiedAs.equals("no")) countFn++;
+                    } else if (!classifiedAs.equals(getTagLine(line,photosLocation)) && classifiedAs.equals("no")) countFn++;
                     //if (classifiedAs.equals(getTagLine(line)))countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
                     //if (classifiedAs.equals(classIdentifier)) countCorrect++;
@@ -1838,7 +1866,7 @@ public class ClassifierTest extends TestCase {
 //                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
                 } catch (Exception e) {
                     System.err.println(">>> ERR:" + e.getMessage() + e);
-                    //   throw (NullPointerException) e;
+                      // throw (NullPointerException) e;
                 }
             }
 
@@ -1916,10 +1944,12 @@ public class ClassifierTest extends TestCase {
         print_line.close();
     }
 
-    private static String getTag(Document d) {
-        StringBuilder ab = new StringBuilder(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].replace("D:\\Datasets\\FashionTest\\", ""));
-        //System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
+    private static String getTag(Document d, String photosLocation) {
+        StringBuilder ab = new StringBuilder(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].replace(photosLocation, ""));
+
+    //    System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
         return ab.substring(0, ab.indexOf("\\")).toString();
+      //  return ab.toString();
         //return "yes";
     }
 
@@ -1953,9 +1983,9 @@ public class ClassifierTest extends TestCase {
         return fMeasure = 2 * ((precision * recall) / (precision + recall));
     }
 
-    private static String getTagLine(String line) {
-        line = line.replace("D:\\Datasets\\FashionTest\\", "");
-        //System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
+    private static String getTagLine(String line, String photosLocation) {
+        line = line.replace(photosLocation, "");
+      //  System.out.println(line.substring(0, line.indexOf("\\")).toString());
         return line.substring(0, line.indexOf("\\")).toString();
         //return "yes";
     }
