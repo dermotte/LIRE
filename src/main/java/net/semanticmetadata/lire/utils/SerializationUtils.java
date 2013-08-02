@@ -173,12 +173,11 @@ public class SerializationUtils {
         int[] result = new int[(length >> 2)];
         byte[] tmp = new byte[4];
         for (int i = 0; i < length >> 2; i++) {
-            System.arraycopy(in, offset + (i* 4), tmp, 0, 4);
+            System.arraycopy(in, offset + (i * 4), tmp, 0, 4);
             result[i] = toInt(tmp);
         }
         return result;
     }
-
 
     /**
      * Converts a float to a byte array with 4 elements. Used to put floats into a byte[] payload in a convenient
@@ -255,7 +254,6 @@ public class SerializationUtils {
         return result;
     }
 
-
     /**
      * Converts a double to a byte array with 4 elements. Used to put doubles into a byte[] payload in a convenient
      * and fast way by shifting without using streams (which is kind of slow). Use
@@ -319,6 +317,20 @@ public class SerializationUtils {
      * Convenience method for creating a double array from a byte array.
      *
      * @param data
+     * @return
+     */
+    public static double[] castToDoubleArray(byte[] data) {
+        double[] result = new double[data.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = data[i];
+        }
+        return result;
+    }
+
+    /**
+     * Convenience method for creating a double array from a byte array.
+     *
+     * @param data
      * @param length
      * @param offset
      * @return
@@ -327,12 +339,11 @@ public class SerializationUtils {
         double[] result = new double[length / 8];
         byte[] tmp = new byte[8];
         for (int i = 0; i < result.length; i++) {
-            System.arraycopy(data, i * 8 +offset, tmp, 0, 8);
+            System.arraycopy(data, i * 8 + offset, tmp, 0, 8);
             result[i] = toDouble(tmp);
         }
         return result;
     }
-
 
     /**
      * Convenience method for creating a String from an array.
@@ -369,7 +380,6 @@ public class SerializationUtils {
         return result;
     }
 
-
     public static double[] toDoubleArray(float[] d) {
         double[] result = new double[d.length];
         for (int i = 0; i < result.length; i++) {
@@ -381,6 +391,7 @@ public class SerializationUtils {
     /**
      * Create a double[] from an int[]<br/>
      * by patch contributed by Franz Graf, franz.graf@gmail.com
+     *
      * @param ints the int array
      * @return a new array of doubles
      */
@@ -388,7 +399,7 @@ public class SerializationUtils {
         double[] result = new double[ints.length];
         for (int i = 0; i < result.length; i++) {
             result[i] = (double) ints[i];
-}
+        }
         return result;
     }
 }

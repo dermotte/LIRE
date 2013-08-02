@@ -41,7 +41,6 @@
 
 package net.semanticmetadata.lire.indexing.tools;
 
-import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.PHOG;
 import net.semanticmetadata.lire.indexing.hashing.BitSampling;
@@ -51,7 +50,6 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 
-import javax.imageio.ImageIO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -130,22 +128,22 @@ public class HashingIndexor extends Indexor {
 
     protected void addToDocument(LireFeature feature, Document document, String featureFieldName) {
         // This is for debugging the image features.
-        try {
-//            System.out.println(feature.getClass().getName() + " " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
-            LireFeature f1 = feature.getClass().newInstance();
-            f1.extract(ImageIO.read(new File(document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
-            float distance = feature.getDistance(f1);
-            if (distance != 0) {
-                System.out.println("Extracted:" + java.util.Arrays.toString(f1.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
-                        "Data     :" + java.util.Arrays.toString(feature.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
-                        "Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance
-                );
-//                System.out.println("Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
+//        try {
+////            System.out.println(feature.getClass().getName() + " " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+//            LireFeature f1 = feature.getClass().newInstance();
+//            f1.extract(ImageIO.read(new File(document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
+//            float distance = feature.getDistance(f1);
+//            if (distance != 0) {
+//                System.out.println("Extracted:" + java.util.Arrays.toString(f1.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
+//                        "Data     :" + java.util.Arrays.toString(feature.getDoubleHistogram()).replaceAll("\\.0,", "") + "\n" +
+//                        "Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance
+//                );
+////                System.out.println("Problem with " + f1.getClass().getName() + " at file " + document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + ", distance=" + distance);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
         if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) {
             // generate hashes here:
 //            int[] hashes = LocalitySensitiveHashing.generateHashes(feature.getDoubleHistogram());

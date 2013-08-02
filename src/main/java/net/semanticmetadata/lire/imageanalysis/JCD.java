@@ -51,13 +51,12 @@ import java.util.Arrays;
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
 public class JCD implements LireFeature {
+    protected double[] data = new double[168];
     int tmp;
     double result = 0;
     double temp1 = 0;
     double temp2 = 0;
     double TempCount1 = 0, TempCount2 = 0, TempCount3 = 0;
-
-    protected double[] data = new double[168];
 
     public JCD(CEDD cedd, FCTH fcth) {
         init(cedd, fcth);
@@ -65,7 +64,6 @@ public class JCD implements LireFeature {
 
     public JCD() {
     }
-
 
     public void extract(BufferedImage bimg) {
         CEDD c = new CEDD();
@@ -95,6 +93,32 @@ public class JCD implements LireFeature {
      */
     public byte[] getByteArrayRepresentation() {
         // find out the position of the beginning of the trailing zeros.
+        int len = 0;
+        byte tmpVal = 0;
+        // find out the actual length. two values in one byte, so we have to round up.
+        byte[] result = new byte[data.length];
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] > 0) {
+                if (tmpVal < 0) {
+                    result[len] = tmpVal;
+                    tmpVal = 0;
+                    len++;
+                }
+                result[len] = (byte) (2d * data[i]);
+                len++;
+            } else {
+                tmpVal--;
+            }
+        }
+        if (tmpVal < 0) {
+            result[len] = tmpVal;
+            len++;
+        }
+        return Arrays.copyOf(result, len);
+    }
+/*
+    public byte[] getByteArrayRepresentation() {
+        // find out the position of the beginning of the trailing zeros.
         int position = -1;
         for (int i = 0; i < data.length; i++) {
             if (position == -1) {
@@ -111,6 +135,7 @@ public class JCD implements LireFeature {
         }
         return result;
     }
+*/
 
     /**
      * Reads descriptor from a byte array. Much faster than the String based method.
@@ -123,12 +148,31 @@ public class JCD implements LireFeature {
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        Arrays.fill(data, 0, data.length, 0);
+        tmp = 0;
         for (int i = 0; i < length; i++) {
-            if (in[offset+i]>0) data[i] = ((double) in[offset+i]) / 2d;
+            if (in[offset + i] > 0) {
+                data[tmp] = ((double) in[offset + i]) / 2d;
+                tmp++;
+            } else {
+                for (int j = 0; j<Math.abs(in[offset+i]); j++) {
+                    data[tmp] = 0d;
+                    tmp++;
+                }
+
+            }
+
         }
     }
 
+/*
+    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+        Arrays.fill(data, 0, data.length, 0);
+        for (int i = 0; i < length; i++) {
+            if (in[offset + i] > 0) data[i] = ((double) in[offset + i]) / 2d;
+        }
+    }
+
+*/
     public double[] getDoubleHistogram() {
         return data;
     }

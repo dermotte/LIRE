@@ -257,4 +257,12 @@ public class MetricsUtils {
         }
         return sum;
     }
+
+    public static double distL1(byte[] h1, byte[] h2) {
+        double sum = 0f;
+        for (int i = 0; i < h1.length; i++) {
+            sum += Math.abs(h1[i] - h2[i]);
+        }
+        return sum;
+    }
 }

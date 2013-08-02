@@ -295,7 +295,7 @@ public class ParallelExtractor implements Runnable {
                 iterator.next().join();
             }
             long l1 = System.currentTimeMillis() - l;
-            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + l1 / overallCount + " ms each.");
+            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + (overallCount>0?(l1 / overallCount):"inf.") + " ms each.");
             dos.close();
 //            writer.commit();
 //            writer.close();
