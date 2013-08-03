@@ -4,6 +4,7 @@ CHANGES for LIRE
 2013-08-03
 ==========
   - Adjusted TestUCID to new, faster searcher implementation.
+  - Release 0.9.4 beta_2
 
 2013-08-02
 ==========
