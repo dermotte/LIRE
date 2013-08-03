@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-08-03
+==========
+  - Adjusted TestUCID to new, faster searcher implementation.
+
 2013-08-02
 ==========
   - Changed quantization & serialization of PHOG (smaller feature, half the size)

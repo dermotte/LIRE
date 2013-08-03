@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 01.07.13 16:15
+ * Updated: 03.08.13 09:07
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.benchmarking;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
 import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
@@ -80,8 +81,8 @@ public class TestUCID extends TestCase {
     private String indexPath = "ucid-index";
     // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
-    private String testExtensive = "E:\\ucid.v2/png";
-    private final String groundTruth = "E:\\ucid.v2/ucid.v2.groundtruth.txt";
+    private String testExtensive = "C:\\Temp\\UCID/png";
+    private final String groundTruth = "C:\\Temp\\UCID/ucid.v2.groundtruth.txt";
 
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
@@ -161,17 +162,17 @@ public class TestUCID extends TestCase {
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
 
         System.out.println("Feature\tMAP\tp@10\tER");
-        computeMAP(ImageSearcherFactory.createCEDDImageSearcher(1400), "CEDD", reader);
-        computeMAP(ImageSearcherFactory.createFCTHImageSearcher(1400), "FCTH", reader);
-        computeMAP(ImageSearcherFactory.createJCDImageSearcher(1400), "JCD", reader);
-        computeMAP(ImageSearcherFactory.createPHOGImageSearcher(1400), "PHOG", reader);
-        computeMAP(ImageSearcherFactory.createColorLayoutImageSearcher(1400), "Color Layout", reader);
-        computeMAP(ImageSearcherFactory.createEdgeHistogramImageSearcher(1400), "Edge Histogram", reader);
-        computeMAP(ImageSearcherFactory.createScalableColorImageSearcher(1400), "Scalable Color", reader);
-        computeMAP(ImageSearcherFactory.createJointHistogramImageSearcher(1400), "Joint Histogram", reader);
-        computeMAP(ImageSearcherFactory.createOpponentHistogramSearcher(1400), "Opponent Histogram", reader);
-        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1400), "RGB Color Histogram", reader);
-        computeMAP(ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(1400), "Color Correlation", reader);
+        computeMAP(new GenericFastImageSearcher(1400, CEDD.class, true, reader), "CEDD", reader);
+        computeMAP(new GenericFastImageSearcher(1400, FCTH.class, true, reader), "FCTH", reader);
+        computeMAP(new GenericFastImageSearcher(1400, JCD.class, true, reader), "JCD", reader);
+        computeMAP(new GenericFastImageSearcher(1400, PHOG.class, true, reader), "PHOG", reader);
+        computeMAP(new GenericFastImageSearcher(1400, ColorLayout.class, true, reader), "Color Layout", reader);
+        computeMAP(new GenericFastImageSearcher(1400, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
+        computeMAP(new GenericFastImageSearcher(1400, ScalableColor.class, true, reader), "Scalable Color", reader);
+        computeMAP(new GenericFastImageSearcher(1400, JointHistogram.class, true, reader), "Joint Histogram", reader);
+        computeMAP(new GenericFastImageSearcher(1400, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
+        computeMAP(new GenericFastImageSearcher(1400, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
 
         computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, "spcedd"), "SPCEDD", reader);
         computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, "spjcd"), "SPJCD", reader);
