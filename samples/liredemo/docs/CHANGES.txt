@@ -1,6 +1,7 @@
 CHANGES for LIREDemo
 ====================
 
+
 2010-09-28
 ==========
   - Added option to try BoVW
