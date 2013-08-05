@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6822615599" secret="18d9915317" server="7152" farm="8" dateuploaded="1328446744" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="bb5d061cb4" originalformat="jpg" views="1409"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari Scuderia Spider 16M</title>
+        <description>For more automotive goodness, follow @torquespeak on Twitter.
+
+            *EXPLORED* - Highest position: #185, 5 February 2012
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1328446744" taken="2011-09-07 14:52:43" takengranularity="0" lastupdate="1330416416"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>19</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6822615599-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6822615599-49217" author="31797562@N04" raw="Scuderia" machine_tag="0">scuderia</tag>
+            <tag id="31765423-6822615599-2249" author="31797562@N04" raw="Spider" machine_tag="0">spider</tag>
+            <tag id="31765423-6822615599-766103" author="31797562@N04" raw="16M" machine_tag="0">16m</tag>
+            <tag id="31765423-6822615599-42383" author="31797562@N04" raw="rosso" machine_tag="0">rosso</tag>
+            <tag id="31765423-6822615599-25273" author="31797562@N04" raw="monte" machine_tag="0">monte</tag>
+            <tag id="31765423-6822615599-23369" author="31797562@N04" raw="carlo" machine_tag="0">carlo</tag>
+            <tag id="31765423-6822615599-58663" author="31797562@N04" raw="v8" machine_tag="0">v8</tag>
+            <tag id="31765423-6822615599-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-6822615599-3444" author="31797562@N04" raw="raw" machine_tag="0">raw</tag>
+            <tag id="31765423-6822615599-8575" author="31797562@N04" raw="convertible" machine_tag="0">convertible</tag>
+            <tag id="31765423-6822615599-135879" author="31797562@N04" raw="roadster" machine_tag="0">roadster</tag>
+            <tag id="31765423-6822615599-227" author="31797562@N04" raw="red" machine_tag="0">red</tag>
+            <tag id="31765423-6822615599-5242" author="31797562@N04" raw="top" machine_tag="0">top</tag>
+            <tag id="31765423-6822615599-8946" author="31797562@N04" raw="down" machine_tag="0">down</tag>
+            <tag id="31765423-6822615599-565" author="31797562@N04" raw="men" machine_tag="0">men</tag>
+            <tag id="31765423-6822615599-3551" author="31797562@N04" raw="driving" machine_tag="0">driving</tag>
+            <tag id="31765423-6822615599-32797" author="31797562@N04" raw="asphalt" machine_tag="0">asphalt</tag>
+            <tag id="31765423-6822615599-958" author="31797562@N04" raw="tarmac" machine_tag="0">tarmac</tag>
+            <tag id="31765423-6822615599-61" author="31797562@N04" raw="road" machine_tag="0">road</tag>
+            <tag id="31765423-6822615599-224" author="31797562@N04" raw="shadow" machine_tag="0">shadow</tag>
+            <tag id="31765423-6822615599-3547" author="31797562@N04" raw="alone" machine_tag="0">alone</tag>
+        </tags>
+        <location latitude="43.740196" longitude="7.429718" accuracy="16" context="0" place_id="x6kb7VtVWrnGxUk"
+                  woeid="483298">
+            <neighbourhood place_id="x6kb7VtVWrnGxUk" woeid="483298">Condamine</neighbourhood>
+            <locality place_id="dlDqly9VWrkRkvw" woeid="483301">Monaco-Ville</locality>
+            <region place_id="_TLtmoFTVr9e2WuCow" woeid="24549797">La Condamine</region>
+            <country place_id="P47fNClTUb7iklTKJw" woeid="23424892">Monaco</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6822615599/</url>
+        </urls>
+    </photo>
+</rsp>
+

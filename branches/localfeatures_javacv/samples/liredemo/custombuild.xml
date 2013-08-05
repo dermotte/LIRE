@@ -1,0 +1,152 @@
+<!--
+  ~ This file is part of the LIRE project: http://www.semanticmetadata.net/lire
+  ~ LIRE is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ LIRE is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with LIRE; if not, write to the Free Software
+  ~ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  ~
+  ~ We kindly ask you to refer the any or one of the following publications in
+  ~ any publication mentioning or employing Lire:
+  ~
+  ~ Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+  ~ An Extensible Java CBIR Library. In proceedings of the 16th ACM International
+  ~ Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
+  ~ URL: http://doi.acm.org/10.1145/1459359.1459577
+  ~
+  ~ Lux Mathias. Content Based Image Retrieval with LIRE. In proceedings of the
+  ~ 19th ACM International Conference on Multimedia, pp. 735-738, Scottsdale,
+  ~ Arizona, USA, 2011
+  ~ URL: http://dl.acm.org/citation.cfm?id=2072432
+  ~
+  ~ Mathias Lux, Oge Marques. Visual Information Retrieval using Java and LIRE
+  ~ Morgan & Claypool, 2013
+  ~ URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
+  ~
+  ~ Copyright statement:
+  ~ ====================
+  ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
+  ~  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+  ~
+  ~ Updated: 03.08.13 10:28
+  -->
+
+<project name="LireDemoRelease" default="release" basedir=".">
+    <!--
+/*
+ * This file is part of the LIRe project.
+ *
+ * LIRe is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * LIRe is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Caliph & Emir; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Copyright statement:
+ * ********************
+ * (c) 2002-2012 by Mathias Lux (mathias@juggle.at)
+ * Palmengasse 20, 9020 Klagenfurt, Austria
+ * http://www.semanticmetadata.net
+ */
+
+
+    -->
+    <description>
+        This buildfile is used to package the LIRE Demo
+    </description>
+
+    <property name="src" value="src"/>
+    <property name="build" value="classes"/>
+    <property name="dist" value="dist"/>
+    <property name="versionstring" value="0.9.4_beta"/>
+
+    <!-- define the classpath  -->
+    <path id="classpath.path">
+        <pathelement location="${build}"/>
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <tstamp>
+            <format property="touch.time" pattern="dd.MM.yyyy hh:mm aa"/>
+        </tstamp>
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="clean, init">
+        <javac srcdir="${src}" destdir="${build}">
+            <classpath refid="classpath.path"/>
+        </javac>
+
+        <copy todir="${build}">
+            <fileset dir="src">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                    <exclude name="**/*.java"/>
+                </patternset>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${dist}/lib"/>
+
+        <echo file="default.mf" append="false">Main-Class: liredemo.LireDemoFrame
+Class-Path: lib/commons-math3-3.1.1.jar lib/JOpenSurf.jar lib/lire.jar lib/lucene-core-4.2.1.jar lib/lucene-queryparser-4.2.1.jar lib/lucene-analyzers-common-4.2.1.jar lib/metadata-extractor-2.3.1.jar
+        </echo>
+
+        <copy todir="${dist}/lib">
+            <fileset dir="lib">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/CVS/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+
+        <jar jarfile="${dist}/liredemo.jar" basedir="${build}" manifest="default.mf"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+
+    <target name="release" depends="dist">
+        <!-- Make a zip file -->
+        <!--subant antfile="nbbuild.xml" target="LireDemo-impl.jar"/-->
+        <zip destfile="${dist}/LireDemo-src-${versionstring}.zip">
+            <fileset dir="${src}">
+                <patternset>
+                    <!--include hashFunctionsFileName="${src}"/-->
+                    <exclude name="**/.svn"/>
+                </patternset>
+            </fileset>
+        </zip>
+    </target>
+
+</project>

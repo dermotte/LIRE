@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6226714304" secret="496944d4cc" server="6038" farm="7" dateuploaded="1318172862" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="90e3b77cac" originalformat="jpg" views="410"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 458 Italia</title>
+        <description>One of those shots that looks better on a DSLR screen than it does on the PC back home. Still,
+            overall I quite like it.
+
+            For more automotive goodness, follow @torquespeak on Twitter.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1318172862" taken="2011-10-08 21:33:37" takengranularity="0" lastupdate="1325643653"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>2</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6226714304-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6226714304-627359" author="31797562@N04" raw="458" machine_tag="0">458</tag>
+            <tag id="31765423-6226714304-3442" author="31797562@N04" raw="Italia" machine_tag="0">italia</tag>
+            <tag id="31765423-6226714304-472" author="31797562@N04" raw="black" machine_tag="0">black</tag>
+            <tag id="31765423-6226714304-49213" author="31797562@N04" raw="nero" machine_tag="0">nero</tag>
+            <tag id="31765423-6226714304-123647" author="31797562@N04" raw="brompton" machine_tag="0">brompton</tag>
+            <tag id="31765423-6226714304-1213" author="31797562@N04" raw="night" machine_tag="0">night</tag>
+            <tag id="31765423-6226714304-4061" author="31797562@N04" raw="shot" machine_tag="0">shot</tag>
+            <tag id="31765423-6226714304-3297" author="31797562@N04" raw="long" machine_tag="0">long</tag>
+            <tag id="31765423-6226714304-3298" author="31797562@N04" raw="exposure" machine_tag="0">exposure</tag>
+            <tag id="31765423-6226714304-216" author="31797562@N04" raw="light" machine_tag="0">light</tag>
+            <tag id="31765423-6226714304-7684" author="31797562@N04" raw="trails" machine_tag="0">trails</tag>
+            <tag id="31765423-6226714304-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-6226714304-58663" author="31797562@N04" raw="V8" machine_tag="0">v8</tag>
+            <tag id="31765423-6226714304-2117" author="31797562@N04" raw="evening" machine_tag="0">evening</tag>
+        </tags>
+        <location latitude="51.497419" longitude="-0.160406" accuracy="16" context="0" place_id="zycK_jRTUrpRQdjcxw"
+                  woeid="20094326">
+            <neighbourhood place_id="zycK_jRTUrpRQdjcxw" woeid="20094326">Knightsbridge</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6226714304/</url>
+        </urls>
+    </photo>
+</rsp>
+

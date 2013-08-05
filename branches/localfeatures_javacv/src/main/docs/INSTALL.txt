@@ -1,0 +1,23 @@
+LIRE: Lucene Image Retrieval
+============================
+LIRE ia a Java content based image retrieval library built
+on top of the Lucene text search engine.
+
+Compile LIRE
+============
+Install ant (see [1]) and run the ant build file with
+
+$> ant dist
+
+after changing to the directory, where the build.xml file
+of LIRE can be found.
+
+Install LIRE
+============
+To use LIRE you have to add it to the classpath of your
+application. Integration into your code is described in
+http://www.semanticmetadata.net/wiki/doku.php?id=lire:lire
+
+
+References:
+[1] http://ant.apache.org

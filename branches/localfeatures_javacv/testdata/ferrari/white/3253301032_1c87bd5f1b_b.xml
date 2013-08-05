@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3253301032" secret="1c87bd5f1b" server="3319" farm="4" dateuploaded="1233753906" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="ab4c3b9be6" originalformat="jpg" views="320"
+           media="photo">
+        <owner nsid="32864201@N08" username="shamrockride" realname="" location="" iconserver="3291" iconfarm="4"/>
+        <title>White lamborghini by Shamrock Auto Trim</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1233753906" taken="2009-01-19 04:08:04" takengranularity="0" lastupdate="1328716721"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>0</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="32771388-3253301032-47385" author="32864201@N08" raw="shamrock" machine_tag="0">shamrock</tag>
+            <tag id="32771388-3253301032-33" author="32864201@N08" raw="auto" machine_tag="0">auto</tag>
+            <tag id="32771388-3253301032-33140" author="32864201@N08" raw="trim" machine_tag="0">trim</tag>
+            <tag id="32771388-3253301032-32100361" author="32864201@N08" raw="shamrockride" machine_tag="0">
+                shamrockride
+            </tag>
+            <tag id="32771388-3253301032-3820" author="32864201@N08" raw="nissan" machine_tag="0">nissan</tag>
+            <tag id="32771388-3253301032-25375" author="32864201@N08" raw="300" machine_tag="0">300</tag>
+            <tag id="32771388-3253301032-154082" author="32864201@N08" raw="zx" machine_tag="0">zx</tag>
+            <tag id="32771388-3253301032-5596" author="32864201@N08" raw="interior" machine_tag="0">interior</tag>
+            <tag id="32771388-3253301032-940" author="32864201@N08" raw="leather" machine_tag="0">leather</tag>
+            <tag id="32771388-3253301032-29749" author="32864201@N08" raw="custom" machine_tag="0">custom</tag>
+            <tag id="32771388-3253301032-472" author="32864201@N08" raw="black" machine_tag="0">black</tag>
+            <tag id="32771388-3253301032-5953" author="32864201@N08" raw="smoke" machine_tag="0">smoke</tag>
+            <tag id="32771388-3253301032-8117" author="32864201@N08" raw="fast" machine_tag="0">fast</tag>
+            <tag id="32771388-3253301032-2709" author="32864201@N08" raw="cool" machine_tag="0">cool</tag>
+            <tag id="32771388-3253301032-241" author="32864201@N08" raw="wild" machine_tag="0">wild</tag>
+            <tag id="32771388-3253301032-6812" author="32864201@N08" raw="north" machine_tag="0">north</tag>
+            <tag id="32771388-3253301032-4861" author="32864201@N08" raw="miami" machine_tag="0">miami</tag>
+            <tag id="32771388-3253301032-704" author="32864201@N08" raw="beach" machine_tag="0">beach</tag>
+            <tag id="32771388-3253301032-43711" author="32864201@N08" raw="rapper" machine_tag="0">rapper</tag>
+            <tag id="32771388-3253301032-4536" author="32864201@N08" raw="florida" machine_tag="0">florida</tag>
+            <tag id="32771388-3253301032-351" author="32864201@N08" raw="usa" machine_tag="0">usa</tag>
+            <tag id="32771388-3253301032-8575" author="32864201@N08" raw="convertible" machine_tag="0">convertible</tag>
+            <tag id="32771388-3253301032-5242" author="32864201@N08" raw="top" machine_tag="0">top</tag>
+            <tag id="32771388-3253301032-9505" author="32864201@N08" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="32771388-3253301032-217001" author="32864201@N08" raw="lambo" machine_tag="0">lambo</tag>
+            <tag id="32771388-3253301032-4742" author="32864201@N08" raw="sweet" machine_tag="0">sweet</tag>
+            <tag id="32771388-3253301032-95" author="32864201@N08" raw="new" machine_tag="0">new</tag>
+            <tag id="32771388-3253301032-29485" author="32864201@N08" raw="pimp" machine_tag="0">pimp</tag>
+            <tag id="32771388-3253301032-10939" author="32864201@N08" raw="harley" machine_tag="0">harley</tag>
+            <tag id="32771388-3253301032-8119" author="32864201@N08" raw="police" machine_tag="0">police</tag>
+            <tag id="32771388-3253301032-955" author="32864201@N08" raw="bike" machine_tag="0">bike</tag>
+            <tag id="32771388-3253301032-3478" author="32864201@N08" raw="ebay" machine_tag="0">ebay</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/shamrockride/3253301032/</url>
+        </urls>
+    </photo>
+</rsp>
+

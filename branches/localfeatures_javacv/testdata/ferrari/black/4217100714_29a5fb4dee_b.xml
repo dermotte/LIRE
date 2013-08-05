@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4217100714" secret="29a5fb4dee" server="2712" farm="3" dateuploaded="1261862729" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="7020dd0e8d" originalformat="jpg" views="3928"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>Enzo.</title>
+        <description/>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1261862729" taken="2009-08-19 13:08:33" takengranularity="0" lastupdate="1304044817"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>51</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-4217100714-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-4217100714-16596" author="26977717@N02" raw="Enzo" machine_tag="0">enzo</tag>
+            <tag id="26957369-4217100714-472" author="26977717@N02" raw="black" machine_tag="0">black</tag>
+            <tag id="26957369-4217100714-49213" author="26977717@N02" raw="Nero" machine_tag="0">nero</tag>
+            <tag id="26957369-4217100714-47566" author="26977717@N02" raw="rare" machine_tag="0">rare</tag>
+            <tag id="26957369-4217100714-2653" author="26977717@N02" raw="insane" machine_tag="0">insane</tag>
+            <tag id="26957369-4217100714-544" author="26977717@N02" raw="color" machine_tag="0">color</tag>
+            <tag id="26957369-4217100714-25273" author="26977717@N02" raw="Monte" machine_tag="0">monte</tag>
+            <tag id="26957369-4217100714-23369" author="26977717@N02" raw="Carlo" machine_tag="0">carlo</tag>
+            <tag id="26957369-4217100714-10171" author="26977717@N02" raw="Monaco" machine_tag="0">monaco</tag>
+            <tag id="26957369-4217100714-5992" author="26977717@N02" raw="South" machine_tag="0">south</tag>
+            <tag id="26957369-4217100714-487" author="26977717@N02" raw="France" machine_tag="0">france</tag>
+            <tag id="26957369-4217100714-1668" author="26977717@N02" raw="French" machine_tag="0">french</tag>
+            <tag id="26957369-4217100714-3438" author="26977717@N02" raw="Riviera" machine_tag="0">riviera</tag>
+            <tag id="26957369-4217100714-1312" author="26977717@N02" raw="port" machine_tag="0">port</tag>
+            <tag id="26957369-4217100714-1313" author="26977717@N02" raw="marina" machine_tag="0">marina</tag>
+            <tag id="26957369-4217100714-25379" author="26977717@N02" raw="yachts" machine_tag="0">yachts</tag>
+            <tag id="26957369-4217100714-31915" author="26977717@N02" raw="expensive" machine_tag="0">expensive</tag>
+            <tag id="26957369-4217100714-2642" author="26977717@N02" raw="big" machine_tag="0">big</tag>
+            <tag id="26957369-4217100714-1532" author="26977717@N02" raw="giant" machine_tag="0">giant</tag>
+            <tag id="26957369-4217100714-111047" author="26977717@N02" raw="mega" machine_tag="0">mega</tag>
+            <tag id="26957369-4217100714-800" author="26977717@N02" raw="water" machine_tag="0">water</tag>
+            <tag id="26957369-4217100714-228" author="26977717@N02" raw="sea" machine_tag="0">sea</tag>
+            <tag id="26957369-4217100714-4445507" author="26977717@N02" raw="40D" machine_tag="0">40d</tag>
+            <tag id="26957369-4217100714-1382" author="26977717@N02" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="26957369-4217100714-34583" author="26977717@N02" raw="17-85" machine_tag="0">1785</tag>
+            <tag id="26957369-4217100714-558325" author="26977717@N02" raw="17mm" machine_tag="0">17mm</tag>
+            <tag id="26957369-4217100714-4550" author="26977717@N02" raw="ultimate" machine_tag="0">ultimate</tag>
+            <tag id="26957369-4217100714-53450" author="26977717@N02" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="26957369-4217100714-3542502" author="26977717@N02" raw="hypercar" machine_tag="0">hypercar</tag>
+            <tag id="26957369-4217100714-923" author="26977717@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="26957369-4217100714-3272" author="26977717@N02" raw="Europe" machine_tag="0">europe</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/4217100714/</url>
+        </urls>
+    </photo>
+</rsp>
+

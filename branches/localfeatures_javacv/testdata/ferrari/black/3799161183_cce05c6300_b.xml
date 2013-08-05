@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3799161183" secret="cce05c6300" server="3496" farm="4" dateuploaded="1249698605" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="9260be4064" originalformat="jpg" views="715"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title>Ferrari 599 GTB Fiorano.</title>
+        <description>Sneaky 599. 2nd one of the day - first was dark blue, This car lead me to the SLR.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1249698605" taken="2009-08-01 16:35:46" takengranularity="0" lastupdate="1263593957"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>5</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-3799161183-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-3799161183-515196" author="26977717@N02" raw="599" machine_tag="0">599</tag>
+            <tag id="26957369-3799161183-663459" author="26977717@N02" raw="Fiorano" machine_tag="0">fiorano</tag>
+            <tag id="26957369-3799161183-119234" author="26977717@N02" raw="GTB" machine_tag="0">gtb</tag>
+            <tag id="26957369-3799161183-472" author="26977717@N02" raw="black" machine_tag="0">black</tag>
+            <tag id="26957369-3799161183-49213" author="26977717@N02" raw="nero" machine_tag="0">nero</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/3799161183/</url>
+        </urls>
+    </photo>
+</rsp>
+

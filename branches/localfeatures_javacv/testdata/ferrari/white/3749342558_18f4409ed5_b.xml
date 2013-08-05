@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3749342558" secret="18f4409ed5" server="2545" farm="3" dateuploaded="1248353382" isfavorite="0"
+           license="5" safety_level="0" rotation="0" originalsecret="bc7ab9734c" originalformat="jpg" views="347"
+           media="photo">
+        <owner nsid="31674926@N02" username="Damors" realname="Morten Schwend" location="Berlin, Deutschland"
+               iconserver="4051" iconfarm="5"/>
+        <title>Ferrari 599 GTB Fiorano</title>
+        <description>&lt;a href="http://www.flickr.com/photos/schwend/sets/72157622646846088/"&gt;my Ferrari set&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1248353382" taken="2008-10-05 15:35:55" takengranularity="0" lastupdate="1315894794"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>1</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31654578-3749342558-281138" author="31674926@N02" raw="nürburgring" machine_tag="0">nürburgring
+            </tag>
+            <tag id="31654578-3749342558-264517" author="31674926@N02" raw="nordschleife" machine_tag="0">nordschleife
+            </tag>
+            <tag id="31654578-3749342558-9505" author="31674926@N02" raw="ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31654578-3749342558-9862" author="31674926@N02" raw="racing" machine_tag="0">racing</tag>
+            <tag id="31654578-3749342558-10176" author="31674926@N02" raw="days" machine_tag="0">days</tag>
+            <tag id="31654578-3749342558-12608" author="31674926@N02" raw="exotic" machine_tag="0">exotic</tag>
+            <tag id="31654578-3749342558-31387762" author="31674926@N02" raw="exoticsonroad" machine_tag="0">
+                exoticsonroad
+            </tag>
+            <tag id="31654578-3749342558-20383357" author="31674926@N02" raw="autogespot" machine_tag="0">autogespot
+            </tag>
+            <tag id="31654578-3749342558-515196" author="31674926@N02" raw="599" machine_tag="0">599</tag>
+            <tag id="31654578-3749342558-119234" author="31674926@N02" raw="gtb" machine_tag="0">gtb</tag>
+            <tag id="31654578-3749342558-663459" author="31674926@N02" raw="fiorano" machine_tag="0">fiorano</tag>
+            <tag id="31654578-3749342558-2339692" author="31674926@N02" raw="tü" machine_tag="0">tü</tag>
+            <tag id="31654578-3749342558-532847" author="31674926@N02" raw="weiß" machine_tag="0">weis</tag>
+            <tag id="31654578-3749342558-395" author="31674926@N02" raw="white" machine_tag="0">white</tag>
+            <tag id="31654578-3749342558-64764" author="31674926@N02" raw="Picnik" machine_tag="0">picnik</tag>
+            <tag id="31654578-3749342558-923" author="31674926@N02" raw="car" machine_tag="0">car</tag>
+            <tag id="31654578-3749342558-56637" author="31674926@N02" raw="morten" machine_tag="0">morten</tag>
+            <tag id="31654578-3749342558-46467712" author="31674926@N02" raw="schwend" machine_tag="0">schwend</tag>
+            <tag id="31654578-3749342558-67224" author="31674926@N02" raw="kk" machine_tag="0">kk</tag>
+            <tag id="31654578-3749342558-7671" author="31674926@N02" raw="royal" machine_tag="0">royal</tag>
+            <tag id="31654578-3749342558-7259" author="31674926@N02" raw="basement" machine_tag="0">basement</tag>
+            <tag id="31654578-3749342558-15876" author="31674926@N02" raw="tc" machine_tag="0">tc</tag>
+            <tag id="31654578-3749342558-159443" author="31674926@N02" raw="concepts" machine_tag="0">concepts</tag>
+        </tags>
+        <location latitude="50.335743" longitude="6.950601" accuracy="16" context="0" place_id="b2ULQdBQULzqEp94yA"
+                  woeid="12627841">
+            <locality place_id="b2ULQdBQULzqEp94yA" woeid="12627841">Gemeinde Nürburg</locality>
+            <county place_id="CG.KeVNQUL9mm9eGNA" woeid="12596824">Landkreis Ahrweiler</county>
+            <region place_id="IwrrQd1TUb4V9Wa6" woeid="2345488">Rhineland-Palatinate</region>
+            <country place_id="h7eZVDlTUb50Btij9Q" woeid="23424829">Germany</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/schwend/3749342558/</url>
+        </urls>
+    </photo>
+</rsp>
+

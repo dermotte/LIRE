@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="4952282992" secret="833ebb47af" server="4097" farm="5" dateuploaded="1283456772" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="4274f56150" originalformat="jpg" views="446"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 16M</title>
+        <description>&lt;a href="http://torquespeak.wordpress.com"
+            rel="nofollow"&gt;torquespeak.wordpress.com&lt;/a&gt;</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1283456772" taken="2010-08-17 17:53:01" takengranularity="0" lastupdate="1326552287"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>0</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-4952282992-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-4952282992-766103" author="31797562@N04" raw="16M" machine_tag="0">16m</tag>
+            <tag id="31765423-4952282992-116028" author="31797562@N04" raw="F430" machine_tag="0">f430</tag>
+            <tag id="31765423-4952282992-49217" author="31797562@N04" raw="scuderia" machine_tag="0">scuderia</tag>
+            <tag id="31765423-4952282992-9983" author="31797562@N04" raw="spyder" machine_tag="0">spyder</tag>
+            <tag id="31765423-4952282992-2249" author="31797562@N04" raw="spider" machine_tag="0">spider</tag>
+            <tag id="31765423-4952282992-78815" author="31797562@N04" raw="exhaust" machine_tag="0">exhaust</tag>
+            <tag id="31765423-4952282992-58542" author="31797562@N04" raw="alloys" machine_tag="0">alloys</tag>
+            <tag id="31765423-4952282992-987" author="31797562@N04" raw="yellow" machine_tag="0">yellow</tag>
+            <tag id="31765423-4952282992-13029" author="31797562@N04" raw="giallo" machine_tag="0">giallo</tag>
+            <tag id="31765423-4952282992-597832" author="31797562@N04" raw="calipers" machine_tag="0">calipers</tag>
+            <tag id="31765423-4952282992-6158" author="31797562@N04" raw="side" machine_tag="0">side</tag>
+            <tag id="31765423-4952282992-6774" author="31797562@N04" raw="profile" machine_tag="0">profile</tag>
+            <tag id="31765423-4952282992-472" author="31797562@N04" raw="black" machine_tag="0">black</tag>
+            <tag id="31765423-4952282992-192" author="31797562@N04" raw="roof" machine_tag="0">roof</tag>
+            <tag id="31765423-4952282992-902" author="31797562@N04" raw="up" machine_tag="0">up</tag>
+            <tag id="31765423-4952282992-169" author="31797562@N04" raw="trees" machine_tag="0">trees</tag>
+            <tag id="31765423-4952282992-1628" author="31797562@N04" raw="square" machine_tag="0">square</tag>
+            <tag id="31765423-4952282992-21965" author="31797562@N04" raw="parked" machine_tag="0">parked</tag>
+            <tag id="31765423-4952282992-6630" author="31797562@N04" raw="rear" machine_tag="0">rear</tag>
+            <tag id="31765423-4952282992-2417" author="31797562@N04" raw="back" machine_tag="0">back</tag>
+            <tag id="31765423-4952282992-25044" author="31797562@N04" raw="grille" machine_tag="0">grille</tag>
+            <tag id="31765423-4952282992-2000" author="31797562@N04" raw="lights" machine_tag="0">lights</tag>
+            <tag id="31765423-4952282992-227" author="31797562@N04" raw="red" machine_tag="0">red</tag>
+            <tag id="31765423-4952282992-61" author="31797562@N04" raw="road" machine_tag="0">road</tag>
+            <tag id="31765423-4952282992-958" author="31797562@N04" raw="tarmac" machine_tag="0">tarmac</tag>
+            <tag id="31765423-4952282992-3932" author="31797562@N04" raw="close" machine_tag="0">close</tag>
+            <tag id="31765423-4952282992-3018" author="31797562@N04" raw="focus" machine_tag="0">focus</tag>
+            <tag id="31765423-4952282992-4345" author="31797562@N04" raw="bright" machine_tag="0">bright</tag>
+            <tag id="31765423-4952282992-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-4952282992-5274" author="31797562@N04" raw="anniversary" machine_tag="0">anniversary</tag>
+            <tag id="31765423-4952282992-2129" author="31797562@N04" raw="berkeley" machine_tag="0">berkeley</tag>
+            <tag id="31765423-4952282992-595" author="31797562@N04" raw="london" machine_tag="0">london</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/4952282992/</url>
+        </urls>
+    </photo>
+</rsp>
+

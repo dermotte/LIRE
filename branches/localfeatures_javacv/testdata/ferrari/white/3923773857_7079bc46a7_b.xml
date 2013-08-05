@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="3923773857" secret="7079bc46a7" server="3430" farm="4" dateuploaded="1253055558" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="b47a5c8a1a" originalformat="jpg" views="855"
+           media="photo">
+        <owner nsid="26977717@N02" username="Damian Morys Foto" realname="Damian Morys"
+               location="New York City, United States" iconserver="3129" iconfarm="4"/>
+        <title/>
+        <description>Striking.</description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1253055558" taken="2009-09-07 15:19:47" takengranularity="0" lastupdate="1277404137"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="1"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>10</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="26957369-3923773857-9505" author="26977717@N02" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="26957369-3923773857-50" author="26977717@N02" raw="California" machine_tag="0">california</tag>
+            <tag id="26957369-3923773857-395" author="26977717@N02" raw="white" machine_tag="0">white</tag>
+            <tag id="26957369-3923773857-46664" author="26977717@N02" raw="bianco" machine_tag="0">bianco</tag>
+            <tag id="26957369-3923773857-21965" author="26977717@N02" raw="parked" machine_tag="0">parked</tag>
+            <tag id="26957369-3923773857-2073" author="26977717@N02" raw="hotel" machine_tag="0">hotel</tag>
+            <tag id="26957369-3923773857-229008" author="26977717@N02" raw="The" machine_tag="0">the</tag>
+            <tag id="26957369-3923773857-5229" author="26977717@N02" raw="Pierre" machine_tag="0">pierre</tag>
+            <tag id="26957369-3923773857-95" author="26977717@N02" raw="New" machine_tag="0">new</tag>
+            <tag id="26957369-3923773857-98" author="26977717@N02" raw="York" machine_tag="0">york</tag>
+            <tag id="26957369-3923773857-103" author="26977717@N02" raw="City" machine_tag="0">city</tag>
+            <tag id="26957369-3923773857-439" author="26977717@N02" raw="NY" machine_tag="0">ny</tag>
+            <tag id="26957369-3923773857-106" author="26977717@N02" raw="NYC" machine_tag="0">nyc</tag>
+            <tag id="26957369-3923773857-5855" author="26977717@N02" raw="gorgeous" machine_tag="0">gorgeous</tag>
+            <tag id="26957369-3923773857-876" author="26977717@N02" raw="beautiful" machine_tag="0">beautiful</tag>
+            <tag id="26957369-3923773857-130257" author="26977717@N02" raw="valet" machine_tag="0">valet</tag>
+            <tag id="26957369-3923773857-5837" author="26977717@N02" raw="taxi" machine_tag="0">taxi</tag>
+            <tag id="26957369-3923773857-9878" author="26977717@N02" raw="limo" machine_tag="0">limo</tag>
+            <tag id="26957369-3923773857-5221" author="26977717@N02" raw="5" machine_tag="0">5</tag>
+            <tag id="26957369-3923773857-2017" author="26977717@N02" raw="star" machine_tag="0">star</tag>
+            <tag id="26957369-3923773857-118392" author="26977717@N02" raw="classy" machine_tag="0">classy</tag>
+            <tag id="26957369-3923773857-1382" author="26977717@N02" raw="Canon" machine_tag="0">canon</tag>
+            <tag id="26957369-3923773857-4445507" author="26977717@N02" raw="40D" machine_tag="0">40d</tag>
+            <tag id="26957369-3923773857-129925" author="26977717@N02" raw="Damian" machine_tag="0">damian</tag>
+            <tag id="26957369-3923773857-835479" author="26977717@N02" raw="Morys" machine_tag="0">morys</tag>
+            <tag id="26957369-3923773857-14309" author="26977717@N02" raw="Fotos" machine_tag="0">fotos</tag>
+            <tag id="26957369-3923773857-33020" author="26977717@N02" raw="17-85mm" machine_tag="0">1785mm</tag>
+            <tag id="26957369-3923773857-558325" author="26977717@N02" raw="17mm" machine_tag="0">17mm</tag>
+        </tags>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/damianmorysfotos/3923773857/</url>
+        </urls>
+    </photo>
+</rsp>
+

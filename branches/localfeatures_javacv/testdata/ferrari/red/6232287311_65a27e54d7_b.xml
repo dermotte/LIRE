@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsp stat="ok">
+    <photo id="6232287311" secret="65a27e54d7" server="6231" farm="7" dateuploaded="1318293388" isfavorite="0"
+           license="4" safety_level="0" rotation="0" originalsecret="e6b58959d0" originalformat="jpg" views="908"
+           media="photo">
+        <owner nsid="31797562@N04" username="Ed Callow [ torquespeak ]" realname="Ed Callow" location=""
+               iconserver="3068" iconfarm="4"/>
+        <title>Ferrari 458 Italia</title>
+        <description>DRLs on at night? On Sloane Street? It's summer all over again...! Well-known R8 parked up behind.
+
+            For more automotive goodness, follow @torquespeak on Twitter.
+        </description>
+        <visibility ispublic="1" isfriend="0" isfamily="0"/>
+        <dates posted="1318293388" taken="2011-10-10 22:49:56" takengranularity="0" lastupdate="1330215284"/>
+        <editability cancomment="0" canaddmeta="0"/>
+        <publiceditability cancomment="1" canaddmeta="0"/>
+        <usage candownload="1" canblog="0" canprint="0" canshare="1"/>
+        <comments>9</comments>
+        <notes/>
+        <people haspeople="0"/>
+        <tags>
+            <tag id="31765423-6232287311-9505" author="31797562@N04" raw="Ferrari" machine_tag="0">ferrari</tag>
+            <tag id="31765423-6232287311-627359" author="31797562@N04" raw="458" machine_tag="0">458</tag>
+            <tag id="31765423-6232287311-3442" author="31797562@N04" raw="Italia" machine_tag="0">italia</tag>
+            <tag id="31765423-6232287311-227" author="31797562@N04" raw="red" machine_tag="0">red</tag>
+            <tag id="31765423-6232287311-42383" author="31797562@N04" raw="rosso" machine_tag="0">rosso</tag>
+            <tag id="31765423-6232287311-595" author="31797562@N04" raw="London" machine_tag="0">london</tag>
+            <tag id="31765423-6232287311-21965" author="31797562@N04" raw="parked" machine_tag="0">parked</tag>
+            <tag id="31765423-6232287311-3297" author="31797562@N04" raw="long" machine_tag="0">long</tag>
+            <tag id="31765423-6232287311-3298" author="31797562@N04" raw="exposure" machine_tag="0">exposure</tag>
+            <tag id="31765423-6232287311-1213" author="31797562@N04" raw="night" machine_tag="0">night</tag>
+            <tag id="31765423-6232287311-2117" author="31797562@N04" raw="evening" machine_tag="0">evening</tag>
+            <tag id="31765423-6232287311-216" author="31797562@N04" raw="light" machine_tag="0">light</tag>
+            <tag id="31765423-6232287311-7684" author="31797562@N04" raw="trails" machine_tag="0">trails</tag>
+            <tag id="31765423-6232287311-22426" author="31797562@N04" raw="streams" machine_tag="0">streams</tag>
+            <tag id="31765423-6232287311-2709" author="31797562@N04" raw="cool" machine_tag="0">cool</tag>
+            <tag id="31765423-6232287311-1180" author="31797562@N04" raw="modern" machine_tag="0">modern</tag>
+            <tag id="31765423-6232287311-76" author="31797562@N04" raw="lighting" machine_tag="0">lighting</tag>
+            <tag id="31765423-6232287311-554" author="31797562@N04" raw="bus" machine_tag="0">bus</tag>
+            <tag id="31765423-6232287311-2871" author="31797562@N04" raw="italian" machine_tag="0">italian</tag>
+            <tag id="31765423-6232287311-53450" author="31797562@N04" raw="supercar" machine_tag="0">supercar</tag>
+            <tag id="31765423-6232287311-58663" author="31797562@N04" raw="v8" machine_tag="0">v8</tag>
+            <tag id="31765423-6232287311-38" author="31797562@N04" raw="show" machine_tag="0">show</tag>
+            <tag id="31765423-6232287311-9633" author="31797562@N04" raw="off" machine_tag="0">off</tag>
+        </tags>
+        <location latitude="51.500257" longitude="-0.159763" accuracy="16" context="0" place_id="pjYotJFTUroSWUpC1Q"
+                  woeid="20094304">
+            <neighbourhood place_id="pjYotJFTUroSWUpC1Q" woeid="20094304">Brompton</neighbourhood>
+            <locality place_id="hP_s5s9VVr5Qcg" woeid="44418">London</locality>
+            <county place_id="RcWoHEVTUb4U88DIPw" woeid="23416974">Greater London</county>
+            <region place_id="2eIY2QFTVr_DwWZNLg" woeid="24554868">England</region>
+            <country place_id="cnffEpdTUb5v258BBA" woeid="23424975">United Kingdom</country>
+        </location>
+        <geoperms ispublic="1" iscontact="0" isfriend="0" isfamily="0"/>
+        <urls>
+            <url type="photopage">http://www.flickr.com/photos/ejcallow/6232287311/</url>
+        </urls>
+    </photo>
+</rsp>
+
