@@ -41,14 +41,13 @@
 
 package net.semanticmetadata.lire;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 
 /**
  * <h2>Creating an Index</h2>
@@ -115,7 +114,9 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSURFHistogram";
     public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
     public static final String FIELD_NAME_TAMURA = "featureTAMURA";
-
+    public static final String FIELD_NAME_BRISK = "featureBrisk";
+    public static final String FIELD_NAME_BRISK_LOCAL_FEATURE_HISTOGRAM = "featureBriskHistogram";
+    public static final String FIELD_NAME_BRISK_VISUAL_WORDS = "featureBriskHistogramVWords";
 
 
     /**
