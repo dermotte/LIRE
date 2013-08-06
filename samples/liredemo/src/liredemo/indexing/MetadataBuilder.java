@@ -41,24 +41,27 @@
 
 package liredemo.indexing;
 
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Iterator;
+
+import net.semanticmetadata.lire.DocumentBuilderFactory;
+import net.semanticmetadata.lire.impl.BriskDocumentBuilder;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
+import net.semanticmetadata.lire.utils.ImageUtils;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.TextField;
+
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
-import net.semanticmetadata.lire.DocumentBuilderFactory;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
-import net.semanticmetadata.lire.utils.ImageUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
-
-import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Iterator;
 
 /**
  * Created by: Mathias Lux, mathias@juggle.at
@@ -85,6 +88,7 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
         addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
         addBuilder(new SurfDocumentBuilder());
+        addBuilder(new BriskDocumentBuilder());
     }
 
     @Override

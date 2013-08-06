@@ -75,6 +75,9 @@ public abstract class LocalFeatureHistogramBuilder {
     // number of documents used to build the vocabulary / clusters.
     private int numDocsForVocabulary = 100;
     private int numClusters = 512;
+    private double changeRateThresh = 1e-04;   // threshold for stress change rate
+    private int sustainThreshSteps = 5;       // number of steps sustaining changeRateThresh before termination
+    private int maxKMeansIterations = 1000;  // fallback termination condition for diverging cases
     private Cluster[] clusters = null;
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
     private ProgressMonitor pm = null;
@@ -83,7 +86,7 @@ public abstract class LocalFeatureHistogramBuilder {
     protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
     protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String clusterFile = "./clusters.dat";
-    public static boolean DELETE_LOCAL_FEATURES = true;
+    public static boolean DELETE_LOCAL_FEATURES = false;
     private boolean useParallelClustering = true;
 
 
@@ -128,7 +131,7 @@ public abstract class LocalFeatureHistogramBuilder {
      * @throws java.io.IOException
      */
     public void index() throws IOException {
-        df.setMaximumFractionDigits(3);
+        df.setMaximumFractionDigits(4);
         // find the documents for building the vocabulary:
         HashSet<Integer> docIDs = selectVocabularyDocs();
         KMeans k;
@@ -162,9 +165,11 @@ public abstract class LocalFeatureHistogramBuilder {
         }
         // do the clustering:
         System.out.println("k.getFeatureCount() = " + k.getFeatureCount());
+        System.out.println("Change rate threshold = " + df.format(changeRateThresh));
+        System.out.println("Maximal number of iterations = " + maxKMeansIterations);
         System.out.println("Starting clustering ...");
         k.init();
-        System.out.println("Step.");
+        System.out.println("Step 1.");
         double time = System.currentTimeMillis();
         double laststress = k.clusteringStep();
 
@@ -173,7 +178,7 @@ public abstract class LocalFeatureHistogramBuilder {
             pm.setNote("Step 1 finished");
         }
 
-        System.out.println(getDuration(time) + " -> Next step.");
+        System.out.println(getDuration(time) + " -> Step 2.");
         time = System.currentTimeMillis();
         double newStress = k.clusteringStep();
 
@@ -183,16 +188,23 @@ public abstract class LocalFeatureHistogramBuilder {
         }
 
         // critical part: Give the difference in between steps as a constraint for accuracy vs. runtime trade off.
-        double threshold = Math.max(20d, (double) k.getFeatureCount() / 1000d);
-        System.out.println("Threshold = " + threshold);
+        //double threshold = Math.max(20d, (double) k.getFeatureCount() / 1000d);
+        double changeRate = (newStress - laststress) / laststress;
+        System.out.println(getDuration(time) + " -> Step 2. Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
+        int sustainSteps = (Math.abs(changeRate) < changeRateThresh) ? 1 : 0;
         int cstep = 3;
-        while (Math.abs(newStress - laststress) > threshold) {
-            System.out.println(getDuration(time) + " -> Next step. Stress difference ~ |" + (int) newStress + " - " + (int) laststress + "| = " + df.format(Math.abs(newStress - laststress)));
+        while (sustainSteps < sustainThreshSteps && cstep <= maxKMeansIterations) {
             time = System.currentTimeMillis();
             laststress = newStress;
             newStress = k.clusteringStep();
+            changeRate = (newStress - laststress) / laststress;
+            if (Math.abs(changeRate) < changeRateThresh)
+                sustainSteps++;
+            else
+                sustainSteps = 0;
+            System.out.println(getDuration(time) + " -> Step " + cstep + ". Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
             if (pm != null) { // set to XX of 100 after second step.
-                pm.setProgress(cstep * 3 + 5);
+                pm.setProgress((cstep * 3) % 90 + 5);
                 pm.setNote("Step " + cstep + " finished");
             }
             cstep++;
@@ -208,7 +220,6 @@ public abstract class LocalFeatureHistogramBuilder {
         //  create & store histograms:
         System.out.println("Creating histograms ...");
         time = System.currentTimeMillis();
-        int[] tmpHist = new int[numClusters];
         IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer, 256d);
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(50);
