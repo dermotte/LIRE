@@ -56,6 +56,8 @@ import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.filter.LsaFilter;
 import net.semanticmetadata.lire.filter.RerankFilter;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.bovw.BriskFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.LocalFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
@@ -114,6 +116,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
             Logger.getLogger(LireDemoFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         selectboxDocumentBuilder.setSelectedIndex(5);
+        selectboxBovwFeature.setSelectedIndex(1);
         buttonSwitchIndex.setBackground(highlightSelectColor);
         DropTarget t = new DropTarget(searchPanel, new DropTargetListener() {
             public void dragEnter(DropTargetDragEvent dtde) {
@@ -166,7 +169,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         searchScalableColor = new javax.swing.JMenuItem();
         searchAutoColorCorrelation = new javax.swing.JMenuItem();
         mosaicButtons = new javax.swing.ButtonGroup();
-        browseImagePanel = new liredemo.ImagePanel();
+        browseImagePanel = new ImagePanel();
         topPane = new javax.swing.JPanel();
         controlPane = new javax.swing.JPanel();
         switchButtonsPanel = new javax.swing.JPanel();
@@ -223,6 +226,8 @@ public class LireDemoFrame extends javax.swing.JFrame {
         optionsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         selectboxDocumentBuilder = new javax.swing.JComboBox();
+        jLabelBovwFeature = new javax.swing.JLabel();
+        selectboxBovwFeature = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
         textfieldIndexName = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -883,11 +888,21 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Type of IndexSearcher:");
 
-        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG"}));
+        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG", "BRISK BoVW"}));
         selectboxDocumentBuilder.setToolTipText(bundle.getString("options.tooltip.documentbuilderselection")); // NOI18N
         selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectboxDocumentBuilderActionPerformed(evt);
+            }
+        });
+
+        jLabelBovwFeature.setText("Local feature for BoVW:");
+
+        selectboxBovwFeature.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"SURF", "BRISK"}));
+        selectboxBovwFeature.setToolTipText(bundle.getString("options.tooltip.bovwfeatureselection")); // NOI18N
+        selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                // NOP
             }
         });
 
@@ -915,6 +930,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
+        
         optionsPanelLayout.setHorizontalGroup(
                 optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(optionsPanelLayout.createSequentialGroup()
@@ -924,6 +940,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
                                                 .addContainerGap()
                                                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jLabel1)
+                                                        .addComponent(jLabelBovwFeature)
                                                         .addComponent(jLabel2)
                                                         .addComponent(jLabel3)
                                                         .addComponent(jLabel17)
@@ -933,10 +950,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
                                                         .addComponent(selectboxRerankFeature, 0, 604, Short.MAX_VALUE)
                                                         .addComponent(textfieldNumSearchResults, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
                                                         .addComponent(selectboxDocumentBuilder, javax.swing.GroupLayout.Alignment.LEADING, 0, 604, Short.MAX_VALUE)
+                                                        .addComponent(selectboxBovwFeature, javax.swing.GroupLayout.Alignment.LEADING, 0, 604, Short.MAX_VALUE)
                                                         .addComponent(textfieldIndexName, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
                                                         .addComponent(textFieldFlickrDownloadMax, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE))))
                                 .addContainerGap())
         );
+        
         optionsPanelLayout.setVerticalGroup(
                 optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(optionsPanelLayout.createSequentialGroup()
@@ -945,6 +964,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
                                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(selectboxDocumentBuilder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jLabel1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(selectboxBovwFeature, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabelBovwFeature))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jLabel2)
@@ -1567,7 +1590,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
                     resultsPane.getViewport().setViewPosition(bounds.getLocation());
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "An error occurred while searching: " + e.getMessage(), "Error while searching", JOptionPane.ERROR_MESSAGE);
-
+                    e.printStackTrace();
                 } finally {
                     resultsTable.setRowHeight(220);
                     // resultsTable.getColumnModel().getColumn(0).setMaxWidth(64);
@@ -1847,12 +1870,30 @@ public class LireDemoFrame extends javax.swing.JFrame {
         tableModel.setHits(filter.filter(tableModel.hits, tableModel.hits.doc(0)), null);
     }//GEN-LAST:event_rerankLsaActionPerformed
 
+    private LocalFeatureHistogramBuilder selectedFeatureHistogramBuilder(IndexReader reader, int samples, int clusters)
+    {
+        LocalFeatureHistogramBuilder lfhBuilder = null;
+        String featureName = null;
+        if (selectboxBovwFeature.getSelectedIndex() == 0) {
+            lfhBuilder = new SurfFeatureHistogramBuilder(reader, samples, clusters);
+            featureName = "SURF";
+        } else if (selectboxBovwFeature.getSelectedIndex() == 1) {
+            lfhBuilder = new BriskFeatureHistogramBuilder(reader, samples, clusters);
+            featureName = "BRISK";
+        } else {
+            throw new UnsupportedOperationException("selectboxBovwFeature index not supported: " + selectboxBovwFeature.getSelectedIndex());
+        }
+        lfhBuilder.setProgressMonitor(new javax.swing.ProgressMonitor(this, 
+                String.format("Progress of %s BoVW indexing (~)", featureName),
+                "", 0, 100));
+        return lfhBuilder;
+    }
+    
     private void indexAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexAllActionPerformed
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
             int samples = Math.max(1000, reader.numDocs() / 2);
-            final SurfFeatureHistogramBuilder builder = new SurfFeatureHistogramBuilder(reader, samples, 500);
-            builder.setProgressMonitor(new javax.swing.ProgressMonitor(this, "Progress of BoVW indexing (~)", "", 0, 100));
+            final LocalFeatureHistogramBuilder builder = selectedFeatureHistogramBuilder(reader, samples, 500);
             Thread t = new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -1871,7 +1912,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private void indexMissingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexMissingActionPerformed
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
-            SurfFeatureHistogramBuilder builder = new SurfFeatureHistogramBuilder(reader, reader.maxDoc() / 10, 2000);
+            final LocalFeatureHistogramBuilder builder = selectedFeatureHistogramBuilder(reader, reader.maxDoc() / 10, 2000);
             builder.indexMissing();
         } catch (IOException e) {
             e.printStackTrace();
@@ -1979,8 +2020,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
             searcher = ImageSearcherFactory.createOpponentHistogramSearcher(numResults);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 14) {
             searcher = ImageSearcherFactory.createLuminanceLayoutImageSearcher(numResults);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 15) {
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 15) {
             searcher = ImageSearcherFactory.createPHOGImageSearcher(numResults);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 16) {
+            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_BRISK_VISUAL_WORDS);
         }
         return searcher;
     }
@@ -2000,7 +2043,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem accSearch;
     private javax.swing.JMenu bovwMenu;
     private javax.swing.JPanel browseImageContainerPanel;
-    private liredemo.ImagePanel browseImagePanel;
+    private ImagePanel browseImagePanel;
     private javax.swing.JPanel browsePanel;
     private javax.swing.JButton buttonBackToOptions;
     private javax.swing.JButton buttonBackToSearch;
@@ -2097,6 +2140,8 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private javax.swing.JPanel searchPanel;
     private javax.swing.JMenuItem searchScalableColor;
     public javax.swing.JComboBox selectboxDocumentBuilder;
+    public javax.swing.JComboBox selectboxBovwFeature;
+    private javax.swing.JLabel jLabelBovwFeature; 
     private javax.swing.JComboBox selectboxRerankFeature;
     private javax.swing.JSpinner spinnerCurrentDocNum;
     private javax.swing.JPanel switchButtonsPanel;

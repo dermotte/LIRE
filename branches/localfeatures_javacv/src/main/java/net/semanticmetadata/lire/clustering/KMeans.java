@@ -201,7 +201,7 @@ public class KMeans {
         int length = features.get(0).length;
         for (int i = 0; i < clusters.length; i++) {
             for (Integer member : clusters[i].members) {
-                float tmpStress = 0;
+                double tmpStress = 0;
                 for (int j = 0; j < length; j++) {
 //                    if (Float.isNaN(features.get(member).descriptor[j])) System.err.println("Error: there is a NaN in cluster " + i + " at member " + member);
                     tmpStress += Math.abs(clusters[i].mean[j] - features.get(member)[j]);
