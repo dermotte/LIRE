@@ -117,6 +117,9 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_BRISK = "featureBrisk";
     public static final String FIELD_NAME_BRISK_LOCAL_FEATURE_HISTOGRAM = "featureBriskHistogram";
     public static final String FIELD_NAME_BRISK_VISUAL_WORDS = "featureBriskHistogramVWords";
+    public static final String FIELD_NAME_FREAK = "featureFreak";
+    public static final String FIELD_NAME_FREAK_LOCAL_FEATURE_HISTOGRAM = "featureFreakHistogram";
+    public static final String FIELD_NAME_FREAK_VISUAL_WORDS = "featureFreakHistogramVWords";
 
 
     /**
