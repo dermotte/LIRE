@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 10:32
+ * Updated: 07.08.13 12:09
  */
 package net.semanticmetadata.lire.imageanalysis;
 
@@ -178,7 +178,7 @@ public class JCD implements LireFeature {
     }
 
     public void init(CEDD c, FCTH f) {
-        data = joinHistograms(c.data, f.histogram);
+        data = joinHistograms(c.getDoubleHistogram(), f.histogram);
     }
 
     public float getDistance(LireFeature vd) {

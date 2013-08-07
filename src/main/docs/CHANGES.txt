@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-08-07
+==========
+  - Changed CEDD internal data handling from double to bytes
+  - Changed OpponentHistogram internal data handling from double to bytes
+
 2013-08-03
 ==========
   - Adjusted TestUCID to new, faster searcher implementation.

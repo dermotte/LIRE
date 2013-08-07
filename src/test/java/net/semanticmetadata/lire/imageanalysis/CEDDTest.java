@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 26.04.13 09:30
+ * Updated: 07.08.13 12:09
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -96,7 +96,7 @@ public class CEDDTest extends TestCase {
         CEDD c = new CEDD();
         BufferedImage img = ImageIO.read(new File("C:\\Java\\Projects\\LireSVN\\testdata\\wang-1000\\652.jpg"));
         c.extract(img);
-        String s = Arrays.toString(c.data);
+        String s = Arrays.toString(c.getDoubleHistogram());
         System.out.println("s = " + s);
         byte[] b = c.getByteArrayRepresentation();
         CEDD d = new CEDD();
@@ -134,9 +134,9 @@ public class CEDDTest extends TestCase {
 //            bytes += (168 - pos);
             assertTrue(f2.getDistance(f1) == 0);
             boolean isSame = true;
-            for (int i = 0; i < f2.data.length; i++) {
-                if (f1.data[i] != f2.data[i]) isSame = false;
-            }
+//            for (int i = 0; i < f2.getFieldName().length; i++) {
+//                if (f1.data[i] != f2.data[i]) isSame = false;
+//            }
             assertTrue(isSame);
         }
         double save = 1d - (double) bytes / (double) sum;
