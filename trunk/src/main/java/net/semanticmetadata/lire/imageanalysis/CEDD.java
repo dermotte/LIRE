@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 10:03
+ * Updated: 07.08.13 12:08
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.imageanalysis;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.cedd.*;
 import net.semanticmetadata.lire.utils.ImageUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -64,7 +65,8 @@ public class CEDD implements LireFeature {
     private double T2;
     private double T3;
     private boolean Compact = false;
-    protected double[] data = new double[144];
+//    protected double[] data = new double[144];
+    protected byte[] histogram = new byte[144];
     int tmp;
     // for tanimoto:
     private double Result, Temp1, Temp2, TempCount1, TempCount2, TempCount3;
@@ -306,8 +308,11 @@ public class CEDD implements LireFeature {
 //        for (int i = 0; i < qCEDD.length; i++)
 //            System.out.println(qCEDD[i]);
 
-        data = qCEDD;  // changed by mlux
+//        data = qCEDD;  // changed by mlux
+        for (int i = 0; i < qCEDD.length; i++) {
+            histogram[i] = (byte) qCEDD[i];
 
+        }
     }
 
     public float getDistance(LireFeature vd) { // added by mlux
@@ -319,7 +324,7 @@ public class CEDD implements LireFeature {
         tmpFeature = (CEDD) vd;
 
         // check if parameters are fitting ...
-        if ((tmpFeature.data.length != data.length))
+        if ((tmpFeature.histogram.length != histogram.length))
             throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
 
         // Init Tanimoto coefficient
@@ -330,17 +335,17 @@ public class CEDD implements LireFeature {
         TempCount2 = 0;
         TempCount3 = 0;
 
-        for (int i = 0; i < tmpFeature.data.length; i++) {
-            Temp1 += tmpFeature.data[i];
-            Temp2 += data[i];
+        for (int i = 0; i < tmpFeature.histogram.length; i++) {
+            Temp1 += tmpFeature.histogram[i];
+            Temp2 += histogram[i];
         }
 
         if (Temp1 == 0 && Temp2 == 0) return 0f;
         if (Temp1 == 0 || Temp2 == 0) return 100f;
 
-        for (int i = 0; i < tmpFeature.data.length; i++) {
-            iTmp1 = tmpFeature.data[i] / Temp1;
-            iTmp2 = data[i] / Temp2;
+        for (int i = 0; i < tmpFeature.histogram.length; i++) {
+            iTmp1 = tmpFeature.histogram[i] / Temp1;
+            iTmp2 = histogram[i] / Temp2;
             TempCount1 += iTmp1 * iTmp2;
             TempCount2 += iTmp2 * iTmp2;
             TempCount3 += iTmp1 * iTmp1;
@@ -362,12 +367,12 @@ public class CEDD implements LireFeature {
     }
 
     public String getStringRepresentation() { // added by mlux
-        StringBuilder sb = new StringBuilder(data.length * 2 + 25);
+        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
         sb.append("cedd");
         sb.append(' ');
-        sb.append(data.length);
+        sb.append(histogram.length);
         sb.append(' ');
-        for (double aData : data) {
+        for (byte aData : histogram) {
             sb.append((int) aData);
             sb.append(' ');
         }
@@ -378,11 +383,10 @@ public class CEDD implements LireFeature {
         StringTokenizer st = new StringTokenizer(s);
         if (!st.nextToken().equals("cedd"))
             throw new UnsupportedOperationException("This is not a CEDD descriptor.");
-        data = new double[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < histogram.length; i++) {
             if (!st.hasMoreTokens())
                 throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            data[i] = Integer.parseInt(st.nextToken());
+            histogram[i] = (byte) Integer.parseInt(st.nextToken());
         }
 
     }
@@ -396,11 +400,11 @@ public class CEDD implements LireFeature {
     public byte[] getByteArrayRepresentation() {
         // find out the position of the beginning of the trailing zeros.
         int position = -1;
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < histogram.length; i++) {
             if (position == -1) {
-                if (data[i] == 0) position = i;
+                if (histogram[i] == 0) position = i;
             } else if (position > -1) {
-                if (data[i] != 0) position = -1;
+                if (histogram[i] != 0) position = -1;
             }
         }
         if (position<0) position = 143;
@@ -409,8 +413,8 @@ public class CEDD implements LireFeature {
         if ((position + 1) % 2 == 1) length = position / 2 + 1;
         byte[] result = new byte[length];
         for (int i = 0; i < result.length; i++) {
-            tmp = ((int) (data[(i << 1)])) << 4;
-            tmp = (tmp | ((int) (data[(i << 1) + 1])));
+            tmp = ((int) (histogram[(i << 1)])) << 4;
+            tmp = (tmp | ((int) (histogram[(i << 1) + 1])));
             result[i] = (byte) (tmp - 128);
         }
         return result;
@@ -423,25 +427,25 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if ((in.length << 1) < data.length) Arrays.fill(data, in.length << 1, data.length - 1, 0);
+        if ((in.length << 1) < histogram.length) Arrays.fill(histogram, in.length << 1, histogram.length - 1, (byte) 0);
         for (int i = 0; i < in.length; i++) {
             tmp = in[i] + 128;
-            data[(i << 1) + 1] = ((double) (tmp & 0x000F));
-            data[i << 1] = ((double) (tmp >> 4));
+            histogram[(i << 1) + 1] = ((byte) (tmp & 0x000F));
+            histogram[i << 1] = ((byte) (tmp >> 4));
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if ((length << 1) < data.length) Arrays.fill(data, length << 1, data.length - 1, 0);
+        if ((length << 1) < histogram.length) Arrays.fill(histogram, length << 1, histogram.length - 1, (byte) 0);
         for (int i = offset; i < offset + length; i++) {
             tmp = in[i] + 128;
-            data[((i - offset) << 1) + 1] = ((double) (tmp & 0x000F));
-            data[(i - offset) << 1] = ((double) (tmp >> 4));
+            histogram[((i - offset) << 1) + 1] = ((byte) (tmp & 0x000F));
+            histogram[(i - offset) << 1] = ((byte) (tmp >> 4));
         }
     }
 
     public double[] getDoubleHistogram() {
-        return data;
+        return SerializationUtils.castToDoubleArray(histogram);
     }
 
     @Override

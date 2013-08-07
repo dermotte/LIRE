@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 19.05.13 11:24
+ * Updated: 07.08.13 12:18
  */
 
 package net.semanticmetadata.lire.utils;
@@ -125,6 +125,15 @@ public class MetricsUtils {
      * @return
      */
     public static double jsd(int[] h1, int[] h2) {
+        double sum = 0d;
+        for (int i = 0; i < h1.length; i++) {
+            sum += (h1[i] > 0 ? h1[i] * Math.log(2d * h1[i] / (h1[i] + h2[i])) : 0) +
+                    (h2[i] > 0 ? h2[i] * Math.log(2d * h2[i] / (h1[i] + h2[i])) : 0);
+        }
+        return sum;
+    }
+
+    public static double jsd(byte[] h1, byte[] h2) {
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] > 0 ? h1[i] * Math.log(2d * h1[i] / (h1[i] + h2[i])) : 0) +

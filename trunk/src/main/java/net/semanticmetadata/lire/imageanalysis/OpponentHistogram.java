@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 10:36
+ * Updated: 07.08.13 12:18
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.imageanalysis;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -82,6 +83,8 @@ public class OpponentHistogram extends Histogram implements LireFeature {
 
     double tmpVal, tmpSum;
 
+    byte[] histogram = new byte[64];
+
     @Override
     public void extract(BufferedImage bimg) {
         // check if it's (i) RGB and (ii) 8 bits per pixel.
@@ -110,46 +113,43 @@ public class OpponentHistogram extends Histogram implements LireFeature {
             }
         }
         // normalize with max norm & quantize to [0,127]:
-        descriptor = new double[64];
         double max = 0;
         for (int i = 0; i < histogram.length; i++) {
             max = Math.max(histogram[i], max);
         }
         for (int i = 0; i < histogram.length; i++) {
-            descriptor[i] = Math.floor(127d * (histogram[i] / max));
+            this.histogram[i] = (byte) Math.floor(127d * (histogram[i] / max));
         }
     }
 
     public byte[] getByteArrayRepresentation() {
-        byte[] result = new byte[descriptor.length];
+        byte[] result = new byte[histogram.length];
         for (int i = 0; i < result.length; i++) {
-            result[i] = (byte) descriptor[i];
+            result[i] = histogram[i];
         }
         return result;
     }
 
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = new double[in.length];
-        for (int i = 0; i < descriptor.length; i++) {
-            descriptor[i] = in[i];
+        for (int i = 0; i < histogram.length; i++) {
+            histogram[i] = in[i];
         }
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = new double[length];
         for (int i = 0; i < length; i++) {
-            descriptor[i] = in[i+offset];
+            histogram[i] = in[i+offset];
         }
     }
 
     public double[] getDoubleHistogram() {
-        return descriptor;
+        return SerializationUtils.castToDoubleArray(histogram);
     }
 
     public float getDistance(LireFeature feature) {
         if (!(feature instanceof OpponentHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
-        return (float) MetricsUtils.jsd(((OpponentHistogram) feature).descriptor, descriptor);
+        return (float) MetricsUtils.jsd(((OpponentHistogram) feature).histogram, histogram);
     }
 
     public double getDistance(byte[] h1, byte[] h2) {
@@ -173,12 +173,12 @@ public class OpponentHistogram extends Histogram implements LireFeature {
     }
 
     public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
+        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
         sb.append("ophist");
         sb.append(' ');
-        sb.append(descriptor.length);
+        sb.append(histogram.length);
         sb.append(' ');
-        for (double aData : descriptor) {
+        for (double aData : histogram) {
             sb.append((int) aData);
             sb.append(' ');
         }
@@ -189,11 +189,10 @@ public class OpponentHistogram extends Histogram implements LireFeature {
         StringTokenizer st = new StringTokenizer(s);
         if (!st.nextToken().equals("ophist"))
             throw new UnsupportedOperationException("This is not a OpponentHistogram descriptor.");
-        descriptor = new double[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < descriptor.length; i++) {
+        for (int i = 0; i < histogram.length; i++) {
             if (!st.hasMoreTokens())
                 throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            descriptor[i] = Integer.parseInt(st.nextToken());
+            histogram[i] = (byte) Integer.parseInt(st.nextToken());
         }
 
     }
