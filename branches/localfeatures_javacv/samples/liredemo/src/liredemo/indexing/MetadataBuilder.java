@@ -91,7 +91,7 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
         */
         addBuilder(new SurfDocumentBuilder());
         addBuilder(new BriskDocumentBuilder());
-        addBuilder(new FreakDocumentBuilder());
+        addBuilder(new FreakDocumentBuilder(50));
     }
 
     @Override

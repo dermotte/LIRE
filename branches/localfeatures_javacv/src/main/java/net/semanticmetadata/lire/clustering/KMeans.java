@@ -109,9 +109,7 @@ public class KMeans {
         Set<Integer> medians = selectInitialMedians(numClusters);
         Iterator<Integer> mediansIterator = medians.iterator();
         for (int i = 0; i < clusters.length; i++) {
-            clusters[i] = new Cluster();
-            double[] descriptor = features.get(mediansIterator.next());
-            System.arraycopy(descriptor, 0, clusters[i].mean, 0, descriptor.length);
+            clusters[i] = new Cluster(features.get(mediansIterator.next()));
         }
     }
 

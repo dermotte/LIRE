@@ -74,8 +74,10 @@ public class FreakDocumentBuilder extends AbstractDocumentBuilder
         kpoints.capacity(0);         // clear data buffer
         descriptor.capacity(0);      // clear data buffer 
 		detector.detect(img, kpoints, null);
+		assert(kpoints.capacity() > 0);
 		extractor.compute(img, kpoints, descriptor);
 		descriptor.reset();          // make internal state consistent after .capacity(0)
+		assert(descriptor.capacity() > 0);
         assert(descriptor.type() == CV_8UC1);    // FREAK features are unsigned byte values
     }
     
@@ -93,15 +95,17 @@ public class FreakDocumentBuilder extends AbstractDocumentBuilder
 	public Field[] createDescriptorFields(BufferedImage bimg) 
 	{
 	    detectFeatures(bimg);
-        ByteBuffer buff = descriptor.getByteBuffer();
 		final int nDesc = descriptor.rows();     // number of descriptors
 		final int lenDesc = descriptor.cols();   // descriptor length (in bytes)
 		final int step = descriptor.step();      // row length of desc in bytes
 		Field[] result = new Field[nDesc];
-		for (int i=0; i < nDesc; i++) {
-	        byte[] b = new byte[lenDesc];  // necessary, because StoredField keeps a reference to b
-		    LocalFeature.byteArrayFromBuffer(b, buff, i*step, lenDesc);
-		    result[i] = new StoredField(FIELD_NAME_FREAK, b);
+		if (nDesc > 0) {
+	        ByteBuffer buff = descriptor.getByteBuffer();
+		    for (int i=0; i < nDesc; i++) {
+		        byte[] b = new byte[lenDesc];  // necessary, because StoredField keeps a reference to b
+		        LocalFeature.byteArrayFromBuffer(b, buff, i*step, lenDesc);
+		        result[i] = new StoredField(FIELD_NAME_FREAK, b);
+		    }
 		}
 		return result;
 	}

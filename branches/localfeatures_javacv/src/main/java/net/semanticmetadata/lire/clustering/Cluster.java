@@ -85,7 +85,8 @@ public class Cluster implements Comparable<Object> {
     }
 
     public Cluster(double[] mean) {
-        this.mean = mean;
+        this.mean = new double[mean.length];
+        System.arraycopy(mean, 0, this.mean, 0, mean.length);
     }
 
     public String toString() {
