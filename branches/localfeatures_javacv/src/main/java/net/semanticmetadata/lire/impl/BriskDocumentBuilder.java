@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 
 import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.BriskFeature;
 import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 
 import org.apache.lucene.document.Document;
@@ -32,8 +31,18 @@ import com.googlecode.javacv.cpp.opencv_features2d.KeyPoint;
  */
 public class BriskDocumentBuilder extends AbstractDocumentBuilder 
 {
-
-    public static CvMat detectFeatures(BufferedImage bimg)
+    private BRISK extractor;
+    private KeyPoint kpoints;
+    private CvMat descriptor;
+    
+    public BriskDocumentBuilder()
+    {
+        extractor = new BRISK();
+        kpoints = new KeyPoint();
+        descriptor = new CvMat(null);
+    }
+    
+    private void detectFeatures(BufferedImage bimg)
     {
         IplImage img = IplImage.createFrom(bimg);
         if (img.depth() != IPL_DEPTH_8U) {
@@ -41,22 +50,31 @@ public class BriskDocumentBuilder extends AbstractDocumentBuilder
             cvCvtColor(img, img2, CV_BGR2GRAY);
             img = img2;
         }
-        BRISK feature = new BRISK();
-        KeyPoint kpoints = new KeyPoint();
-        CvMat desc = new CvMat(null);
-        feature.detectAndCompute(img, null, kpoints, desc, false);
-        assert(desc.type() == CV_8UC1);    // BRISK features are unsigned byte values
-        return desc;
+        kpoints.capacity(0);         // clear data buffer
+        descriptor.capacity(0);      // clear data buffer 
+        extractor.detectAndCompute(img, null, kpoints, descriptor, false);
+        descriptor.reset();          // make internal state consistent after .capacity(0)
+        assert(descriptor.type() == CV_8UC1);    // BRISK features are unsigned byte values
+    }
+    
+    public CvMat getDescriptor()
+    {
+        return descriptor;
+    }
+    
+    public int numKeyPoints()
+    {
+        return kpoints.capacity();
     }
     
 	@Override
 	public Field[] createDescriptorFields(BufferedImage bimg) 
 	{
-	    CvMat desc = detectFeatures(bimg);
-        ByteBuffer buff = desc.getByteBuffer();
-		final int nDesc = desc.rows();     // number of descriptors
-		final int lenDesc = desc.cols();   // descriptor length (in bytes)
-		final int step = desc.step();      // row length of desc in bytes
+	    detectFeatures(bimg);
+        ByteBuffer buff = descriptor.getByteBuffer();
+		final int nDesc = descriptor.rows();     // number of descriptors
+		final int lenDesc = descriptor.cols();   // descriptor length (in bytes)
+		final int step = descriptor.step();      // row length of desc in bytes
 		Field[] result = new Field[nDesc];
 		for (int i=0; i < nDesc; i++) {
 	        byte[] b = new byte[lenDesc];  // necessary, because StoredField keeps a reference to b
@@ -69,15 +87,15 @@ public class BriskDocumentBuilder extends AbstractDocumentBuilder
 	@Override
 	public Document createDocument(BufferedImage bimg, String identifier) throws FileNotFoundException 
 	{
-        CvMat desc = detectFeatures(bimg);
-        ByteBuffer buff = desc.getByteBuffer();
-        final int nDesc = desc.rows();     // number of descriptors
-        final int lenDesc = desc.cols();   // descriptor length (in bytes)
-        final int step = desc.step();      // row length of desc in bytes
+        detectFeatures(bimg);
+        ByteBuffer buff = descriptor.getByteBuffer();
+        final int nDesc = descriptor.rows();     // number of descriptors
+        final int lenDesc = descriptor.cols();   // descriptor length (in bytes)
+        final int step = descriptor.step();      // row length of desc in bytes
         Document doc = new Document();
         for (int i=0; i < nDesc; i++) {
             byte[] b = new byte[lenDesc];  // necessary, because StoredField keeps a reference to b
-            BriskFeature.byteArrayFromBuffer(b, buff, i*step, lenDesc);
+            LocalFeature.byteArrayFromBuffer(b, buff, i*step, lenDesc);
             doc.add(new StoredField(FIELD_NAME_BRISK, b));
         }
         if (identifier != null)
