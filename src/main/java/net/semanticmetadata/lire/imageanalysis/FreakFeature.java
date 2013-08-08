@@ -3,7 +3,7 @@ package net.semanticmetadata.lire.imageanalysis;
 import net.semanticmetadata.lire.DocumentBuilder;
 
 /**
- * FREAK creates a 64-dimensional feature vector of byte values
+ * FREAK creates a 512-dimensional binary feature vector (64 bytes)
  * for each appropriate keypoint.
  * 
  * @author Mario Taschwer
@@ -49,7 +49,7 @@ public class FreakFeature extends LocalFeature
         if (freakDescriptor == null || freakDescriptor.length != length)
             freakDescriptor = new byte[length];
         System.arraycopy(in, offset, freakDescriptor, 0, length);
-        descriptor = ubyte2doubleArray(descriptor, in, offset, length);
+        descriptor = bit2doubleArray(descriptor, in, offset, length);
     }
 
 }
