@@ -11,7 +11,6 @@ import java.nio.ByteBuffer;
 
 import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.BriskFeature;
 import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 
 import org.apache.lucene.document.Document;
@@ -118,7 +117,7 @@ public class FreakDocumentBuilder extends AbstractDocumentBuilder
         Document doc = new Document();
         for (int i=0; i < nDesc; i++) {
             byte[] b = new byte[lenDesc];  // necessary, because StoredField keeps a reference to b
-            BriskFeature.byteArrayFromBuffer(b, buff, i*step, lenDesc);
+            LocalFeature.byteArrayFromBuffer(b, buff, i*step, lenDesc);
             doc.add(new StoredField(FIELD_NAME_FREAK, b));
         }
         if (identifier != null)

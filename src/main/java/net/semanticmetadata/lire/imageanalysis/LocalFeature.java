@@ -55,6 +55,31 @@ public abstract class LocalFeature extends Histogram implements LireFeature
         return out;
     }
 
+    /**
+     * Convert array of bits to double.
+     * In fact, a subarray of <code>in</code> determined by <code>offset</code> and <code>length</code>
+     * (in bytes) is converted and stored into the array <code>out</code> if its length is equal to <code>length</code>.
+     * Otherwise, a new double array of length <code>length</code> is allocated.
+     * @return the array passed as <code>out</code>, or a new array if the length of <code>out</code>
+     *         is not appropriate or if <code>out</code> is <code>null</code>.
+     */
+    protected static double[] bit2doubleArray(double[] out, byte[] in, int offset, int length)
+    {
+        final int bitlen = length << 3;    // length in bits
+        if (out == null || out.length != bitlen)
+            out = new double[bitlen];
+        int src = 0;
+        for (int i=0, j=offset; i < bitlen; i++) {
+            final int shift = i & 7;
+            if (shift == 0) {
+                src = (in[j] + 256) & 0xff;   // get unsigned byte value
+                j++;
+            }
+            out[i] = (src >> shift) & 1;
+        }
+        return out;
+    }
+    
     protected LocalFeature() {
         // NOP
     }

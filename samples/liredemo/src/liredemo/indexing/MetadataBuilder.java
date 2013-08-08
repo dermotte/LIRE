@@ -46,9 +46,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
 
-import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.impl.BriskDocumentBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.FreakDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 
@@ -71,6 +71,7 @@ import com.drew.metadata.iptc.IptcReader;
 public class MetadataBuilder extends ChainedDocumentBuilder {
     public MetadataBuilder() {
         super();
+        /*
         addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
         addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
@@ -87,8 +88,10 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
         addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
         addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+        */
         addBuilder(new SurfDocumentBuilder());
         addBuilder(new BriskDocumentBuilder());
+        addBuilder(new FreakDocumentBuilder());
     }
 
     @Override

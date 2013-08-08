@@ -25,7 +25,7 @@ import com.googlecode.javacv.cpp.opencv_core.CvMat;
 public class BriskFeatureTest extends TestCase
 {
     private final String testImageDir = "src/test/resources/images/";
-    private final String[] testImages = new String[] { "img01.JPG", "img02.JPG", "img03.JPG" };
+    private final String[] testImages = new String[] { "img01.JPG", "img02.JPG", "img03.JPG", "img04.JPG" };
     private final double epsilon = 0.01;  // BRISK features are integers
 
     public void testCreateDescriptorFields() throws IOException
@@ -34,12 +34,13 @@ public class BriskFeatureTest extends TestCase
         BriskFeature briskFeature = new BriskFeature();
         for (String testImg : testImages) {
             BufferedImage img = ImageIO.read(new FileInputStream(testImageDir + testImg));
-            CvMat desc = BriskDocumentBuilder.detectFeatures(img);
+            Field[] fields = briskBuilder.createDescriptorFields(img);
+            CvMat desc = briskBuilder.getDescriptor();
             assertTrue(desc.rows() > 0);
             assertTrue(desc.cols() == 64);
-            Field[] fields = briskBuilder.createDescriptorFields(img);
             assertTrue(fields.length == desc.rows());
-            System.out.format("%s: extracted %d BRISK feature vectors\n", testImg, fields.length);
+            System.out.format("%s: extracted %d BRISK feature vectors at %d key points\n", 
+                    testImg, fields.length, briskBuilder.numKeyPoints());
             for (int i=0; i < fields.length; i++) {
                 BytesRef bref = fields[i].binaryValue();
                 briskFeature.setByteArrayRepresentation(bref.bytes, bref.offset, bref.length);
@@ -56,13 +57,14 @@ public class BriskFeatureTest extends TestCase
         BriskFeature briskFeature = new BriskFeature();
         for (String testImg : testImages) {
             BufferedImage img = ImageIO.read(new FileInputStream(testImageDir + testImg));
-            CvMat desc = BriskDocumentBuilder.detectFeatures(img);
+            Document doc = briskBuilder.createDocument(img, testImg);
+            CvMat desc = briskBuilder.getDescriptor();
             assertTrue(desc.rows() > 0);
             assertTrue(desc.cols() == 64);
-            Document doc = briskBuilder.createDocument(img, testImg);
             IndexableField[] fields = doc.getFields(BriskDocumentBuilder.FIELD_NAME_BRISK);
             assertTrue(fields.length == desc.rows());
-            System.out.format("%s: extracted %d BRISK feature vectors\n", testImg, fields.length);
+            System.out.format("%s: extracted %d BRISK feature vectors at %d key points\n", 
+                    testImg, fields.length, briskBuilder.numKeyPoints());
             for (int i=0; i < fields.length; i++) {
                 BytesRef bref = fields[i].binaryValue();
                 briskFeature.setByteArrayRepresentation(bref.bytes, bref.offset, bref.length);

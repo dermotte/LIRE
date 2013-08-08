@@ -1,7 +1,5 @@
 package net.semanticmetadata.lire.imageanalysis;
 
-import java.nio.ByteBuffer;
-
 import net.semanticmetadata.lire.DocumentBuilder;
 
 /**

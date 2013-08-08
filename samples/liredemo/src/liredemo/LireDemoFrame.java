@@ -57,6 +57,7 @@ import net.semanticmetadata.lire.filter.LsaFilter;
 import net.semanticmetadata.lire.filter.RerankFilter;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.BriskFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.FreakFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.LocalFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
@@ -888,7 +889,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Type of IndexSearcher:");
 
-        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG", "BRISK BoVW"}));
+        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG", "BRISK BoVW", "FREAK BoVW"}));
         selectboxDocumentBuilder.setToolTipText(bundle.getString("options.tooltip.documentbuilderselection")); // NOI18N
         selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -898,7 +899,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabelBovwFeature.setText("Local feature for BoVW:");
 
-        selectboxBovwFeature.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"SURF", "BRISK"}));
+        selectboxBovwFeature.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"SURF", "BRISK", "FREAK"}));
         selectboxBovwFeature.setToolTipText(bundle.getString("options.tooltip.bovwfeatureselection")); // NOI18N
         selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1874,13 +1875,20 @@ public class LireDemoFrame extends javax.swing.JFrame {
     {
         LocalFeatureHistogramBuilder lfhBuilder = null;
         String featureName = null;
-        if (selectboxBovwFeature.getSelectedIndex() == 0) {
+        switch (selectboxBovwFeature.getSelectedIndex()) {
+        case 0:
             lfhBuilder = new SurfFeatureHistogramBuilder(reader, samples, clusters);
             featureName = "SURF";
-        } else if (selectboxBovwFeature.getSelectedIndex() == 1) {
+            break;
+        case 1:
             lfhBuilder = new BriskFeatureHistogramBuilder(reader, samples, clusters);
             featureName = "BRISK";
-        } else {
+            break;
+        case 2:
+            lfhBuilder = new FreakFeatureHistogramBuilder(reader, samples, clusters);
+            featureName = "FREAK";
+            break;
+        default:
             throw new UnsupportedOperationException("selectboxBovwFeature index not supported: " + selectboxBovwFeature.getSelectedIndex());
         }
         lfhBuilder.setProgressMonitor(new javax.swing.ProgressMonitor(this, 
@@ -2022,8 +2030,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
             searcher = ImageSearcherFactory.createLuminanceLayoutImageSearcher(numResults);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 15) {
             searcher = ImageSearcherFactory.createPHOGImageSearcher(numResults);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 16) {
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 16) {
             searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_BRISK_VISUAL_WORDS);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 17) {
+            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_FREAK_VISUAL_WORDS);
         }
         return searcher;
     }
