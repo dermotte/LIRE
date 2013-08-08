@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-08-08
+==========
+  - Speeded up OpponentHistogram extraction
+  - Speeded up ParallelExtractor by moving JPEG decoding to the consumer part.
+
 2013-08-07
 ==========
   - Changed CEDD internal data handling from double to bytes

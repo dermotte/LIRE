@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.indexing.tools;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.indexing.parallel.WorkItem;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import javax.imageio.ImageIO;
@@ -72,12 +73,6 @@ import java.util.*;
  * @author Mathias Lux, mathias@juggle.at, 08.03.13
  */
 public class ParallelExtractor implements Runnable {
-    private static boolean force = false;
-    Stack<WorkItem> images = new Stack<WorkItem>();
-    boolean ended = false;
-    int overallCount = 0;
-    OutputStream dos = null;
-
     public static final String[] features = new String[]{
             "net.semanticmetadata.lire.imageanalysis.CEDD",                  // 0
             "net.semanticmetadata.lire.imageanalysis.FCTH",                  // 1
@@ -95,7 +90,6 @@ public class ParallelExtractor implements Runnable {
             "net.semanticmetadata.lire.imageanalysis.LuminanceLayout",       // 13
             "net.semanticmetadata.lire.imageanalysis.PHOG",                   // 14
     };
-
     public static final String[] featureFieldNames = new String[]{
             DocumentBuilder.FIELD_NAME_CEDD,                 // 0
             DocumentBuilder.FIELD_NAME_FCTH,                 // 1
@@ -113,7 +107,6 @@ public class ParallelExtractor implements Runnable {
             DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,     // 13
             DocumentBuilder.FIELD_NAME_PHOG,                 // 14
     };
-
     static HashMap<String, Integer> feature2index;
 
     static {
@@ -123,19 +116,17 @@ public class ParallelExtractor implements Runnable {
         }
     }
 
+    private static boolean force = false;
+    private static int numberOfThreads = 4;
+    Stack<WorkItem> images = new Stack<WorkItem>();
+    boolean ended = false;
+    int overallCount = 0;
+    OutputStream dos = null;
     LinkedList<LireFeature> listOfFeatures;
     File fileList = null;
     File outFile = null;
-    private static int numberOfThreads = 4;
     private int monitoringInterval = 10;
-
-    /**
-     * Sets the number of consumer threads that are employed for extraction
-     * @param numberOfThreads
-     */
-    public static void setNumberOfThreads(int numberOfThreads) {
-        ParallelExtractor.numberOfThreads = numberOfThreads;
-    }
+    private int maxSideLength = -1;
 
     public ParallelExtractor() {
         // default constructor.
@@ -143,30 +134,12 @@ public class ParallelExtractor implements Runnable {
     }
 
     /**
-     * Adds a feature to the extractor chain. All those features are extracted from images.
+     * Sets the number of consumer threads that are employed for extraction
      *
-     * @param feature
+     * @param numberOfThreads
      */
-    public void addFeature(LireFeature feature) {
-        listOfFeatures.add(feature);
-    }
-
-    /**
-     * Sets the file list for processing. One image file per line is fine.
-     *
-     * @param fileList
-     */
-    public void setFileList(File fileList) {
-        this.fileList = fileList;
-    }
-
-    /**
-     * Sets the outfile. The outfile has to be in a folder parent to all input images.
-     *
-     * @param outFile
-     */
-    public void setOutFile(File outFile) {
-        this.outFile = outFile;
+    public static void setNumberOfThreads(int numberOfThreads) {
+        ParallelExtractor.numberOfThreads = numberOfThreads;
     }
 
     public static void main(String[] args) throws IOException {
@@ -185,6 +158,18 @@ public class ParallelExtractor implements Runnable {
                 if ((i + 1) < args.length)
                     e.setOutFile(new File(args[i + 1]));
                 else printHelp();
+            } else if (arg.startsWith("-m")) {
+                // out file
+                if ((i + 1) < args.length) {
+                    try {
+                        int s = Integer.parseInt(args[i + 1]);
+                        if (s > 10)
+                            e.setMaxSideLength(s);
+                    } catch (NumberFormatException e1) {
+                        e1.printStackTrace();
+                        printHelp();
+                    }
+                } else printHelp();
             } else if (arg.startsWith("-f")) {
                 force = true;
             } else if (arg.startsWith("-h")) {
@@ -193,9 +178,9 @@ public class ParallelExtractor implements Runnable {
             } else if (arg.startsWith("-n")) {
                 if ((i + 1) < args.length)
                     try {
-                        ParallelExtractor.numberOfThreads = Integer.parseInt(args[i+1]);
+                        ParallelExtractor.numberOfThreads = Integer.parseInt(args[i + 1]);
                     } catch (Exception e1) {
-                        System.err.println("Could not set number of threads to \""+args[i+1]+"\".");
+                        System.err.println("Could not set number of threads to \"" + args[i + 1] + "\".");
                         e1.printStackTrace();
                     }
                 else printHelp();
@@ -225,6 +210,63 @@ public class ParallelExtractor implements Runnable {
         }
     }
 
+    private static void printHelp() {
+        System.out.println("Help for the ParallelExtractor class.\n" +
+                "=============================\n" +
+                "This help text is shown if you start the ParallelExtractor with the '-h' option.\n" +
+                "\n" +
+                "1. Usage\n" +
+                "========\n" +
+                "$> ParallelExtractor -i <infile> [-o <outfile>] -c <configfile> [-n <threads>] [-m <max_side_length>]\n" +
+                "\n" +
+                "Note: if you don't specify an outfile just \".data\" is appended to the infile for output.\n" +
+                "\n" +
+                "2. Config File\n" +
+                "==============\n" +
+                "The config file is a simple java Properties file. It basically gives the \n" +
+                "employed features as a list of properties, just like:\n" +
+                "\n" +
+                "feature.1=net.semanticmetadata.lire.imageanalysis.CEDD\n" +
+                "feature.2=net.semanticmetadata.lire.imageanalysis.FCTH\n" +
+                "\n" +
+                "... and so on. ");
+    }
+
+    /**
+     * Adds a feature to the extractor chain. All those features are extracted from images.
+     *
+     * @param feature
+     */
+    public void addFeature(LireFeature feature) {
+        listOfFeatures.add(feature);
+    }
+
+    /**
+     * Sets the file list for processing. One image file per line is fine.
+     *
+     * @param fileList
+     */
+    public void setFileList(File fileList) {
+        this.fileList = fileList;
+    }
+
+    /**
+     * Sets the outfile. The outfile has to be in a folder parent to all input images.
+     *
+     * @param outFile
+     */
+    public void setOutFile(File outFile) {
+        this.outFile = outFile;
+    }
+
+    public int getMaxSideLength() {
+        return maxSideLength;
+    }
+
+    public void setMaxSideLength(int maxSideLength) {
+        this.maxSideLength = maxSideLength;
+    }
+
     private boolean isConfigured() {
         boolean configured = true;
         if (fileList == null || !fileList.exists()) configured = false;
@@ -243,29 +285,6 @@ public class ParallelExtractor implements Runnable {
         if (listOfFeatures.size() < 1) configured = false;
         return configured;
     }
-
-    private static void printHelp() {
-        System.out.println("Help for the Extractor class.\n" +
-                "=============================\n" +
-                "This help text is shown if you start the Extractor with the '-h' option.\n" +
-                "\n" +
-                "1. Usage\n" +
-                "========\n" +
-                "$> Extractor -i <infile> [-o <outfile>] -c <configfile> [-n <threads>]\n" +
-                "\n" +
-                "Note: if you don't specify an outfile just \".data\" is appended to the infile for output.\n" +
-                "\n" +
-                "2. Config File\n" +
-                "==============\n" +
-                "The config file is a simple java Properties file. It basically gives the \n" +
-                "employed features as a list of properties, just like:\n" +
-                "\n" +
-                "feature.1=net.semanticmetadata.lire.imageanalysis.CEDD\n" +
-                "feature.2=net.semanticmetadata.lire.imageanalysis.FCTH\n" +
-                "\n" +
-                "... and so on. ");
-    }
-
 
     @Override
     public void run() {
@@ -295,7 +314,7 @@ public class ParallelExtractor implements Runnable {
                 iterator.next().join();
             }
             long l1 = System.currentTimeMillis() - l;
-            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + (overallCount>0?(l1 / overallCount):"inf.") + " ms each.");
+            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + (overallCount > 0 ? (l1 / overallCount) : "inf.") + " ms each.");
             dos.close();
 //            writer.commit();
 //            writer.close();
@@ -305,6 +324,17 @@ public class ParallelExtractor implements Runnable {
             e.printStackTrace();
         }
 
+    }
+
+    private void addFeatures(List features) {
+        for (Iterator<LireFeature> iterator = listOfFeatures.iterator(); iterator.hasNext(); ) {
+            LireFeature next = iterator.next();
+            try {
+                features.add(next.getClass().newInstance());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     class Monitoring implements Runnable {
@@ -319,7 +349,7 @@ public class ParallelExtractor implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+images.size()+" images currently in queue).");
+                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount > 0) ? (time / overallCount) : "n.a.") + " ms each (" + images.size() + " images currently in queue).");
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -327,7 +357,6 @@ public class ParallelExtractor implements Runnable {
             }
         }
     }
-
 
     class Producer implements Runnable {
         public void run() {
@@ -340,15 +369,18 @@ public class ParallelExtractor implements Runnable {
                     next = new File(file);
                     BufferedImage img = null;
                     try {
-                        img = ImageIO.read(next);
+                        int fileSize = (int) next.length();
+                        byte[] buffer = new byte[fileSize];
+                        FileInputStream fis = new FileInputStream(next);
+                        fis.read(buffer);
                         String path = next.getCanonicalPath();
                         synchronized (images) {
-                            images.add(new WorkItem(path, img));
+                            images.add(new WorkItem(path, buffer));
                             tmpSize = images.size();
                             // if the cache is too crowded, then wait.
-                            if (tmpSize>500) images.wait(500);
+                            if (tmpSize > 500) images.wait(500);
                             // if the cache is too small, dont' notify.
-//                            if (tmpSize>50) images.notifyAll();
+                            images.notify();
                         }
                     } catch (Exception e) {
                         System.err.println("Could not read image " + file + ": " + e.getMessage());
@@ -390,7 +422,7 @@ public class ParallelExtractor implements Runnable {
                     // we wait for the stack to be either filled or empty & not being filled any more.
                     while (images.empty() && !ended) {
                         try {
-                            images.wait(10);
+                            images.wait(200);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -408,7 +440,9 @@ public class ParallelExtractor implements Runnable {
                 try {
                     bufferCount = 0;
                     if (!locallyEnded) {
-                        BufferedImage img = tmp.getImage();
+                        ByteArrayInputStream b = new ByteArrayInputStream(tmp.getBuffer());
+                        BufferedImage img = ImageIO.read(b);
+                        if (maxSideLength > 50) img = ImageUtils.scaleImage(img, maxSideLength);
                         byte[] tmpBytes = tmp.getFileName().getBytes();
                         // everything is written to a buffer and only if no exception is thrown, the image goes to index.
                         System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, 0, 4);
@@ -441,17 +475,6 @@ public class ParallelExtractor implements Runnable {
                     System.err.println("Error processing file " + tmp.getFileName());
                     e.printStackTrace();
                 }
-            }
-        }
-    }
-
-    private void addFeatures(List features) {
-        for (Iterator<LireFeature> iterator = listOfFeatures.iterator(); iterator.hasNext(); ) {
-            LireFeature next = iterator.next();
-            try {
-                features.add(next.getClass().newInstance());
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
     }

@@ -50,12 +50,26 @@ import java.awt.image.BufferedImage;
  */
 
 public class WorkItem {
+    public byte[] getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+    }
+
+    private byte[] buffer;
     private String fileName;
     private BufferedImage image;
 
     public WorkItem(String fileName, BufferedImage image) {
         this.fileName = fileName;
         this.image = image;
+    }
+
+    public WorkItem(String path, byte[] buffer) {
+        this.fileName = path;
+        this.buffer = buffer;
     }
 
     public String getFileName() {
