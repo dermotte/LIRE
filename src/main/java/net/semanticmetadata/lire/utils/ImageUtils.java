@@ -60,7 +60,7 @@ public class ImageUtils {
      *
      * @param image         the image to scale down. It remains untouched.
      * @param maxSideLength the maximum side length of the scaled down instance. Has to be > 0.
-     * @return the scaled image, the
+     * @return the scaled image if the original image is bigger than the scaled version, the original instance otherwise.
      */
     public static BufferedImage scaleImage(BufferedImage image, int maxSideLength) {
         assert (maxSideLength > 0);
@@ -73,13 +73,16 @@ public class ImageUtils {
             scaleFactor = ((double) maxSideLength / originalHeight);
         }
         // create new image
-        BufferedImage img = new BufferedImage((int) (originalWidth * scaleFactor), (int) (originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
-        // fast scale (Java 1.4 & 1.5)
-        Graphics g = img.getGraphics();
+        if (scaleFactor < 1) {
+            BufferedImage img = new BufferedImage((int) (originalWidth * scaleFactor), (int) (originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
+            // fast scale (Java 1.4 & 1.5)
+            Graphics g = img.getGraphics();
 //        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        g.drawImage(image, 0, 0, img.getWidth(), img.getHeight(), null);
-        return img;
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            g.drawImage(image, 0, 0, img.getWidth(), img.getHeight(), null);
+            return img;
+        } else
+            return image;
     }
 
     /**

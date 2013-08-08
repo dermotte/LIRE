@@ -95,14 +95,14 @@ public class OpponentHistogram extends Histogram implements LireFeature {
             histogram[i] = 0;
         }
         WritableRaster raster = bimg.getRaster();
-        int[] px = new int[3];
+        int[] px = new int[3*(raster.getHeight()-2)];
         int colorPos;
         for (int x = 1; x < raster.getWidth() - 1; x++) {
-            for (int y = 1; y < raster.getHeight() - 1; y++) {
-                raster.getPixel(x, y, px);
-                o1 = (double) (px[0] - px[1]) / sq2;
-                o2 = (double) (px[0] + px[1] - 2 * px[2]) / sq6;
-                o3 = (double) (px[0] + px[1] + px[2]) / sq3;
+            raster.getPixels(x, 1, 1, raster.getHeight()-2, px);
+            for (int y = 0; y < raster.getHeight() - 2; y++) {
+                o1 = (double) (px[y*3] - px[y*3+1]) / sq2;
+                o2 = (double) (px[y*3] + px[y*3+1] - 2 * px[y*3+2]) / sq6;
+                o3 = (double) (px[y*3] + px[y*3+1] + px[y*3+2]) / sq3;
                 // Normalize ... easier to handle.
                 o1 = (o1 + 255d / sq2) / (510d / sq2);
                 o2 = (o2 + 510d / sq6) / (1020d / sq6);

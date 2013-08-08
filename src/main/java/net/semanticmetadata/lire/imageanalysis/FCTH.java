@@ -59,15 +59,12 @@ import java.util.StringTokenizer;
  */
 
 public class FCTH implements LireFeature {
-    protected double[] histogram = new double[192];
-
     public boolean Compact = false;
+    protected double[] histogram = new double[192];
     int tmp;
-
     double distResult = 0;
     double distTmp1 = 0;
     double distTmp2 = 0;
-
     double distTmpCnt1 = 0;
     double distTmpCnt2 = 0;
     double distTmpCnt3 = 0;
