@@ -54,6 +54,7 @@ import java.awt.image.WritableRaster;
  * This class computes and quantifies several basic image features like contrast, overall sharpness etc.
  *
  * @author Thomas Pairitsch
+ * @deprecated other features replace the functionality of this one, do not use!
  */
 public class BasicFeatures implements LireFeature {
 

@@ -125,6 +125,11 @@ public class IndexingThread extends Thread {
 //                String toPaint = "~ " + df.format(secLeft) + " sec. left";
 //                if (secLeft > 90) toPaint = "~ " + Math.ceil(secLeft / 60) + " min. left";
 //                parent.progressBarIndexing.setString(toPaint);
+                try {
+                    Thread.currentThread().sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             }
             try {
                 t.join();

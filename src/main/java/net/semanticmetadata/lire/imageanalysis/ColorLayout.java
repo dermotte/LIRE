@@ -124,7 +124,7 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
     public float getDistance(LireFeature descriptor) {
         if (!(descriptor instanceof ColorLayoutImpl)) return -1f;
         ColorLayoutImpl cl = (ColorLayoutImpl) descriptor;
-        return (float) ColorLayoutImpl.getSimilarity(YCoeff, CbCoeff, CrCoeff, cl.YCoeff, cl.CbCoeff, cl.CrCoeff);
+        return (float) getSimilarity(YCoeff, CbCoeff, CrCoeff, cl.YCoeff, cl.CbCoeff, cl.CrCoeff);
     }
 
     @Override

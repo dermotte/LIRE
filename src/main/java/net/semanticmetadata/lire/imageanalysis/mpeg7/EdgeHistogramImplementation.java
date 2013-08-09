@@ -518,20 +518,20 @@ public class EdgeHistogramImplementation {
      * @return the distance from [0, 480]
      */
     public static float calculateDistance(int[] edgeHistogramA, int[] edgeHistogramB) {
-        if (edgeHistogramA == null) System.err.println("Input edgeHistogram a is null!");
-        if (edgeHistogramB == null) System.err.println("Input edgeHistogram b is null!");
+//        if (edgeHistogramA == null) System.err.println("Input edgeHistogram a is null!");
+//        if (edgeHistogramB == null) System.err.println("Input edgeHistogram b is null!");
         double result = 0f;
         // Todo: this first for loop should sum up the differences of the non quantized edges. Check if this code is right!
         for (int i = 0; i < edgeHistogramA.length; i++) {
             // first version is the un-quantized version, according to the MPEG-7 docs part 8 this version is quite okay as though its nearly linear quantization
             // result += Math.abs((float) edgeHistogramA[i] - (float) edgeHistogramB[i]);
-            result += Math.abs((double) EdgeHistogramImplementation.QuantTable[i % 5][edgeHistogramA[i]] - (double) EdgeHistogramImplementation.QuantTable[i % 5][edgeHistogramB[i]]);
+            result += Math.abs(QuantTable[i % 5][edgeHistogramA[i]] - QuantTable[i % 5][edgeHistogramB[i]]);
         }
         for (int i = 0; i <= 4; i++) {
-            result += 5d * Math.abs((double) edgeHistogramA[i] - (double) edgeHistogramB[i]);
+            result += 5d * Math.abs(edgeHistogramA[i] - edgeHistogramB[i]);
         }
         for (int i = 5; i < 80; i++) {
-            result += Math.abs((double) edgeHistogramA[i] - (double) edgeHistogramB[i]);
+            result += Math.abs(edgeHistogramA[i] - edgeHistogramB[i]);
         }
         return (float) result;
     }

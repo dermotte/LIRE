@@ -65,12 +65,29 @@ public class JCD implements LireFeature {
     public JCD() {
     }
 
-    public void extract(BufferedImage bimg) {
-        CEDD c = new CEDD();
-        c.extract(bimg);
-        FCTH f = new FCTH();
-        f.extract(bimg);
-        init(c, f);
+    public static double getDistance(double[] histogram1, double[] histogram2) {
+        double temp1 = 0;
+        double temp2 = 0;
+
+        double TempCount1 = 0;
+        double TempCount2 = 0;
+        double TempCount3 = 0;
+
+        for (int i = 0; i < histogram1.length; i++) {
+            temp1 += histogram1[i];
+            temp2 += histogram2[i];
+        }
+
+        if (temp1 == 0 && temp2 == 0) return 0f;
+        if (temp1 == 0 || temp2 == 0) return 100f;
+
+        for (int i = 0; i < histogram1.length; i++) {
+            TempCount1 += (histogram2[i] / temp2) * (histogram1[i] / temp1);
+            TempCount2 += (histogram1[i] / temp1) * (histogram1[i] / temp1);
+            TempCount3 += (histogram2[i] / temp2) * (histogram2[i] / temp2);
+        }
+
+        return (100d - 100d * (TempCount1 / (TempCount2 + TempCount3 - TempCount1)));
     }
 
 //    public byte[] getByteArrayRepresentation() {
@@ -84,6 +101,34 @@ public class JCD implements LireFeature {
 //    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
 //        data = SerializationUtils.toDoubleArray(in, offset, length);
 //    }
+
+    public void extract(BufferedImage bimg) {
+        CEDD c = new CEDD();
+        c.extract(bimg);
+        FCTH f = new FCTH();
+        f.extract(bimg);
+        init(c, f);
+    }
+/*
+    public byte[] getByteArrayRepresentation() {
+        // find out the position of the beginning of the trailing zeros.
+        int position = -1;
+        for (int i = 0; i < data.length; i++) {
+            if (position == -1) {
+                if (data[i] == 0) position = i;
+            } else if (position > -1) {
+                if (data[i] != 0) position = -1;
+            }
+        }
+        if (position <0) position = data.length;
+        // find out the actual length. two values in one byte, so we have to round up.
+        byte[] result = new byte[position];
+        for (int i = 0; i < position; i++) {
+            result[i] = (byte) (2d * data[i]);
+        }
+        return result;
+    }
+*/
 
     /**
      * Creates a small byte array from an JCD descriptor.
@@ -116,26 +161,6 @@ public class JCD implements LireFeature {
         }
         return Arrays.copyOf(result, len);
     }
-/*
-    public byte[] getByteArrayRepresentation() {
-        // find out the position of the beginning of the trailing zeros.
-        int position = -1;
-        for (int i = 0; i < data.length; i++) {
-            if (position == -1) {
-                if (data[i] == 0) position = i;
-            } else if (position > -1) {
-                if (data[i] != 0) position = -1;
-            }
-        }
-        if (position <0) position = data.length;
-        // find out the actual length. two values in one byte, so we have to round up.
-        byte[] result = new byte[position];
-        for (int i = 0; i < position; i++) {
-            result[i] = (byte) (2d * data[i]);
-        }
-        return result;
-    }
-*/
 
     /**
      * Reads descriptor from a byte array. Much faster than the String based method.
@@ -154,7 +179,7 @@ public class JCD implements LireFeature {
                 data[tmp] = ((double) in[offset + i]) / 2d;
                 tmp++;
             } else {
-                for (int j = 0; j<Math.abs(in[offset+i]); j++) {
+                for (int j = 0; j < Math.abs(in[offset + i]); j++) {
                     data[tmp] = 0d;
                     tmp++;
                 }
@@ -164,15 +189,15 @@ public class JCD implements LireFeature {
         }
     }
 
-/*
-    public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        Arrays.fill(data, 0, data.length, 0);
-        for (int i = 0; i < length; i++) {
-            if (in[offset + i] > 0) data[i] = ((double) in[offset + i]) / 2d;
+    /*
+        public void setByteArrayRepresentation(byte[] in, int offset, int length) {
+            Arrays.fill(data, 0, data.length, 0);
+            for (int i = 0; i < length; i++) {
+                if (in[offset + i] > 0) data[i] = ((double) in[offset + i]) / 2d;
+            }
         }
-    }
 
-*/
+    */
     public double[] getDoubleHistogram() {
         return data;
     }
@@ -190,34 +215,33 @@ public class JCD implements LireFeature {
         if ((((JCD) vd).data.length != data.length))
             throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
 
-        // Tanimoto coefficient
-        result = 0;
-        temp1 = 0;
-        temp2 = 0;
-
-        TempCount1 = 0;
-        TempCount2 = 0;
-        TempCount3 = 0;
-
-        for (int i = 0; i < ((JCD) vd).data.length; i++) {
-            temp1 += ((JCD) vd).data[i];
-            temp2 += data[i];
-        }
-
-        if (temp1 == 0 && temp2 == 0) return 0f;
-        if (temp1 == 0 || temp2 == 0) return 100f;
-
-        for (int i = 0; i < ((JCD) vd).data.length; i++) {
-            TempCount1 += (((JCD) vd).data[i] / temp1) * (data[i] / temp2);
-            TempCount2 += (data[i] / temp2) * (data[i] / temp2);
-            TempCount3 += (((JCD) vd).data[i] / temp1) * (((JCD) vd).data[i] / temp1);
-
-        }
-
-        result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3
-                - TempCount1))); //Tanimoto
-        return (float) result;
-
+//        // Tanimoto coefficient
+//        result = 0;
+//        temp1 = 0;
+//        temp2 = 0;
+//
+//        TempCount1 = 0;
+//        TempCount2 = 0;
+//        TempCount3 = 0;
+//
+//        for (int i = 0; i < ((JCD) vd).data.length; i++) {
+//            temp1 += ((JCD) vd).data[i];
+//            temp2 += data[i];
+//        }
+//
+//        if (temp1 == 0 && temp2 == 0) return 0f;
+//        if (temp1 == 0 || temp2 == 0) return 100f;
+//
+//        for (int i = 0; i < ((JCD) vd).data.length; i++) {
+//            TempCount1 += (((JCD) vd).data[i] / temp1) * (data[i] / temp2);
+//            TempCount2 += (data[i] / temp2) * (data[i] / temp2);
+//            TempCount3 += (((JCD) vd).data[i] / temp1) * (((JCD) vd).data[i] / temp1);
+//
+//        }
+//
+//        result = (100d - 100d * (TempCount1 / (TempCount2 + TempCount3 - TempCount1)));
+//        return (float) result;
+        return (float) getDistance(data, ((JCD) vd).data);
     }
 
     public String getStringRepresentation() {

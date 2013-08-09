@@ -58,10 +58,7 @@ import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -329,13 +326,17 @@ public class ParallelIndexer implements Runnable {
     class Producer implements Runnable {
         public void run() {
             boolean leaveOneOut = false;
-            BufferedImage tmpImage;
+//            BufferedImage tmpImage;
             int tmpSize = 0;
             for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
                 String path = iterator.next();
                 File next = new File(path);
                 try {
-                    tmpImage = ImageIO.read(next);
+//                    tmpImage = ImageIO.read(next);
+                    int fileSize = (int) next.length();
+                    byte[] buffer = new byte[fileSize];
+                    FileInputStream fis = new FileInputStream(next);
+                    fis.read(buffer);
                     synchronized (images) {
                         path = next.getCanonicalPath();
                         // TODO: add re-write rule for path here!
@@ -343,7 +344,7 @@ public class ParallelIndexer implements Runnable {
 //                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
                         // this helps a lot for slow computers ....
                         if (images.size()>500) images.wait(5000);
-                        images.add(new WorkItem(path, tmpImage));
+                        images.add(new WorkItem(path, buffer));
                         tmpSize = images.size();
                         images.notifyAll();
                     }
@@ -408,7 +409,9 @@ public class ParallelIndexer implements Runnable {
                 }
                 try {
                     if (!locallyEnded) {
-                        Document d = builder.createDocument(tmp.getImage(), tmp.getFileName());
+                        ByteArrayInputStream b = new ByteArrayInputStream(tmp.getBuffer());
+                        BufferedImage img = ImageIO.read(b);
+                        Document d = builder.createDocument(img, tmp.getFileName());
                         writer.addDocument(d);
                     }
                 } catch (Exception e) {
