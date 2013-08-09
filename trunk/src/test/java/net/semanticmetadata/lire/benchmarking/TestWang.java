@@ -46,13 +46,7 @@ import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.impl.ParallelImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
@@ -104,15 +98,15 @@ public class TestWang extends TestCase {
         parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
 
@@ -233,14 +227,14 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - JSD");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.TANIMOTO;
 
-        computeMAP(new GenericFastImageSearcher(1000, CEDD.class), "CEDD", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, CEDD.class), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "Color Correlogram", reader);
         computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, true, reader), "Color Layout", reader);
         computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
-        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
+        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
         computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "OpponentHistogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), "PHOG", reader);
+        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), "PHOG", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
         computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, true, reader), "Scalable Color", reader);
 
@@ -275,10 +269,13 @@ public class TestWang extends TestCase {
             pr10cat[i] = 0d;
             pr10cnt[i] = 0d;
         }
+        long sum=0, ms=0;
         for (int i = 0; i < sampleQueries.length; i++) {
             int id = sampleQueries[i];
             String file = testExtensive + "/" + id + ".jpg";
+            ms = System.currentTimeMillis();
             ImageSearchHits hits = searcher.search(findDoc(reader, id + ".jpg"), reader);
+            sum += (System.currentTimeMillis()-ms);
             int goodOnes = 0;
             double avgPrecision = 0d;
             double precision10temp = 0d;
@@ -336,6 +333,7 @@ public class TestWang extends TestCase {
             System.out.printf("%.5f\t", v);
 
         }
+        System.out.printf("%2.3f\t", (double) sum / (double) sampleQueries.length);
         System.out.println();
     }
 

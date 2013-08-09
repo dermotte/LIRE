@@ -3,8 +3,14 @@ CHANGES for LIRE
 
 2013-08-08
 ==========
+  - Speeded up ParallelIndexer by moving JPEG decoding to the consumer part.
+
+2013-08-08
+==========
   - Speeded up OpponentHistogram extraction
   - Speeded up ParallelExtractor by moving JPEG decoding to the consumer part.
+  - Speeded up ColorLayoutImpl similarity implementation
+  - Small improvements on the JCD similarity implementation
 
 2013-08-07
 ==========

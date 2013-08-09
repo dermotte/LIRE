@@ -65,6 +65,10 @@ public class ColorLayoutImpl {
     public int[] CbCoeff = new int[numCCoeff];
     public int[] CrCoeff = new int[numCCoeff];
 
+    // tmp vars for similarity function.
+//    int diffCb, diffCr, sumCb=0, sumCr=0, sumY=0;
+
+
 
     protected static int[] arrayZigZag = {
             0, 1, 8, 16, 9, 2, 3, 10, 17, 24, 32, 25, 18, 11, 4, 5,
@@ -109,6 +113,20 @@ public class ColorLayoutImpl {
     };
     protected static int[][] weightMatrix = new int[3][64];
     protected BufferedImage colorLayoutImage;
+
+    static {
+        weightMatrix[0][0] = 2;
+        weightMatrix[0][1] = weightMatrix[0][2] = 2;
+        weightMatrix[1][0] = 2;
+        weightMatrix[1][1] = weightMatrix[1][2] = 1;
+        weightMatrix[2][0] = 4;
+        weightMatrix[2][1] = weightMatrix[2][2] = 2;
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 3; j < 64; j++)
+                weightMatrix[i][j] = 1;
+        }
+    }
 
     public ColorLayoutImpl() {
         // empty constructor, used for new instance if setStringRepresentation is called later.
@@ -384,45 +402,36 @@ public class ColorLayoutImpl {
      * @return -1.0 if data is not valid.
      */
     public static double getSimilarity(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2) {
-        int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
+//        int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
 
         //Numbers of the Coefficients of two descriptor values.
-        numYCoeff1 = YCoeff1.length;
-        numYCoeff2 = YCoeff2.length;
-        CCoeff1 = CbCoeff1.length;
-        CCoeff2 = CbCoeff2.length;
+//        numYCoeff1 = YCoeff1.length;
+//        numYCoeff2 = YCoeff2.length;
+//        CCoeff1 = CbCoeff1.length;
+//        CCoeff2 = CbCoeff2.length;
 
         //take the minimal Coeff-number
-        YCoeff = Math.min(numYCoeff1, numYCoeff2);
-        CCoeff = Math.min(CCoeff1, CCoeff2);
+//        YCoeff = Math.min(numYCoeff1, numYCoeff2);
+//        CCoeff = Math.min(CCoeff1, CCoeff2);
 
-        setWeightingValues();
+//        setWeightingValues();
 
-        int j;
-        int[] sum = new int[3];
-        int diff;
-        sum[0] = 0;
+//        int[] sum = new int[3];
+        int diffCb, diffCr, sumCb=0, sumCr=0, sumY=0;
 
-        for (j = 0; j < YCoeff; j++) {
-            diff = (YCoeff1[j] - YCoeff2[j]);
-            sum[0] += (weightMatrix[0][j] * diff * diff);
+        for (int j = 0; j < YCoeff1.length; j++) {
+            diffCb = (YCoeff1[j] - YCoeff2[j]);
+            sumY += (weightMatrix[0][j] * diffCb * diffCb);
         }
 
-        sum[1] = 0;
-        for (j = 0; j < CCoeff; j++) {
-            diff = (CbCoeff1[j] - CbCoeff2[j]);
-            sum[1] += (weightMatrix[1][j] * diff * diff);
+        for (int j = 0; j < CbCoeff1.length; j++) {
+            diffCb = (CbCoeff1[j] - CbCoeff2[j]);
+            sumCb += (weightMatrix[1][j] * diffCb * diffCb);
+            diffCr = (CrCoeff1[j] - CrCoeff2[j]);
+            sumCr += (weightMatrix[2][j] * diffCr * diffCr);
         }
 
-        sum[2] = 0;
-        for (j = 0; j < CCoeff; j++) {
-            diff = (CrCoeff1[j] - CrCoeff2[j]);
-            sum[2] += (weightMatrix[2][j] * diff * diff);
-        }
-
-        //returns the distance between the two desciptor values
-
-        return Math.sqrt(sum[0] * 1.0) + Math.sqrt(sum[1] * 1.0) + Math.sqrt(sum[2] * 1.0);
+        return Math.sqrt(sumY) + Math.sqrt(sumCb) + Math.sqrt(sumCr);
     }
 
     private static void setWeightingValues() {
