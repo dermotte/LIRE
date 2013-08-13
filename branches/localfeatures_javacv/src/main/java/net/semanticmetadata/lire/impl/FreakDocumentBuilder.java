@@ -33,7 +33,7 @@ import com.googlecode.javacv.cpp.opencv_features2d.KeyPoint;
  */
 public class FreakDocumentBuilder extends AbstractDocumentBuilder 
 {
-	private static final int DEFAULT_FAST_THRESHOLD = 40;
+	private static final int DEFAULT_FAST_THRESHOLD = 50;
 	
 	private FastFeatureDetector detector;
 	private FREAK extractor;

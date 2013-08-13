@@ -195,7 +195,7 @@ public class TestWang extends TestCase {
 //        for (int i = 1000; i<20001; i+=1000)
 //            doParams(10000, i);
 
-        indexBovw(1000, 1000);
+        indexBovw(1000, 500);
 
     }
 
@@ -275,12 +275,11 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, "splbp"), "SPLBP");
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
 */
-//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
+        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS), "SIFT BoVW");
-//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_BRISK_VISUAL_WORDS), "BRISK BoVW", reader);
+        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_BRISK_VISUAL_WORDS), "BRISK BoVW", reader);
         computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_FREAK_VISUAL_WORDS), "FREAK BoVW", reader);
-
     }
 
     public void computeMAP(ImageSearcher searcher, String prefix, IndexReader reader) throws IOException {

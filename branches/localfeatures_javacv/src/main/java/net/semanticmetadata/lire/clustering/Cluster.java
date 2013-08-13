@@ -132,25 +132,45 @@ public class Cluster implements Comparable<Object> {
         mean = SerializationUtils.toDoubleArray(data);
     }
 
+    /**
+     * Write cluster centroids to the given file.
+     * File format:
+     * <pre>
+     * 4 Bytes: numC - number of centroids.
+     * 4 Bytes: numF - number of (double) values per centroid (feature vector).
+     * numC * numF * 8 bytes: double values of centroids.
+     * </pre>
+     */
     public static void writeClusters(Cluster[] clusters, String file) throws IOException {
         FileOutputStream fout = new FileOutputStream(file);
         fout.write(SerializationUtils.toBytes(clusters.length));
-        for (int i = 0; i < clusters.length; i++) {
-            fout.write(clusters[i].getByteRepresentation());
+        if (clusters.length > 0) {
+            fout.write(SerializationUtils.toBytes(clusters[0].mean.length));
+            for (int i = 0; i < clusters.length; i++) {
+                fout.write(clusters[i].getByteRepresentation());
+            }
         }
         fout.close();
     }
 
-    // TODO: re-visit here to make the length variable (depending on the actual feature size).
+    /**
+     * Read cluster centroids from file.
+     * The file is expected to be written using {@link #writeClusters()}.
+     */
     public static Cluster[] readClusters(String file) throws IOException {
         FileInputStream fin = new FileInputStream(file);
         byte[] tmp = new byte[4];
         fin.read(tmp, 0, 4);
         Cluster[] result = new Cluster[SerializationUtils.toInt(tmp)];
-        tmp = new byte[128 * 8];
+        fin.read(tmp, 0, 4);
+        final int numB = SerializationUtils.toInt(tmp) * 8;
+        tmp = new byte[numB];
         for (int i = 0; i < result.length; i++) {
-            int bytesRead = fin.read(tmp, 0, 128 * 8);
-            if (bytesRead != 128 * 8) System.err.println("Didn't read enough bytes ...");
+            int bytesRead = fin.read(tmp, 0, numB);
+            if (bytesRead != numB) {
+                fin.close();
+                throw new IOException("readClusters: file format error");
+            }
             result[i] = new Cluster();
             result[i].setByteRepresentation(tmp);
         }

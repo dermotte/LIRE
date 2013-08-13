@@ -48,7 +48,7 @@ public class BriskFeature extends LocalFeature
         if (briskDescriptor == null || briskDescriptor.length != length)
             briskDescriptor = new byte[length];
         System.arraycopy(in, offset, briskDescriptor, 0, length);
-        descriptor = ubyte2doubleArray(descriptor, in, offset, length);
+        descriptor = bit2doubleArray(descriptor, in, offset, length);
     }
 
 }

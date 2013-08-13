@@ -75,9 +75,9 @@ public abstract class LocalFeatureHistogramBuilder {
     // number of documents used to build the vocabulary / clusters.
     private int numDocsForVocabulary = 100;
     private int numClusters = 512;
-    private double changeRateThresh = 1e-04;   // threshold for stress change rate
-    private int sustainThreshSteps = 5;       // number of steps sustaining changeRateThresh before termination
-    private int maxKMeansIterations = 1000;  // fallback termination condition for diverging cases
+    private double changeRateThresh = 1e-03;   // threshold for stress change rate
+    private int sustainThreshSteps = 5;        // number of steps sustaining changeRateThresh before termination
+    private int maxKMeansIterations = 50;      // fallback termination condition for diverging cases
     private Cluster[] clusters = null;
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
     private ProgressMonitor pm = null;
