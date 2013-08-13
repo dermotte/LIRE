@@ -45,12 +45,10 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.MMapDirectory;
+
 import javax.imageio.ImageIO;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -187,8 +185,8 @@ public class ClassifierTest extends TestCase {
             int k = 1;
             String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
             String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
-          //  String listFiles = "D:\\Datasets\\FashionTestItemDataSet\\itemtest.txt";
-            String listFiles = "D:\\bug.txt";
+            //  String listFiles = "D:\\Datasets\\FashionTestItemDataSet\\itemtest.txt";
+            String listFiles = "D:\\Datasets\\FashionTestItemDataSet\\itemtest.txt";
 
             // CONFIG
             String fieldName = null;
@@ -485,8 +483,8 @@ public class ClassifierTest extends TestCase {
             ArrayList<String> classesHTML = new ArrayList<String>();
             ArrayList<String> filesHTML = new ArrayList<String>();
 
-           // int[] confusion = new int[2];
-           // Arrays.fill(confusion, 0);
+            // int[] confusion = new int[2];
+            // Arrays.fill(confusion, 0);
             HashMap<String, Integer> class2id = new HashMap<String, Integer>(2);
             for (int i = 0; i < classes.length; i++)
                 class2id.put(classes[i], i);
@@ -769,7 +767,7 @@ public class ClassifierTest extends TestCase {
             String f1 = null;
             String f2 = null;
             String f3 = null;
-               try{
+            try {
                 f1 = (String) DocumentBuilder.class.getField(fN1).get(null);
                 f2 = (String) DocumentBuilder.class.getField(fN2).get(null);
                 f3 = (String) DocumentBuilder.class.getField(fN3).get(null);
@@ -1232,10 +1230,10 @@ public class ClassifierTest extends TestCase {
                 try {
                     tag2count.clear();
                     tag2weight.clear();
-                    tag2count.put("yes",1);
-                    tag2count.put("no",1);
-                    tag2weight.put("yes",1.0);
-                    tag2weight.put("no",1.0);
+                    tag2count.put("yes", 1);
+                    tag2count.put("no", 1);
+                    tag2weight.put("yes", 1.0);
+                    tag2weight.put("no", 1.0);
 
                     hits1 = bis1.search(ImageIO.read(new File(line)), ir1);
                     hits2 = bis2.search(ImageIO.read(new File(line)), ir2);
@@ -1255,7 +1253,7 @@ public class ClassifierTest extends TestCase {
                         tag2count.put(tagSecond, tag2count.get(tagSecond) + 1);
                         tag2count.put(tagThird, tag2count.get(tagThird) + 1);
 
-                       if (weightByRank) {
+                        if (weightByRank) {
                             //only if rank weight used
                             if (tag2weight.get(tag) == null && tag2weight.get(tagSecond) == null && tag2weight.get(tagThird) == null) {
                                 tag2weight.put(tag, (double) l);
@@ -1436,7 +1434,7 @@ public class ClassifierTest extends TestCase {
 
     public void testClassifyFashionAllCombinedFeatures() throws IOException {
 
-        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsallFeatureK7.txt")));
+        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsallFeatureK31.txt")));
 
         String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
         String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
@@ -1449,7 +1447,7 @@ public class ClassifierTest extends TestCase {
         boolean weightByRank = true;
         boolean createHTML = false;
         String[] classes = {"yes", "no"};
-        int k = 50;
+        int k = 3;
         String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
         String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
         //Testset
@@ -1851,190 +1849,66 @@ public class ClassifierTest extends TestCase {
         print_line.close();
     }
 
-    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, String searchedClass, String[] fieldsArray, String[] classArray  ) throws IOException {
+    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, int searchedClass, String[] fieldsArray, String[] classArray, int combineNfeatures, String class1, String class2) throws IOException, NoSuchFieldException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+
+        //numer of features and how much should be combined
+        int feats = fieldsArray.length;
+        int combs = combineNfeatures;
 
         PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
+
+        //all the combinations stored here
+        ArrayList combinations = print_nCr(feats, combs);
 
         //  String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
         //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
 
         //get the features for the column names
         String sCombinedFeatures = "";
-        for (int i = 0; i < fieldsArray.length; i++) {
-            sCombinedFeatures =   sCombinedFeatures + "Feature" + i + ";";
+        for (int i = 0; i < 12; i++) {
+            sCombinedFeatures = sCombinedFeatures + "Feature" + i+1 + ";";
         }
         print_line.print(sCombinedFeatures + "K=;Weight Rank=;Class;Precision;Recall;True Negative Rate;Accuracy;False Positive Rate;F-Measure;Count Test Images;Count Correct;ms per test;TP;FP;TN;FN");
         print_line.println();
         print_line.flush();
 
         ArrayList<String> fields1List = new ArrayList<String>();
-        ArrayList<String> fields2List = new ArrayList<String>();
-        ArrayList<String> fields3List = new ArrayList<String>();
-        ArrayList<String> fields4List = new ArrayList<String>();
-        ArrayList<String> fields5List = new ArrayList<String>();
-        ArrayList<String> fields6List = new ArrayList<String>();
-        ArrayList<String> fields7List = new ArrayList<String>();
-        ArrayList<String> fields8List = new ArrayList<String>();
-        ArrayList<String> fields9List = new ArrayList<String>();
-        ArrayList<String> fields10List = new ArrayList<String>();
-        ArrayList<String> fields11List = new ArrayList<String>();
-        ArrayList<String> fields12List = new ArrayList<String>();
         ArrayList<String> class1List = new ArrayList<String>();
-        ArrayList<String> class2List = new ArrayList<String>();
-        ArrayList<String> class3List = new ArrayList<String>();
-        ArrayList<String> class4List = new ArrayList<String>();
-        ArrayList<String> class5List = new ArrayList<String>();
-        ArrayList<String> class6List = new ArrayList<String>();
-        ArrayList<String> class7List = new ArrayList<String>();
-        ArrayList<String> class8List = new ArrayList<String>();
-        ArrayList<String> class9List = new ArrayList<String>();
-        ArrayList<String> class10List = new ArrayList<String>();
-        ArrayList<String> class11List = new ArrayList<String>();
-        ArrayList<String> class12List = new ArrayList<String>();
 
 
-
-        for (int i1 = 0; i1 < fieldsArray.length; i1++) {
-            //   System.out.println(fieldsArray[g]);
-
-            for (int i2 = i1 + 1; i2 < fieldsArray.length; i2++) {
-                for (int i3 = i2 + 1; i3 < fieldsArray.length; i3++) {
-
-                    for (int i4 = i3 + 1; i4 < fieldsArray.length; i4++) {
-
-                        for (int i5 = i4 + 1; i5 < fieldsArray.length; i5++) {
-
-                            for (int i6 = i5 + 1; i6 < fieldsArray.length; i6++) {
-
-                                for (int i7 = i6 + 1; i7 < fieldsArray.length; i7++) {
-
-                                    for (int i8 = i7 + 1; i8 < fieldsArray.length; i8++) {
-
-                                        for (int i9 = i8 + 1; i9 < fieldsArray.length; i9++) {
-
-                                            for (int i10 = i9 + 1; i10 < fieldsArray.length; i10++) {
-
-                                                for (int i11 = i10 + 1; i11 < fieldsArray.length; i11++) {
-
-                                                    for (int i12 = i11 + 1; i12 < fieldsArray.length; i12++) {
-
-
-                                                        fields1List.add(fieldsArray[i1]);
-                                                        fields2List.add(fieldsArray[i2]);
-                                                        fields3List.add(fieldsArray[i3]);
-                                                        fields4List.add(fieldsArray[i4]);
-                                                        fields5List.add(fieldsArray[i5]);
-                                                        fields6List.add(fieldsArray[i6]);
-                                                        fields7List.add(fieldsArray[i7]);
-                                                        fields8List.add(fieldsArray[i8]);
-                                                        fields9List.add(fieldsArray[i9]);
-                                                        fields10List.add(fieldsArray[i10]);
-                                                        fields11List.add(fieldsArray[i11]);
-                                                        fields12List.add(fieldsArray[i12]);
-
-                                                        class1List.add(classArray[i1]);
-                                                        class2List.add(classArray[i2]);
-                                                        class3List.add(classArray[i3]);
-                                                        class4List.add(classArray[i4]);
-                                                        class5List.add(classArray[i5]);
-                                                        class6List.add(classArray[i6]);
-                                                        class7List.add(classArray[i7]);
-                                                        class8List.add(classArray[i8]);
-                                                        class9List.add(classArray[i9]);
-                                                        class10List.add(classArray[i10]);
-                                                        class11List.add(classArray[i11]);
-                                                        class12List.add(classArray[i12]);
-
-
-                                                    }
-
-                                                }
-
-                                            }
-
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-
-                        }
-
-                    }
-
-                }
+        for (int i = 0; i < combinations.size(); i += combs) {
+            for (int j = 0; j < combs; j++) {
+                //     System.out.print(combinations.get(i + j).toString() + " ");
+                int x = (Integer) combinations.get(i + j) - 1;
+                fields1List.add(fieldsArray[x]);
+                class1List.add(classArray[x]);
             }
-
         }
 
-        for (int y = start; y < end; y++) {
 
-            String fS1 = class1List.get(y);
-            String fS2 = class2List.get(y);
-            String fS3 = class3List.get(y);
+        for (int i = 0; i < combinations.size(); i += combs) {
 
-            String fN1 = "FIELD_NAME_" + fields1List.get(y).toUpperCase();
-            String fN2 = "FIELD_NAME_" + fields2List.get(y).toUpperCase();
-            String fN3 = "FIELD_NAME_" + fields3List.get(y).toUpperCase();
+           // System.out.println(i);
+
+            ArrayList featureNameList = new ArrayList();
+            ArrayList lireFeatureList = new ArrayList();
+            ArrayList indexLocationList = new ArrayList();
+
+
+            //iterate over all fields lists and fill it in a array
+            for (int j = 0; j < combs; j++) {
+                //   System.out.print(combinations.get(i + j).toString() + " ");
+                featureNameList.add((String) DocumentBuilder.class.getField("FIELD_NAME_" + fields1List.get(i + j).toUpperCase()).get(null));
+                lireFeatureList.add((LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + class1List.get(i + j)).newInstance());
+                indexLocationList.add(indexLocation + class1List.get(i + j));
+            }
 
             boolean weightByRank = true;
             boolean createHTML = false;
-            String[] classes = {"yes", "no"};
+          //  String[] classes = {"yes", "no"};
+            String[] classes =  {class1, class2};
             int k = numberOfNeighbours;
-            //  String indexLocation = sIndexLocation;
-            //  String photosLocation = sPhotosLocation;
-            //Testset
-            //String listFiles = "location of test set file";
-            // CONFIG
 
-            String f1 = null;
-            String f2 = null;
-            String f3 = null;
-            try {
-                f1 = (String) DocumentBuilder.class.getField(fN1).get(null);
-                f2 = (String) DocumentBuilder.class.getField(fN2).get(null);
-                f3 = (String) DocumentBuilder.class.getField(fN3).get(null);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-
-            LireFeature lf1 = null;
-            LireFeature lf2 = null;
-            LireFeature lf3 = null;
-            try {
-                lf1 = (LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS1).newInstance();
-                lf2 = (LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS2).newInstance();
-                lf3 = (LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS3).newInstance();
-            } catch (InstantiationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-            String i1 = indexLocation + fS1;
-            String i2 = indexLocation + fS2;
-            String i3 = indexLocation + fS3;
-
-            //boolean weightByRank = true;
-            //String[] classes = {"yes", "no"};
-            //int k = 70;
-            // CONFIG
-            //String f1 = DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM;
-            //String f2 = DocumentBuilder.FIELD_NAME_CEDD;
-            //String f3 = DocumentBuilder.FIELD_NAME_PHOG;
-            //LireFeature lf1 = new EdgeHistogram();
-            //LireFeature lf2 = new CEDD();
-            //LireFeature lf3 = new PHOG();
-            //String i1 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\indexEdgeHistogram";
-            //String i2 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\indexCEDD";
-            //String i3 = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\indexPHOG";
-
-            //  for (int ik = 0;ik<k;ik++)       {
 
             //System.out.println("Tests for lf1 " + f1 + " with k=" + k + " combined with " + f2 + " - weighting by rank sum: " + weightByRank);
             //System.out.println("========================================");
@@ -2042,10 +1916,7 @@ public class ClassifierTest extends TestCase {
             HashMap<String, Double> tag2weight = new HashMap<String, Double>(k);
             int c = 0;   // used for just one class ...
             //        for (int c = 0; c < 10; c++) {
-            if (searchedClass.equals("yes"))
-                c = 0;
-            else if(searchedClass.equals("no"))
-                c = 1;
+            c = searchedClass;
 
             String classIdentifier = classes[c];
 
@@ -2059,157 +1930,261 @@ public class ClassifierTest extends TestCase {
             int[] confusion = new int[2];
             Arrays.fill(confusion, 0);
             HashMap<String, Integer> class2id = new HashMap<String, Integer>(2);
-            for (int i = 0; i < classes.length; i++)
-                class2id.put(classes[i], i);
+            for (int d = 0; d < classes.length; d++)
+                class2id.put(classes[d], d);
 
             BufferedReader br = new BufferedReader(new FileReader(testSetFile));
             String line;
 
-            IndexReader ir1 = DirectoryReader.open(MMapDirectory.open(new File(i1)));
-            IndexReader ir2 = DirectoryReader.open(MMapDirectory.open(new File(i2)));
-            IndexReader ir3 = DirectoryReader.open(MMapDirectory.open(new File(i3)));
-            // in-memory linear search
-            ImageSearcher bis1 = new GenericFastImageSearcher(k, lf1.getClass(), f1, true, ir1);
-            ImageSearcher bis2 = new GenericFastImageSearcher(k, lf2.getClass(), f2, true, ir2);
-            ImageSearcher bis3 = new GenericFastImageSearcher(k, lf3.getClass(), f3, true, ir3);
-            // hashing based searcher
-            //BitSamplingImageSearcher bis1 = new BitSamplingImageSearcher(k, f1, f1 + "_hash", lf1, 3000);
+            IndexReader ir2 = null;
+            ImageSearcher bis2 = null;
+            IndexReader ir3 = null;
+            ImageSearcher bis3 = null;
+            IndexReader ir4 = null;
+            ImageSearcher bis4 = null;
+            IndexReader ir5 = null;
+            ImageSearcher bis5 = null;
+            IndexReader ir6 = null;
+            ImageSearcher bis6 = null;
+            IndexReader ir7 = null;
+            ImageSearcher bis7 = null;
+            IndexReader ir8 = null;
+            ImageSearcher bis8 = null;
+            IndexReader ir9 = null;
+            ImageSearcher bis9 = null;
+            IndexReader ir10 = null;
+            ImageSearcher bis10 = null;
+            IndexReader ir11 = null;
+            ImageSearcher bis11 = null;
+            IndexReader ir12 = null;
+            ImageSearcher bis12 = null;
+
+
+            IndexReader ir1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0))));
+            ImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
+            if (combs > 1) {
+                ir2 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(1))));
+                bis2 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(1).getClass(), (String) featureNameList.get(1), true, ir2);
+            }
+            if (combs > 2) {
+                ir3 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(2))));
+                bis3 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(2).getClass(), (String) featureNameList.get(2), true, ir3);
+            }
+            if (combs > 3) {
+                ir4 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(3))));
+                bis4 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(3).getClass(), (String) featureNameList.get(3), true, ir4);
+            }
+            if (combs > 4) {
+                ir5 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(4))));
+                bis5 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(4).getClass(), (String) featureNameList.get(4), true, ir5);
+            }
+            if (combs > 5) {
+                ir6 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(5))));
+                bis6 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(5).getClass(), (String) featureNameList.get(5), true, ir6);
+            }
+            if (combs > 6) {
+                ir7 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(6))));
+                bis7 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(6).getClass(), (String) featureNameList.get(6), true, ir7);
+            }
+            if (combs > 7) {
+                ir8 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(7))));
+                bis8 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(7).getClass(), (String) featureNameList.get(7), true, ir8);
+            }
+            if (combs > 8) {
+                ir9 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(8))));
+                bis9 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(8).getClass(), (String) featureNameList.get(8), true, ir9);
+            }
+            if (combs > 9) {
+                ir10 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(9))));
+                bis10 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(9).getClass(), (String) featureNameList.get(9), true, ir10);
+            }
+            if (combs > 10) {
+                ir11 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(10))));
+                bis11 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(10).getClass(), (String) featureNameList.get(10), true, ir11);
+            }
+            if (combs > 11) {
+                ir12 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(11))));
+                bis12 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(11).getClass(), (String) featureNameList.get(11), true, ir12);
+            }
+
             ImageSearchHits hits1;
-            ImageSearchHits hits2;
-            ImageSearchHits hits3;
+            ImageSearchHits hits2 = null;
+            ImageSearchHits hits3 = null;
+            ImageSearchHits hits4 = null;
+            ImageSearchHits hits5 = null;
+            ImageSearchHits hits6 = null;
+            ImageSearchHits hits7 = null;
+            ImageSearchHits hits8 = null;
+            ImageSearchHits hits9 = null;
+            ImageSearchHits hits10 = null;
+            ImageSearchHits hits11 = null;
+            ImageSearchHits hits12 = null;
 
             int count = 0, countCorrect = 0;
             double countTp = 0, countFp = 0, countTn = 0, countFn = 0;      //F1 Metric
             long ms = System.currentTimeMillis();
             while ((line = br.readLine()) != null) {
-                try {
-                    tag2count.clear();
-                    tag2weight.clear();
-                    tag2count.put("yes",1);
-                    tag2count.put("no",1);
-                    tag2weight.put("yes",1.0);
-                    tag2weight.put("no",1.0);
 
-                    hits1 = bis1.search(ImageIO.read(new File(line)), ir1);
+                //  System.out.println(count);
+
+                tag2count.clear();
+                tag2weight.clear();
+              //  tag2count.put("yes", 1);
+              //  tag2count.put("no", 1);
+              //  tag2weight.put("yes", 1.0);
+              //  tag2weight.put("no", 1.0);
+
+                  tag2count.put(class1, 1);
+                  tag2count.put(class2, 1);
+                  tag2weight.put(class1, 1.0);
+                  tag2weight.put(class2, 1.0);
+
+
+                hits1 = bis1.search(ImageIO.read(new File(line)), ir1);
+                if (combs > 1) {
                     hits2 = bis2.search(ImageIO.read(new File(line)), ir2);
+                }
+                if (combs > 2) {
                     hits3 = bis3.search(ImageIO.read(new File(line)), ir3);
-                    //Print the tag of both searches
-                    //System.out.println(getTag(hits1.doc(0)) + "\n" + getTag(hits2.doc(0)));
+                }
+                if (combs > 3) {
+                    hits4 = bis4.search(ImageIO.read(new File(line)), ir4);
+                }
+                if (combs > 4) {
+                    hits5 = bis5.search(ImageIO.read(new File(line)), ir5);
+                }
+                if (combs > 5) {
+                    hits6 = bis6.search(ImageIO.read(new File(line)), ir6);
+                }
+                if (combs > 6) {
+                    hits7 = bis7.search(ImageIO.read(new File(line)), ir7);
+                }
+                if (combs > 7) {
+                    hits8 = bis8.search(ImageIO.read(new File(line)), ir8);
+                }
+                if (combs > 8) {
+                    hits9 = bis9.search(ImageIO.read(new File(line)), ir9);
+                }
+                if (combs > 9) {
+                    hits10 = bis10.search(ImageIO.read(new File(line)), ir10);
+                }
+                if (combs > 10) {
+                    hits11 = bis11.search(ImageIO.read(new File(line)), ir11);
+                }
+                if (combs > 11) {
+                    hits12 = bis12.search(ImageIO.read(new File(line)), ir12);
+                }
 
-                    // set tag weights and counts.
-                    for (int l = 0; l < k; l++) {
-                        String tag = getTag(hits1.doc(l), photosLocation);
-                        String tagSecond = getTag(hits2.doc(l), photosLocation);
-                        String tagThird = getTag(hits3.doc(l), photosLocation);
+                // set tag weights and counts.
+                for (int l = 0; l < k; l++) {
 
-                        //Simple combination
+                 //  String tag = getTag(hits1.doc(l), photosLocation);
 
-                        tag2count.put(tag, tag2count.get(tag) + 1);
-                        tag2count.put(tagSecond, tag2count.get(tagSecond) + 1);
-                        tag2count.put(tagThird, tag2count.get(tagThird) + 1);
+                    tag2count.put(getTag(hits1.doc(l), photosLocation), tag2count.get(getTag(hits1.doc(l), photosLocation)) + 1);
+                    if (combs > 1)
+                        tag2count.put(getTag(hits2.doc(l), photosLocation), tag2count.get(getTag(hits2.doc(l), photosLocation)) + 1);
+                    if (combs > 2)
+                        tag2count.put(getTag(hits3.doc(l), photosLocation), tag2count.get(getTag(hits3.doc(l), photosLocation)) + 1);
+                    if (combs > 3)
+                        tag2count.put(getTag(hits4.doc(l), photosLocation), tag2count.get(getTag(hits4.doc(l), photosLocation)) + 1);
+                    if (combs > 4)
+                        tag2count.put(getTag(hits5.doc(l), photosLocation), tag2count.get(getTag(hits5.doc(l), photosLocation)) + 1);
+                    if (combs > 5)
+                        tag2count.put(getTag(hits6.doc(l), photosLocation), tag2count.get(getTag(hits6.doc(l), photosLocation)) + 1);
+                    if (combs > 6)
+                        tag2count.put(getTag(hits7.doc(l), photosLocation), tag2count.get(getTag(hits7.doc(l), photosLocation)) + 1);
+                    if (combs > 7)
+                        tag2count.put(getTag(hits8.doc(l), photosLocation), tag2count.get(getTag(hits8.doc(l), photosLocation)) + 1);
+                    if (combs > 8)
+                        tag2count.put(getTag(hits9.doc(l), photosLocation), tag2count.get(getTag(hits9.doc(l), photosLocation)) + 1);
+                    if (combs > 9)
+                        tag2count.put(getTag(hits10.doc(l), photosLocation), tag2count.get(getTag(hits10.doc(l), photosLocation)) + 1);
+                    if (combs > 10)
+                        tag2count.put(getTag(hits11.doc(l), photosLocation), tag2count.get(getTag(hits11.doc(l), photosLocation)) + 1);
+                    if (combs > 11)
+                        tag2count.put(getTag(hits12.doc(l), photosLocation), tag2count.get(getTag(hits12.doc(l), photosLocation)) + 1);
 
-                        if (weightByRank) {
-                            //only if rank weight used
-                            if (tag2weight.get(tag) == null && tag2weight.get(tagSecond) == null && tag2weight.get(tagThird) == null) {
-                                tag2weight.put(tag, (double) l);
-                                tag2weight.put(tagSecond, (double) l);
-                                tag2weight.put(tagThird, (double) l);
-                            } else if (tag2weight.get(tag) != null && tag2weight.get(tagSecond) != null && tag2weight.get(tagThird) != null) {
-                                tag2weight.put(tag, (double) l + tag2weight.get(tag));
-                                tag2weight.put(tagSecond, (double) l + tag2weight.get(tagSecond));
-                                tag2weight.put(tagThird, (double) l + tag2weight.get(tagThird));
-                            } else if (tag2weight.get(tag) != null && tag2weight.get(tagSecond) != null && tag2weight.get(tagThird) == null) {
-                                tag2weight.put(tag, (double) l + tag2weight.get(tag));
-                                tag2weight.put(tagSecond, (double) l + tag2weight.get(tagSecond));
-                                tag2weight.put(tagThird, (double) l);
-                            } else if (tag2count.get(tag) != null && tag2count.get(tagSecond) == null && tag2weight.get(tagThird) != null) {
-                                tag2weight.put(tag, (double) l + tag2weight.get(tag));
-                                tag2weight.put(tagSecond, (double) l);
-                                tag2weight.put(tagThird, (double) l + tag2weight.get(tagThird));
-                            } else if (tag2count.get(tag) == null && tag2count.get(tagSecond) != null && tag2weight.get(tagThird) != null) {
-                                tag2weight.put(tag, (double) l);
-                                tag2weight.put(tagSecond, (double) l + tag2weight.get(tagSecond));
-                                tag2weight.put(tagThird, (double) l + tag2weight.get(tagThird));
-                            }
-                            //  else {
-                            //      tag2weight.put(tag, (double) l + tag2weight.get(tag));
-                            //}
-                        } else {
-                            // System.out.println(hits1.score(l));
-                            //  System.out.println(hits2.score(l));
-                            if (tag2weight.get(tag) == null) {
-                                if (Double.valueOf(hits1.score(l)) > Double.valueOf(hits2.score(l)) && Double.valueOf(hits1.score(l)) > Double.valueOf(hits3.score(l)))
-                                    tag2weight.put(tag, Double.valueOf(hits1.score(l)));
-                                else if (Double.valueOf(hits2.score(l)) > Double.valueOf(hits1.score(l)) && Double.valueOf(hits2.score(l)) > Double.valueOf(hits3.score(l)))
-                                    tag2weight.put(tagSecond, Double.valueOf(hits2.score(l)));
-                                else if (Double.valueOf(hits3.score(l)) > Double.valueOf(hits1.score(l)) && Double.valueOf(hits3.score(l)) > Double.valueOf(hits2.score(l)))
-                                    tag2weight.put(tagThird, Double.valueOf(hits3.score(l)));
-                            } else {
 
-                                if (Double.valueOf(hits1.score(l)) > Double.valueOf(hits2.score(l)) && Double.valueOf(hits1.score(l)) > Double.valueOf(hits3.score(l)))
-                                    tag2weight.put(tag, (double) l + hits1.score(l));
-                                else if (Double.valueOf(hits2.score(l)) > Double.valueOf(hits1.score(l)) && Double.valueOf(hits2.score(l)) > Double.valueOf(hits3.score(l)))
-                                    tag2weight.put(tagSecond, (double) l + hits2.score(l));
-                                else if (Double.valueOf(hits3.score(l)) > Double.valueOf(hits1.score(l)) && Double.valueOf(hits3.score(l)) > Double.valueOf(hits2.score(l)))
-                                    tag2weight.put(tagThird, Double.valueOf(hits3.score(l)));
-
-                            }
-                        }
+                    if (weightByRank) {
+                        tag2weight.put(getTag(hits1.doc(l), photosLocation), (double) l);
+                        if (combs > 1)
+                            tag2weight.put(getTag(hits2.doc(l), photosLocation), (double) l);
+                        if (combs > 2)
+                            tag2weight.put(getTag(hits3.doc(l), photosLocation), (double) l);
+                        if (combs > 3)
+                            tag2weight.put(getTag(hits4.doc(l), photosLocation), (double) l);
+                        if (combs > 4)
+                            tag2weight.put(getTag(hits5.doc(l), photosLocation), (double) l);
+                        if (combs > 5)
+                            tag2weight.put(getTag(hits6.doc(l), photosLocation), (double) l);
+                        if (combs > 6)
+                            tag2weight.put(getTag(hits7.doc(l), photosLocation), (double) l);
+                        if (combs > 7)
+                            tag2weight.put(getTag(hits8.doc(l), photosLocation), (double) l);
+                        if (combs > 8)
+                            tag2weight.put(getTag(hits9.doc(l), photosLocation), (double) l);
+                        if (combs > 9)
+                            tag2weight.put(getTag(hits10.doc(l), photosLocation), (double) l);
+                        if (combs > 10)
+                            tag2weight.put(getTag(hits11.doc(l), photosLocation), (double) l);
+                        if (combs > 11)
+                            tag2weight.put(getTag(hits12.doc(l), photosLocation), (double) l);
                     }
-                    // find class, iterate over the tags (classes):
-                    int maxCount = 0, maxima = 0;
-                    String classifiedAs = null;
+
+                }
+                // find class, iterate over the tags (classes):
+                int maxCount = 0, maxima = 0;
+                String classifiedAs = null;
+                for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
+                    String tag = tagIterator.next();
+                    if (tag2count.get(tag) > maxCount) {
+                        maxCount = tag2count.get(tag);
+                        maxima = 1;
+                        classifiedAs = tag;
+                    } else if (tag2count.get(tag) == maxCount) {
+                        maxima++;
+                    }
+                }
+                // if there are two or more classes with the same number of results, then we take a look at the weights.
+                // else the class is alread given in classifiedAs.
+                if (maxima > 1) {
+                    double minWeight = Double.MAX_VALUE;
                     for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
                         String tag = tagIterator.next();
-                        if (tag2count.get(tag) > maxCount) {
-                            maxCount = tag2count.get(tag);
-                            maxima = 1;
+                        if (tag2weight.get(tag) < minWeight) {
+                            minWeight = tag2weight.get(tag);
                             classifiedAs = tag;
-                        } else if (tag2count.get(tag) == maxCount) {
-                            maxima++;
                         }
                     }
-                    // if there are two or more classes with the same number of results, then we take a look at the weights.
-                    // else the class is alread given in classifiedAs.
-                    if (maxima > 1) {
-                        double minWeight = Double.MAX_VALUE;
-                        for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
-                            String tag = tagIterator.next();
-                            if (tag2weight.get(tag) < minWeight) {
-                                minWeight = tag2weight.get(tag);
-                                classifiedAs = tag;
-                            }
-                        }
-                    }
-//                    if (tag2.equals(tag3)) tag1 = tag2;
-                    count++;
-                    //SHOW THE CLASSIFICATION
-                    //     System.out.println(classifiedAs+";"+line);
-                    classesHTML.add(classifiedAs);
-                    filesHTML.add(line);
-
-                    //F1 Metric
-                    if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes")) {
-                        countCorrect++;
-                        countTp++;
-                    } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes"))
-                        countFp++;
-
-                    if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no")) {
-                        countCorrect++;
-                        countTn++;
-                    } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no"))
-                        countFn++;
-                    //if (classifiedAs.equals(getTagLine(line)))countCorrect++;
-                    //if (classifiedAs.equals(classIdentifier)) countCorrect++;
-                    //if (classifiedAs.equals(classIdentifier)) countCorrect++;
-                    // confusion:
-                    confusion[class2id.get(classifiedAs)]++;
-//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
-                } catch (Exception e) {
-                    System.err.println(">>> ERR:" + e.getMessage() + e);
-                    //   throw (NullPointerException) e;
                 }
+
+                count++;
+                //SHOW THE CLASSIFICATION
+                //     System.out.println(classifiedAs+";"+line);
+                classesHTML.add(classifiedAs);
+                filesHTML.add(line);
+
+                //F1 Metric
+           //     if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes")) {
+                if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class1)) {
+                    countCorrect++;
+                    countTp++;
+            //    } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes"))
+                } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class1))
+                    countFp++;
+
+            //    if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no")) {
+                   if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class2)) {
+                    countCorrect++;
+                    countTn++;
+           //     } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no"))
+            } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class2))
+                    countFn++;
+
+                // confusion:
+                //confusion[class2id.get(classifiedAs)]++;
+//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+
             }
 
             double precisicon = getPrecision(countTp, countFp);
@@ -2218,24 +2193,23 @@ public class ClassifierTest extends TestCase {
             double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
             double fMeasure = getFmeasure(precisicon, recall);
             double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
-//            System.out.println("Results for class " + classIdentifier);
+            // System.out.println("Results for class " + classIdentifier);
             // System.out.printf("Class\tPrecision\tRecall\tTrue Negative Rate\tAccuracy\tF-Measure\tCount Test Images\tCount Corret\tms per test\n");
             // System.out.printf("%s\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%10d\t%10d\t%4d\n", classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
 
-            System.out.println(y + 1 + " of " + class1List.size() + " finished. " + (System.currentTimeMillis() - ms) / 1000 + " seconds per round. " + "Feature: " + class1List.get(y) + " " + class2List.get(y) + " " + class3List.get(y) + " Current y: " + y);
+         //   System.out.println(i + 1 + " of " + class1List.size() + " finished. " + (System.currentTimeMillis() - ms) / 1000 + " seconds per round. " + "Feature: " + " Current y: " + i);
 
-            print_line.printf("%s;%s;%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", class1List.get(y), class2List.get(y), class3List.get(y), k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            String classesLongName = "";
+
+            for (int j = 0; j < combs; j++) {
+                //   System.out.print(combinations.get(i + j).toString() + " ");
+                classesLongName = classesLongName + fields1List.get(i + j) + ";";
+            }
+
+            //   print_line.printf("%s,%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            System.out.printf("%s%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            print_line.printf("%s%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
             print_line.flush();
-
-//        System.out.printf("Confusion\t");
-//            for (int i = 0; i < classes.length; i++) {
-//                System.out.printf("%s\t", classes[i]);
-//            }
-//            System.out.println();
-//        for (int i = 0; i < classes.length; i++) {
-            //           System.out.printf("%d\t", confusion[i]);
-//        }
-            //   System.out.println();
 
             //Create HTML
             if (createHTML == true) {
@@ -2250,13 +2224,13 @@ public class ClassifierTest extends TestCase {
                 // int elems = Math.min(filesHTML.size(),50);
                 int elems = filesHTML.size();
 
-                for (int i = 0; i < elems; i++) {
-                    if (i % 3 == 0) bw.write("<tr>");
+                for (int d = 0; i < elems; d++) {
+                    if (d % 3 == 0) bw.write("<tr>");
 
-                    String s = filesHTML.get(i);
+                    String s = filesHTML.get(d);
                     String colorF = "rgb(0, 255, 0)";
 
-                    if (classesHTML.get(i).equals("no"))
+                    if (classesHTML.get(d).equals("no"))
                         colorF = "rgb(255, 0, 0)";
                     //  String s = reader.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
                     //  System.out.println(reader.document(topDocs.scoreDocs[i].doc).get("featLumLay"));
@@ -2264,7 +2238,7 @@ public class ClassifierTest extends TestCase {
                     // System.out.println(s);
                     bw.write("<td><a href=\"" + s + "\"><img style=\"max-width:220px;border:medium solid " + colorF + ";\"src=\"" + s + "\" border=\"" + 5 + "\" style=\"border: 3px\n" +
                             "black solid;\"></a></td>\n");
-                    if (i % 3 == 2) bw.write("</tr>");
+                    if (d % 3 == 2) bw.write("</tr>");
                 }
                 if (elems % 3 != 0) {
                     if (elems % 3 == 2) {
@@ -2287,16 +2261,17 @@ public class ClassifierTest extends TestCase {
         return true;
     }
 
+
+
+
     private static String getTag(Document d, String photosLocation) {
         StringBuilder ab = new StringBuilder(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].replace(photosLocation, ""));
 
-        //    System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
+      //  System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
         return ab.substring(0, ab.indexOf("\\")).toString();
         //  return ab.toString();
         //return "yes";
     }
-
-
 
     private static double getPrecision(double tp, double fp) {
         double precision;
@@ -2335,7 +2310,7 @@ public class ClassifierTest extends TestCase {
         //return "yes";
     }
 
-     //  public static void main(String[] args) {
+    //  public static void main(String[] args) {
     public void testThreadClassifyThreeFeatures() throws IOException {
         Thread[] all = new Thread[4];
         all[0] = new Thread(new Classifie3Task(0, 56, "D:\\resultsTripleFeatureItemK31.txt"));
@@ -2387,18 +2362,106 @@ public class ClassifierTest extends TestCase {
 
     public void testClassifyNFeatures() throws IOException {
 
-        String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
-        String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
+     //   String locationOfIndex = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+    //   String locationOfImages = "D:\\Datasets\\FashionTestItemDataSet\\";
+        String locationOfIndex = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index";
+        String locationOfImages = "D:\\Datasets\\FashionTest\\";
+
+        String class1 = "yes";
+        String class2 = "no";
+
         //Testset
-        String listFiles = "D:\\Datasets\\FashionTestItemDataSet\\itemtest.txt";
+        String locationOfTestset = "D:\\Datasets\\FashionTestFashionDataSet\\test.txt";
 
-     //     String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
-   //       String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+     //   String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+     //   String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
 
-        String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH"};
-        String[] classArray = {"CEDD", "EdgeHistogram", "FCTH"};
+     //   String[] fieldsArray = {"CEDD", "FCTH", "PHOG", "JCD", "JpegCoeffs", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+     //   String[] classArray = {"CEDD", "FCTH", "PHOG", "JCD", "JpegCoefficientHistogram", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+        String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "JpegCoeffs","Opponent_Histogram"};
+        String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "JpegCoefficientHistogram","OpponentHistogram" };
 
-        testClassifyNCombinedFeaturesMulti(0,220,"D:\\resultsTripleFeatureItemK31.txt",3,"D:\\Datasets\\FashionTestItemDataSet\\idx\\index","D:\\Datasets\\FashionTestItemDataSet\\","D:\\Datasets\\FashionTestItemDataSet\\itemtest.txt","yes",fieldsArray,classArray);
+
+        //  String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH"};
+        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH"};
+
+        try {
+            testClassifyNCombinedFeaturesMulti(0, 220, "D:\\8k3.txt", 2, locationOfIndex, locationOfImages, locationOfTestset, 0, fieldsArray, classArray,8,class1,class2);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InstantiationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public void testNCR() throws IOException {
+
+        int feats = 12;
+        int combs = 2;
+
+        ArrayList combinations = print_nCr(feats, combs);
+
+        for (int i = 0; i < combinations.size(); i += combs) {
+
+
+            for (int j = 0; j < combs; j++) {
+                System.out.print(combinations.get(i + j).toString() + " ");
+            }
+            System.out.println();
+
+
+        }
+
+
+/////////
+
+
+    }
+
+    public static ArrayList print_nCr(final int n, final int r) {
+        int[] res = new int[r];
+        ArrayList combinations = new ArrayList();
+        for (int i = 0; i < res.length; i++) {
+            res[i] = i + 1;
+        }
+        boolean done = false;
+        while (!done) {
+
+
+            // System.out.println(Arrays.toString(res));
+            for (int j = 0; j < res.length; j++) {
+                combinations.add(res[j]);
+            }
+
+            done = getNext(res, n, r);
+        }
+        return combinations;
+    }
+
+    public static boolean getNext(final int[] num, final int n, final int r) {
+        int target = r - 1;
+        num[target]++;
+        if (num[target] > ((n - (r - target)) + 1)) {
+            // Carry the One
+            while (num[target] > ((n - (r - target)))) {
+                target--;
+                if (target < 0) {
+                    break;
+                }
+            }
+            if (target < 0) {
+                return true;
+            }
+            num[target]++;
+            for (int i = target + 1; i < num.length; i++) {
+                num[i] = num[i - 1] + 1;
+            }
+        }
+        return false;
     }
 
 
