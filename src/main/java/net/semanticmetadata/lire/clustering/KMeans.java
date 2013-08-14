@@ -38,10 +38,12 @@
  */
 package net.semanticmetadata.lire.clustering;
 
-import net.semanticmetadata.lire.imageanalysis.Histogram;
-import net.semanticmetadata.lire.utils.StatsUtils;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
-import java.util.*;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
+import net.semanticmetadata.lire.utils.StatsUtils;
 
 /**
  * ...
@@ -51,11 +53,11 @@ import java.util.*;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class KMeans {
-    protected List<Image> images = new LinkedList<Image>();
-    protected int countAllFeatures = 0, numClusters = 256;
-    protected ArrayList<double[]> features = null;
+    //protected List<Image> images = new LinkedList<Image>();
+    protected int numClusters = 500;
+    protected ArrayList<LocalFeature> features = new ArrayList<LocalFeature>(5000);
     protected Cluster[] clusters = null;
-    protected HashMap<double[], Integer> featureIndex = null;
+    //protected HashMap<double[], Integer> featureIndex = null;
 
     public KMeans() {
 
@@ -65,44 +67,35 @@ public class KMeans {
         this.numClusters = numClusters;
     }
 
+    /*
     public void addImage(String identifier, List<double[]> features) {
         images.add(new Image(identifier, features));
         countAllFeatures += features.size();
     }
+    */
 
+    /**
+     * Adds a reference to the given LocalFeature to the internal set of features.
+     * The LocalFeature will not be copied.
+     */
+    public void addFeature(LocalFeature f)
+    {
+        features.add(f);
+    }
+    
     public int getFeatureCount() {
-        return countAllFeatures;
+        return features.size();
     }
 
     public void init() {
-        // create a set of all features:
-        features = new ArrayList<double[]>(countAllFeatures);
-        for (Image image : images) {
-            if (image.features.size() > 0)
-                for (double[] histogram : image.features) {
-                    if (!hasNaNs(histogram)) features.add(histogram);
-                }
-            else {
-                System.err.println("Image with no features: " + image.identifier);
-            }
-        }
-        // --- check if there are (i) enough images and (ii) enough features
-        if (images.size() < 500) {
-            System.err.println("WARNING: Please note that this approach has been implemented for big data and *a lot of images*. " +
-                    "You might not get appropriate results with a small number of images employed for constructing the visual vocabulary.");
-        }
         if (features.size() < numClusters*2) {
             System.err.println("WARNING: Please note that the number of local features, in this case " + features.size() + ", is" +
                     "smaller than the recommended minimum number, which is two times the number of visual words, in your case 2*" + numClusters +
                     ". Please adapt your data and either use images with more local features or more images for creating the visual vocabulary.");
         }
-        if (features.size() < numClusters + 1) {
-            System.err.println("CRITICAL: The number of features is smaller than the number of clusters. This cannot work as there has to be at least one " +
-                    "feature per cluster. Aborting process now.");
-            System.out.println("images: " + images.size());
-            System.out.println("features: " + features.size());
-            System.out.println("clusters: " + numClusters);
-            System.exit(1);
+        if (features.size() < numClusters) {
+            throw new IllegalArgumentException(String.format("KMeans: The number of features (%d) is smaller than the number of clusters (%d)!",
+                    features.size(), numClusters));
         }
         // find first clusters:
         clusters = new Cluster[numClusters];
@@ -124,87 +117,50 @@ public class KMeans {
      * @return
      */
     public double clusteringStep() {
-        for (int i = 0; i < clusters.length; i++) {
-            clusters[i].members.clear();
+        for (Cluster c : clusters) {
+            c.members.clear();
         }
         reOrganizeFeatures();
-        recomputeMeans();
+        recomputeCentroids();
         return overallStress();
     }
 
-    protected boolean hasNaNs(double[] histogram) {
-        boolean hasNaNs = false;
-        for (int i = 0; i < histogram.length; i++) {
-            if (Double.isNaN(histogram[i])) {
-                hasNaNs = true;
-                break;
-            }
-        }
-        if (hasNaNs) {
-            System.err.println("Found a NaN in init");
-//            System.out.println("image.identifier = " + image.identifier);
-            for (int j = 0; j < histogram.length; j++) {
-                double v = histogram[j];
-                System.out.print(v + ", ");
-            }
-            System.out.println("");
-        }
-        return hasNaNs;
-    }
-
     /**
-     * Re-shuffle all features.
+     * Assign features to the nearest cluster.
+     * Assumes that each cluster's member set is empty.
      */
     protected void reOrganizeFeatures() {
-        for (int k = 0; k < features.size(); k++) {
-            double[] f = features.get(k);
+        for (LocalFeature f : features) {
             Cluster best = clusters[0];
-            double minDistance = clusters[0].getDistance(f);
+            float minDistance = f.getDistance(clusters[0].centroid);
             for (int i = 1; i < clusters.length; i++) {
-                double v = clusters[i].getDistance(f);
-                if (minDistance > v) {
+                float d = f.getDistance(clusters[i].centroid);
+                if (d < minDistance) {
                     best = clusters[i];
-                    minDistance = v;
+                    minDistance = d;
                 }
             }
-            best.members.add(k);
+            best.members.add(f);
         }
     }
 
     /**
-     * Computes the mean per cluster (averaged vector)
+     * Update the centroids based on current cluster memberships.
      */
-    protected void recomputeMeans() {
-        int length = features.get(0).length;
-        for (Cluster cluster : clusters) {
-            double[] mean = cluster.mean;
-            for (int j = 0; j < length; j++) {
-                mean[j] = 0;
-                for (Integer member : cluster.members) {
-                    mean[j] += features.get(member)[j];
-                }
-                if (cluster.members.size() > 1)
-                    mean[j] = mean[j] / (double) cluster.members.size();
-            }
+    protected void recomputeCentroids() {
+        for (Cluster c : clusters) {
+            c.centroid.setCentroid(c.members);
         }
     }
 
     /**
-     * Squared error in classification.
-     *
-     * @return
+     * Compute sum of distances between every LocalFeature and its centroid.
      */
     protected double overallStress() {
         double v = 0;
-        int length = features.get(0).length;
-        for (int i = 0; i < clusters.length; i++) {
-            for (Integer member : clusters[i].members) {
-                double tmpStress = 0;
-                for (int j = 0; j < length; j++) {
-//                    if (Float.isNaN(features.get(member).descriptor[j])) System.err.println("Error: there is a NaN in cluster " + i + " at member " + member);
-                    tmpStress += Math.abs(clusters[i].mean[j] - features.get(member)[j]);
-                }
-                v += tmpStress;
+        for (Cluster c : clusters) {
+            for (LocalFeature f : c.members) {
+                v += c.centroid.getDistance(f);
             }
         }
         return v;
@@ -214,15 +170,12 @@ public class KMeans {
         return clusters;
     }
 
-    public List<Image> getImages() {
-        return images;
-    }
-
     /**
      * Set the number of desired clusters.
      *
      * @return
      */
+    /*
     public int getNumClusters() {
         return numClusters;
     }
@@ -230,7 +183,9 @@ public class KMeans {
     public void setNumClusters(int numClusters) {
         this.numClusters = numClusters;
     }
-
+    */
+    
+    /*
     private HashMap<double[], Integer> createIndex() {
         featureIndex = new HashMap<double[], Integer>(features.size());
         for (int i = 0; i < clusters.length; i++) {
@@ -242,6 +197,7 @@ public class KMeans {
         }
         return featureIndex;
     }
+    */
 
     /**
      * Used to find the cluster of a feature actually used in the clustering process (so
@@ -249,13 +205,14 @@ public class KMeans {
      *
      * @param f the feature to search for
      * @return the index of the Cluster
-     */
     public int getClusterOfFeature(Histogram f) {
         if (featureIndex == null) createIndex();
         return featureIndex.get(f);
     }
+     */
 }
 
+/*
 class Image {
     public List<double[]> features;
     public String identifier;
@@ -301,3 +258,4 @@ class Image {
         System.out.println("");
     }
 }
+*/

@@ -2,6 +2,7 @@ package net.semanticmetadata.lire.imageanalysis;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.util.HashSet;
 
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
@@ -89,6 +90,11 @@ public abstract class LocalFeature extends Histogram implements LireFeature
 	}
 	
     /**
+     * Create a deep copy of this instance.
+     */
+    public abstract LocalFeature clone();
+    
+    /**
      * This method is empty, because local features are extracted by the
      * corresponding DocumentBuilder and passed to the constructor of the
      * LocalFeature subclass.
@@ -141,4 +147,27 @@ public abstract class LocalFeature extends Histogram implements LireFeature
         throw new UnsupportedOperationException("Not implemented!");
 	}
 
+	/**
+	 * Set this instance to the centroid of the given set of LocalFeatures
+	 * for clustering purposes.
+	 * The default implementation computes the component-wise mean of double values.
+	 * It should be overridden by subclasses with different descriptor semantics
+	 * (in particular, for binary descriptors).
+	 */
+	public void setCentroid(HashSet<LocalFeature> features)
+	{
+	    // we iterate over descriptor in inner loops to optimize cache performance
+	    for (int i=0; i < descriptor.length; i++) {
+	        descriptor[i] = 0;
+	    }
+	    for (LocalFeature f : features) {
+	        for (int i=0; i < descriptor.length; i++) {
+	            descriptor[i] += f.descriptor[i];
+	        }
+	    }
+	    final int n = features.size();
+        for (int i=0; i < descriptor.length; i++) {
+            descriptor[i] /= n;
+        }
+	}
 }

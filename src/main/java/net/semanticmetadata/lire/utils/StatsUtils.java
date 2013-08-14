@@ -57,7 +57,7 @@ public class StatsUtils {
      * @param maximum the maximum number
      * @return a set of randomly sampled numbers in [0,maximum], null if the request is not possible.
      */
-    public static Set<Integer> drawSample(int size, int maximum) {
+    public static HashSet<Integer> drawSample(int size, int maximum) {
         if (maximum < size) return null;
         HashSet<Integer> set = new HashSet<Integer>(size);
         if (size * 4 > maximum) {
