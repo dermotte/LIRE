@@ -58,14 +58,15 @@
  */
 package net.semanticmetadata.lire.clustering;
 
-import net.semanticmetadata.lire.imageanalysis.Histogram;
-import net.semanticmetadata.lire.utils.SerializationUtils;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashSet;
+
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 
 /**
  * Provides a simple implementation for a cluster used with the visual bag of words approach.
@@ -73,22 +74,26 @@ import java.util.HashSet;
  * Date: 26.03.2010
  * Time: 12:10:19
  */
-public class Cluster implements Comparable<Object> {
-    double[] mean;
-    HashSet<Integer> members = new HashSet<Integer>();
+public class Cluster implements Comparable<Object>, Serializable 
+{
+    private static final long serialVersionUID = 4534242151035576519L;
+    
+    LocalFeature centroid;
+    HashSet<LocalFeature> members = new HashSet<LocalFeature>();
 
-    private double stress = 0;
-
-    public Cluster() {
-        this.mean = new double[4 * 4 * 8];
-        Arrays.fill(mean, 0f);
+    public Cluster(LocalFeature mean) {
+        this.centroid = mean.clone();
     }
 
-    public Cluster(double[] mean) {
-        this.mean = new double[mean.length];
-        System.arraycopy(mean, 0, this.mean, 0, mean.length);
+    /**
+     * Return the distance between the given LocalFeature and this cluster's centroid.
+     */
+    public double getDistance(LocalFeature f)
+    {
+        return centroid.getDistance(f);
     }
-
+    
+    /*
     public String toString() {
         StringBuilder sb = new StringBuilder(512);
         for (Integer integer : members) {
@@ -101,83 +106,14 @@ public class Cluster implements Comparable<Object> {
         }
         return sb.toString();
     }
-
+    */
+    
+    @Override
     public int compareTo(Object o) {
         return ((Cluster) o).members.size() - members.size();
     }
 
-    public double getDistance(Histogram f) {
-        return getDistance(f.descriptor);
-    }
-
-    public double getDistance(double[] f) {
-        double d = 0;
-        // now using L1 for faster results ...
-        for (int i = 0; i < f.length; i++) {
-            d += Math.abs(mean[i] - f[i]);
-        }
-        return d;
-    }
-
-    /**
-     * Creates a byte array representation from the clusters mean.
-     *
-     * @return the clusters mean as byte array.
-     */
-    public byte[] getByteRepresentation() {
-        return SerializationUtils.toByteArray(mean);
-    }
-
-    public void setByteRepresentation(byte[] data) {
-        mean = SerializationUtils.toDoubleArray(data);
-    }
-
-    /**
-     * Write cluster centroids to the given file.
-     * File format:
-     * <pre>
-     * 4 Bytes: numC - number of centroids.
-     * 4 Bytes: numF - number of (double) values per centroid (feature vector).
-     * numC * numF * 8 bytes: double values of centroids.
-     * </pre>
-     */
-    public static void writeClusters(Cluster[] clusters, String file) throws IOException {
-        FileOutputStream fout = new FileOutputStream(file);
-        fout.write(SerializationUtils.toBytes(clusters.length));
-        if (clusters.length > 0) {
-            fout.write(SerializationUtils.toBytes(clusters[0].mean.length));
-            for (int i = 0; i < clusters.length; i++) {
-                fout.write(clusters[i].getByteRepresentation());
-            }
-        }
-        fout.close();
-    }
-
-    /**
-     * Read cluster centroids from file.
-     * The file is expected to be written using {@link #writeClusters()}.
-     */
-    public static Cluster[] readClusters(String file) throws IOException {
-        FileInputStream fin = new FileInputStream(file);
-        byte[] tmp = new byte[4];
-        fin.read(tmp, 0, 4);
-        Cluster[] result = new Cluster[SerializationUtils.toInt(tmp)];
-        fin.read(tmp, 0, 4);
-        final int numB = SerializationUtils.toInt(tmp) * 8;
-        tmp = new byte[numB];
-        for (int i = 0; i < result.length; i++) {
-            int bytesRead = fin.read(tmp, 0, numB);
-            if (bytesRead != numB) {
-                fin.close();
-                throw new IOException("readClusters: file format error");
-            }
-            result[i] = new Cluster();
-            result[i].setByteRepresentation(tmp);
-        }
-        fin.close();
-        return result;
-    }
-
+    /*
     public double getStress() {
         return stress;
     }
@@ -186,11 +122,43 @@ public class Cluster implements Comparable<Object> {
         this.stress = stress;
     }
 
-    public HashSet<Integer> getMembers() {
+    public HashSet<LocalFeature> getMembers() {
         return members;
     }
 
-    public void setMembers(HashSet<Integer> members) {
+    public void setMembers(HashSet<LocalFeature> members) {
         this.members = members;
     }
+    */
+    
+    /**
+     * Write cluster centroids to the given file.
+     * Deletes membership mappings of all clusters before writing!
+     */
+    public static void writeClusters(Cluster[] clusters, String file) throws IOException {
+        ObjectOutputStream fout = new ObjectOutputStream(new FileOutputStream(file));
+        for (Cluster c : clusters) {
+            c.members.clear();
+        }
+        fout.writeObject(clusters);
+        fout.close();
+    }
+
+    /**
+     * Read cluster centroids from file.
+     * The file is expected to be written using {@link #writeClusters()}.
+     */
+    public static Cluster[] readClusters(String file) throws IOException  {
+        ObjectInputStream fin = new ObjectInputStream(new FileInputStream(file));
+        Cluster[] result = null;
+        try {
+            result = (Cluster[]) fin.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new IOException(e);
+        } finally {
+            fin.close();
+        }
+        return result;
+    }
+
 }

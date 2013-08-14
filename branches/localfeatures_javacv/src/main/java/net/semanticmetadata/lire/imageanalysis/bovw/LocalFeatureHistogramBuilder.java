@@ -40,28 +40,36 @@
  */
 package net.semanticmetadata.lire.imageanalysis.bovw;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.clustering.Cluster;
-import net.semanticmetadata.lire.clustering.KMeans;
-import net.semanticmetadata.lire.clustering.ParallelKMeans;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.utils.LuceneUtils;
-import net.semanticmetadata.lire.utils.SerializationUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.*;
-import org.apache.lucene.util.Bits;
-
-import javax.swing.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import javax.swing.ProgressMonitor;
+
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.clustering.Cluster;
+import net.semanticmetadata.lire.clustering.KMeans;
+import net.semanticmetadata.lire.clustering.ParallelKMeans;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
+import net.semanticmetadata.lire.utils.LuceneUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
+import net.semanticmetadata.lire.utils.StatsUtils;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.util.Bits;
+import org.apache.lucene.util.BytesRef;
 
 /**
  * General class creating bag of visual words vocabularies parallel based on k-means. Works with SIFT, SURF and MSER.
@@ -87,7 +95,7 @@ public abstract class LocalFeatureHistogramBuilder {
     protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String clusterFile = "./clusters.dat";
     public static boolean DELETE_LOCAL_FEATURES = false;
-    private boolean useParallelClustering = true;
+    private boolean useParallelClustering = false;
 
 
     public LocalFeatureHistogramBuilder(IndexReader reader) {
@@ -135,36 +143,29 @@ public abstract class LocalFeatureHistogramBuilder {
         // find the documents for building the vocabulary:
         HashSet<Integer> docIDs = selectVocabularyDocs();
         KMeans k;
-        if (useParallelClustering) k = new ParallelKMeans(numClusters);
-        else k = new KMeans(numClusters);
-        // fill the KMeans object:
-        LinkedList<double[]> features = new LinkedList<double[]>();
+        if (useParallelClustering) 
+            k = new ParallelKMeans(numClusters);
+        else 
+            k = new KMeans(numClusters);
         // Needed for check whether the document is deleted.
         Bits liveDocs = MultiFields.getLiveDocs(reader);
-        for (Iterator<Integer> iterator = docIDs.iterator(); iterator.hasNext(); ) {
-            int nextDoc = iterator.next();
+        // add features to the KMeans object
+        for (int nextDoc : docIDs) {
             if (reader.hasDeletions() && !liveDocs.get(nextDoc)) continue; // if it is deleted, just ignore it.
             Document d = reader.document(nextDoc);
-            features.clear();
-            IndexableField[] fields = d.getFields(localFeatureFieldName);
-            String file = d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
-            for (int j = 0; j < fields.length; j++) {
-                LireFeature f = getFeatureInstance();
-                f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                features.add(((Histogram) f).descriptor);
+            for (IndexableField field : d.getFields(localFeatureFieldName)) {
+                final BytesRef ref = field.binaryValue();
+                LocalFeature f = getFeatureInstance();
+                f.setByteArrayRepresentation(ref.bytes, ref.offset, ref.length);
+                k.addFeature(f);
             }
-            k.addImage(file, features);
         }
         if (pm != null) { // set to 5 of 100 before clustering starts.
             pm.setProgress(5);
             pm.setNote("Starting clustering");
         }
-        if (k.getFeatureCount() < numClusters) {
-            // this cannot work. You need more data points than clusters.
-            throw new UnsupportedOperationException("Only " + features.size() + " features found to cluster in " + numClusters + ". Try to use less clusters or more images.");
-        }
         // do the clustering:
-        System.out.println("k.getFeatureCount() = " + k.getFeatureCount());
+        System.out.println("KMeans feature count = " + k.getFeatureCount());
         System.out.println("Change rate threshold = " + df.format(changeRateThresh));
         System.out.println("Maximal number of iterations = " + maxKMeansIterations);
         System.out.println("Starting clustering ...");
@@ -178,7 +179,7 @@ public abstract class LocalFeatureHistogramBuilder {
             pm.setNote("Step 1 finished");
         }
 
-        System.out.println(getDuration(time) + " -> Step 2.");
+        System.out.println(getDuration(time) + " -> Step 1 finished.");
         time = System.currentTimeMillis();
         double newStress = k.clusteringStep();
 
@@ -187,10 +188,8 @@ public abstract class LocalFeatureHistogramBuilder {
             pm.setNote("Step 2 finished");
         }
 
-        // critical part: Give the difference in between steps as a constraint for accuracy vs. runtime trade off.
-        //double threshold = Math.max(20d, (double) k.getFeatureCount() / 1000d);
         double changeRate = (newStress - laststress) / laststress;
-        System.out.println(getDuration(time) + " -> Step 2. Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
+        System.out.println(getDuration(time) + " -> Step 2 finished. Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
         int sustainSteps = (Math.abs(changeRate) < changeRateThresh) ? 1 : 0;
         int cstep = 3;
         while (sustainSteps < sustainThreshSteps && cstep <= maxKMeansIterations) {
@@ -202,7 +201,7 @@ public abstract class LocalFeatureHistogramBuilder {
                 sustainSteps++;
             else
                 sustainSteps = 0;
-            System.out.println(getDuration(time) + " -> Step " + cstep + ". Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
+            System.out.println(getDuration(time) + " -> Step " + cstep + "finished. Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
             if (pm != null) { // set to XX of 100 after second step.
                 pm.setProgress((cstep * 3) % 90 + 5);
                 pm.setNote("Step " + cstep + " finished");
@@ -210,26 +209,20 @@ public abstract class LocalFeatureHistogramBuilder {
             cstep++;
         }
         // Serializing clusters to a file on the disk ...
+        System.out.println("Writing cluster centroids to file " + clusterFile);
         clusters = k.getClusters();
-//        for (int i = 0; i < clusters.length; i++) {
-//            Cluster cluster = clusters[i];
-//            System.out.print(cluster.getMembers().size() + ", ");
-//        }
-//        System.out.println();
         Cluster.writeClusters(clusters, clusterFile);
-        //  create & store histograms:
-        System.out.println("Creating histograms ...");
-        time = System.currentTimeMillis();
-        IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer, 256d);
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(50);
             pm.setNote("Clustering finished");
         }
-        // parallelized indexing
+        //  create & store histograms:
+        System.out.println("Creating histograms ...");
+        time = System.currentTimeMillis();
+        IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer, 256d);
+        // parallel indexing
         LinkedList<Thread> threads = new LinkedList<Thread>();
         int numThreads = 4;
-        // careful: copy reader to RAM for faster access when reading ...
-//        reader = IndexReader.open(new RAMDirectory(reader.directory()), true);
         int step = reader.maxDoc() / numThreads;
         for (int part = 0; part < numThreads; part++) {
             Indexer indexer = null;
@@ -267,12 +260,11 @@ public abstract class LocalFeatureHistogramBuilder {
 
 
     public void indexMissing() throws IOException {
-        // Reading clusters from disk:
         clusters = Cluster.readClusters(clusterFile);
         //  create & store histograms:
         System.out.println("Creating histograms ...");
         int[] tmpHist = new int[numClusters];
-        LireFeature f = getFeatureInstance();
+        LocalFeature f = getFeatureInstance();
         IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         for (int i = 0; i < reader.maxDoc(); i++) {
 //            if (!reader.isDeleted(i)) {
@@ -282,15 +274,18 @@ public abstract class LocalFeatureHistogramBuilder {
             Document d = reader.document(i);
             // Only if there are no values yet:
             if (d.getValues(visualWordsFieldName) == null || d.getValues(visualWordsFieldName).length == 0) {
-                IndexableField[] fields = d.getFields(localFeatureFieldName);
-                // find the appropriate cluster for each feature:
-                for (int j = 0; j < fields.length; j++) {
-                    f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                    tmpHist[clusterForFeature((Histogram) f)]++;
+                for (IndexableField field : d.getFields(localFeatureFieldName)) {
+                    final BytesRef ref = field.binaryValue();
+                    f.setByteArrayRepresentation(ref.bytes, ref.offset, ref.length);
+                    tmpHist[clusterForFeature(f)]++;
                 }
                 normalize(tmpHist);
                 d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
                 d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
+                // remove local features to save some space if requested:
+                if (DELETE_LOCAL_FEATURES) {
+                    d.removeFields(localFeatureFieldName);
+                }
                 // now write the new one. we use the identifier to update ;)
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
             }
@@ -311,17 +306,19 @@ public abstract class LocalFeatureHistogramBuilder {
     public Document getVisualWords(Document d) throws IOException {
         clusters = Cluster.readClusters(clusterFile);
         int[] tmpHist = new int[clusters.length];
-        LireFeature f = getFeatureInstance();
-        IndexableField[] fields = d.getFields(localFeatureFieldName);
-        // find the appropriate cluster for each feature:
-        for (int j = 0; j < fields.length; j++) {
-            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-            tmpHist[clusterForFeature((Histogram) f)]++;
+        LocalFeature f = getFeatureInstance();
+        for (IndexableField field : d.getFields(localFeatureFieldName)) {
+            final BytesRef ref = field.binaryValue();
+            f.setByteArrayRepresentation(ref.bytes, ref.offset, ref.length);
+            tmpHist[clusterForFeature(f)]++;
         }
         normalize(tmpHist);
         d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
         d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
-        d.removeFields(localFeatureFieldName);
+        // remove local features to save some space if requested:
+        if (DELETE_LOCAL_FEATURES) {
+            d.removeFields(localFeatureFieldName);
+        }
         return d;
     }
 
@@ -338,10 +335,9 @@ public abstract class LocalFeatureHistogramBuilder {
     /**
      * Find the appropriate cluster for a given feature.
      *
-     * @param f
      * @return the index of the cluster.
      */
-    private int clusterForFeature(Histogram f) {
+    private int clusterForFeature(LocalFeature f) {
         double distance = clusters[0].getDistance(f);
         double tmp;
         int result = 0;
@@ -369,35 +365,15 @@ public abstract class LocalFeatureHistogramBuilder {
     }
 
     private HashSet<Integer> selectVocabularyDocs() throws IOException {
-        // need to make sure that this is not running forever ...
-        int loopCount = 0;
-        float maxDocs = reader.maxDoc();
-        int capacity = (int) Math.min(numDocsForVocabulary, maxDocs - 5);
-        if (capacity < 0) capacity = (int) (maxDocs / 2);
-        HashSet<Integer> result = new HashSet<Integer>(capacity);
-        int tmpDocNumber, tmpIndex;
-        LinkedList<Integer> docCandidates = new LinkedList<Integer>();
-        for (int i = 0; i < maxDocs; i++) {
-            docCandidates.add(i);
-        }
-        for (int r = 0; r < capacity; r++) {
-            boolean worksFine = false;
-            do {
-                tmpIndex = (int) Math.floor(Math.random() * (double) docCandidates.size());
-                tmpDocNumber = docCandidates.get(tmpIndex);
-                docCandidates.remove(tmpIndex);
-                // check if the selected doc number is valid: not null, not deleted and not already chosen.
-                worksFine = (reader.document(tmpDocNumber) != null) && !result.contains(tmpDocNumber);
-            } while (!worksFine);
-            result.add(tmpDocNumber);
-            // need to make sure that this is not running forever ...
-            if (loopCount++ > capacity * 100)
-                throw new UnsupportedOperationException("Could not get the documents, maybe there are not enough documents in the index?");
-        }
-        return result;
+        final int maxDocs = reader.maxDoc();
+        final int samples = (int) Math.min(numDocsForVocabulary, maxDocs);
+        return StatsUtils.drawSample(samples, maxDocs);
     }
 
-    protected abstract LireFeature getFeatureInstance();
+    /**
+     * Return a new concrete LocalFeature instance.
+     */
+    protected abstract LocalFeature getFeatureInstance();
 
     private class Indexer implements Runnable {
         int start, end;
@@ -413,7 +389,7 @@ public abstract class LocalFeatureHistogramBuilder {
 
         public void run() {
             int[] tmpHist = new int[numClusters];
-            LireFeature f = getFeatureInstance();
+            LocalFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {
 //                    if (!reader.isDeleted(i)) {    // TODO!
@@ -421,15 +397,15 @@ public abstract class LocalFeatureHistogramBuilder {
                         tmpHist[j] = 0;
                     }
                     Document d = reader.document(i);
-                    IndexableField[] fields = d.getFields(localFeatureFieldName);
                     // remove the fields if they are already there ...
                     d.removeField(visualWordsFieldName);
                     d.removeField(localFeatureHistFieldName);
 
                     // find the appropriate cluster for each feature:
-                    for (int j = 0; j < fields.length; j++) {
-                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                        tmpHist[clusterForFeature((Histogram) f)]++;
+                    for (IndexableField field : d.getFields(localFeatureFieldName)) {
+                        final BytesRef ref = field.binaryValue();
+                        f.setByteArrayRepresentation(ref.bytes, ref.offset, ref.length);
+                        tmpHist[clusterForFeature(f)]++;
                     }
                     normalize(tmpHist);
                     d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
