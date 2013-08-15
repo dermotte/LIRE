@@ -41,10 +41,16 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.indexing.tools.Extractor;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.MMapDirectory;
+import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.InfoGainAttributeEval;
+import weka.attributeSelection.Ranker;
+import weka.core.Instances;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -57,6 +63,75 @@ import java.util.*;
  * Time: 13:53
  */
 public class ClassifierTest extends TestCase {
+
+    //MAIN CLASS
+    //Starts the classification process
+    public void testClassifyNFeatures() throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+
+
+        String locationSaveResultsFile = "D:\\8k3.txt";
+        String locationOfIndex = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
+        String locationOfImages = "D:\\Datasets\\FashionTestItemDataSet\\";
+        String locationOfTrainSet = "D:\\Datasets\\FashionTestItemDataSet\\train.txt";
+        String locationExtracorFile =  "D:\\Datasets\\FashionTestItemDataSet\\indexall.data";
+        double informationGainThreshold = 1.1;
+        int numberOfCombinations = 8;
+        int numberOfNeighbours = 2;
+        //All possible classes and fields
+    //    String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+    //    String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+        String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+         String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+
+        String class1 = "yes";
+        String class2 = "no";
+        //Testset
+        String locationOfTestset = "D:\\Datasets\\FashionTestItemDataSet\\test.txt";
+        int[] featureSpace = {144,60,64,64,168,64,630,33,192,18,192,80};
+        double[] featuresInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
+        featuresInformationGain = getFeaturesInformationGainScore(locationOfImages,locationOfTrainSet,locationExtracorFile,classArray,featureSpace,featuresInformationGain);
+
+        ArrayList<String> reducedFieldsArray = new ArrayList<String>();
+        ArrayList<String> reducedClassArray = new ArrayList<String>();
+
+
+        for (int i=0;i<featuresInformationGain.length;i++) {
+            if(featuresInformationGain[i]>informationGainThreshold){
+                reducedFieldsArray.add(fieldsArray[i]);
+                reducedClassArray.add(classArray[i]);
+            }
+        }
+
+        //If the number of combinations is bigger than the max size of features
+        if(numberOfCombinations>reducedClassArray.size())
+            numberOfCombinations = reducedClassArray.size();
+
+        //FOR THE Feature Selection PART
+        // String photosLocation = "D:\\Datasets\\FashionTest\\";
+        // String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt";
+        // String locationExtracorFile =  "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";
+
+        //Name of the features to extract
+        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+        //  int[] featureSpace = {144,60,64,64,168,64,630,33,192,18,192,80};
+        //  double[] featureInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
+
+        System.out.println("Features reduced! Starting with classification. Reduced Feature Set: " + reducedClassArray.toString());
+
+
+        try {
+            testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray,numberOfCombinations,class1,class2,informationGainThreshold);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InstantiationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
 
 
     public void testClassify() throws IOException {
@@ -322,6 +397,7 @@ public class ClassifierTest extends TestCase {
             double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
             double fMeasure = getFmeasure(precisicon, recall);
             double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
+            double mccMeasure = getMccMeasure(countTp,countFp,countTn,countFn);
 //            System.out.println("Results for class " + classIdentifier);
 
             // System.out.printf("%s;%s;%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d\n",classArray[y],classArray[y],classArray[y],k,weightByRank, classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
@@ -1849,10 +1925,10 @@ public class ClassifierTest extends TestCase {
         print_line.close();
     }
 
-    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, int searchedClass, String[] fieldsArray, String[] classArray, int combineNfeatures, String class1, String class2) throws IOException, NoSuchFieldException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, int searchedClass, ArrayList<String> fieldsArray, ArrayList<String> classArray, int combineNfeatures, String class1, String class2, double informationGainThreshold) throws IOException, NoSuchFieldException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 
         //numer of features and how much should be combined
-        int feats = fieldsArray.length;
+        int feats = fieldsArray.size();
         int combs = combineNfeatures;
 
         PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
@@ -1868,7 +1944,7 @@ public class ClassifierTest extends TestCase {
         for (int i = 0; i < 12; i++) {
             sCombinedFeatures = sCombinedFeatures + "Feature" + i+1 + ";";
         }
-        print_line.print(sCombinedFeatures + "K=;Weight Rank=;Class;Precision;Recall;True Negative Rate;Accuracy;False Positive Rate;F-Measure;Count Test Images;Count Correct;ms per test;TP;FP;TN;FN");
+        print_line.print(sCombinedFeatures + "K=;IGTH;Weight Rank=;Class;Precision;Recall;True Negative Rate;Accuracy;False Positive Rate;F-Measure;Count Test Images;Count Correct;ms per test;TP;FP;TN;FN");
         print_line.println();
         print_line.flush();
 
@@ -1880,8 +1956,8 @@ public class ClassifierTest extends TestCase {
             for (int j = 0; j < combs; j++) {
                 //     System.out.print(combinations.get(i + j).toString() + " ");
                 int x = (Integer) combinations.get(i + j) - 1;
-                fields1List.add(fieldsArray[x]);
-                class1List.add(classArray[x]);
+                fields1List.add(fieldsArray.get(x));
+                class1List.add(classArray.get(x));
             }
         }
 
@@ -2193,6 +2269,8 @@ public class ClassifierTest extends TestCase {
             double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
             double fMeasure = getFmeasure(precisicon, recall);
             double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
+            double mccMeasure = getMccMeasure(countTp, countFp, countTn, countFn);
+            double wFM = getWFM(countTp, countFp, countTn, countFn,fMeasure,count);
             // System.out.println("Results for class " + classIdentifier);
             // System.out.printf("Class\tPrecision\tRecall\tTrue Negative Rate\tAccuracy\tF-Measure\tCount Test Images\tCount Corret\tms per test\n");
             // System.out.printf("%s\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%10d\t%10d\t%4d\n", classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
@@ -2207,8 +2285,8 @@ public class ClassifierTest extends TestCase {
             }
 
             //   print_line.printf("%s,%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
-            System.out.printf("%s%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
-            print_line.printf("%s%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            System.out.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            print_line.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
             print_line.flush();
 
             //Create HTML
@@ -2303,12 +2381,30 @@ public class ClassifierTest extends TestCase {
         return fMeasure = 2 * ((precision * recall) / (precision + recall));
     }
 
+    private static double getMccMeasure(double tp, double fp, double tn, double fn) {
+        double mccMeasure;
+        return mccMeasure = ((tp*tn)-(fp*fn))/Math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn));
+    }
+
+    private static double getWFM(double tp, double fp, double tn, double fn,double fMeasure, double allN) {
+        double wFm;
+        double nPrec = tn/(tn+fn);
+        double nRec = tn/(tn+fp);
+        double nF1 = 2*(nPrec*nRec)/(nPrec+nRec);
+
+        return wFm = (fMeasure*(tp+fn)+nF1*(fp+tn))/allN;
+    }
+
     private static String getTagLine(String line, String photosLocation) {
         line = line.replace(photosLocation, "");
         //  System.out.println(line.substring(0, line.indexOf("\\")).toString());
         return line.substring(0, line.indexOf("\\")).toString();
         //return "yes";
     }
+
+
+
+
 
     //  public static void main(String[] args) {
     public void testThreadClassifyThreeFeatures() throws IOException {
@@ -2360,44 +2456,8 @@ public class ClassifierTest extends TestCase {
         }
     }
 
-    public void testClassifyNFeatures() throws IOException {
 
-     //   String locationOfIndex = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
-    //   String locationOfImages = "D:\\Datasets\\FashionTestItemDataSet\\";
-        String locationOfIndex = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index";
-        String locationOfImages = "D:\\Datasets\\FashionTest\\";
-
-        String class1 = "yes";
-        String class2 = "no";
-
-        //Testset
-        String locationOfTestset = "D:\\Datasets\\FashionTestFashionDataSet\\test.txt";
-
-     //   String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
-     //   String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
-
-     //   String[] fieldsArray = {"CEDD", "FCTH", "PHOG", "JCD", "JpegCoeffs", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
-     //   String[] classArray = {"CEDD", "FCTH", "PHOG", "JCD", "JpegCoefficientHistogram", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
-        String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "JpegCoeffs","Opponent_Histogram"};
-        String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "JpegCoefficientHistogram","OpponentHistogram" };
-
-
-        //  String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH"};
-        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH"};
-
-        try {
-            testClassifyNCombinedFeaturesMulti(0, 220, "D:\\8k3.txt", 2, locationOfIndex, locationOfImages, locationOfTestset, 0, fieldsArray, classArray,8,class1,class2);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-    }
-
+    //Testclass for the NCR function
     public void testNCR() throws IOException {
 
         int feats = 12;
@@ -2422,6 +2482,7 @@ public class ClassifierTest extends TestCase {
 
     }
 
+    //Calculates the possible combinations of the selected features
     public static ArrayList print_nCr(final int n, final int r) {
         int[] res = new int[r];
         ArrayList combinations = new ArrayList();
@@ -2442,6 +2503,7 @@ public class ClassifierTest extends TestCase {
         return combinations;
     }
 
+    //Part of print_nCr
     public static boolean getNext(final int[] num, final int n, final int r) {
         int target = r - 1;
         num[target]++;
@@ -2463,6 +2525,146 @@ public class ClassifierTest extends TestCase {
         }
         return false;
     }
+
+
+    // FEATURE SELECTION PART
+    //Do the feature selection, returns a double array with the scores
+    private static double[] getFeaturesInformationGainScore(String photosLocation, String locationOfTrainSet, String locationExtracorFile, String[] classArray, int[] featureSpace, double[] featureInformationGain) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+      //Configurations
+      String storeToFile = "wekaTemp.arff";
+      // String photosLocation = "D:\\Datasets\\FashionTest\\";
+      // String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt";
+      // String locationExtracorFile =  "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";
+
+      //Name of the features to extract
+      //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+      //  int[] featureSpace = {144,60,64,64,168,64,630,33,192,18,192,80};
+      //  double[] featureInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
+
+        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
+
+        print_line.print("@relation vowel-train"  + "\n" + "\n");
+        print_line.flush();
+
+        for(int i = 0; i<classArray.length;i++)   {
+            for(int j=0;j<featureSpace[i];j++) {
+                print_line.print("@attribute " + i + "_" + classArray[i] + "_" + j  + " " + "numeric" + "\n" + "\n");
+            }
+            print_line.flush();
+        }
+
+        //  print_line.print("@attribute FileName String" + "\n" + "\n");
+
+        print_line.print("@attribute Class {yes,no}" + "\n" + "\n" + "@data" + "\n" + "\n");
+        print_line.flush();
+
+
+        BufferedReader br = new BufferedReader(new FileReader(locationOfTrainSet));
+        String line;
+
+        //   while ((line = br.readLine()) != null) {
+        //       BufferedImage img = ImageIO.read(new File(line));
+        //       String tag = getTagLine(line, photosLocation);
+
+        InputStream in = new FileInputStream(locationExtracorFile);
+        byte[] tempInt = new byte[4];
+        int tmp, tmpFeature;
+
+        byte[] temp = new byte[100 * 1024];
+        while ((tmp = in.read(tempInt, 0, 4)) > 0) {
+            tmp = SerializationUtils.toInt(tempInt);
+            in.read(temp, 0, tmp);
+            String filename = new String(temp, 0, tmp);
+            String tag = getTagLine(filename, photosLocation);
+            while (in.read(tempInt, 0, 1) > 0) {
+                if (tempInt[0] == -1) break;
+                tmpFeature = tempInt[0];
+                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
+                // byte[] length ...
+                in.read(tempInt, 0, 4);
+                tmp = SerializationUtils.toInt(tempInt);
+                in.read(temp, 0, tmp);
+                f.setByteArrayRepresentation(temp, 0, tmp);
+                //System.out.println(filename + Arrays.toString(f.getDoubleHistogram()));
+                //System.out.println(f.getDoubleHistogram().length);
+                double[] tempDouble = f.getDoubleHistogram();
+                double tempMean = 0.0;
+                for (int j=0;j<tempDouble.length;j++)  {
+                    //      tempMean = tempMean + tempDouble[j];
+                    print_line.print(tempDouble[j]+",");
+                }
+                //  print_line.print(tempMean/tempDouble.length + ",");
+
+            }
+            //  print_line.print(filename+","+tag);
+            print_line.print(tag+",");
+
+            print_line.print("\n");
+            print_line.flush();
+        }
+        //   }
+
+        print_line.close();
+        return calculateInformationGain(storeToFile,featureInformationGain);
+      //  System.out.println(Arrays.toString(featureInformationGain));
+
+    }
+
+    //Do the information gain algorithm and return a list of total information gain scores
+    private static double[] calculateInformationGain(String wekaFileLocation, double[] featureInformationGain){
+
+        Instances data = null;
+        try {
+            data = new Instances(new BufferedReader(new FileReader(wekaFileLocation)));
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        AttributeSelection attsel = new AttributeSelection();  // package weka.attributeSelection!
+        InfoGainAttributeEval eval = new InfoGainAttributeEval();
+        Ranker search = new Ranker();
+        search.setThreshold(-1.7976931348623157E308);
+        search.setNumToSelect(-1);
+        search.setGenerateRanking(true);
+        attsel.setEvaluator(eval);
+        attsel.setSearch(search);
+        try {
+
+            attsel.SelectAttributes(data);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        // obtain the attribute indices that were selected
+        int[] indices = new int[0];
+        double[][] rankedAttribuesArray = new double[0][0];
+        try {
+            rankedAttribuesArray = attsel.rankedAttributes();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            indices = attsel.selectedAttributes();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        for (int i=0;i<rankedAttribuesArray.length;i++) {
+
+            int currentFeature = Integer.parseInt(data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0,data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_")));
+            // System.out.print(data.attribute((int) rankedAttribuesArray[i][0]).name() + "/" + rankedAttribuesArray[i][0] + "/");
+            //     System.out.println(rankedAttribuesArray[i][1]);
+            // data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0,data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_"));
+            featureInformationGain[currentFeature] = featureInformationGain[currentFeature] + rankedAttribuesArray[i][1];
+        }
+
+
+        // for(int i=0;i<0;i++){
+        //     System.out.println(data.attribute(indices[i]).toString());
+        // }
+        System.out.println("Scoring finished, starting with classification! Scores: " + Arrays.toString(featureInformationGain));
+        return featureInformationGain;
+    }
+
 
 
 }
