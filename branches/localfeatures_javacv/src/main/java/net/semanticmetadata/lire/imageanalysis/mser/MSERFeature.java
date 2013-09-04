@@ -41,13 +41,13 @@
 
 package net.semanticmetadata.lire.imageanalysis.mser;
 
+import java.awt.image.BufferedImage;
+
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
-
-import java.awt.image.BufferedImage;
 
 /**
  * Feature describing an MSER
@@ -57,7 +57,9 @@ import java.awt.image.BufferedImage;
  *
  * @author Christine Keim, christine.keim@inode.at
  */
-public class MSERFeature extends Histogram implements LireFeature {
+public class MSERFeature extends LocalFeature {
+    private static final long serialVersionUID = 3973358078105657495L;
+
     MSERGrowthHistory mser;
 
     public MSERFeature(MSERGrowthHistory maxStableExtremalRegion, double[] invariants) {
@@ -67,6 +69,12 @@ public class MSERFeature extends Histogram implements LireFeature {
 
     public MSERFeature() {
         mser = null;
+    }
+
+    @Override
+    public LocalFeature clone()
+    {
+        return new MSERFeature().copyOf(this);
     }
 
     public void extract(BufferedImage bimg) {

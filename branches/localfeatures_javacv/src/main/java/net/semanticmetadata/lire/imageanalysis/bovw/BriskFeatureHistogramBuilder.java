@@ -2,8 +2,7 @@ package net.semanticmetadata.lire.imageanalysis.bovw;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.BriskFeature;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.bovw.LocalFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 
 import org.apache.lucene.index.IndexReader;
 
@@ -31,7 +30,7 @@ public class BriskFeatureHistogramBuilder extends LocalFeatureHistogramBuilder
     }
 
     @Override
-    protected LireFeature getFeatureInstance() {
+    protected LocalFeature getFeatureInstance() {
         return new BriskFeature();
     }
 

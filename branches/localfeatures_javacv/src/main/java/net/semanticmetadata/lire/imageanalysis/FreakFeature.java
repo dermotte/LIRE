@@ -9,10 +9,10 @@ import net.semanticmetadata.lire.DocumentBuilder;
  * @author Mario Taschwer
  * @version $Id$
  */
-public class FreakFeature extends LocalFeature
+public class FreakFeature extends LocalBinaryFeature
 {
     
-    private byte[] freakDescriptor;
+    private static final long serialVersionUID = -3236386571130123265L;
 
     public FreakFeature()
     {
@@ -32,24 +32,9 @@ public class FreakFeature extends LocalFeature
     }
 
     @Override
-    public byte[] getByteArrayRepresentation()
+    public LocalFeature clone()
     {
-        return freakDescriptor;
-    }
-
-    @Override
-    public void setByteArrayRepresentation(byte[] in)
-    {
-        setByteArrayRepresentation(in, 0, in.length);
-    }
-
-    @Override
-    public void setByteArrayRepresentation(byte[] in, int offset, int length)
-    {
-        if (freakDescriptor == null || freakDescriptor.length != length)
-            freakDescriptor = new byte[length];
-        System.arraycopy(in, offset, freakDescriptor, 0, length);
-        descriptor = bit2doubleArray(descriptor, in, offset, length);
+        return new FreakFeature().copyOf(this);
     }
 
 }

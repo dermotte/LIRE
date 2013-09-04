@@ -40,8 +40,9 @@
 package net.semanticmetadata.lire.imageanalysis.bovw;
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 import net.semanticmetadata.lire.imageanalysis.sift.Feature;
+
 import org.apache.lucene.index.IndexReader;
 
 /**
@@ -75,7 +76,7 @@ public class SiftFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
     }
 
     @Override
-    protected LireFeature getFeatureInstance() {
+    protected LocalFeature getFeatureInstance() {
         return new Feature();
     }
 }
