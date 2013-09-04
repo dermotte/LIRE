@@ -41,22 +41,25 @@
 
 package net.semanticmetadata.lire.imageanalysis;
 
-import com.stromberglabs.jopensurf.SURFInterestPoint;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.utils.MetricsUtils;
-import net.semanticmetadata.lire.utils.SerializationUtils;
-
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
+
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.utils.MetricsUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
+
+import com.stromberglabs.jopensurf.SURFInterestPoint;
 
 /**
  * Mathias Lux, mathias@juggle.at
  * Date: 29.09.2010
  * Time: 15:44:14
  */
-public class SurfFeature extends Histogram implements LireFeature {
+public class SurfFeature extends LocalFeature {
+
+    private static final long serialVersionUID = -2549684656165689141L;
     SURFInterestPoint sip;
 
     public SurfFeature(SURFInterestPoint surfInterestPoint) {
@@ -66,6 +69,12 @@ public class SurfFeature extends Histogram implements LireFeature {
 
     public SurfFeature() {
         sip = null;
+    }
+
+    @Override
+    public LocalFeature clone()
+    {
+        return new SurfFeature().copyOf(this);
     }
 
     public void extract(BufferedImage bimg) {

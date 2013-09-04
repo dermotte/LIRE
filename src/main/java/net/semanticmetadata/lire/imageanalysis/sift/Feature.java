@@ -41,26 +41,23 @@
 package net.semanticmetadata.lire.imageanalysis.sift;
 
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.utils.MetricsUtils;
-import net.semanticmetadata.lire.utils.SerializationUtils;
-
 import java.awt.image.BufferedImage;
-import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
+import net.semanticmetadata.lire.utils.MetricsUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
+
 /**
  * SIFT feature container
  */
-public class Feature extends Histogram implements Comparable<Feature>, Serializable, LireFeature {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+public class Feature extends LocalFeature implements Comparable<Feature> {
+
+    private static final long serialVersionUID = -2918941062222798682L;
     private Logger logger = Logger.getLogger(getClass().getName());
     public float scale;
     public float orientation;
@@ -78,6 +75,27 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
         orientation = o;
         location = l;
         descriptor = SerializationUtils.toDoubleArray(d);
+    }
+
+    @Override
+    public LocalFeature clone()
+    {
+        return new Feature().copyOf(this);
+    }
+
+    @Override
+    protected LocalFeature copyOf(LocalFeature src)
+    {
+        super.copyOf(src);
+        if (src instanceof Feature) {
+            Feature f = (Feature) src;
+            scale = f.scale;
+            orientation = f.orientation;
+            final int len = f.location.length;
+            location = new float[len];
+            System.arraycopy(f.location, 0, location, 0, len);
+        }
+        return this;
     }
 
     /**

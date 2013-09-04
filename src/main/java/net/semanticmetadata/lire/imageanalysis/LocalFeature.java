@@ -1,11 +1,10 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 
-import net.semanticmetadata.lire.imageanalysis.Histogram;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -15,28 +14,10 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
  * @author Mario Taschwer mt@itec.aau.at
  * @version $Id$
  */
-public abstract class LocalFeature extends Histogram implements LireFeature 
+public abstract class LocalFeature implements LireFeature, Serializable
 {
 
-    /**
-     * Create byte array representation from ByteBuffer.
-     * The ByteBuffer is supposed to contain one feature descriptor
-     * starting at position <code>offset</code>.
-     * The result is compatible with {@link #getByteArrayRepresentation()}.
-     * 
-     * @param dst      destination array of length greater than or equal to <code>length</code>,
-     *                 will be filled starting at position 0.
-     * @param buffer   source buffer.
-     * @param offset   offset in <code>buffer</code> pointing to the first descriptor element.
-     * @param length   length of descriptor (in bytes).
-     */
-    public static void byteArrayFromBuffer(byte[] dst, ByteBuffer buffer, int offset, int length)
-    {
-        buffer.position(offset);
-        for (int i=0; i < length; i++) {
-            dst[i] = buffer.get();
-        }
-    }
+    private static final long serialVersionUID = -3359651678675364902L;
 
     /**
      * Convert array of unsigned byte values to double.
@@ -81,6 +62,8 @@ public abstract class LocalFeature extends Histogram implements LireFeature
         return out;
     }
     
+    public double[] descriptor;
+    
     protected LocalFeature() {
         // NOP
     }
@@ -93,6 +76,20 @@ public abstract class LocalFeature extends Histogram implements LireFeature
      * Create a deep copy of this instance.
      */
     public abstract LocalFeature clone();
+    
+    /**
+     * Make this instance a deep copy of the given LocalFeature instance.
+     * Should be called by {@link #clone()} to facilitate implementations
+     * in subclasses.
+     * @return this instance.
+     */
+    protected LocalFeature copyOf(LocalFeature src)
+    {
+        final int len = src.descriptor.length;
+        descriptor = new double[len];
+        System.arraycopy(src.descriptor, 0, descriptor, 0, len);
+        return this;
+    }
     
     /**
      * This method is empty, because local features are extracted by the

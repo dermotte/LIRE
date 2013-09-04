@@ -1,5 +1,6 @@
 package net.semanticmetadata.lire.imageanalysis;
 
+import java.nio.ByteBuffer;
 import java.util.HashSet;
 
 /**
@@ -10,6 +11,27 @@ import java.util.HashSet;
  */
 public abstract class LocalBinaryFeature extends LocalFeature
 {
+    private static final long serialVersionUID = 4486301452248715455L;
+
+    /**
+     * Create byte array representation from ByteBuffer.
+     * The ByteBuffer is supposed to contain one feature descriptor
+     * starting at position <code>offset</code>.
+     * The result is compatible with {@link #getByteArrayRepresentation()}.
+     * 
+     * @param dst      destination array of length greater than or equal to <code>length</code>,
+     *                 will be filled starting at position 0.
+     * @param buffer   source buffer.
+     * @param offset   offset in <code>buffer</code> pointing to the first descriptor element.
+     * @param length   length of descriptor (in bytes).
+     */
+    public static void byteArrayFromBuffer(byte[] dst, ByteBuffer buffer, int offset, int length)
+    {
+        buffer.position(offset);
+        for (int i=0; i < length; i++) {
+            dst[i] = buffer.get();
+        }
+    }
 
     /** Lookup table: countOnes[k] gives the number of 1s in the binary representation of k (0 <= k <= 255). */
     private static final byte[] countOnes = new byte[] { 
@@ -44,6 +66,33 @@ public abstract class LocalBinaryFeature extends LocalFeature
     protected LocalBinaryFeature(byte[] descriptor)
     {
         binDesc = descriptor;
+    }
+
+    @Override
+    public String getFeatureName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getFieldName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    protected LocalFeature copyOf(LocalFeature src)
+    {
+        // no need to call super.copyOf() as super.descriptor is not used for binary descriptors
+        if (src instanceof LocalBinaryFeature) {
+            LocalBinaryFeature srcBin = (LocalBinaryFeature) src;
+            final int len = srcBin.binDesc.length;
+            binDesc = new byte[len];
+            System.arraycopy(srcBin.binDesc, 0, binDesc, 0, len);
+        }
+        return this;
     }
 
     @Override
@@ -99,7 +148,7 @@ public abstract class LocalBinaryFeature extends LocalFeature
             }
         }
         byteval = 0;
-        final int thresh = count.length >> 1;
+        final int thresh = features.size() >> 1;
         for (int i=0, j=0; i < count.length; i++) {
             final int shift = i & 7;
             // if count[i] <= thresh, the median value is 0, and byteval does not need to be updated

@@ -84,7 +84,7 @@ public abstract class LocalFeatureHistogramBuilder {
     private int numDocsForVocabulary = 100;
     private int numClusters = 512;
     private double changeRateThresh = 1e-03;   // threshold for stress change rate
-    private int sustainThreshSteps = 5;        // number of steps sustaining changeRateThresh before termination
+    private int sustainThreshSteps = 3;        // number of steps sustaining changeRateThresh before termination
     private int maxKMeansIterations = 50;      // fallback termination condition for diverging cases
     private Cluster[] clusters = null;
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
@@ -201,7 +201,7 @@ public abstract class LocalFeatureHistogramBuilder {
                 sustainSteps++;
             else
                 sustainSteps = 0;
-            System.out.println(getDuration(time) + " -> Step " + cstep + "finished. Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
+            System.out.println(getDuration(time) + " -> Step " + cstep + " finished. Stress change rate ~ |" + (int) laststress + " -> " + (int) newStress + "| = " + df.format(changeRate));
             if (pm != null) { // set to XX of 100 after second step.
                 pm.setProgress((cstep * 3) % 90 + 5);
                 pm.setNote("Step " + cstep + " finished");

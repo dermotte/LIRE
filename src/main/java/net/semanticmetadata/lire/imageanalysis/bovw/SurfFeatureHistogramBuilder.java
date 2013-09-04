@@ -39,8 +39,9 @@
 package net.semanticmetadata.lire.imageanalysis.bovw;
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.LocalFeature;
 import net.semanticmetadata.lire.imageanalysis.SurfFeature;
+
 import org.apache.lucene.index.IndexReader;
 
 /**
@@ -67,7 +68,7 @@ public class SurfFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
     }
 
     @Override
-    protected LireFeature getFeatureInstance() {
+    protected LocalFeature getFeatureInstance() {
         return new SurfFeature();
     }
 

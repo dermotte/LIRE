@@ -3,15 +3,15 @@ package net.semanticmetadata.lire.imageanalysis;
 import net.semanticmetadata.lire.DocumentBuilder;
 
 /**
- * BRISK creates a 64-dimensional feature vector of byte values
+ * BRISK creates a 512-dimensional binary feature vector (64 bytes)
  * for each detected keypoint.
  * 
  * @author Mario Taschwer
  * @version $Id$
  */
-public class BriskFeature extends LocalFeature
+public class BriskFeature extends LocalBinaryFeature
 {
-    private byte[] briskDescriptor;
+    private static final long serialVersionUID = 202839550883583630L;
 
     public BriskFeature()
     {
@@ -31,24 +31,9 @@ public class BriskFeature extends LocalFeature
     }
 
     @Override
-    public byte[] getByteArrayRepresentation()
+    public LocalFeature clone()
     {
-        return briskDescriptor;
-    }
-
-    @Override
-    public void setByteArrayRepresentation(byte[] in)
-    {
-        setByteArrayRepresentation(in, 0, in.length);
-    }
-
-    @Override
-    public void setByteArrayRepresentation(byte[] in, int offset, int length)
-    {
-        if (briskDescriptor == null || briskDescriptor.length != length)
-            briskDescriptor = new byte[length];
-        System.arraycopy(in, offset, briskDescriptor, 0, length);
-        descriptor = bit2doubleArray(descriptor, in, offset, length);
+        return new BriskFeature().copyOf(this);
     }
 
 }
