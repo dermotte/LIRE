@@ -71,6 +71,12 @@ public class SurfFeature extends LocalFeature {
         sip = null;
     }
 
+    public SurfFeature(double[] descriptor)
+    {
+        sip = null;
+        this.descriptor = descriptor;
+    }
+    
     @Override
     public LocalFeature clone()
     {
