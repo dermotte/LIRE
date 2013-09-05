@@ -41,6 +41,7 @@ package net.semanticmetadata.lire.utils;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.clustering.Cluster;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
 
 import java.io.IOException;
 
@@ -105,7 +106,7 @@ public class SerializationUtilsTest extends TestCase {
             for (int j = 0; j < test.length; j++) {
                 test[j] = (Math.random() * 1000);
             }
-            tc[i] = new Cluster(test);
+            tc[i] = new Cluster(new SurfFeature(test));
         }
 
         Cluster.writeClusters(tc, "test-tmp.dat");
