@@ -156,12 +156,9 @@ public class TestWang extends TestCase {
     }
 
     public void testIndexAndMap() throws IOException {
-//        for (int i = 30; i<50; i+=5) {
-//            PHOG.bins = i;
-//            System.out.println(PHOG.bins + " bins > ------------------------");
         testIndexWang();
+        testIndexBovw();
         testMAP();
-//        }
     }
 
     public void testIndexWang() throws IOException {
@@ -240,7 +237,7 @@ public class TestWang extends TestCase {
         // copy index to ram to be much faster ...
         IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
 
-        System.out.println("hashFunctionsFileName\tmap\tp@10\terror rate");
+        System.out.println("descriptor\tmap\tp@10\terror rate\tp@10 per category");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L1;
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - L1");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L2;
