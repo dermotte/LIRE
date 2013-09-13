@@ -72,7 +72,7 @@ import java.util.Iterator;
 public class GeneralTest extends TestCase {
     private String[] testFiles = new String[]{
             "img01.JPG", "img02.JPG", "img03.JPG", "img04.JPG", "img05.JPG",
-            "img06.JPG", "img07.JPG", "img08.JPG", "error.jpg"};
+            "img06.JPG", "img07.JPG", "img08.JPG", "error.jpg", "91561.lire.jpg", "91561.jpg"};
     private String testFilesPath = "./src/test/resources/images/";
     private String indexPath = "test-index";
     private String testExtensive = "./testdata/wang-1000";
@@ -136,6 +136,7 @@ public class GeneralTest extends TestCase {
             LireFeature lireFeature = (LireFeature) c.newInstance();
             LireFeature tmpLireFeature = (LireFeature) c.newInstance();
             for (String file : testFiles) {
+                System.out.println(c.getName() + ": " + file);
                 lireFeature.extract(ImageIO.read(new FileInputStream(testFilesPath + file)));
                 float delta = 0.0000f;
                 assertEquals(lireFeature.getDistance(lireFeature), 0, delta);

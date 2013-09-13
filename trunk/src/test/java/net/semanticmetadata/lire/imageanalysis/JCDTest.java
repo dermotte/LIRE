@@ -119,6 +119,20 @@ public class JCDTest extends TestCase {
 
     }
 
+    public void testExtractionAndMetric() throws IOException {
+        JCD jcd1 = new JCD();
+        BufferedImage img = ImageIO.read(new File("src/test/resources/images/91561.lire.jpg"));
+        jcd1.extract(img);
+        System.out.println(Arrays.toString(jcd1.getByteArrayRepresentation()));
+        JCD jcd2 = new JCD();
+        jcd2.extract(ImageIO.read(new File("src/test/resources/images/img01.JPG")));
+        jcd2.setByteArrayRepresentation(jcd1.getByteArrayRepresentation());
+        System.out.println(Arrays.toString(jcd2.getByteArrayRepresentation()));
+        System.out.println("jcd2.getDistance(jcd1) = " + jcd1.getDistance(jcd2));
+        jcd2.setByteArrayRepresentation(jcd1.getByteArrayRepresentation(), 0, jcd1.getByteArrayRepresentation().length);
+        System.out.println("jcd2.getDistance(jcd1) = " + jcd1.getDistance(jcd2));
+    }
+
     public void testConcurrentExtraction() throws IOException, IllegalAccessException, InstantiationException {
         // concurrent extraction.
         Class[] featureClasses = new Class[]{
@@ -146,7 +160,7 @@ public class JCDTest extends TestCase {
             Class featureClass = featureClasses[j];
             LireFeature f1 = (LireFeature) featureClass.newInstance();
             Thread t = null;
-            BufferedImage read = ImageIO.read(new File("src/test/resources/images/img01.JPG"));
+            BufferedImage read = ImageIO.read(new File("src/test/resources/images/91561.lire.jpg"));
             f1.extract(read);
             for (int i=0; i<16; i++) {
                 t = new Thread(new Extractor(read, f1));

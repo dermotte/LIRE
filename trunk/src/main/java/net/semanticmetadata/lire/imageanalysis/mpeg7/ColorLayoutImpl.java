@@ -419,12 +419,12 @@ public class ColorLayoutImpl {
 //        int[] sum = new int[3];
         int diffCb, diffCr, sumCb=0, sumCr=0, sumY=0;
 
-        for (int j = 0; j < YCoeff1.length; j++) {
+        for (int j = 0; j < Math.min(YCoeff1.length, YCoeff2.length); j++) {
             diffCb = (YCoeff1[j] - YCoeff2[j]);
             sumY += (weightMatrix[0][j] * diffCb * diffCb);
         }
 
-        for (int j = 0; j < CbCoeff1.length; j++) {
+        for (int j = 0; j < Math.min(CbCoeff1.length, CbCoeff2.length); j++) {
             diffCb = (CbCoeff1[j] - CbCoeff2[j]);
             sumCb += (weightMatrix[1][j] * diffCb * diffCb);
             diffCr = (CrCoeff1[j] - CrCoeff2[j]);
