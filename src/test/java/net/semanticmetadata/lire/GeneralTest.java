@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 13.09.13 18:35
  */
 
 package net.semanticmetadata.lire;
@@ -48,6 +50,7 @@ import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.utils.FileUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -57,6 +60,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.MMapDirectory;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -137,7 +141,9 @@ public class GeneralTest extends TestCase {
             LireFeature tmpLireFeature = (LireFeature) c.newInstance();
             for (String file : testFiles) {
                 System.out.println(c.getName() + ": " + file);
-                lireFeature.extract(ImageIO.read(new FileInputStream(testFilesPath + file)));
+                BufferedImage image = ImageIO.read(new FileInputStream(testFilesPath + file));
+//                image = ImageUtils.trimWhiteSpace(image);
+                lireFeature.extract(image);
                 float delta = 0.0000f;
                 assertEquals(lireFeature.getDistance(lireFeature), 0, delta);
 //                tmpLireFeature.setStringRepresentation(lireFeature.getStringRepresentation());

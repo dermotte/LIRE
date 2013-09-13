@@ -5,6 +5,7 @@ CHANGES for LIRE
 ==========
   - Fixed bug in ColorLayout distance metric
   - Fixed bug in JCD re-use
+  - Fixed handling of "white only" images in trim(...) function.
 
 2013-08-08
 ==========

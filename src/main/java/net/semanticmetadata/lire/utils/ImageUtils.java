@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 09:32
+ * Updated: 13.09.13 18:35
  */
 
 package net.semanticmetadata.lire.utils;
@@ -183,6 +183,10 @@ public class ImageUtils {
             }
             if (white) {
                 trimTop++;
+                // handling white only images ..
+                if (trimTop > raster.getHeight() - 10) {
+                    return img;
+                }
             }
         }
         // bottom:
@@ -277,6 +281,7 @@ public class ImageUtils {
 
     /**
      * Check if the image is fail safe for color based features that are actually using 8 bits per pixel RGB.
+     *
      * @param bufferedImage
      * @return
      */
