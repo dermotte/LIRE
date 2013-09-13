@@ -42,14 +42,12 @@
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.DocumentBuilderFactory;
+import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
-import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
@@ -81,8 +79,8 @@ public class TestUCID extends TestCase {
     private String indexPath = "ucid-index";
     // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
-    private String testExtensive = "C:\\Temp\\UCID/png";
-    private final String groundTruth = "C:\\Temp\\UCID/ucid.v2.groundtruth.txt";
+    private String testExtensive = "E:\\ucid.v2/png";
+    private final String groundTruth = "E:\\ucid.v2/ucid.v2.groundtruth.txt";
 
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
@@ -95,17 +93,17 @@ public class TestUCID extends TestCase {
         parallelIndexer = new ParallelIndexer(16, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
                 builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
 
 //                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
@@ -116,14 +114,14 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new SurfDocumentBuilder());
 //                builder.addBuilder(new MSERDocumentBuilder());
 //                builder.addBuilder(new SiftDocumentBuilder());
-                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd"));
-                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class, "spjcd"));
-                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class, "spfcth"));
-                builder.addBuilder(new GenericDocumentBuilder(SPACC.class, "spacc"));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
-                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
+                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
+                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
+                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
+                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
+//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class, "splbp"));
+                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
             }
         };
 
@@ -162,26 +160,26 @@ public class TestUCID extends TestCase {
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
 
         System.out.println("Feature\tMAP\tp@10\tER");
-        computeMAP(new GenericFastImageSearcher(1400, CEDD.class, true, reader), "CEDD", reader);
-        computeMAP(new GenericFastImageSearcher(1400, FCTH.class, true, reader), "FCTH", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, CEDD.class, true, reader), "CEDD", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, FCTH.class, true, reader), "FCTH", reader);
         computeMAP(new GenericFastImageSearcher(1400, JCD.class, true, reader), "JCD", reader);
-        computeMAP(new GenericFastImageSearcher(1400, PHOG.class, true, reader), "PHOG", reader);
-        computeMAP(new GenericFastImageSearcher(1400, ColorLayout.class, true, reader), "Color Layout", reader);
-        computeMAP(new GenericFastImageSearcher(1400, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
-        computeMAP(new GenericFastImageSearcher(1400, ScalableColor.class, true, reader), "Scalable Color", reader);
-        computeMAP(new GenericFastImageSearcher(1400, JointHistogram.class, true, reader), "Joint Histogram", reader);
-        computeMAP(new GenericFastImageSearcher(1400, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
-        computeMAP(new GenericFastImageSearcher(1400, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, PHOG.class, true, reader), "PHOG", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, ColorLayout.class, true, reader), "Color Layout", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, ScalableColor.class, true, reader), "Scalable Color", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, JointHistogram.class, true, reader), "Joint Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
         computeMAP(new GenericFastImageSearcher(1400, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
 
-        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, "spcedd"), "SPCEDD", reader);
-        computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, "spjcd"), "SPJCD", reader);
-        computeMAP(new GenericFastImageSearcher(1400, SPFCTH.class, "spfcth"), "SPFCTH", reader);
-        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, "spacc"), "SPACC ", reader);
-        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
-        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
-        computeMAP(new GenericFastImageSearcher(1400, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, SPLBP.class, "splbp"), "SPLBP ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, true, reader), "SPCEDD", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, true, reader), "SPJCD", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPFCTH.class, true, reader), "SPFCTH", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, true, reader), "SPACC ", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
+        computeMAP(new GenericFastImageSearcher(1400, SPLBP.class, true, reader), "SPLBP ", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW", reader);

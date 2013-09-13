@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-09-13
+==========
+  - Fixed bug in ColorLayout distance metric
+  - Fixed bug in JCD re-use
+
 2013-08-08
 ==========
   - Speeded up ParallelIndexer by moving JPEG decoding to the consumer part.
