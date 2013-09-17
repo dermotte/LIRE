@@ -156,6 +156,18 @@ public class OpponentHistogram extends Histogram implements LireFeature {
         return getDistance(h1, 0, h1.length, h2, 0, h2.length);
     }
 
+    /**
+     * Jeffrey Divergence or Jensen-Shannon divergence (JSD) from
+     * Deselaers, T.; Keysers, D. & Ney, H. Features for image retrieval:
+     * an experimental comparison Inf. Retr., Kluwer Academic Publishers, 2008, 11, 77-107
+     * @param h1
+     * @param offset1
+     * @param length1
+     * @param h2
+     * @param offset2
+     * @param length2
+     * @return
+     */
     public double getDistance(byte[] h1, int offset1, int length1, byte[] h2, int offset2, int length2) {
 //        double sum = 0f;
 //        for (int i = 0; i < h1.length; i++) {

@@ -49,7 +49,7 @@ import net.semanticmetadata.lire.imageanalysis.FCTH;
 import net.semanticmetadata.lire.imageanalysis.JCD;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
@@ -128,14 +128,14 @@ public class TestWang extends TestCase {
 //               builder.addBuilder(new SiftDocumentBuilder());
 
                 builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
-                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
-                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
-                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, "whog"));
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
 
             }
         };
@@ -223,7 +223,7 @@ public class TestWang extends TestCase {
         // copy index to ram to be much faster ...
         IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
 
-        System.out.println("hashFunctionsFileName\tmap\tp@10\terror rate");
+        System.out.println("Method\tmap\tp@10\terror rate");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L1;
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - L1");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.L2;
@@ -249,13 +249,13 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, FuzzyOpponentHistogram.class, "opHist"), "Joint Opponent Histogram - JSD");
 //        computeMAP(new GenericFastImageSearcher(1000, RankAndOpponent.class, "jop"), "JointOp Hist");
         computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, true, reader), "SPCEDD", reader);
-        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, true, reader), "SPFCTH", reader);
-        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, true, reader), "SPJCD", reader);
-        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, true, reader), "SPACC", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, true, reader), "SPFCTH", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, true, reader), "SPJCD", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, true, reader), "SPACC", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, BinaryPatternsPyramid.class, true, reader), "whog", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, true, reader), "jhl", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP");
-        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP", reader);
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");

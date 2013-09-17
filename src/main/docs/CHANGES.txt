@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-09-17
+==========
+  - Updated to Lucene 4.4.0
+
 2013-09-13
 ==========
   - Fixed bug in ColorLayout distance metric
