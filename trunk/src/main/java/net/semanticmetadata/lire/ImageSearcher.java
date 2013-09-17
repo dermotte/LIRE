@@ -83,7 +83,7 @@ public interface ImageSearcher {
      * Searches for images similar to the given image.
      *
      * @param image  the example image to search for.
-     * @param reader the IndexReader which is used to dsearch through the images.
+     * @param reader the IndexReader which is used to search through the images.
      * @return a sorted list of hits.
      * @throws java.io.IOException in case exceptions in the reader occurs
      */
