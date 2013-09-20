@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2013-09-20
+==========
+  - Added pixel clustering quantization method in package net.semanticmetadata.lire.utils.cv
+  - Added fast bilateral filtering based on the code from Frederic Langlet - https://code.google.com/p/kanzi/
+  - Added generic double[] k-means in package net.semanticmetadata.lire.utils.cv
+
 2013-09-17
 ==========
   - Updated to Lucene 4.4.0
