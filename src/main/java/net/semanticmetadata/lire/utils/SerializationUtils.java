@@ -402,5 +402,41 @@ public class SerializationUtils {
         }
         return result;
     }
+
+    /**
+     * Creates a double[] array from a String. It is assumed that the double array is encoded like using {@link #toString(double[])}
+     * @param data
+     * @return
+     */
+    public static double[] toDoubleArray(String data) {
+        LinkedList<Double> dl = new LinkedList<Double>();
+        StringTokenizer st = new StringTokenizer(data);
+        while(st.hasMoreTokens()) {
+            dl.add(Double.parseDouble(st.nextToken()));
+        }
+        double[] result = new double[dl.size()];
+        int count = 0;
+        for (Iterator<Double> iterator = dl.iterator(); iterator.hasNext(); ) {
+            double next = iterator.next();
+            result[count] = next;
+            count++;
+        }
+        return result;
+    }
+
+
+    /**
+     * A simple string creation method. Can be parsed with {@link #toDoubleArray(String)}.
+     * @param data
+     * @return
+     */
+    public static String toString(double[] data) {
+        StringBuilder sb = new StringBuilder(data.length<<2);
+        for (int i = 0; i < data.length; i++) {
+            sb.append(data[i]);
+            sb.append(' ');
+        }
+        return sb.toString();
+    }
 }
 

@@ -48,7 +48,6 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
 
 /**
  * <h2>Creating an Index</h2>
@@ -114,6 +113,7 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_SURF = "featureSurf";
     public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSURFHistogram";
     public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
+    public static final String FIELD_NAME_SURF_VLAD = "featSurfVlad";
     public static final String FIELD_NAME_TAMURA = "featureTAMURA";
 
 
