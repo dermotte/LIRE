@@ -172,14 +172,15 @@ public class ProximityHashingIndexor {
                 run = 0;
                 readFile(indexWriter, inputFile);
                 if (verbose) System.out.printf("%d images found in the data file.\n", docCount);
-                int numReps = 1000;  // TODO: clever selection.
-                if (numReps > docCount / 10) numReps = docCount / 10;
-                if (verbose) System.out.printf("Selecting %d representative images for hashing.\n", numReps);
-                representativesID = new HashSet<Integer>(numReps);
-                while (representativesID.size() < numReps) {
+                int numberOfRepresentatives = 1000;  // TODO: clever selection.
+                // select a number of representative "fixed stars" randomly from file
+                if (numberOfRepresentatives > docCount / 10) numberOfRepresentatives = docCount / 10;
+                if (verbose) System.out.printf("Selecting %d representative images for hashing.\n", numberOfRepresentatives);
+                representativesID = new HashSet<Integer>(numberOfRepresentatives);
+                while (representativesID.size() < numberOfRepresentatives) {
                     representativesID.add((int) Math.floor(Math.random() * (docCount - 1)));
                 }
-                representatives = new ArrayList<LireFeature>(numReps);
+                representatives = new ArrayList<LireFeature>(numberOfRepresentatives);
                 docCount = 0;
                 run = 1;
                 if (verbose) System.out.println("Now getting representatives from the data file.");
@@ -258,7 +259,7 @@ public class ProximityHashingIndexor {
                 // put it into a temporary data structure ...
                 representatives.add(feature);
             }
-        } else if (run == 2) {
+        } else if (run == 2) { // actual hashing: find the nearest representatives and put those as a hash into a document.
             if (feature.getClass().getCanonicalName().equals(featureClass.getCanonicalName())) { // it's a feature to be hashed
                 document.add(new TextField(featureFieldName + "_hash", SerializationUtils.arrayToString(getHashes(feature)), Field.Store.YES));
             }

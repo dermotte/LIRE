@@ -172,4 +172,13 @@ public class Cluster implements Comparable<Object> {
     public void setMembers(HashSet<Integer> members) {
         this.members = members;
     }
+
+    /**
+     * Returns the cluster mean
+     *
+     * @return the cluster mean vector
+     */
+    public double[] getMean() {
+        return mean;
+    }
 }
