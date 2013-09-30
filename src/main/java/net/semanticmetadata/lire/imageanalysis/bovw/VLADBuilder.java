@@ -44,15 +44,13 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
 import net.semanticmetadata.lire.clustering.ParallelKMeans;
-import net.semanticmetadata.lire.imageanalysis.GenericLireFeature;
+import net.semanticmetadata.lire.imageanalysis.GenericByteLireFeature;
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.SurfFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.Bits;
 
@@ -187,7 +185,8 @@ public class VLADBuilder {
         double threshold = Math.max(20d, (double) k.getFeatureCount() / 1000d);
         System.out.println("Threshold = " + threshold);
         int cstep = 3;
-        while (Math.abs(newStress - laststress) > threshold) {
+        // maximum of 14 steps.
+        while (Math.abs(newStress - laststress) > threshold && cstep < 115) {
             System.out.println(getDuration(time) + " -> Next step. Stress difference ~ |" + (int) newStress + " - " + (int) laststress + "| = " + df.format(Math.abs(newStress - laststress)));
             time = System.currentTimeMillis();
             laststress = newStress;
@@ -255,32 +254,46 @@ public class VLADBuilder {
         System.out.println("Finished.");
     }
 
-    public void indexMissing() throws IOException { // TODO: Adapt to VLAD!
+    /**
+     * Indexes all documents in the index, that do not include the VLAD feature yet.
+     *
+     * @throws IOException
+     */
+    public void indexMissing() throws IOException {
         // Reading clusters from disk:
         clusters = Cluster.readClusters(clusterFile);
         //  create & store histograms:
         System.out.println("Creating histograms ...");
-        int[] tmpHist = new int[numClusters];
+//        int[] tmpHist = new int[numClusters];
         LireFeature f = getFeatureInstance();
         IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         for (int i = 0; i < reader.maxDoc(); i++) {
 //            if (!reader.isDeleted(i)) {
-            for (int j = 0; j < tmpHist.length; j++) {
-                tmpHist[j] = 0;
-            }
             Document d = reader.document(i);
+            double[] vlad = null;
+
             // Only if there are no values yet:
             if (d.getValues(vladFieldName) == null || d.getValues(vladFieldName).length == 0) {
                 IndexableField[] fields = d.getFields(localFeatureFieldName);
                 // find the appropriate cluster for each feature:
                 for (int j = 0; j < fields.length; j++) {
                     f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                    tmpHist[clusterForFeature((Histogram) f)]++;
+                    if (vlad == null) {  // init vlad if it is null.
+                        vlad = new double[clusters.length * f.getDoubleHistogram().length];
+                        Arrays.fill(vlad, 0d);
+                    }
+                    int clusterIndex = clusterForFeature((Histogram) f);
+                    double[] mean = clusters[clusterIndex].getMean();
+                    for (int k = 0; k < f.getDoubleHistogram().length; k++) {
+                        vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
+                    }
+
                 }
-//                normalize(tmpHist);
-                d.add(new TextField(vladFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
-//                d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
-                // now write the new one. we use the identifier to update ;)
+                normalize(vlad);
+                GenericByteLireFeature feat = new GenericByteLireFeature();
+                feat.setData(vlad);
+//                System.out.println(feat.getStringRepresentation());
+                d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
             }
 //            }
@@ -299,16 +312,27 @@ public class VLADBuilder {
      */
     public Document getVisualWords(Document d) throws IOException {  // TODO: Adapt to VLAD!
         clusters = Cluster.readClusters(clusterFile);
-        int[] tmpHist = new int[clusters.length];
+        double[] vlad = null;
         LireFeature f = getFeatureInstance();
         IndexableField[] fields = d.getFields(localFeatureFieldName);
         // find the appropriate cluster for each feature:
         for (int j = 0; j < fields.length; j++) {
             f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-            tmpHist[clusterForFeature((Histogram) f)]++;
+            if (vlad == null) {
+                vlad = new double[clusters.length * f.getDoubleHistogram().length];
+                Arrays.fill(vlad, 0d);
+            }
+            int clusterIndex = clusterForFeature((Histogram) f);
+            double[] mean = clusters[clusterIndex].getMean();
+            for (int k = 0; k < f.getDoubleHistogram().length; k++) {
+                vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
+            }
+
         }
-//        normalize(tmpHist);
-        d.add(new TextField(vladFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+        normalize(vlad);
+        GenericByteLireFeature feat = new GenericByteLireFeature();
+        feat.setData(vlad);
+        d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
 //        d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
         d.removeFields(localFeatureFieldName);
         return d;
@@ -321,7 +345,7 @@ public class VLADBuilder {
             sumOfSquares += histogram[i] * histogram[i];
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = Math.floor(16d* histogram[i] / Math.sqrt(sumOfSquares));
+            histogram[i] = Math.floor(16d * histogram[i] / Math.sqrt(sumOfSquares));
         }
 /*        // L1
         double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
@@ -444,14 +468,14 @@ public class VLADBuilder {
         }
 
         public void run() {
-            int[] tmpHist = new int[numClusters];
+//            int[] tmpHist = new int[numClusters];
             LireFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {
 //                    if (!reader.isDeleted(i)) {    // TODO!
-                    for (int j = 0; j < tmpHist.length; j++) {
-                        tmpHist[j] = 0;
-                    }
+//                    for (int j = 0; j < tmpHist.length; j++) {
+//                        tmpHist[j] = 0;
+//                    }
                     Document d = reader.document(i);
                     IndexableField[] fields = d.getFields(localFeatureFieldName);
                     // remove the fields if they are already there ...
@@ -471,13 +495,13 @@ public class VLADBuilder {
                         double[] mean = clusters[clusterIndex].getMean();
                         for (int k = 0; k < f.getDoubleHistogram().length; k++) {
 //                            System.out.println((clusterIndex*f.getDoubleHistogram().length+k) + " - mean: " + mean.length + " - feature: " + f.getDoubleHistogram().length);
-                            vlad[clusterIndex*f.getDoubleHistogram().length+k] += f.getDoubleHistogram()[k] - mean[k];
+                            vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
                         }
                     }
                     normalize(vlad);
-                    GenericLireFeature feat = new GenericLireFeature();
+                    GenericByteLireFeature feat = new GenericByteLireFeature();
                     feat.setData(vlad);
-                    System.out.println(feat.getStringRepresentation());
+//                    System.out.println(feat.getStringRepresentation());
                     d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
 //                    d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
 

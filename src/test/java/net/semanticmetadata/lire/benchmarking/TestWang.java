@@ -48,7 +48,7 @@ import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.FCTH;
-import net.semanticmetadata.lire.imageanalysis.GenericLireFeature;
+import net.semanticmetadata.lire.imageanalysis.GenericByteLireFeature;
 import net.semanticmetadata.lire.imageanalysis.JCD;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
@@ -266,7 +266,7 @@ public class TestWang extends TestCase {
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS), "SIFT BoVW");
 
-        computeMAP(new GenericFastImageSearcher(1000, GenericLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), "VLAD-SURF", reader);
+        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), "VLAD-SURF", reader);
 
     }
 

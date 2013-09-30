@@ -48,7 +48,7 @@ import java.awt.image.BufferedImage;
  * Generic double[] based feature implementation.
  * @author Mathias Lux, mathias@juggle.at, 27.09.13 17:00
  */
-public class GenericLireFeature implements LireFeature {
+public class GenericDoubleLireFeature implements LireFeature {
     double[] data = null;
 
     @Override
@@ -58,7 +58,7 @@ public class GenericLireFeature implements LireFeature {
 
     @Override
     public String getFieldName() {
-        return "featGeneric";
+        return "featGenericDouble";
     }
 
     @Override
