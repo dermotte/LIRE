@@ -438,5 +438,14 @@ public class SerializationUtils {
         }
         return sb.toString();
     }
+
+    public static String toString(byte[] data) {
+        StringBuilder sb = new StringBuilder(data.length<<2);
+        for (int i = 0; i < data.length; i++) {
+            sb.append(data[i]);
+            sb.append(' ');
+        }
+        return sb.toString();
+    }
 }
 

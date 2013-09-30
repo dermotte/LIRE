@@ -124,9 +124,9 @@ public class TestGroundTruth extends TestCase {
                 builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
 //                builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
 //                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
-
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
+//                builder.addBuilder(new SurfDocumentBuilder());
             }
         };
         pin.run();
@@ -155,12 +155,19 @@ public class TestGroundTruth extends TestCase {
 //                    builder.addBuilder(new GenericDocumentBuilder(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, false));
 
-//                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
-//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
+//                    builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "lbp", true));
+//                    builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class, "spcedd", true));
+//                    builder.addBuilder(new SurfDocumentBuilder());
                 }
             };
             pin.run();
         }
+//        try {
+//            VLADBuilder vlad = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 5000);
+//            vlad.index();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void testSearchBenchmark() throws IOException {
@@ -186,6 +193,7 @@ public class TestGroundTruth extends TestCase {
 //        getRecall("LocalBinaryPatterns (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "_hash", new LocalBinaryPatterns(), 1000), reader);
 //        getRecall("Luminance Layout (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT + "_hash", new LuminanceLayout(), 1000), reader);
 //        getRecall("BinaryPatternsPyramid (hashed)", new BitSamplingImageSearcher(50, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID, DocumentBuilder.FIELD_NAME_BINARY_PATTERNS_PYRAMID + "_hash", new LocalBinaryPatterns(), 1000), reader);
+//        getRecall("VLAD (linear)", new GenericFastImageSearcher(1000, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), reader);
     }
 
     /**

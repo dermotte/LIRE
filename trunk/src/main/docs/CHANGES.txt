@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2013-09-30
+==========
+  - Added convenience methods to VLADBuilder (indexMissing, etc.)
+  - Added GenericByteLireFeature and renamed generic feature to
+    net.semanticmetadata.lire.imageanalysis.GenericDoubleLireFeature
+
+
 2013-09-27
 ==========
   - Added a preliminary implementation of the VLAD descriptor (net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder)
