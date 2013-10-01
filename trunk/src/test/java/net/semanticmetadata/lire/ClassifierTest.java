@@ -68,59 +68,112 @@ public class ClassifierTest extends TestCase {
     //Starts the classification process
     public void testClassifyNFeatures() throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
 
-
-        String locationSaveResultsFile = "D:\\8k3.txt";
-        String locationOfIndex = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
-        String locationOfImages = "D:\\Datasets\\FashionTestItemDataSet\\";
-        String locationOfTrainSet = "D:\\Datasets\\FashionTestItemDataSet\\train.txt";
-        String locationExtracorFile =  "D:\\Datasets\\FashionTestItemDataSet\\indexall.data";
-        double informationGainThreshold = 1.1;
-        int numberOfCombinations = 8;
-        int numberOfNeighbours = 2;
+        //config
+        boolean useIndexSearch = true; //use a with HashigIndexorMulti class generated index of the test set for search
+        String locationSaveResultsFile = "D:\\Fashion10000RunFashion3withTweakmoreNo.txt"; //where should the outcame be saved
+        String locationOfIndex = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index";  //location of the lire index
+        String locationOfImages = "D:\\Datasets\\FashionTest\\";     //location of the images
+        String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt"; //location of the trainingsset
+        String locationExtracorFile = "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";    //location of the extractor file
+        String locationOfTestset = "D:\\Datasets\\FashionTestFashionDataSet\\test.txt";          //Testset location
+     /*   String locationOfIndex = "D:\\Datasets\\FashionTestFashionDataSet\\idx\\index";  //location of the lire index
+        String locationOfImages = "D:\\Datasets\\FashionTest\\";     //location of the images
+        String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt"; //location of the trainingsset
+        String locationExtracorFile = "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";    //location of the extractor file
+        String locationOfTestset = "D:\\Datasets\\FashionTestFashionDataSet\\test.txt"; */         //Testset location
+        double informationGainThreshold = 0.1;    //threshold for information gain
+        int numberOfCombinations = 12;      //number of max combinations
+        int numberOfNeighbours = 2;        //number of neighbours for search result
         //All possible classes and fields
-    //    String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
-    //    String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+        //    String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+        //    String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
         String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
-         String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+        String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
 
+        //int[] featureSpace = {144, 80, 192, 33, 630, 168, 60, 192, 18, 64, 64, 64};    //size of feature vector per feature
+        //int[] featureSpace = {144, 60, 64, 64, 168, 64, 630, 192, 192, 18, 192, 80};
+        int [] featureSpace = new int[classArray.length];
+        double[] featuresInformationGain = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};       //for information gain. musst contain the same value of zeros as fiedls and class array have features
+
+        //get the length of the feature spaces
+        InputStream inf = new FileInputStream(locationExtracorFile);
+        byte[] tempIntf = new byte[4];
+        int tmpf, tmpFeaturef;
+        byte[] tempf = new byte[100 * 1024];
+        while ((tmpf = inf.read(tempIntf, 0, 4)) > 0) {
+            tmpf = SerializationUtils.toInt(tempIntf);
+            inf.read(tempf, 0, tmpf);
+            while (inf.read(tempIntf, 0, 1) > 0) {
+                if (tempIntf[0] == -1) break;
+                tmpFeaturef = tempIntf[0];
+                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
+                // byte[] length ...
+                inf.read(tempIntf, 0, 4);
+                tmpf = SerializationUtils.toInt(tempIntf);
+                inf.read(tempf, 0, tmpf);
+                f.setByteArrayRepresentation(tempf, 0, tmpf);
+                //System.out.println(f.getDoubleHistogram().length+f.getClass().getSimpleName());
+                for (int z=0;z<classArray.length;z++){
+                    if(f.getClass().getSimpleName().equals(classArray[z]))
+                    featureSpace[z] = f.getDoubleHistogram().length;
+
+                }
+
+            }
+            break;
+        }
+
+
+        //Create Hasmap for the feature length
+        HashMap<String, Integer> featureSpaceHashMap = new HashMap<String, Integer>(classArray.length);
+        for (int d = 0; d < classArray.length; d++)
+            featureSpaceHashMap.put(classArray[d], featureSpace[d]);
+
+        //Create Hasmap for the feature information gain
+        HashMap<String, Double> featureInformationGainHashMap = new HashMap<String, Double>(classArray.length);
+        for (int d = 0; d < classArray.length; d++)
+            featureInformationGainHashMap.put(classArray[d], 0.0);
+
+
+        //classes for the search
         String class1 = "yes";
         String class2 = "no";
-        //Testset
-        String locationOfTestset = "D:\\Datasets\\FashionTestItemDataSet\\test.txt";
-        int[] featureSpace = {144,60,64,64,168,64,630,33,192,18,192,80};
-        double[] featuresInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
-        featuresInformationGain = getFeaturesInformationGainScore(locationOfImages,locationOfTrainSet,locationExtracorFile,classArray,featureSpace,featuresInformationGain);
+
+
+        //Calculate the information gain for each feature and reduce the features for combination
+        featureInformationGainHashMap = getFeaturesInformationGainScore(locationOfImages, locationOfTrainSet, locationExtracorFile, classArray, featureSpace, featuresInformationGain, featureSpaceHashMap, featureInformationGainHashMap);
 
         ArrayList<String> reducedFieldsArray = new ArrayList<String>();
         ArrayList<String> reducedClassArray = new ArrayList<String>();
 
 
-        for (int i=0;i<featuresInformationGain.length;i++) {
-            if(featuresInformationGain[i]>informationGainThreshold){
+     /*   for (int i = 0; i < featuresInformationGain.length; i++) {
+            if (featuresInformationGain[i] >= informationGainThreshold) {
+                reducedFieldsArray.add(fieldsArray[i]);
+                reducedClassArray.add(classArray[i]);
+            }
+        }*/
+            for (int i = 0; i < classArray.length; i++) {
+            if (featureInformationGainHashMap.get(classArray[i]) >= informationGainThreshold) {
                 reducedFieldsArray.add(fieldsArray[i]);
                 reducedClassArray.add(classArray[i]);
             }
         }
 
         //If the number of combinations is bigger than the max size of features
-        if(numberOfCombinations>reducedClassArray.size())
+        if (numberOfCombinations > reducedClassArray.size())
             numberOfCombinations = reducedClassArray.size();
-
-        //FOR THE Feature Selection PART
-        // String photosLocation = "D:\\Datasets\\FashionTest\\";
-        // String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt";
-        // String locationExtracorFile =  "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";
-
-        //Name of the features to extract
-        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
-        //  int[] featureSpace = {144,60,64,64,168,64,630,33,192,18,192,80};
-        //  double[] featureInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
 
         System.out.println("Features reduced! Starting with classification. Reduced Feature Set: " + reducedClassArray.toString());
 
 
+        //Starts the classification
         try {
-            testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray,numberOfCombinations,class1,class2,informationGainThreshold);
+            if (useIndexSearch)
+            testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray, numberOfCombinations, class1, class2, informationGainThreshold,"TestSet");
+            else
+            testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray, numberOfCombinations, class1, class2, informationGainThreshold);
+
         } catch (NoSuchFieldException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IllegalAccessException e) {
@@ -133,7 +186,895 @@ public class ClassifierTest extends TestCase {
     }
 
 
+    //classfication for N combined features
+    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, int searchedClass, ArrayList<String> fieldsArray, ArrayList<String> classArray, int combineNfeatures, String class1, String class2, double informationGainThreshold) throws IOException, NoSuchFieldException, IllegalAccessException, ClassNotFoundException, InstantiationException {
 
+        //numer of features and how much should be combined
+        int feats = fieldsArray.size();
+        int combs = combineNfeatures;
+
+        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
+
+        //all the combinations stored here
+        ArrayList combinations = print_nCr(feats, combs);
+
+        //  String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+
+        //get the features for the column names
+        String sCombinedFeatures = "";
+        for (int i = 0; i < 12; i++) {
+            sCombinedFeatures = sCombinedFeatures + "Feature" + i + 1 + ";";
+        }
+        print_line.print(sCombinedFeatures + "K=;IGTH;Weight Rank=;Class;Precision;Recall;True Negative Rate;Accuracy;False Positive Rate;F-Measure;Count Test Images;Count Correct;ms per test;TP;FP;TN;FN");
+        print_line.println();
+        print_line.flush();
+
+        ArrayList<String> fields1List = new ArrayList<String>();
+        ArrayList<String> class1List = new ArrayList<String>();
+
+
+        for (int i = 0; i < combinations.size(); i += combs) {
+            for (int j = 0; j < combs; j++) {
+                //     System.out.print(combinations.get(i + j).toString() + " ");
+                int x = (Integer) combinations.get(i + j) - 1;
+                fields1List.add(fieldsArray.get(x));
+                class1List.add(classArray.get(x));
+            }
+        }
+
+
+        for (int i = 0; i < combinations.size(); i += combs) {
+
+            // System.out.println(i);
+
+            ArrayList featureNameList = new ArrayList();
+            ArrayList lireFeatureList = new ArrayList();
+            ArrayList indexLocationList = new ArrayList();
+
+
+            //iterate over all fields lists and fill it in a array
+            for (int j = 0; j < combs; j++) {
+                //   System.out.print(combinations.get(i + j).toString() + " ");
+                featureNameList.add((String) DocumentBuilder.class.getField("FIELD_NAME_" + fields1List.get(i + j).toUpperCase()).get(null));
+                lireFeatureList.add((LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + class1List.get(i + j)).newInstance());
+                indexLocationList.add(indexLocation + class1List.get(i + j));
+            }
+
+            boolean weightByRank = true;
+            boolean createHTML = true;
+            //  String[] classes = {"yes", "no"};
+            String[] classes = {class1, class2};
+            int k = numberOfNeighbours;
+
+
+            //System.out.println("Tests for lf1 " + f1 + " with k=" + k + " combined with " + f2 + " - weighting by rank sum: " + weightByRank);
+            //System.out.println("========================================");
+            HashMap<String, Integer> tag2count = new HashMap<String, Integer>(k);
+            HashMap<String, Double> tag2weight = new HashMap<String, Double>(k);
+            int c = 0;   // used for just one class ...
+            //        for (int c = 0; c < 10; c++) {
+            c = searchedClass;
+
+            String classIdentifier = classes[c];
+
+            //"D:\\Datasets\\FashionTest\\fashion10000Test\\" + classIdentifier + ".txt";
+
+            // INIT
+            ArrayList<String> classesHTML = new ArrayList<String>();
+            ArrayList<String> filesHTML = new ArrayList<String>();
+
+
+            int[] confusion = new int[2];
+            Arrays.fill(confusion, 0);
+            HashMap<String, Integer> class2id = new HashMap<String, Integer>(2);
+            for (int d = 0; d < classes.length; d++)
+                class2id.put(classes[d], d);
+
+            BufferedReader br = new BufferedReader(new FileReader(testSetFile));
+            String line;
+
+            IndexReader ir2 = null;
+            ImageSearcher bis2 = null;
+            IndexReader ir3 = null;
+            ImageSearcher bis3 = null;
+            IndexReader ir4 = null;
+            ImageSearcher bis4 = null;
+            IndexReader ir5 = null;
+            ImageSearcher bis5 = null;
+            IndexReader ir6 = null;
+            ImageSearcher bis6 = null;
+            IndexReader ir7 = null;
+            ImageSearcher bis7 = null;
+            IndexReader ir8 = null;
+            ImageSearcher bis8 = null;
+            IndexReader ir9 = null;
+            ImageSearcher bis9 = null;
+            IndexReader ir10 = null;
+            ImageSearcher bis10 = null;
+            IndexReader ir11 = null;
+            ImageSearcher bis11 = null;
+            IndexReader ir12 = null;
+            ImageSearcher bis12 = null;
+
+
+            IndexReader ir1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0))));
+            ImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
+            if (combs > 1) {
+                ir2 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(1))));
+                bis2 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(1).getClass(), (String) featureNameList.get(1), true, ir2);
+            }
+            if (combs > 2) {
+                ir3 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(2))));
+                bis3 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(2).getClass(), (String) featureNameList.get(2), true, ir3);
+            }
+            if (combs > 3) {
+                ir4 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(3))));
+                bis4 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(3).getClass(), (String) featureNameList.get(3), true, ir4);
+            }
+            if (combs > 4) {
+                ir5 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(4))));
+                bis5 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(4).getClass(), (String) featureNameList.get(4), true, ir5);
+            }
+            if (combs > 5) {
+                ir6 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(5))));
+                bis6 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(5).getClass(), (String) featureNameList.get(5), true, ir6);
+            }
+            if (combs > 6) {
+                ir7 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(6))));
+                bis7 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(6).getClass(), (String) featureNameList.get(6), true, ir7);
+            }
+            if (combs > 7) {
+                ir8 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(7))));
+                bis8 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(7).getClass(), (String) featureNameList.get(7), true, ir8);
+            }
+            if (combs > 8) {
+                ir9 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(8))));
+                bis9 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(8).getClass(), (String) featureNameList.get(8), true, ir9);
+            }
+            if (combs > 9) {
+                ir10 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(9))));
+                bis10 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(9).getClass(), (String) featureNameList.get(9), true, ir10);
+            }
+            if (combs > 10) {
+                ir11 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(10))));
+                bis11 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(10).getClass(), (String) featureNameList.get(10), true, ir11);
+            }
+            if (combs > 11) {
+                ir12 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(11))));
+                bis12 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(11).getClass(), (String) featureNameList.get(11), true, ir12);
+            }
+
+            ImageSearchHits hits1;
+            ImageSearchHits hits2 = null;
+            ImageSearchHits hits3 = null;
+            ImageSearchHits hits4 = null;
+            ImageSearchHits hits5 = null;
+            ImageSearchHits hits6 = null;
+            ImageSearchHits hits7 = null;
+            ImageSearchHits hits8 = null;
+            ImageSearchHits hits9 = null;
+            ImageSearchHits hits10 = null;
+            ImageSearchHits hits11 = null;
+            ImageSearchHits hits12 = null;
+
+            int count = 0, countCorrect = 0;
+            double countTp = 0, countFp = 0, countTn = 0, countFn = 0;      //F1 Metric
+            long ms = System.currentTimeMillis();
+            while ((line = br.readLine()) != null) {
+
+                //  System.out.println(count);
+
+                tag2count.clear();
+                tag2weight.clear();
+                //  tag2count.put("yes", 1);
+                //  tag2count.put("no", 1);
+                //  tag2weight.put("yes", 1.0);
+                //  tag2weight.put("no", 1.0);
+
+                tag2count.put(class1, 1);
+                tag2count.put(class2, 1);
+                tag2weight.put(class1, 1.0);
+                tag2weight.put(class2, 1.0);
+
+
+                hits1 = bis1.search(ImageIO.read(new File(line)), ir1);
+                if (combs > 1) {
+                    hits2 = bis2.search(ImageIO.read(new File(line)), ir2);
+                }
+                if (combs > 2) {
+                    hits3 = bis3.search(ImageIO.read(new File(line)), ir3);
+                }
+                if (combs > 3) {
+                    hits4 = bis4.search(ImageIO.read(new File(line)), ir4);
+                }
+                if (combs > 4) {
+                    hits5 = bis5.search(ImageIO.read(new File(line)), ir5);
+                }
+                if (combs > 5) {
+                    hits6 = bis6.search(ImageIO.read(new File(line)), ir6);
+                }
+                if (combs > 6) {
+                    hits7 = bis7.search(ImageIO.read(new File(line)), ir7);
+                }
+                if (combs > 7) {
+                    hits8 = bis8.search(ImageIO.read(new File(line)), ir8);
+                }
+                if (combs > 8) {
+                    hits9 = bis9.search(ImageIO.read(new File(line)), ir9);
+                }
+                if (combs > 9) {
+                    hits10 = bis10.search(ImageIO.read(new File(line)), ir10);
+                }
+                if (combs > 10) {
+                    hits11 = bis11.search(ImageIO.read(new File(line)), ir11);
+                }
+                if (combs > 11) {
+                    hits12 = bis12.search(ImageIO.read(new File(line)), ir12);
+                }
+
+                // set tag weights and counts.
+                for (int l = 0; l < k; l++) {
+
+                    //  String tag = getTag(hits1.doc(l), photosLocation);
+
+                    tag2count.put(getTag(hits1.doc(l), photosLocation), tag2count.get(getTag(hits1.doc(l), photosLocation)) + 1);
+                    if (combs > 1)
+                        tag2count.put(getTag(hits2.doc(l), photosLocation), tag2count.get(getTag(hits2.doc(l), photosLocation)) + 1);
+                    if (combs > 2)
+                        tag2count.put(getTag(hits3.doc(l), photosLocation), tag2count.get(getTag(hits3.doc(l), photosLocation)) + 1);
+                    if (combs > 3)
+                        tag2count.put(getTag(hits4.doc(l), photosLocation), tag2count.get(getTag(hits4.doc(l), photosLocation)) + 1);
+                    if (combs > 4)
+                        tag2count.put(getTag(hits5.doc(l), photosLocation), tag2count.get(getTag(hits5.doc(l), photosLocation)) + 1);
+                    if (combs > 5)
+                        tag2count.put(getTag(hits6.doc(l), photosLocation), tag2count.get(getTag(hits6.doc(l), photosLocation)) + 1);
+                    if (combs > 6)
+                        tag2count.put(getTag(hits7.doc(l), photosLocation), tag2count.get(getTag(hits7.doc(l), photosLocation)) + 1);
+                    if (combs > 7)
+                        tag2count.put(getTag(hits8.doc(l), photosLocation), tag2count.get(getTag(hits8.doc(l), photosLocation)) + 1);
+                    if (combs > 8)
+                        tag2count.put(getTag(hits9.doc(l), photosLocation), tag2count.get(getTag(hits9.doc(l), photosLocation)) + 1);
+                    if (combs > 9)
+                        tag2count.put(getTag(hits10.doc(l), photosLocation), tag2count.get(getTag(hits10.doc(l), photosLocation)) + 1);
+                    if (combs > 10)
+                        tag2count.put(getTag(hits11.doc(l), photosLocation), tag2count.get(getTag(hits11.doc(l), photosLocation)) + 1);
+                    if (combs > 11)
+                        tag2count.put(getTag(hits12.doc(l), photosLocation), tag2count.get(getTag(hits12.doc(l), photosLocation)) + 1);
+
+
+                    if (weightByRank) {
+                        tag2weight.put(getTag(hits1.doc(l), photosLocation), (double) l);
+                        if (combs > 1)
+                            tag2weight.put(getTag(hits2.doc(l), photosLocation), (double) l);
+                        if (combs > 2)
+                            tag2weight.put(getTag(hits3.doc(l), photosLocation), (double) l);
+                        if (combs > 3)
+                            tag2weight.put(getTag(hits4.doc(l), photosLocation), (double) l);
+                        if (combs > 4)
+                            tag2weight.put(getTag(hits5.doc(l), photosLocation), (double) l);
+                        if (combs > 5)
+                            tag2weight.put(getTag(hits6.doc(l), photosLocation), (double) l);
+                        if (combs > 6)
+                            tag2weight.put(getTag(hits7.doc(l), photosLocation), (double) l);
+                        if (combs > 7)
+                            tag2weight.put(getTag(hits8.doc(l), photosLocation), (double) l);
+                        if (combs > 8)
+                            tag2weight.put(getTag(hits9.doc(l), photosLocation), (double) l);
+                        if (combs > 9)
+                            tag2weight.put(getTag(hits10.doc(l), photosLocation), (double) l);
+                        if (combs > 10)
+                            tag2weight.put(getTag(hits11.doc(l), photosLocation), (double) l);
+                        if (combs > 11)
+                            tag2weight.put(getTag(hits12.doc(l), photosLocation), (double) l);
+                    }
+
+                }
+                // find class, iterate over the tags (classes):
+                int maxCount = 0, maxima = 0;
+                String classifiedAs = null;
+                for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
+                    String tag = tagIterator.next();
+                    if (tag2count.get(tag) > maxCount) {
+                        maxCount = tag2count.get(tag);
+                        maxima = 1;
+                        classifiedAs = tag;
+                    } else if (tag2count.get(tag) == maxCount) {
+                        maxima++;
+                    }
+                }
+                // if there are two or more classes with the same number of results, then we take a look at the weights.
+                // else the class is alread given in classifiedAs.
+                if (maxima > 1) {
+                    double minWeight = Double.MAX_VALUE;
+                    for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
+                        String tag = tagIterator.next();
+                        if (tag2weight.get(tag) < minWeight) {
+                            minWeight = tag2weight.get(tag);
+                            classifiedAs = tag;
+                        }
+                    }
+                }
+
+                count++;
+                //SHOW THE CLASSIFICATION
+                //     System.out.println(classifiedAs+";"+line);
+                classesHTML.add(classifiedAs);
+                filesHTML.add(line);
+
+                //F1 Metric
+                //     if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes")) {
+                if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class1)) {
+                    countCorrect++;
+                    countTp++;
+                    //    } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes"))
+                } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class1))
+                    countFp++;
+
+                //    if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no")) {
+                if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class2)) {
+                    countCorrect++;
+                    countTn++;
+                    //     } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no"))
+                } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class2))
+                    countFn++;
+
+                // confusion:
+                //confusion[class2id.get(classifiedAs)]++;
+//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+
+            }
+
+            double precisicon = getPrecision(countTp, countFp);
+            double recall = getRecall(countTp, countFn);
+            double trueNegativeRate = getTrueNegativeRate(countTn, countFp);
+            double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
+            double fMeasure = getFmeasure(precisicon, recall);
+            double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
+            double mccMeasure = getMccMeasure(countTp, countFp, countTn, countFn);
+            double wFM = getWFM(countTp, countFp, countTn, countFn, fMeasure, count);
+            // System.out.println("Results for class " + classIdentifier);
+            // System.out.printf("Class\tPrecision\tRecall\tTrue Negative Rate\tAccuracy\tF-Measure\tCount Test Images\tCount Corret\tms per test\n");
+            // System.out.printf("%s\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%10d\t%10d\t%4d\n", classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
+
+            //   System.out.println(i + 1 + " of " + class1List.size() + " finished. " + (System.currentTimeMillis() - ms) / 1000 + " seconds per round. " + "Feature: " + " Current y: " + i);
+
+            String classesLongName = "";
+
+            for (int j = 0; j < combs; j++) {
+                //   System.out.print(combinations.get(i + j).toString() + " ");
+                classesLongName = classesLongName + fields1List.get(i + j) + ";";
+            }
+
+            //   print_line.printf("%s,%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            System.out.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            print_line.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            print_line.flush();
+
+            //Create HTML
+            if (createHTML == true) {
+
+                String fileName = "classifieresults-" + System.currentTimeMillis() / 1000 + ".html";
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+                bw.write("<html>\n" +
+                        "<head><title>Classification Results</title></head>\n" +
+                        "<body bgcolor=\"#FFFFFF\">\n");
+                bw.write("<table>");
+
+                // int elems = Math.min(filesHTML.size(),50);
+                int elems = filesHTML.size();
+
+                for (int d = 0; i < elems; d++) {
+                    if (d % 3 == 0) bw.write("<tr>");
+
+                    String s = filesHTML.get(d);
+                    String colorF = "rgb(0, 255, 0)";
+
+                    if (classesHTML.get(d).equals("no"))
+                        colorF = "rgb(255, 0, 0)";
+                    //  String s = reader.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
+                    //  System.out.println(reader.document(topDocs.scoreDocs[i].doc).get("featLumLay"));
+                    //  s = new File(s).getAbsolutePath();
+                    // System.out.println(s);
+                    bw.write("<td><a href=\"" + s + "\"><img style=\"max-width:220px;border:medium solid " + colorF + ";\"src=\"" + s + "\" border=\"" + 5 + "\" style=\"border: 3px\n" +
+                            "black solid;\"></a></td>\n");
+                    if (d % 3 == 2) bw.write("</tr>");
+                }
+                if (elems % 3 != 0) {
+                    if (elems % 3 == 2) {
+                        bw.write("<td>-</td with exit code 0\nd>\n");
+                        bw.write("<td>-</td>\n");
+                    } else if (elems % 3 == 2) {
+                        bw.write("<td>-</td>\n");
+                    }
+                    bw.write("</tr>");
+                }
+
+                bw.write("</table></body>\n" +
+                        "</html>");
+                bw.close();
+            }
+            //   } // kfor
+//        }
+        }
+        print_line.close();
+        return true;
+    }
+
+    //use index for classification, its faster
+    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, int searchedClass, ArrayList<String> fieldsArray, ArrayList<String> classArray, int combineNfeatures, String class1, String class2, double informationGainThreshold, String useIndex) throws IOException, NoSuchFieldException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+
+        //numer of features and how much should be combined
+        int feats = fieldsArray.size();
+        int combs = combineNfeatures;
+
+        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
+
+        //all the combinations stored here
+        ArrayList combinations = print_nCr(feats, combs);
+
+        //  String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
+        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+
+        //get the features for the column names
+        String sCombinedFeatures = "";
+        for (int i = 0; i < 12; i++) {
+            sCombinedFeatures = sCombinedFeatures + "Feature" + i + 1 + ";";
+        }
+        print_line.print(sCombinedFeatures + "K=;IGTH;Weight Rank=;Class;Precision;Recall;True Negative Rate;Accuracy;False Positive Rate;F-Measure;Count Test Images;Count Correct;ms per test;TP;FP;TN;FN");
+        print_line.println();
+        print_line.flush();
+
+        ArrayList<String> fields1List = new ArrayList<String>();
+        ArrayList<String> class1List = new ArrayList<String>();
+
+
+        for (int i = 0; i < combinations.size(); i += combs) {
+            for (int j = 0; j < combs; j++) {
+                //     System.out.print(combinations.get(i + j).toString() + " ");
+                int x = (Integer) combinations.get(i + j) - 1;
+                fields1List.add(fieldsArray.get(x));
+                class1List.add(classArray.get(x));
+            }
+        }
+
+
+        for (int i = 0; i < combinations.size(); i += combs) {
+
+            // System.out.println(i);
+
+            ArrayList featureNameList = new ArrayList();
+            ArrayList lireFeatureList = new ArrayList();
+            ArrayList indexLocationList = new ArrayList();
+
+
+            //iterate over all fields lists and fill it in a array
+            for (int j = 0; j < combs; j++) {
+                //   System.out.print(combinations.get(i + j).toString() + " ");
+                featureNameList.add((String) DocumentBuilder.class.getField("FIELD_NAME_" + fields1List.get(i + j).toUpperCase()).get(null));
+                lireFeatureList.add((LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + class1List.get(i + j)).newInstance());
+                indexLocationList.add(indexLocation + class1List.get(i + j));
+            }
+
+            boolean weightByRank = true;
+            boolean createHTML = true;
+            //  String[] classes = {"yes", "no"};
+            String[] classes = {class1, class2};
+            int k = numberOfNeighbours;
+
+
+            //System.out.println("Tests for lf1 " + f1 + " with k=" + k + " combined with " + f2 + " - weighting by rank sum: " + weightByRank);
+            //System.out.println("========================================");
+            HashMap<String, Integer> tag2count = new HashMap<String, Integer>(k);
+            HashMap<String, Double> tag2weight = new HashMap<String, Double>(k);
+            int c = 0;   // used for just one class ...
+            //        for (int c = 0; c < 10; c++) {
+            c = searchedClass;
+
+            String classIdentifier = classes[c];
+
+            //"D:\\Datasets\\FashionTest\\fashion10000Test\\" + classIdentifier + ".txt";
+
+            // INIT
+            ArrayList<String> classesHTML = new ArrayList<String>();
+            ArrayList<String> filesHTML = new ArrayList<String>();
+
+
+            int[] confusion = new int[2];
+            Arrays.fill(confusion, 0);
+            HashMap<String, Integer> class2id = new HashMap<String, Integer>(2);
+            for (int d = 0; d < classes.length; d++)
+                class2id.put(classes[d], d);
+
+         //   BufferedReader br = new BufferedReader(new FileReader(testSetFile));
+         //   String line;
+
+            IndexReader irt1 = null;
+            IndexReader irt2 = null;
+            IndexReader irt3 = null;
+            IndexReader irt4 = null;
+            IndexReader irt5 = null;
+            IndexReader irt6 = null;
+            IndexReader irt7 = null;
+            IndexReader irt8 = null;
+            IndexReader irt9 = null;
+            IndexReader irt10 = null;
+            IndexReader irt11 = null;
+            IndexReader irt12 = null;
+
+
+            IndexReader ir2 = null;
+            ImageSearcher bis2 = null;
+            IndexReader ir3 = null;
+            ImageSearcher bis3 = null;
+            IndexReader ir4 = null;
+            ImageSearcher bis4 = null;
+            IndexReader ir5 = null;
+            ImageSearcher bis5 = null;
+            IndexReader ir6 = null;
+            ImageSearcher bis6 = null;
+            IndexReader ir7 = null;
+            ImageSearcher bis7 = null;
+            IndexReader ir8 = null;
+            ImageSearcher bis8 = null;
+            IndexReader ir9 = null;
+            ImageSearcher bis9 = null;
+            IndexReader ir10 = null;
+            ImageSearcher bis10 = null;
+            IndexReader ir11 = null;
+            ImageSearcher bis11 = null;
+            IndexReader ir12 = null;
+            ImageSearcher bis12 = null;
+
+    /*        IndexReader ir2 = null;
+            BitSamplingImageSearcher bis2 = null;
+            IndexReader ir3 = null;
+            BitSamplingImageSearcher bis3 = null;
+            IndexReader ir4 = null;
+            BitSamplingImageSearcher bis4 = null;
+            IndexReader ir5 = null;
+            BitSamplingImageSearcher bis5 = null;
+            IndexReader ir6 = null;
+            BitSamplingImageSearcher bis6 = null;
+            IndexReader ir7 = null;
+            BitSamplingImageSearcher bis7 = null;
+            IndexReader ir8 = null;
+            BitSamplingImageSearcher bis8 = null;
+            IndexReader ir9 = null;
+            BitSamplingImageSearcher bis9 = null;
+            IndexReader ir10 = null;
+            BitSamplingImageSearcher bis10 = null;
+            IndexReader ir11 = null;
+            BitSamplingImageSearcher bis11 = null;
+            IndexReader ir12 = null;
+            BitSamplingImageSearcher bis12 = null;*/
+
+
+            IndexReader ir1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0))));
+            irt1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0)+"TestSet")));
+          //  ImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
+            GenericFastImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
+            if (combs > 1) {
+                ir2 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(1))));
+                irt2 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(1)+"TestSet")));
+                bis2 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(1).getClass(), (String) featureNameList.get(1), true, ir2);
+            }
+            if (combs > 2) {
+                ir3 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(2))));
+                irt3 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(2)+"TestSet")));
+                bis3 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(2).getClass(), (String) featureNameList.get(2), true, ir3);
+            }
+            if (combs > 3) {
+                ir4 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(3))));
+                irt4 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(3)+"TestSet")));
+                bis4 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(3).getClass(), (String) featureNameList.get(3), true, ir4);
+            }
+            if (combs > 4) {
+                ir5 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(4))));
+                irt5 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(4)+"TestSet")));
+                bis5 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(4).getClass(), (String) featureNameList.get(4), true, ir5);
+            }
+            if (combs > 5) {
+                ir6 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(5))));
+                irt6 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(5)+"TestSet")));
+                bis6 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(5).getClass(), (String) featureNameList.get(5), true, ir6);
+            }
+            if (combs > 6) {
+                ir7 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(6))));
+                irt7 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(6)+"TestSet")));
+                bis7 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(6).getClass(), (String) featureNameList.get(6), true, ir7);
+            }
+            if (combs > 7) {
+                ir8 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(7))));
+                irt8 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(7)+"TestSet")));
+                bis8 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(7).getClass(), (String) featureNameList.get(7), true, ir8);
+            }
+            if (combs > 8) {
+                ir9 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(8))));
+                irt9 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(8)+"TestSet")));
+                bis9 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(8).getClass(), (String) featureNameList.get(8), true, ir9);
+            }
+            if (combs > 9) {
+                ir10 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(9))));
+                irt10 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(9)+"TestSet")));
+                bis10 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(9).getClass(), (String) featureNameList.get(9), true, ir10);
+            }
+            if (combs > 10) {
+                ir11 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(10))));
+                irt11 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(10)+"TestSet")));
+                bis11 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(10).getClass(), (String) featureNameList.get(10), true, ir11);
+            }
+            if (combs > 11) {
+                ir12 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(11))));
+                irt12 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(11)+"TestSet")));
+                bis12 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(11).getClass(), (String) featureNameList.get(11), true, ir12);
+            }
+
+            ImageSearchHits hits1;
+            ImageSearchHits hits2 = null;
+            ImageSearchHits hits3 = null;
+            ImageSearchHits hits4 = null;
+            ImageSearchHits hits5 = null;
+            ImageSearchHits hits6 = null;
+            ImageSearchHits hits7 = null;
+            ImageSearchHits hits8 = null;
+            ImageSearchHits hits9 = null;
+            ImageSearchHits hits10 = null;
+            ImageSearchHits hits11 = null;
+            ImageSearchHits hits12 = null;
+
+            int count = 0, countCorrect = 0;
+            double countTp = 0, countFp = 0, countTn = 0, countFn = 0;      //F1 Metric
+            long ms = System.currentTimeMillis();
+            for (int x = 0; x <  irt1.numDocs();x++){
+
+          //  while ((line = br.readLine()) != null) {
+
+                // System.out.println(x);
+
+                tag2count.clear();
+                tag2weight.clear();
+                //  tag2count.put("yes", 1);
+                //  tag2count.put("no", 1);
+                //  tag2weight.put("yes", 1.0);
+                //  tag2weight.put("no", 1.0);
+
+
+                tag2count.put(class1, 1);
+                tag2count.put(class2, 1);
+                tag2weight.put(class1, 1.0);
+                tag2weight.put(class2, 1.0);
+
+
+                hits1 = bis1.search(irt1.document(x), ir1);
+                if (combs > 1) {
+                    hits2 = bis2.search(irt2.document(x), ir2);
+                }
+                if (combs > 2) {
+                    hits3 = bis3.search(irt3.document(x), ir3);
+                }
+                if (combs > 3) {
+                    hits4 = bis4.search(irt4.document(x), ir4);
+                }
+                if (combs > 4) {
+                    hits5 = bis5.search(irt5.document(x), ir5);
+                }
+                if (combs > 5) {
+                    hits6 = bis6.search(irt6.document(x), ir6);
+                }
+                if (combs > 6) {
+                    hits7 = bis7.search(irt7.document(x), ir7);
+                }
+                if (combs > 7) {
+                    hits8 = bis8.search(irt8.document(x), ir8);
+                }
+                if (combs > 8) {
+                    hits9 = bis9.search(irt9.document(x), ir9);
+                }
+                if (combs > 9) {
+                    hits10 = bis10.search(irt10.document(x), ir10);
+                }
+                if (combs > 10) {
+                    hits11 = bis11.search(irt11.document(x), ir11);
+                }
+                if (combs > 11) {
+                    hits12 = bis12.search(irt12.document(x), ir12);
+                }
+
+                // set tag weights and counts.
+                for (int l = 0; l < k; l++) {
+
+                    //  String tag = getTag(hits1.doc(l), photosLocation);
+
+                    tag2count.put(getTag(hits1.doc(l), photosLocation), tag2count.get(getTag(hits1.doc(l), photosLocation)) + 1);
+                    if (combs > 1)
+                        tag2count.put(getTag(hits2.doc(l), photosLocation), tag2count.get(getTag(hits2.doc(l), photosLocation)) + 1);
+                    if (combs > 2)
+                        tag2count.put(getTag(hits3.doc(l), photosLocation), tag2count.get(getTag(hits3.doc(l), photosLocation)) + 1);
+                    if (combs > 3)
+                        tag2count.put(getTag(hits4.doc(l), photosLocation), tag2count.get(getTag(hits4.doc(l), photosLocation)) + 1);
+                    if (combs > 4)
+                        tag2count.put(getTag(hits5.doc(l), photosLocation), tag2count.get(getTag(hits5.doc(l), photosLocation)) + 1);
+                    if (combs > 5)
+                        tag2count.put(getTag(hits6.doc(l), photosLocation), tag2count.get(getTag(hits6.doc(l), photosLocation)) + 1);
+                    if (combs > 6)
+                        tag2count.put(getTag(hits7.doc(l), photosLocation), tag2count.get(getTag(hits7.doc(l), photosLocation)) + 1);
+                    if (combs > 7)
+                        tag2count.put(getTag(hits8.doc(l), photosLocation), tag2count.get(getTag(hits8.doc(l), photosLocation)) + 1);
+                    if (combs > 8)
+                        tag2count.put(getTag(hits9.doc(l), photosLocation), tag2count.get(getTag(hits9.doc(l), photosLocation)) + 1);
+                    if (combs > 9)
+                        tag2count.put(getTag(hits10.doc(l), photosLocation), tag2count.get(getTag(hits10.doc(l), photosLocation)) + 1);
+                    if (combs > 10)
+                        tag2count.put(getTag(hits11.doc(l), photosLocation), tag2count.get(getTag(hits11.doc(l), photosLocation)) + 1);
+                    if (combs > 11)
+                        tag2count.put(getTag(hits12.doc(l), photosLocation), tag2count.get(getTag(hits12.doc(l), photosLocation)) + 1);
+
+
+                    if (weightByRank) {
+                        tag2weight.put(getTag(hits1.doc(l), photosLocation), (double) l);
+                        if (combs > 1)
+                            tag2weight.put(getTag(hits2.doc(l), photosLocation), (double) l);
+                        if (combs > 2)
+                            tag2weight.put(getTag(hits3.doc(l), photosLocation), (double) l);
+                        if (combs > 3)
+                            tag2weight.put(getTag(hits4.doc(l), photosLocation), (double) l);
+                        if (combs > 4)
+                            tag2weight.put(getTag(hits5.doc(l), photosLocation), (double) l);
+                        if (combs > 5)
+                            tag2weight.put(getTag(hits6.doc(l), photosLocation), (double) l);
+                        if (combs > 6)
+                            tag2weight.put(getTag(hits7.doc(l), photosLocation), (double) l);
+                        if (combs > 7)
+                            tag2weight.put(getTag(hits8.doc(l), photosLocation), (double) l);
+                        if (combs > 8)
+                            tag2weight.put(getTag(hits9.doc(l), photosLocation), (double) l);
+                        if (combs > 9)
+                            tag2weight.put(getTag(hits10.doc(l), photosLocation), (double) l);
+                        if (combs > 10)
+                            tag2weight.put(getTag(hits11.doc(l), photosLocation), (double) l);
+                        if (combs > 11)
+                            tag2weight.put(getTag(hits12.doc(l), photosLocation), (double) l);
+                    }
+                 //  System.out.println(System.currentTimeMillis()-ms);
+                 //  ms=System.currentTimeMillis();
+                }
+                // find class, iterate over the tags (classes):
+                int maxCount = 0, maxima = 0;
+                String classifiedAs = null;
+                for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
+                    String tag = tagIterator.next();
+                  //  System.out.println(tag+tag2count.get(tag));
+                    if (tag2count.get(tag) > maxCount) {
+                        maxCount = tag2count.get(tag);
+                        maxima = 1;
+                        classifiedAs = tag;
+
+                    } else if (tag2count.get(tag) == maxCount) {
+                        maxima++;
+                    }
+                }
+                // if there are two or more classes with the same number of results, then we take a look at the weights.
+                // else the class is alread given in classifiedAs.
+                if (maxima > 1) {
+                    double minWeight = Double.MAX_VALUE;
+                    for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
+                        String tag = tagIterator.next();
+                        if (tag2weight.get(tag) < minWeight) {
+                            minWeight = tag2weight.get(tag);
+                            classifiedAs = tag;
+                        }
+                    }
+                }
+
+                count++;
+                //SHOW THE CLASSIFICATION
+                //     System.out.println(classifiedAs+";"+line);
+                classesHTML.add(classifiedAs);
+                filesHTML.add(irt1.document(x).getField("descriptorImageIdentifier").stringValue());
+
+                //F1 Metric
+                //     if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes")) {
+                if (classifiedAs.equals(getTag(irt1.document(x), photosLocation)) && classifiedAs.equals(class1)) {
+                    countCorrect++;
+                    countTp++;
+                    //    } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes"))
+                } else if (!classifiedAs.equals(getTag(irt1.document(x), photosLocation)) && classifiedAs.equals(class1))
+                    countFp++;
+
+                //    if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no")) {
+                if (classifiedAs.equals(getTag(irt1.document(x), photosLocation)) && classifiedAs.equals(class2)) {
+                    countCorrect++;
+                    countTn++;
+                    //     } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no"))
+                } else if (!classifiedAs.equals(getTag(irt1.document(x), photosLocation)) && classifiedAs.equals(class2))
+                    countFn++;
+
+                // confusion:
+                //confusion[class2id.get(classifiedAs)]++;
+//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
+
+            }
+
+            double precisicon = getPrecision(countTp, countFp);
+            double recall = getRecall(countTp, countFn);
+            double trueNegativeRate = getTrueNegativeRate(countTn, countFp);
+            double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
+            double fMeasure = getFmeasure(precisicon, recall);
+            double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
+            double mccMeasure = getMccMeasure(countTp, countFp, countTn, countFn);
+            double wFM = getWFM(countTp, countFp, countTn, countFn, fMeasure, count);
+            // System.out.println("Results for class " + classIdentifier);
+            // System.out.printf("Class\tPrecision\tRecall\tTrue Negative Rate\tAccuracy\tF-Measure\tCount Test Images\tCount Corret\tms per test\n");
+            // System.out.printf("%s\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%10d\t%10d\t%4d\n", classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
+
+            //   System.out.println(i + 1 + " of " + class1List.size() + " finished. " + (System.currentTimeMillis() - ms) / 1000 + " seconds per round. " + "Feature: " + " Current y: " + i);
+
+            String classesLongName = "";
+
+            for (int j = 0; j < combs; j++) {
+                //   System.out.print(combinations.get(i + j).toString() + " ");
+                classesLongName = classesLongName + fields1List.get(i + j) + ";";
+            }
+
+            //   print_line.printf("%s,%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            System.out.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            print_line.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
+            print_line.flush();
+
+            //Create HTML
+            if (createHTML == true) {
+
+                String fileName = "classifieresults-" + System.currentTimeMillis() / 1000 + ".html";
+                BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
+                bw.write("<html>\n" +
+                        "<head><title>Classification Results</title></head>\n" +
+                        "<body bgcolor=\"#FFFFFF\">\n");
+                bw.write("<table>");
+
+                // int elems = Math.min(filesHTML.size(),50);
+                int elems = filesHTML.size();
+
+                for (int d = 0; d < elems; d++) {
+                    if (d % 3 == 0) bw.write("<tr>");
+
+                    String s = filesHTML.get(d);
+                    String colorF = "rgb(0, 255, 0)";
+
+                    if (classesHTML.get(d).equals("no"))
+                        colorF = "rgb(255, 0, 0)";
+                       // String s = ir1.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
+                   // String s = filesHTML.get(d);
+                    //  System.out.println(reader.document(topDocs.scoreDocs[i].doc).get("featLumLay"));
+                    //  s = new File(s).getAbsolutePath();
+                    // System.out.println(s);
+                    bw.write("<td><a href=\"" + s + "\"><img style=\"max-width:220px;border:medium solid " + colorF + ";\"src=\"" + s + "\" border=\"" + 5 + "\" style=\"border: 3px\n" +
+                            "black solid;\"></a></td>\n");
+                    if (d % 3 == 2) bw.write("</tr>");
+                }
+                if (elems % 3 != 0) {
+                    if (elems % 3 == 2) {
+                        bw.write("<td>-</td with exit code 0\nd>\n");
+                        bw.write("<td>-</td>\n");
+                    } else if (elems % 3 == 2) {
+                        bw.write("<td>-</td>\n");
+                    }
+                    bw.write("</tr>");
+                }
+
+                bw.write("</table></body>\n" +
+                        "</html>");
+                bw.close();
+            }
+            //   } // kfor
+//        }
+        }
+        print_line.close();
+        return true;
+    }
+
+
+    //ground class for classification
     public void testClassify() throws IOException {
         boolean weightByRank = true;
         String[] classes = {"2012", "beach", "food", "london", "music", "nature", "people", "sky", "travel", "wedding"};
@@ -397,7 +1338,7 @@ public class ClassifierTest extends TestCase {
             double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
             double fMeasure = getFmeasure(precisicon, recall);
             double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
-            double mccMeasure = getMccMeasure(countTp,countFp,countTn,countFn);
+            double mccMeasure = getMccMeasure(countTp, countFp, countTn, countFn);
 //            System.out.println("Results for class " + classIdentifier);
 
             // System.out.printf("%s;%s;%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d\n",classArray[y],classArray[y],classArray[y],k,weightByRank, classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
@@ -468,6 +1409,7 @@ public class ClassifierTest extends TestCase {
 
     }
 
+    //classification for two combined features
     public void testClassifyFashionCombinedFeatures() throws IOException {
 
         PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsitemDoubleFeatureK1.txt")));
@@ -786,6 +1728,7 @@ public class ClassifierTest extends TestCase {
 
     }
 
+    //classification for three combined features
     public void testClassifyFashionThreeCombinedFeatures() throws IOException {
 
         PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsTripleFeature.txt")));
@@ -1160,6 +2103,7 @@ public class ClassifierTest extends TestCase {
         print_line.close();
     }
 
+    //classification for three combined features using theading
     public static boolean testClassifyFashionThreeCombinedFeaturesMulti(int start, int end, String storeToFile) throws IOException {
 
         PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
@@ -1508,6 +2452,7 @@ public class ClassifierTest extends TestCase {
         return true;
     }
 
+    //classification for all combined features
     public void testClassifyFashionAllCombinedFeatures() throws IOException {
 
         PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter("D:\\resultsallFeatureK31.txt")));
@@ -1925,432 +2870,25 @@ public class ClassifierTest extends TestCase {
         print_line.close();
     }
 
-    public static boolean testClassifyNCombinedFeaturesMulti(int start, int end, String storeToFile, int numberOfNeighbours, String indexLocation, String photosLocation, String testSetFile, int searchedClass, ArrayList<String> fieldsArray, ArrayList<String> classArray, int combineNfeatures, String class1, String class2, double informationGainThreshold) throws IOException, NoSuchFieldException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-
-        //numer of features and how much should be combined
-        int feats = fieldsArray.size();
-        int combs = combineNfeatures;
-
-        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
-
-        //all the combinations stored here
-        ArrayList combinations = print_nCr(feats, combs);
-
-        //  String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
-        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
-
-        //get the features for the column names
-        String sCombinedFeatures = "";
-        for (int i = 0; i < 12; i++) {
-            sCombinedFeatures = sCombinedFeatures + "Feature" + i+1 + ";";
-        }
-        print_line.print(sCombinedFeatures + "K=;IGTH;Weight Rank=;Class;Precision;Recall;True Negative Rate;Accuracy;False Positive Rate;F-Measure;Count Test Images;Count Correct;ms per test;TP;FP;TN;FN");
-        print_line.println();
-        print_line.flush();
-
-        ArrayList<String> fields1List = new ArrayList<String>();
-        ArrayList<String> class1List = new ArrayList<String>();
-
-
-        for (int i = 0; i < combinations.size(); i += combs) {
-            for (int j = 0; j < combs; j++) {
-                //     System.out.print(combinations.get(i + j).toString() + " ");
-                int x = (Integer) combinations.get(i + j) - 1;
-                fields1List.add(fieldsArray.get(x));
-                class1List.add(classArray.get(x));
-            }
-        }
-
-
-        for (int i = 0; i < combinations.size(); i += combs) {
-
-           // System.out.println(i);
-
-            ArrayList featureNameList = new ArrayList();
-            ArrayList lireFeatureList = new ArrayList();
-            ArrayList indexLocationList = new ArrayList();
-
-
-            //iterate over all fields lists and fill it in a array
-            for (int j = 0; j < combs; j++) {
-                //   System.out.print(combinations.get(i + j).toString() + " ");
-                featureNameList.add((String) DocumentBuilder.class.getField("FIELD_NAME_" + fields1List.get(i + j).toUpperCase()).get(null));
-                lireFeatureList.add((LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + class1List.get(i + j)).newInstance());
-                indexLocationList.add(indexLocation + class1List.get(i + j));
-            }
-
-            boolean weightByRank = true;
-            boolean createHTML = false;
-          //  String[] classes = {"yes", "no"};
-            String[] classes =  {class1, class2};
-            int k = numberOfNeighbours;
-
-
-            //System.out.println("Tests for lf1 " + f1 + " with k=" + k + " combined with " + f2 + " - weighting by rank sum: " + weightByRank);
-            //System.out.println("========================================");
-            HashMap<String, Integer> tag2count = new HashMap<String, Integer>(k);
-            HashMap<String, Double> tag2weight = new HashMap<String, Double>(k);
-            int c = 0;   // used for just one class ...
-            //        for (int c = 0; c < 10; c++) {
-            c = searchedClass;
-
-            String classIdentifier = classes[c];
-
-            //"D:\\Datasets\\FashionTest\\fashion10000Test\\" + classIdentifier + ".txt";
-
-            // INIT
-            ArrayList<String> classesHTML = new ArrayList<String>();
-            ArrayList<String> filesHTML = new ArrayList<String>();
-
-
-            int[] confusion = new int[2];
-            Arrays.fill(confusion, 0);
-            HashMap<String, Integer> class2id = new HashMap<String, Integer>(2);
-            for (int d = 0; d < classes.length; d++)
-                class2id.put(classes[d], d);
-
-            BufferedReader br = new BufferedReader(new FileReader(testSetFile));
-            String line;
-
-            IndexReader ir2 = null;
-            ImageSearcher bis2 = null;
-            IndexReader ir3 = null;
-            ImageSearcher bis3 = null;
-            IndexReader ir4 = null;
-            ImageSearcher bis4 = null;
-            IndexReader ir5 = null;
-            ImageSearcher bis5 = null;
-            IndexReader ir6 = null;
-            ImageSearcher bis6 = null;
-            IndexReader ir7 = null;
-            ImageSearcher bis7 = null;
-            IndexReader ir8 = null;
-            ImageSearcher bis8 = null;
-            IndexReader ir9 = null;
-            ImageSearcher bis9 = null;
-            IndexReader ir10 = null;
-            ImageSearcher bis10 = null;
-            IndexReader ir11 = null;
-            ImageSearcher bis11 = null;
-            IndexReader ir12 = null;
-            ImageSearcher bis12 = null;
-
-
-            IndexReader ir1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0))));
-            ImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
-            if (combs > 1) {
-                ir2 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(1))));
-                bis2 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(1).getClass(), (String) featureNameList.get(1), true, ir2);
-            }
-            if (combs > 2) {
-                ir3 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(2))));
-                bis3 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(2).getClass(), (String) featureNameList.get(2), true, ir3);
-            }
-            if (combs > 3) {
-                ir4 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(3))));
-                bis4 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(3).getClass(), (String) featureNameList.get(3), true, ir4);
-            }
-            if (combs > 4) {
-                ir5 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(4))));
-                bis5 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(4).getClass(), (String) featureNameList.get(4), true, ir5);
-            }
-            if (combs > 5) {
-                ir6 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(5))));
-                bis6 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(5).getClass(), (String) featureNameList.get(5), true, ir6);
-            }
-            if (combs > 6) {
-                ir7 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(6))));
-                bis7 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(6).getClass(), (String) featureNameList.get(6), true, ir7);
-            }
-            if (combs > 7) {
-                ir8 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(7))));
-                bis8 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(7).getClass(), (String) featureNameList.get(7), true, ir8);
-            }
-            if (combs > 8) {
-                ir9 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(8))));
-                bis9 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(8).getClass(), (String) featureNameList.get(8), true, ir9);
-            }
-            if (combs > 9) {
-                ir10 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(9))));
-                bis10 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(9).getClass(), (String) featureNameList.get(9), true, ir10);
-            }
-            if (combs > 10) {
-                ir11 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(10))));
-                bis11 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(10).getClass(), (String) featureNameList.get(10), true, ir11);
-            }
-            if (combs > 11) {
-                ir12 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(11))));
-                bis12 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(11).getClass(), (String) featureNameList.get(11), true, ir12);
-            }
-
-            ImageSearchHits hits1;
-            ImageSearchHits hits2 = null;
-            ImageSearchHits hits3 = null;
-            ImageSearchHits hits4 = null;
-            ImageSearchHits hits5 = null;
-            ImageSearchHits hits6 = null;
-            ImageSearchHits hits7 = null;
-            ImageSearchHits hits8 = null;
-            ImageSearchHits hits9 = null;
-            ImageSearchHits hits10 = null;
-            ImageSearchHits hits11 = null;
-            ImageSearchHits hits12 = null;
-
-            int count = 0, countCorrect = 0;
-            double countTp = 0, countFp = 0, countTn = 0, countFn = 0;      //F1 Metric
-            long ms = System.currentTimeMillis();
-            while ((line = br.readLine()) != null) {
-
-                //  System.out.println(count);
-
-                tag2count.clear();
-                tag2weight.clear();
-              //  tag2count.put("yes", 1);
-              //  tag2count.put("no", 1);
-              //  tag2weight.put("yes", 1.0);
-              //  tag2weight.put("no", 1.0);
-
-                  tag2count.put(class1, 1);
-                  tag2count.put(class2, 1);
-                  tag2weight.put(class1, 1.0);
-                  tag2weight.put(class2, 1.0);
-
-
-                hits1 = bis1.search(ImageIO.read(new File(line)), ir1);
-                if (combs > 1) {
-                    hits2 = bis2.search(ImageIO.read(new File(line)), ir2);
-                }
-                if (combs > 2) {
-                    hits3 = bis3.search(ImageIO.read(new File(line)), ir3);
-                }
-                if (combs > 3) {
-                    hits4 = bis4.search(ImageIO.read(new File(line)), ir4);
-                }
-                if (combs > 4) {
-                    hits5 = bis5.search(ImageIO.read(new File(line)), ir5);
-                }
-                if (combs > 5) {
-                    hits6 = bis6.search(ImageIO.read(new File(line)), ir6);
-                }
-                if (combs > 6) {
-                    hits7 = bis7.search(ImageIO.read(new File(line)), ir7);
-                }
-                if (combs > 7) {
-                    hits8 = bis8.search(ImageIO.read(new File(line)), ir8);
-                }
-                if (combs > 8) {
-                    hits9 = bis9.search(ImageIO.read(new File(line)), ir9);
-                }
-                if (combs > 9) {
-                    hits10 = bis10.search(ImageIO.read(new File(line)), ir10);
-                }
-                if (combs > 10) {
-                    hits11 = bis11.search(ImageIO.read(new File(line)), ir11);
-                }
-                if (combs > 11) {
-                    hits12 = bis12.search(ImageIO.read(new File(line)), ir12);
-                }
-
-                // set tag weights and counts.
-                for (int l = 0; l < k; l++) {
-
-                 //  String tag = getTag(hits1.doc(l), photosLocation);
-
-                    tag2count.put(getTag(hits1.doc(l), photosLocation), tag2count.get(getTag(hits1.doc(l), photosLocation)) + 1);
-                    if (combs > 1)
-                        tag2count.put(getTag(hits2.doc(l), photosLocation), tag2count.get(getTag(hits2.doc(l), photosLocation)) + 1);
-                    if (combs > 2)
-                        tag2count.put(getTag(hits3.doc(l), photosLocation), tag2count.get(getTag(hits3.doc(l), photosLocation)) + 1);
-                    if (combs > 3)
-                        tag2count.put(getTag(hits4.doc(l), photosLocation), tag2count.get(getTag(hits4.doc(l), photosLocation)) + 1);
-                    if (combs > 4)
-                        tag2count.put(getTag(hits5.doc(l), photosLocation), tag2count.get(getTag(hits5.doc(l), photosLocation)) + 1);
-                    if (combs > 5)
-                        tag2count.put(getTag(hits6.doc(l), photosLocation), tag2count.get(getTag(hits6.doc(l), photosLocation)) + 1);
-                    if (combs > 6)
-                        tag2count.put(getTag(hits7.doc(l), photosLocation), tag2count.get(getTag(hits7.doc(l), photosLocation)) + 1);
-                    if (combs > 7)
-                        tag2count.put(getTag(hits8.doc(l), photosLocation), tag2count.get(getTag(hits8.doc(l), photosLocation)) + 1);
-                    if (combs > 8)
-                        tag2count.put(getTag(hits9.doc(l), photosLocation), tag2count.get(getTag(hits9.doc(l), photosLocation)) + 1);
-                    if (combs > 9)
-                        tag2count.put(getTag(hits10.doc(l), photosLocation), tag2count.get(getTag(hits10.doc(l), photosLocation)) + 1);
-                    if (combs > 10)
-                        tag2count.put(getTag(hits11.doc(l), photosLocation), tag2count.get(getTag(hits11.doc(l), photosLocation)) + 1);
-                    if (combs > 11)
-                        tag2count.put(getTag(hits12.doc(l), photosLocation), tag2count.get(getTag(hits12.doc(l), photosLocation)) + 1);
-
-
-                    if (weightByRank) {
-                        tag2weight.put(getTag(hits1.doc(l), photosLocation), (double) l);
-                        if (combs > 1)
-                            tag2weight.put(getTag(hits2.doc(l), photosLocation), (double) l);
-                        if (combs > 2)
-                            tag2weight.put(getTag(hits3.doc(l), photosLocation), (double) l);
-                        if (combs > 3)
-                            tag2weight.put(getTag(hits4.doc(l), photosLocation), (double) l);
-                        if (combs > 4)
-                            tag2weight.put(getTag(hits5.doc(l), photosLocation), (double) l);
-                        if (combs > 5)
-                            tag2weight.put(getTag(hits6.doc(l), photosLocation), (double) l);
-                        if (combs > 6)
-                            tag2weight.put(getTag(hits7.doc(l), photosLocation), (double) l);
-                        if (combs > 7)
-                            tag2weight.put(getTag(hits8.doc(l), photosLocation), (double) l);
-                        if (combs > 8)
-                            tag2weight.put(getTag(hits9.doc(l), photosLocation), (double) l);
-                        if (combs > 9)
-                            tag2weight.put(getTag(hits10.doc(l), photosLocation), (double) l);
-                        if (combs > 10)
-                            tag2weight.put(getTag(hits11.doc(l), photosLocation), (double) l);
-                        if (combs > 11)
-                            tag2weight.put(getTag(hits12.doc(l), photosLocation), (double) l);
-                    }
-
-                }
-                // find class, iterate over the tags (classes):
-                int maxCount = 0, maxima = 0;
-                String classifiedAs = null;
-                for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
-                    String tag = tagIterator.next();
-                    if (tag2count.get(tag) > maxCount) {
-                        maxCount = tag2count.get(tag);
-                        maxima = 1;
-                        classifiedAs = tag;
-                    } else if (tag2count.get(tag) == maxCount) {
-                        maxima++;
-                    }
-                }
-                // if there are two or more classes with the same number of results, then we take a look at the weights.
-                // else the class is alread given in classifiedAs.
-                if (maxima > 1) {
-                    double minWeight = Double.MAX_VALUE;
-                    for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
-                        String tag = tagIterator.next();
-                        if (tag2weight.get(tag) < minWeight) {
-                            minWeight = tag2weight.get(tag);
-                            classifiedAs = tag;
-                        }
-                    }
-                }
-
-                count++;
-                //SHOW THE CLASSIFICATION
-                //     System.out.println(classifiedAs+";"+line);
-                classesHTML.add(classifiedAs);
-                filesHTML.add(line);
-
-                //F1 Metric
-           //     if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes")) {
-                if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class1)) {
-                    countCorrect++;
-                    countTp++;
-            //    } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("yes"))
-                } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class1))
-                    countFp++;
-
-            //    if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no")) {
-                   if (classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class2)) {
-                    countCorrect++;
-                    countTn++;
-           //     } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals("no"))
-            } else if (!classifiedAs.equals(getTagLine(line, photosLocation)) && classifiedAs.equals(class2))
-                    countFn++;
-
-                // confusion:
-                //confusion[class2id.get(classifiedAs)]++;
-//                    System.out.printf("%10s (%4.3f, %10d, %4d)\n", classifiedAs, ((double) countCorrect / (double) count), count, (System.currentTimeMillis() - ms) / count);
-
-            }
-
-            double precisicon = getPrecision(countTp, countFp);
-            double recall = getRecall(countTp, countFn);
-            double trueNegativeRate = getTrueNegativeRate(countTn, countFp);
-            double accuracy = getAccuracy(countTp, countFp, countTn, countFn);
-            double fMeasure = getFmeasure(precisicon, recall);
-            double falsePositiveRate = getFalsePositiveRate(countFp, countTn);
-            double mccMeasure = getMccMeasure(countTp, countFp, countTn, countFn);
-            double wFM = getWFM(countTp, countFp, countTn, countFn,fMeasure,count);
-            // System.out.println("Results for class " + classIdentifier);
-            // System.out.printf("Class\tPrecision\tRecall\tTrue Negative Rate\tAccuracy\tF-Measure\tCount Test Images\tCount Corret\tms per test\n");
-            // System.out.printf("%s\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%4.5f\t%10d\t%10d\t%4d\n", classIdentifier, precisicon, recall, trueNegativeRate,accuracy, fMeasure,  count, countCorrect, (System.currentTimeMillis() - ms) / count);
-
-         //   System.out.println(i + 1 + " of " + class1List.size() + " finished. " + (System.currentTimeMillis() - ms) / 1000 + " seconds per round. " + "Feature: " + " Current y: " + i);
-
-            String classesLongName = "";
-
-            for (int j = 0; j < combs; j++) {
-                //   System.out.print(combinations.get(i + j).toString() + " ");
-                classesLongName = classesLongName + fields1List.get(i + j) + ";";
-            }
-
-            //   print_line.printf("%s,%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
-            System.out.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
-            print_line.printf("%s%s;%s;%s;%s;%4.5f;%4.5f;%4.5f;%4.5f;%4.5f%4.5f;%4.5f;%4.5f;%10d;%10d;%4d;%4.5f;%4.5f;%4.5f;%4.5f\n", classesLongName, k, informationGainThreshold, weightByRank, classIdentifier, precisicon, recall, trueNegativeRate, accuracy, falsePositiveRate, fMeasure, mccMeasure, wFM, count, countCorrect, (System.currentTimeMillis() - ms) / count, countTp, countFp, countTn, countFn);
-            print_line.flush();
-
-            //Create HTML
-            if (createHTML == true) {
-
-                String fileName = "classifieresults-" + System.currentTimeMillis() / 1000 + ".html";
-                BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
-                bw.write("<html>\n" +
-                        "<head><title>Classification Results</title></head>\n" +
-                        "<body bgcolor=\"#FFFFFF\">\n");
-                bw.write("<table>");
-
-                // int elems = Math.min(filesHTML.size(),50);
-                int elems = filesHTML.size();
-
-                for (int d = 0; i < elems; d++) {
-                    if (d % 3 == 0) bw.write("<tr>");
-
-                    String s = filesHTML.get(d);
-                    String colorF = "rgb(0, 255, 0)";
-
-                    if (classesHTML.get(d).equals("no"))
-                        colorF = "rgb(255, 0, 0)";
-                    //  String s = reader.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
-                    //  System.out.println(reader.document(topDocs.scoreDocs[i].doc).get("featLumLay"));
-                    //  s = new File(s).getAbsolutePath();
-                    // System.out.println(s);
-                    bw.write("<td><a href=\"" + s + "\"><img style=\"max-width:220px;border:medium solid " + colorF + ";\"src=\"" + s + "\" border=\"" + 5 + "\" style=\"border: 3px\n" +
-                            "black solid;\"></a></td>\n");
-                    if (d % 3 == 2) bw.write("</tr>");
-                }
-                if (elems % 3 != 0) {
-                    if (elems % 3 == 2) {
-                        bw.write("<td>-</td with exit code 0\nd>\n");
-                        bw.write("<td>-</td>\n");
-                    } else if (elems % 3 == 2) {
-                        bw.write("<td>-</td>\n");
-                    }
-                    bw.write("</tr>");
-                }
-
-                bw.write("</table></body>\n" +
-                        "</html>");
-                bw.close();
-            }
-            //   } // kfor
-//        }
-        }
-        print_line.close();
-        return true;
-    }
-
-
-
-
+    //get the tag from a given document
     private static String getTag(Document d, String photosLocation) {
         StringBuilder ab = new StringBuilder(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].replace(photosLocation, ""));
 
-      //  System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
+        //  System.out.println(ab.substring(0, ab.indexOf("\\")).toString());
         return ab.substring(0, ab.indexOf("\\")).toString();
         //  return ab.toString();
         //return "yes";
     }
 
+    //get the tag from a textfile line
+    private static String getTagLine(String line, String photosLocation) {
+        line = line.replace(photosLocation, "");
+        //  System.out.println(line.substring(0, line.indexOf("\\")).toString());
+        return line.substring(0, line.indexOf("\\")).toString();
+        //return "yes";
+    }
+
+    //Mesures
     private static double getPrecision(double tp, double fp) {
         double precision;
         return precision = tp / (tp + fp);
@@ -2383,30 +2921,247 @@ public class ClassifierTest extends TestCase {
 
     private static double getMccMeasure(double tp, double fp, double tn, double fn) {
         double mccMeasure;
-        return mccMeasure = ((tp*tn)-(fp*fn))/Math.sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn));
+        return mccMeasure = ((tp * tn) - (fp * fn)) / Math.sqrt((tp + fp) * (tp + fn) * (tn + fp) * (tn + fn));
     }
 
-    private static double getWFM(double tp, double fp, double tn, double fn,double fMeasure, double allN) {
+    private static double getWFM(double tp, double fp, double tn, double fn, double fMeasure, double allN) {
         double wFm;
-        double nPrec = tn/(tn+fn);
-        double nRec = tn/(tn+fp);
-        double nF1 = 2*(nPrec*nRec)/(nPrec+nRec);
+        double nPrec = tn / (tn + fn);
+        double nRec = tn / (tn + fp);
+        double nF1 = 2 * (nPrec * nRec) / (nPrec + nRec);
 
-        return wFm = (fMeasure*(tp+fn)+nF1*(fp+tn))/allN;
+        return wFm = (fMeasure * (tp + fn) + nF1 * (fp + tn)) / allN;
     }
 
-    private static String getTagLine(String line, String photosLocation) {
-        line = line.replace(photosLocation, "");
-        //  System.out.println(line.substring(0, line.indexOf("\\")).toString());
-        return line.substring(0, line.indexOf("\\")).toString();
-        //return "yes";
+    //Calculates the possible combinations of the selected features
+    public static ArrayList print_nCr(final int n, final int r) {
+        int[] res = new int[r];
+        ArrayList combinations = new ArrayList();
+        for (int i = 0; i < res.length; i++) {
+            res[i] = i + 1;
+        }
+        boolean done = false;
+        while (!done) {
+
+
+            // System.out.println(Arrays.toString(res));
+            for (int j = 0; j < res.length; j++) {
+                combinations.add(res[j]);
+            }
+
+            done = getNext(res, n, r);
+        }
+        return combinations;
     }
 
+    //Part of print_nCr
+    public static boolean getNext(final int[] num, final int n, final int r) {
+        int target = r - 1;
+        num[target]++;
+        if (num[target] > ((n - (r - target)) + 1)) {
+            // Carry the One
+            while (num[target] > ((n - (r - target)))) {
+                target--;
+                if (target < 0) {
+                    break;
+                }
+            }
+            if (target < 0) {
+                return true;
+            }
+            num[target]++;
+            for (int i = target + 1; i < num.length; i++) {
+                num[i] = num[i - 1] + 1;
+            }
+        }
+        return false;
+    }
+
+    // FEATURE SELECTION PART
+    //Do the feature selection, returns a double array with the scores
+    private static HashMap<String, Double> getFeaturesInformationGainScore(String photosLocation, String locationOfTrainSet, String locationExtracorFile, String[] classArray, int[] featureSpace, double[] featureInformationGain, HashMap<String, Integer> featureSpaceHashMap,HashMap<String, Double> featureInformationGainHashMap) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+
+        //Configurations
+        String storeToFile = "wekaTemp.arff";
+        // String photosLocation = "D:\\Datasets\\FashionTest\\";
+        // String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt";
+        // String locationExtracorFile =  "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";
+
+        //Name of the features to extract
+        //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
+        //  int[] featureSpace = {144, 80, 192, 33, 630, 168, 60, 192, 18, 64, 64, 64};
+        //  double[] featureInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
+
+        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
+
+        print_line.print("@relation vowel-train" + "\n" + "\n");
+        print_line.flush();
+
+        //get the feature order
+        InputStream inf = new FileInputStream(locationExtracorFile);
+        byte[] tempIntf = new byte[4];
+        int tmpf, tmpFeaturef;
+
+        ArrayList<String> featureOrder = new ArrayList<String>();
+
+        byte[] tempf = new byte[100 * 1024];
+        while ((tmpf = inf.read(tempIntf, 0, 4)) > 0) {
+            tmpf = SerializationUtils.toInt(tempIntf);
+            inf.read(tempf, 0, tmpf);
+            while (inf.read(tempIntf, 0, 1) > 0) {
+                if (tempIntf[0] == -1) break;
+                tmpFeaturef = tempIntf[0];
+                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
+                // byte[] length ...
+                inf.read(tempIntf, 0, 4);
+                tmpf = SerializationUtils.toInt(tempIntf);
+                inf.read(tempf, 0, tmpf);
+                f.setByteArrayRepresentation(tempf, 0, tmpf);
+                //System.out.println(f.getDoubleHistogram().length+f.getClass().getSimpleName());
+                featureOrder.add(f.getClass().getSimpleName());
+            }
+            break;
+        }
 
 
+     //   for (int i = 0; i < classArray.length; i++) {
+        for (int i = 0; i < featureOrder.size(); i++) {
+           // for (int j = 0; j < featureSpace[i]; j++) {
+            for (int j = 0; j < featureSpaceHashMap.get(featureOrder.get(i)); j++) {
+                print_line.print("@attribute " + i + "_" + featureOrder.get(i) + "_" + j + " " + "numeric" + "\n" + "\n");
+            }
+            print_line.flush();
+        }
+
+        //  print_line.print("@attribute FileName String" + "\n" + "\n");
+
+        print_line.print("@attribute Class {yes,no}" + "\n" + "\n" + "@data" + "\n" + "\n");
+        print_line.flush();
 
 
-    //  public static void main(String[] args) {
+        BufferedReader br = new BufferedReader(new FileReader(locationOfTrainSet));
+        String line;
+
+        //   while ((line = br.readLine()) != null) {
+        //       BufferedImage img = ImageIO.read(new File(line));
+        //       String tag = getTagLine(line, photosLocation);
+
+        InputStream in = new FileInputStream(locationExtracorFile);
+        byte[] tempInt = new byte[4];
+        int tmp, tmpFeature;
+
+        byte[] temp = new byte[100 * 1024];
+        while ((tmp = in.read(tempInt, 0, 4)) > 0) {
+            tmp = SerializationUtils.toInt(tempInt);
+            in.read(temp, 0, tmp);
+            String filename = new String(temp, 0, tmp);
+            String tag = getTagLine(filename, photosLocation);
+            while (in.read(tempInt, 0, 1) > 0) {
+                if (tempInt[0] == -1) break;
+                tmpFeature = tempInt[0];
+                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
+                // byte[] length ...
+                in.read(tempInt, 0, 4);
+                tmp = SerializationUtils.toInt(tempInt);
+                in.read(temp, 0, tmp);
+                f.setByteArrayRepresentation(temp, 0, tmp);
+                //System.out.println(filename + Arrays.toString(f.getDoubleHistogram()));
+                //System.out.println(f.getDoubleHistogram().length+f.getFieldName());
+                double[] tempDouble = f.getDoubleHistogram();
+                double tempMean = 0.0;
+                for (int j = 0; j < tempDouble.length; j++) {
+                    //      tempMean = tempMean + tempDouble[j];
+                    print_line.print(tempDouble[j] + ",");
+                }
+                //  print_line.print(tempMean/tempDouble.length + ",");
+
+            }
+            //  print_line.print(filename+","+tag);
+            print_line.print(tag + ",");
+
+            print_line.print("\n");
+            print_line.flush();
+        }
+        //   }
+
+        print_line.close();
+        return calculateInformationGain(storeToFile, featureInformationGain, featureSpace, featureSpaceHashMap, featureOrder, featureInformationGainHashMap);
+        //  System.out.println(Arrays.toString(featureInformationGain));
+
+    }
+
+    //Does the information gain algorithm and return a list of total information gain scores
+    private static HashMap<String, Double> calculateInformationGain(String wekaFileLocation, double[] featureInformationGain, int featureSpace[], HashMap<String, Integer> featureSpaceHashMap, ArrayList<String> featureOrder,HashMap<String, Double> featureInformationGainHashMap) {
+
+        Instances data = null;
+        try {
+            data = new Instances(new BufferedReader(new FileReader(wekaFileLocation)));
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        AttributeSelection attsel = new AttributeSelection();  // package weka.attributeSelection!
+        InfoGainAttributeEval eval = new InfoGainAttributeEval();
+        Ranker search = new Ranker();
+        search.setThreshold(-1.7976931348623157E308);
+        search.setNumToSelect(-1);
+        search.setGenerateRanking(true);
+        attsel.setEvaluator(eval);
+        attsel.setSearch(search);
+        try {
+
+            attsel.SelectAttributes(data);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        // obtain the attribute indices that were selected
+        int[] indices = new int[0];
+        double[][] rankedAttribuesArray = new double[0][0];
+        try {
+            rankedAttribuesArray = attsel.rankedAttributes();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            indices = attsel.selectedAttributes();
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        for (int i = 0; i < rankedAttribuesArray.length; i++) {
+
+            int currentFeature = Integer.parseInt(data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0, data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_")));
+            //System.out.println("DDDDDDDDDDDDDD"+currentFeature);
+            // System.out.print(data.attribute((int) rankedAttribuesArray[i][0]).name() + "/" + rankedAttribuesArray[i][0] + "/");
+            //     System.out.println(rankedAttribuesArray[i][1]);
+            // data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0,data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_"));
+           // featureInformationGain[currentFeature] = featureInformationGain[currentFeature] + rankedAttribuesArray[i][1];
+            featureInformationGainHashMap.put(featureOrder.get(currentFeature),featureInformationGainHashMap.get(featureOrder.get(currentFeature))+rankedAttribuesArray[i][1]);
+        }
+
+        //Caalculate the mean of the information gain (better comparable)
+       // for (int i = 0; i < featureInformationGain.length; i++) {
+       //     featureInformationGain[i] = (featureInformationGain[i] / featureSpace[i]) * 100;
+       // }
+
+        //Calculate the mean of the information gain (better comparable)
+         for (int i = 0; i < featureOrder.size(); i++) {
+            featureInformationGainHashMap.put(featureOrder.get(i),(featureInformationGainHashMap.get(featureOrder.get(i))/featureSpaceHashMap.get(featureOrder.get(i)))*100);
+         }
+
+        // for(int i=0;i<0;i++){
+        //     System.out.println(data.attribute(indices[i]).toString());
+        // }
+        System.out.println("Scoring finished, starting with classification! Scores: ");
+        for (int i = 0; i < featureOrder.size(); i++) {
+            System.out.println(featureOrder.get(i)+" "+ featureInformationGainHashMap.get(featureOrder.get(i)));
+           // featureInformationGainHashMap.put(featureOrder.get(i),(featureInformationGainHashMap.get(featureOrder.get(i))/featureSpaceHashMap.get(featureOrder.get(i)))*100);
+        }
+       // return featureInformationGain;
+       return featureInformationGainHashMap;
+    }
+
+    //SOME TEST CLASSES
+    //classifie three combinend features main class uses threading
     public void testThreadClassifyThreeFeatures() throws IOException {
         Thread[] all = new Thread[4];
         all[0] = new Thread(new Classifie3Task(0, 56, "D:\\resultsTripleFeatureItemK31.txt"));
@@ -2456,7 +3211,6 @@ public class ClassifierTest extends TestCase {
         }
     }
 
-
     //Testclass for the NCR function
     public void testNCR() throws IOException {
 
@@ -2482,188 +3236,6 @@ public class ClassifierTest extends TestCase {
 
     }
 
-    //Calculates the possible combinations of the selected features
-    public static ArrayList print_nCr(final int n, final int r) {
-        int[] res = new int[r];
-        ArrayList combinations = new ArrayList();
-        for (int i = 0; i < res.length; i++) {
-            res[i] = i + 1;
-        }
-        boolean done = false;
-        while (!done) {
-
-
-            // System.out.println(Arrays.toString(res));
-            for (int j = 0; j < res.length; j++) {
-                combinations.add(res[j]);
-            }
-
-            done = getNext(res, n, r);
-        }
-        return combinations;
-    }
-
-    //Part of print_nCr
-    public static boolean getNext(final int[] num, final int n, final int r) {
-        int target = r - 1;
-        num[target]++;
-        if (num[target] > ((n - (r - target)) + 1)) {
-            // Carry the One
-            while (num[target] > ((n - (r - target)))) {
-                target--;
-                if (target < 0) {
-                    break;
-                }
-            }
-            if (target < 0) {
-                return true;
-            }
-            num[target]++;
-            for (int i = target + 1; i < num.length; i++) {
-                num[i] = num[i - 1] + 1;
-            }
-        }
-        return false;
-    }
-
-
-    // FEATURE SELECTION PART
-    //Do the feature selection, returns a double array with the scores
-    private static double[] getFeaturesInformationGainScore(String photosLocation, String locationOfTrainSet, String locationExtracorFile, String[] classArray, int[] featureSpace, double[] featureInformationGain) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-
-      //Configurations
-      String storeToFile = "wekaTemp.arff";
-      // String photosLocation = "D:\\Datasets\\FashionTest\\";
-      // String locationOfTrainSet = "D:\\Datasets\\FashionTestFashionDataSet\\train.txt";
-      // String locationExtracorFile =  "D:\\Datasets\\FashionTestFashionDataSet\\indexall.data";
-
-      //Name of the features to extract
-      //  String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
-      //  int[] featureSpace = {144,60,64,64,168,64,630,33,192,18,192,80};
-      //  double[] featureInformationGain = {0,0,0,0,0,0,0,0,0,0,0,0};
-
-        PrintWriter print_line = new PrintWriter(new BufferedWriter(new FileWriter(storeToFile)));
-
-        print_line.print("@relation vowel-train"  + "\n" + "\n");
-        print_line.flush();
-
-        for(int i = 0; i<classArray.length;i++)   {
-            for(int j=0;j<featureSpace[i];j++) {
-                print_line.print("@attribute " + i + "_" + classArray[i] + "_" + j  + " " + "numeric" + "\n" + "\n");
-            }
-            print_line.flush();
-        }
-
-        //  print_line.print("@attribute FileName String" + "\n" + "\n");
-
-        print_line.print("@attribute Class {yes,no}" + "\n" + "\n" + "@data" + "\n" + "\n");
-        print_line.flush();
-
-
-        BufferedReader br = new BufferedReader(new FileReader(locationOfTrainSet));
-        String line;
-
-        //   while ((line = br.readLine()) != null) {
-        //       BufferedImage img = ImageIO.read(new File(line));
-        //       String tag = getTagLine(line, photosLocation);
-
-        InputStream in = new FileInputStream(locationExtracorFile);
-        byte[] tempInt = new byte[4];
-        int tmp, tmpFeature;
-
-        byte[] temp = new byte[100 * 1024];
-        while ((tmp = in.read(tempInt, 0, 4)) > 0) {
-            tmp = SerializationUtils.toInt(tempInt);
-            in.read(temp, 0, tmp);
-            String filename = new String(temp, 0, tmp);
-            String tag = getTagLine(filename, photosLocation);
-            while (in.read(tempInt, 0, 1) > 0) {
-                if (tempInt[0] == -1) break;
-                tmpFeature = tempInt[0];
-                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
-                // byte[] length ...
-                in.read(tempInt, 0, 4);
-                tmp = SerializationUtils.toInt(tempInt);
-                in.read(temp, 0, tmp);
-                f.setByteArrayRepresentation(temp, 0, tmp);
-                //System.out.println(filename + Arrays.toString(f.getDoubleHistogram()));
-                //System.out.println(f.getDoubleHistogram().length);
-                double[] tempDouble = f.getDoubleHistogram();
-                double tempMean = 0.0;
-                for (int j=0;j<tempDouble.length;j++)  {
-                    //      tempMean = tempMean + tempDouble[j];
-                    print_line.print(tempDouble[j]+",");
-                }
-                //  print_line.print(tempMean/tempDouble.length + ",");
-
-            }
-            //  print_line.print(filename+","+tag);
-            print_line.print(tag+",");
-
-            print_line.print("\n");
-            print_line.flush();
-        }
-        //   }
-
-        print_line.close();
-        return calculateInformationGain(storeToFile,featureInformationGain);
-      //  System.out.println(Arrays.toString(featureInformationGain));
-
-    }
-
-    //Do the information gain algorithm and return a list of total information gain scores
-    private static double[] calculateInformationGain(String wekaFileLocation, double[] featureInformationGain){
-
-        Instances data = null;
-        try {
-            data = new Instances(new BufferedReader(new FileReader(wekaFileLocation)));
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        AttributeSelection attsel = new AttributeSelection();  // package weka.attributeSelection!
-        InfoGainAttributeEval eval = new InfoGainAttributeEval();
-        Ranker search = new Ranker();
-        search.setThreshold(-1.7976931348623157E308);
-        search.setNumToSelect(-1);
-        search.setGenerateRanking(true);
-        attsel.setEvaluator(eval);
-        attsel.setSearch(search);
-        try {
-
-            attsel.SelectAttributes(data);
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        // obtain the attribute indices that were selected
-        int[] indices = new int[0];
-        double[][] rankedAttribuesArray = new double[0][0];
-        try {
-            rankedAttribuesArray = attsel.rankedAttributes();
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        try {
-            indices = attsel.selectedAttributes();
-        } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        for (int i=0;i<rankedAttribuesArray.length;i++) {
-
-            int currentFeature = Integer.parseInt(data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0,data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_")));
-            // System.out.print(data.attribute((int) rankedAttribuesArray[i][0]).name() + "/" + rankedAttribuesArray[i][0] + "/");
-            //     System.out.println(rankedAttribuesArray[i][1]);
-            // data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0,data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_"));
-            featureInformationGain[currentFeature] = featureInformationGain[currentFeature] + rankedAttribuesArray[i][1];
-        }
-
-
-        // for(int i=0;i<0;i++){
-        //     System.out.println(data.attribute(indices[i]).toString());
-        // }
-        System.out.println("Scoring finished, starting with classification! Scores: " + Arrays.toString(featureInformationGain));
-        return featureInformationGain;
-    }
 
 
 
