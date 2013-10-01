@@ -58,7 +58,7 @@ import java.util.List;
  * @author Mathias Lux, mathias@juggle.at - 20.09.13 10:39
  */
 public class PixelClustering {
-    private static int numberOfColors = 6;
+    private static int numberOfColors = 32;
 
     public static BufferedImage clusterPixels(BufferedImage img) {
         // Apply Bilateral Filtering before actually classifying the pixels ...
@@ -97,7 +97,7 @@ public class PixelClustering {
         }
         // do the k-means
         KMeans km = new KMeans(pixels, numberOfColors);
-        for (int i=0; i<25; i++)
+        for (int i=0; i<15; i++)
             km.step();
         List<double[]> means = km.getMeans();
         double[] tmpPixel = new double[3];
