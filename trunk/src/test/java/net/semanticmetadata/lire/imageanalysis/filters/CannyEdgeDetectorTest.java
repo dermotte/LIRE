@@ -42,9 +42,12 @@
 package net.semanticmetadata.lire.imageanalysis.filters;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.utils.cv.PixelClustering;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
@@ -58,5 +61,27 @@ public class CannyEdgeDetectorTest extends TestCase {
         BufferedImage in = ImageIO.read(new File("flower.jpg"));
         CannyEdgeDetector ced = new CannyEdgeDetector(in, 60, 100);
         ImageIO.write(ced.filter(), "png", new File("out.png"));
+    }
+
+    public void testComic() throws IOException {
+        BufferedImage in = ImageIO.read(new File("flower.jpg"));
+        CannyEdgeDetector ced = new CannyEdgeDetector(in, 30, 80);
+        BufferedImage filter = ced.filter();
+        BufferedImage flower = PixelClustering.clusterPixels(in);
+
+        WritableRaster raster = flower.getRaster();
+        Graphics graphics = flower.getGraphics();
+        graphics.setColor(Color.black);
+        int[] tmp = new int[3];
+        for (int x = 0; x < raster.getWidth(); x++) {
+            for (int y = 0; y < raster.getHeight(); y++) {
+                filter.getRaster().getPixel(x, y, tmp);
+                if (tmp[0] < 10) {
+                    graphics.fillOval(x, y, 3, 4);
+                }
+            }
+        }
+        ImageIO.write(filter, "png", new File("flower-canny.png"));
+        ImageIO.write(flower, "png", new File("flower-comic.png"));
     }
 }
