@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-10-01
+==========
+  - Fixed bugs in Canny Edge Detector implementation
+  - Fixed the same bugs in PHOG
+
 2013-09-30
 ==========
   - Added convenience methods to VLADBuilder (indexMissing, etc.)

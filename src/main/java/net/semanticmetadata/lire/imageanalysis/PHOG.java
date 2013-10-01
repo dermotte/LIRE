@@ -123,12 +123,12 @@ public class PHOG implements LireFeature {
                     else
                         gray.getRaster().setPixel(x, y, tmp255);
                 } else if (gd[x][y] < (3d * Math.PI / 8d) && gd[x][y] >= (Math.PI / 8d)) {
-                    if (gm[x][y] > gm[x - 1][y - 1] && gm[x][y] > gm[x - 1][y - 1])
+                    if (gm[x][y] > gm[x - 1][y - 1] && gm[x][y] > gm[x + 1][y + 1])
                         setPixel(x, y, gray, gm[x][y]);
                     else
                         gray.getRaster().setPixel(x, y, tmp255);
                 } else if (gd[x][y] < (-3d * Math.PI / 8d) || gd[x][y] >= (3d * Math.PI / 8d)) {
-                    if (gm[x][y] > gm[x][y + 1] && gm[x][y] > gm[x][y + 1])
+                    if (gm[x][y] > gm[x][y + 1] && gm[x][y] > gm[x][y - 1])
                         setPixel(x, y, gray, gm[x][y]);
                     else
                         gray.getRaster().setPixel(x, y, tmp255);
