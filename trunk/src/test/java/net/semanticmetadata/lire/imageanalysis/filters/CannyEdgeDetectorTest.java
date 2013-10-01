@@ -55,8 +55,8 @@ import java.io.IOException;
  */
 public class CannyEdgeDetectorTest extends TestCase {
     public void testCanny() throws IOException {
-        BufferedImage in = ImageIO.read(new File("wipo_us_fita.jpg"));
-        CannyEdgeDetector ced = new CannyEdgeDetector(in, 40, 100);
+        BufferedImage in = ImageIO.read(new File("flower.jpg"));
+        CannyEdgeDetector ced = new CannyEdgeDetector(in, 60, 100);
         ImageIO.write(ced.filter(), "png", new File("out.png"));
     }
 }

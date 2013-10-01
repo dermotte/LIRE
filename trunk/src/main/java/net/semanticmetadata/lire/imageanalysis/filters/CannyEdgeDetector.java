@@ -94,9 +94,8 @@ public class CannyEdgeDetector {
     public BufferedImage filter() {
         // All for Canny Edge ...
         BufferedImage gray;
-        double[][] gx, gy;
-        double[][] gd, gm;
-        int[][] gdRounded;
+        double[][] gx, gy; // Sobel outputs in x and y direction.
+        double[][] gd, gm; // gradient direction and gradient magnitude
 
         // doing canny edge detection first:
         // filter images:
@@ -131,17 +130,19 @@ public class CannyEdgeDetector {
         for (int x = 1; x < width - 1; x++) {
             for (int y = 1; y < height - 1; y++) {
                 if (gd[x][y] < (Math.PI / 8d) && gd[x][y] >= (-Math.PI / 8d)) {
+                    // check if pixel is a local maximum ...
                     if (gm[x][y] > gm[x + 1][y] && gm[x][y] > gm[x - 1][y])
                         setPixel(x, y, gray, gm[x][y]);
                     else
                         gray.getRaster().setPixel(x, y, tmp255);
                 } else if (gd[x][y] < (3d * Math.PI / 8d) && gd[x][y] >= (Math.PI / 8d)) {
-                    if (gm[x][y] > gm[x - 1][y - 1] && gm[x][y] > gm[x - 1][y - 1])
+                    // check if pixel is a local maximum ...
+                    if (gm[x][y] > gm[x - 1][y - 1] && gm[x][y] > gm[x + 1][y + 1])
                         setPixel(x, y, gray, gm[x][y]);
                     else
                         gray.getRaster().setPixel(x, y, tmp255);
                 } else if (gd[x][y] < (-3d * Math.PI / 8d) || gd[x][y] >= (3d * Math.PI / 8d)) {
-                    if (gm[x][y] > gm[x][y + 1] && gm[x][y] > gm[x][y + 1])
+                    if (gm[x][y] > gm[x][y + 1] && gm[x][y] > gm[x][y - 1])
                         setPixel(x, y, gray, gm[x][y]);
                     else
                         gray.getRaster().setPixel(x, y, tmp255);
