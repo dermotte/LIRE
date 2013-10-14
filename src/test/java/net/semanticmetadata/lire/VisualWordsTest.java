@@ -46,6 +46,7 @@ import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
+import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -74,35 +75,27 @@ public class VisualWordsTest extends TestCase {
     private static File indexPath;
     String queryImage = "testdata/flickr-10000/3544790945_38c07af051_o.jpg";
     private DocumentBuilder surfBuilder, siftBuilder;
+    String pathName;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        indexPath = new File("index-bow");
+        pathName = "index-bow";
+        indexPath = new File(pathName);
         surfBuilder = new SurfDocumentBuilder();
         siftBuilder = new SiftDocumentBuilder();
     }
 
     public void testIndexingAndSearchSurf() throws IOException {
-        // Creating an Lucene IndexWriter
-        IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_40, new WhitespaceAnalyzer(Version.LUCENE_40));
-        IndexWriter iw = new IndexWriter(FSDirectory.open(indexPath), conf);
-        long ms = System.currentTimeMillis();
-        int count = 0;
-        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/flickr-10000"), true);
-        for (Iterator<File> i = files.iterator(); i.hasNext(); ) {
-            File imgFile = i.next();
-            iw.addDocument(surfBuilder.createDocument(
-                    ImageIO.read(imgFile), imgFile.getPath()));
-            count++;
-            if (count > 100 && count % 500 == 0) {
-                System.out.println(count + " files indexed. " + (System.currentTimeMillis() - ms) / (count) + " ms per file");
+        ParallelIndexer pin = new ParallelIndexer(8, pathName, "wang-1000") {
+            @Override
+            public void addBuilders(ChainedDocumentBuilder builder) {
+                builder.addBuilder(new SurfDocumentBuilder());
             }
-
-        }
-        iw.close();
+        };
+        pin.run();
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-        SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir, 1000, 500);
+        SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir, 1000, 50);
         sfh.index();
     }
 

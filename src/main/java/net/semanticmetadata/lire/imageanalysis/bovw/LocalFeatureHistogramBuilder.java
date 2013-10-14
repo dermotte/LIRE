@@ -262,7 +262,9 @@ public abstract class LocalFeatureHistogramBuilder {
         System.out.println("Creating histograms ...");
         int[] tmpHist = new int[numClusters];
         LireFeature f = getFeatureInstance();
-        IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+        // based on bug report from Einav Itamar <einavitamar@gmail.com>
+        IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(),
+                false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         for (int i = 0; i < reader.maxDoc(); i++) {
 //            if (!reader.isDeleted(i)) {
             for (int j = 0; j < tmpHist.length; j++) {
