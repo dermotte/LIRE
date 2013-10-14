@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2013-10-14
+==========
+  - Added constructor to GenericDocumentBuilder to allow for selection of Hashing algorithm.
+  - Added some test files to excludes in compile task in the ant file.
+
 2013-10-01
 ==========
   - Fixed bugs in Canny Edge Detector implementation

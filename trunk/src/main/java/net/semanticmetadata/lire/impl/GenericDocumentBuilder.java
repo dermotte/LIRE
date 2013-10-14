@@ -74,7 +74,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
     final static Mode DEFAULT_MODE = Mode.Fast;
     Mode currentMode = DEFAULT_MODE;
     // private LireFeature lireFeature;
-    protected static HashingMode hashingMode = HashingMode.BitSampling;
+    protected HashingMode hashingMode = HashingMode.BitSampling;
 
     public static HashMap<Class, String> fieldForClass = new HashMap<Class, String>();
     public static HashMap<String, Class> classForField = new HashMap<String, Class>();
@@ -87,7 +87,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         // Let's try to read the hash functions right here and we don't have to care about it right now.
         try {
             BitSampling.readHashFunctions();
-//            LocalitySensitiveHashing.readHashFunctions();
+            LocalitySensitiveHashing.readHashFunctions();
         } catch (IOException e) {
             System.err.println("Could not read hashes from file when first creating a GenericDocumentBuilder instance.");
             e.printStackTrace();
@@ -174,7 +174,22 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
      *
      * @param descriptorClass has to implement {@link net.semanticmetadata.lire.imageanalysis.LireFeature}
      * @param hashing         set to true is you want to create an additional field for hashes based on BitSampling.
+     * @param mode the hashing mode you want to use. default is bit sampling, but there is also a vector based LSH version.
      */
+    public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, boolean hashing, HashingMode mode) {
+        this.descriptorClass = descriptorClass;
+        this.fieldName = fieldForClass.get(descriptorClass);
+        this.hashingMode = mode;
+        if (fieldName == null) {
+            try {
+                fieldName = descriptorClass.newInstance().getFieldName();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        hashingEnabled = hashing;
+    }
+
     public GenericDocumentBuilder(Class<? extends LireFeature> descriptorClass, boolean hashing) {
         this.descriptorClass = descriptorClass;
         this.fieldName = fieldForClass.get(descriptorClass);

@@ -96,6 +96,7 @@
         </echo>
         <javac srcdir="${src}" destdir="${build}">
             <classpath refid="classpath.path"/>
+            <exclude name="**/ClassifierTest.java"/>
         </javac>
         <copy todir="${build}">
             <fileset dir="${src}">
