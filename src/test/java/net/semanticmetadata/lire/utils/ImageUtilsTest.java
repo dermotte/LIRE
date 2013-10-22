@@ -46,10 +46,7 @@ import junit.framework.TestCase;
 import javax.imageio.ImageIO;
 import java.awt.color.ColorSpace;
 import java.awt.image.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -80,6 +77,11 @@ public class ImageUtilsTest extends TestCase {
 
     public void testTrim() throws IOException {
         ImageIO.write(ImageUtils.trimWhiteSpace(ImageIO.read(new File("test_trim.png"))), "png", new File("out-trim.png"));
+    }
+
+    public void testDifferenceOfGaussians() throws IOException {
+        BufferedImage bufferedImage = ImageUtils.differenceOfGaussians(ImageIO.read(new FileInputStream("wang-1000/0.jpg")));
+        ImageIO.write(bufferedImage, "png", new FileOutputStream("out-DoG.png"));
     }
 
     public void testSobel() throws IOException {

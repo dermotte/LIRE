@@ -41,10 +41,15 @@
 
 package net.semanticmetadata.lire.utils;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ConvolveOp;
+import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Some little helper methods.<br>
@@ -254,6 +259,33 @@ public class ImageUtils {
         for (int i = 0; i < kernel.length; i++)
             kernel[i] /= sum;
         return kernel;
+    }
+
+    public static BufferedImage differenceOfGaussians(BufferedImage image) {
+        BufferedImage img1 = getGrayscaleImage(image);
+        BufferedImage img2 = getGrayscaleImage(image);
+
+        ConvolveOp gaussian1 = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 1.0f)));
+        ConvolveOp gaussian2 = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 2.0f)));
+
+        img1 = gaussian1.filter(img1, null);
+        img2 = gaussian2.filter(img2, null);
+
+        WritableRaster r1 = img1.getRaster();
+        WritableRaster r2 = img2.getRaster();
+        int[] tmp1 = new int[3];
+        int[] tmp2 = new int[3];
+        for (int x = 0; x < img1.getWidth(); x++) {
+            for (int y = 0; y < img1.getHeight(); y++) {
+                r1.getPixel(x, y, tmp1);
+                r2.getPixel(x, y, tmp2);
+                tmp1[0] = Math.abs(tmp1[0]-tmp2[0]);
+                // System.out.println("tmp1 = " + tmp1[0]);
+                if (tmp1[0]>5) tmp1[0] =255;
+                r1.setPixel(x, y, tmp1);
+            }
+        }
+        return img1;
     }
 
     /**

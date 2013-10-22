@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-10-22
+==========
+  - Added difference of Gaussians method to ImageUtils and unit test
+
 2013-10-14
 ==========
   - Added constructor to GenericDocumentBuilder to allow for selection of Hashing algorithm.
