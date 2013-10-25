@@ -43,15 +43,13 @@ package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.*;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.FCTH;
-import net.semanticmetadata.lire.imageanalysis.JCD;
-import net.semanticmetadata.lire.imageanalysis.PHOG;
+import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.impl.ParallelImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder;
+import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPLBP;
+import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
@@ -64,6 +62,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.Bits;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -129,11 +128,11 @@ public class TestWang extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
 //                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
-//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class));
 //                builder.addBuilder(new GenericDocumentBuilder(BinaryPatternsPyramid.class, "whog"));
-//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
-//                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
+                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class));
+                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class));
+                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
 
             }
         };
@@ -254,9 +253,10 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, true, reader), "SPJCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, true, reader), "SPACC", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, BinaryPatternsPyramid.class, true, reader), "whog", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, true, reader), "jhl", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP");
-//        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP", reader);
+        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, true, reader), "lbp", reader);
+        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, true, reader), "jhl", reader);
+        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, true, reader), "RILBP", reader);
+        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP", reader);
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");

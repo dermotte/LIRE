@@ -94,9 +94,10 @@
         <echo file="default.mf" append="false">Build-Date: ${touch.time}
             Build-Number: ${build-number}
         </echo>
-        <javac srcdir="${src}" destdir="${build}">
+        <javac srcdir="${src}" destdir="${build}" debug="true" debuglevel="lines,vars,source">
             <classpath refid="classpath.path"/>
             <exclude name="**/ClassifierTest.java"/>
+            <exclude name="**/HashingSearchBasedClassifierMod.java"/>
         </javac>
         <copy todir="${build}">
             <fileset dir="${src}">
