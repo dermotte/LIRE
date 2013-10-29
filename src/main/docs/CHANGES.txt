@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2013-10-29
+==========
+  - Doubled PHOG & Canny Edge Detector extraction speed (with Carlos Perez Lara)
+
 2013-10-22
 ==========
   - Added difference of Gaussians method to ImageUtils and unit test

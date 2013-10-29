@@ -47,11 +47,13 @@ import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder;
-import net.semanticmetadata.lire.imageanalysis.joint.LocalBinaryPatternsAndOpponent;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
-import net.semanticmetadata.lire.impl.*;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.document.Document;
@@ -80,8 +82,8 @@ public class TestUCID extends TestCase {
     private String indexPath = "ucid-index";
     // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
-    private String testExtensive = "testdata/ucid/png";
-    private final String groundTruth = "testdata/ucid/ucid.v2.groundtruth.txt";
+    private String testExtensive = "E:\\ucid.v2/png";
+    private final String groundTruth = "E:\\ucid.v2/ucid.v2.groundtruth.txt";
 
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;

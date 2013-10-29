@@ -115,7 +115,8 @@ public class CannyEdgeDetector {
                 } else {
                     gd[x][y] = Math.PI / 2d;
                 }
-                gm[x][y] = Math.hypot(gy[x][y], gx[x][y]);
+                gm[x][y] = Math.sqrt(gy[x][y] * gy[x][y] + gx[x][y] * gx[x][y]);
+//                gm[x][y] = Math.hypot(gy[x][y], gx[x][y]);
             }
         }
         // Non-maximum suppression

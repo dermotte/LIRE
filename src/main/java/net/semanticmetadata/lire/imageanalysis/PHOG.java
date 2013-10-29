@@ -103,7 +103,8 @@ public class PHOG implements LireFeature {
                 } else {
                     gd[x][y] = Math.PI / 2d;
                 }
-                gm[x][y] = Math.hypot(gy[x][y], gx[x][y]);
+                gm[x][y] = Math.sqrt(gy[x][y]*gy[x][y] + gx[x][y]*gx[x][y]);
+//                gm[x][y] = Math.hypot(gy[x][y], gx[x][y]);
             }
         }
         // Non-maximum suppression
@@ -284,7 +285,7 @@ public class PHOG implements LireFeature {
         else gray.getRaster().setPixel(x, y, tmp255);
     }
 
-    private void sobelFilter(BufferedImage gray, double[][] gx, double[][] gy) {
+    private static void sobelFilter(BufferedImage gray, double[][] gx, double[][] gy) {
         int[] tmp = new int[4];
         int tmpSumX = 0, tmpSumY =0, pix;
         for (int x = 1; x < gray.getWidth() - 1; x++) {
