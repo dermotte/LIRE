@@ -174,6 +174,14 @@ public class JCDTest extends TestCase {
         }
     }
 
+    public void testSingleFile() throws IOException {
+        BufferedImage image = ImageIO.read(new File("gray.jpg"));
+        JCD j = new JCD();
+        j.extract(image);
+        System.out.println(Arrays.toString(j.getDoubleHistogram()));
+        System.out.println(Arrays.toString(j.getByteArrayRepresentation()));
+    }
+
     class Extractor implements Runnable {
         private BufferedImage file;
         private LireFeature feature;
