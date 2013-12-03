@@ -41,15 +41,12 @@
 
 package net.semanticmetadata.lire.utils;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Some little helper methods.<br>
@@ -100,10 +97,11 @@ public class ImageUtils {
      */
     public static BufferedImage scaleImage(BufferedImage image, int width, int height) {
         assert (width > 0 && height > 0);
-        // create smaller image
+        // create image of new size
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // fast scale (Java 1.4 & 1.5)
         Graphics g = img.getGraphics();
+        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g.drawImage(image, 0, 0, img.getWidth(), img.getHeight(), null);
         return img;
     }
