@@ -43,6 +43,7 @@ package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.utils.FileUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -121,7 +122,8 @@ public class JCDTest extends TestCase {
 
     public void testExtractionAndMetric() throws IOException {
         JCD jcd1 = new JCD();
-        BufferedImage img = ImageIO.read(new File("src/test/resources/images/91561.lire.jpg"));
+        BufferedImage img = ImageIO.read(new File("out1.jpg"));
+        ImageUtils.scaleImage(img, 50);
         jcd1.extract(img);
         System.out.println(Arrays.toString(jcd1.getByteArrayRepresentation()));
         JCD jcd2 = new JCD();
