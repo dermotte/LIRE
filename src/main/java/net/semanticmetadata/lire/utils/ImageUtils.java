@@ -75,7 +75,7 @@ public class ImageUtils {
             scaleFactor = ((double) maxSideLength / originalHeight);
         }
         // create new image
-        if (scaleFactor < 1) {
+        if (scaleFactor < 1 && (int) (originalWidth * scaleFactor) > 1 && (int) (originalHeight * scaleFactor) > 1) {
             BufferedImage img = new BufferedImage((int) (originalWidth * scaleFactor), (int) (originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
             // fast scale (Java 1.4 & 1.5)
             Graphics g = img.getGraphics();
