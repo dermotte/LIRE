@@ -262,11 +262,15 @@ public abstract class LocalFeatureHistogramBuilder {
         System.out.println("Creating histograms ...");
         int[] tmpHist = new int[numClusters];
         LireFeature f = getFeatureInstance();
+
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
+
         // based on bug report from Einav Itamar <einavitamar@gmail.com>
         IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(),
                 false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         for (int i = 0; i < reader.maxDoc(); i++) {
-//            if (!reader.isDeleted(i)) {
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
             for (int j = 0; j < tmpHist.length; j++) {
                 tmpHist[j] = 0;
             }
@@ -288,6 +292,8 @@ public abstract class LocalFeatureHistogramBuilder {
 //            }
         }
         iw.commit();
+        // added to permanently remove the deleted docs.
+        iw.forceMerge(1);
         iw.close();
         System.out.println("Finished.");
     }
