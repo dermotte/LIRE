@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2014-03-05
+==========
+  - Fixed LireDemo bugs based on comments of Martha Larson's students from TU Delft:
+    * Re-sized large images to prevent out-of-memory errors
+    * Adapted error message to let people know they have to create a local feature histogram prior to searching for it.
+
 2013-10-29
 ==========
   - Doubled PHOG & Canny Edge Detector extraction speed (with Carlos Perez Lara)

@@ -89,7 +89,7 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
 
     @Override
     public Document createDocument(BufferedImage bufferedImage, String s) throws FileNotFoundException {
-        Document d = super.createDocument(ImageUtils.createWorkingCopy(bufferedImage), s);
+        Document d = super.createDocument(ImageUtils.createWorkingCopy(ImageUtils.scaleImage(bufferedImage, 1024)), s);
         // extract available metadata:
         Metadata metadata = new Metadata();
         try {
@@ -119,6 +119,7 @@ public class MetadataBuilder extends ChainedDocumentBuilder {
 
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
+        image = ImageUtils.scaleImage(image, 1024);
         return super.createDescriptorFields(image);
     }
 }
