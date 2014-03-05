@@ -1566,7 +1566,8 @@ public class LireDemoFrame extends javax.swing.JFrame {
                     Rectangle bounds = resultsTable.getCellRect(0, 0, true);
                     resultsPane.getViewport().setViewPosition(bounds.getLocation());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(null, "An error occurred while searching: " + e.getMessage(), "Error while searching", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "An error occurred while searching: " + e.getMessage() + "\nIf you tried to search for local features (SURF) then please \n" +
+                            "make sure you used the menu item Developer -> Bag of Visual Words -> Index All first ", "Error while searching", JOptionPane.ERROR_MESSAGE);
 
                 } finally {
                     resultsTable.setRowHeight(220);
