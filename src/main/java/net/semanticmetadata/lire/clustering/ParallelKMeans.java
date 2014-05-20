@@ -151,10 +151,11 @@ public class ParallelKMeans extends KMeans {
         }
 
         public void run() {
+            double minDistance;
             for (int k = start; k < end; k++) {
                 double[] f = features.get(k);
                 int best = 0;
-                double minDistance = clusters[0].getDistance(f);
+                minDistance = clusters[0].getDistance(f);
                 for (int i = 1; i < clusters.length; i++) {
                     double v = clusters[i].getDistance(f);
                     if (minDistance > v) {
