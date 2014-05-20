@@ -89,6 +89,21 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
         return scale < f.scale ? 1 : scale == f.scale ? 0 : -1;
     }
 
+    /**
+     * Method to convert SIFT to RootSIFT as described in Arandjelovic, Relja, and Andrew Zisserman.
+     * "Three things everyone should know to improve object retrieval." Computer Vision and Pattern
+     * Recognition (CVPR), 2012 IEEE Conference on. IEEE, 2012.
+     */
+    public void toRootSIFT() {
+        double max = 0;
+        for (int i = 0; i < descriptor.length; i++) {
+            max = Math.max(max, Math.abs(descriptor[i]));
+        }
+        for (int i = 0; i < descriptor.length; i++) {
+            descriptor[i] = Math.sqrt(Math.abs(descriptor[i])/max);
+        }
+    }
+
     public float descriptorDistance(Feature f) {
         if (!(f instanceof Feature)) return -1;
         return (float) MetricsUtils.distL2(descriptor, ((Feature) f).descriptor);
