@@ -11,7 +11,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../lib/JOpenSurf.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../lib/jopensurf.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -48,6 +48,15 @@
       <library>
         <CLASSES>
           <root url="jar://$MODULE_DIR$/../../lib/commons-math3-3.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://D:/Java/Libs/lucene-4.4.0/test-framework/lib/junit-4.10.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
