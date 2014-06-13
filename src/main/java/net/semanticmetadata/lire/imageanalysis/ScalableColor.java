@@ -85,6 +85,7 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
         for (int i = 2; i < result.length; i++) {
             haarTransformedHistogram[i - 2] = result[i];
         }
+        descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
@@ -95,6 +96,7 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
         for (int i = 2; i < result.length; i++) {
             haarTransformedHistogram[i - 2] = result[i];
         }
+        descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
     }
 
     public double[] getDoubleHistogram() {

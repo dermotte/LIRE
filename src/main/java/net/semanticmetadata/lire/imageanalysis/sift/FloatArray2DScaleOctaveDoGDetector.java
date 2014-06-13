@@ -74,9 +74,9 @@ package net.semanticmetadata.lire.imageanalysis.sift;
  * @version 0.1b
  */
 
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.LUDecompositionImpl;
-import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.Vector;
 
@@ -319,7 +319,7 @@ public class FloatArray2DScaleOctaveDoGDetector {
                                 {(double) dxi, (double) dyi, (double) dii}});
                         RealMatrix H_inv;
                         try {
-                            H_inv = new LUDecompositionImpl(H).getSolver().getInverse();
+                            H_inv = new LUDecomposition(H).getSolver().getInverse();
                         } catch (RuntimeException e) {
                             continue X;
                         }
