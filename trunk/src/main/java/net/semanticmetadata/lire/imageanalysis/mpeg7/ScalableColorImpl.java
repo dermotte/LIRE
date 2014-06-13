@@ -38,7 +38,9 @@
  */
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
 
+import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -50,7 +52,7 @@ import java.util.logging.Logger;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class ScalableColorImpl {
+public class ScalableColorImpl extends Histogram {
     protected Logger logger = Logger.getLogger(getClass().getName());
 
     protected BufferedImage img;
@@ -260,7 +262,7 @@ public class ScalableColorImpl {
         _h_value = 16;
         _s_value = 4;
         _v_value = 4;
-
+        descriptor = new double[NumberOfCoefficients];
     }
 
     protected void extract() {
@@ -333,6 +335,7 @@ public class ScalableColorImpl {
         }
         QuantizeHistogram(tmpHist, sumPixels);
         haarTransformedHistogram = HaarTransform(tmpHist);
+        descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
     }
 
     private int[] createHsvImageBuffer(int imageColSize) {
@@ -379,6 +382,8 @@ public class ScalableColorImpl {
             }
             QuantizeHistogram(tmpHist, sumPixels);
             haarTransformedHistogram = HaarTransform(tmpHist);
+            descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
+
         }
     }
 
@@ -816,5 +821,6 @@ public class ScalableColorImpl {
             count++;
         }
         haarTransformedHistogram = hist;
+        this.descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
     }
 }

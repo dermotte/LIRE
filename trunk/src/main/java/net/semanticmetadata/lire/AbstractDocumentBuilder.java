@@ -42,9 +42,12 @@
 package net.semanticmetadata.lire;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -73,5 +76,19 @@ public abstract class AbstractDocumentBuilder implements DocumentBuilder {
         assert (image != null);
         BufferedImage bufferedImage = ImageIO.read(image);
         return createDocument(bufferedImage, identifier);
+    }
+
+    @Override
+    public Document createDocument(BufferedImage image, String identifier) throws FileNotFoundException {
+        assert (image != null);
+        Document doc = new Document();
+        if (identifier != null) {
+            doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
+        }
+        Field[] fields = createDescriptorFields(image);
+        for (int i = 0; i < fields.length; i++) {
+            doc.add(fields[i]);
+        }
+        return doc;
     }
 }

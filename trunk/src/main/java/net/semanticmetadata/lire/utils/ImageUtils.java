@@ -112,7 +112,7 @@ public class ImageUtils {
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         // fast scale (Java 1.4 & 1.5)
         Graphics g = img.getGraphics();
-        g.drawImage(image, fromX, fromY, img.getWidth(), img.getHeight(), null);
+        g.drawImage(image,0, 0, img.getWidth(), img.getHeight(), fromX, fromY, fromX + img.getWidth(), fromY + img.getHeight(), null);
         return img;
     }
 

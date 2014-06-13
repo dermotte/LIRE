@@ -186,7 +186,7 @@ public abstract class LocalFeatureHistogramBuilder {
         double threshold = Math.max(20d, (double) k.getFeatureCount() / 1000d);
         System.out.println("Threshold = " + threshold);
         int cstep = 3;
-        while (Math.abs(newStress - laststress) > threshold) {
+        while (Math.abs(newStress - laststress) > threshold && cstep < 8) {
             System.out.println(getDuration(time) + " -> Next step. Stress difference ~ |" + (int) newStress + " - " + (int) laststress + "| = " + df.format(Math.abs(newStress - laststress)));
             time = System.currentTimeMillis();
             laststress = newStress;

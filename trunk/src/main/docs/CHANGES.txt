@@ -1,6 +1,14 @@
 CHANGES for LIRE
 ================
 
+2014-04-14
+==========
+  - Updated jopensurf to latest svn / git version.
+  - linked sift implementation to math3 package of Apache Math Commons
+  - fixed image cropping in ImageUtils. It didn't crop, but scaled
+  - added generic method to AbstractDocumentBuilder (arch simplification.)
+  - made CEDD work with smaller images (Tnx to Savvas Chatzichristofis)
+
 2014-03-05
 ==========
   - Fixed LireDemo bugs based on comments of Martha Larson's students from TU Delft:
