@@ -74,10 +74,11 @@ import java.util.StringTokenizer;
     ISSN={0162-8828},
 }
 */
-public class OpponentHistogram extends Histogram implements LireFeature {
+public class OpponentHistogram implements LireFeature {
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
     final double sq3 = Math.sqrt(6d);
+    double[] descriptor;
 
     double o1, o2, o3;
 

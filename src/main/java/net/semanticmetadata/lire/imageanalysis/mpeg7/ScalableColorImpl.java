@@ -38,7 +38,6 @@
  */
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
 
-import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -52,8 +51,9 @@ import java.util.logging.Logger;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class ScalableColorImpl extends Histogram {
+public class ScalableColorImpl {
     protected Logger logger = Logger.getLogger(getClass().getName());
+    double[] descriptor;
 
     protected BufferedImage img;
     protected int NumberOfCoefficients = 256;
@@ -211,7 +211,7 @@ public class ScalableColorImpl extends Histogram {
     public ScalableColorImpl(BufferedImage image) {
         this.img = image;
         this.NumberOfBitplanesDiscarded = 0;
-        this.NumberOfCoefficients = 64;
+        this.NumberOfCoefficients = 256;
         _xSize = img.getWidth();
         _ySize = img.getHeight();
         init();
@@ -221,7 +221,7 @@ public class ScalableColorImpl extends Histogram {
     public void extract(BufferedImage image) {
         this.img = image;
         this.NumberOfBitplanesDiscarded = 0;
-        this.NumberOfCoefficients = 64;
+        this.NumberOfCoefficients = 256;
         _xSize = img.getWidth();
         _ySize = img.getHeight();
         init();
@@ -241,7 +241,7 @@ public class ScalableColorImpl extends Histogram {
     public ScalableColorImpl(int[] pixels) {
         this.img = null;
         this.NumberOfBitplanesDiscarded = 0;
-        this.NumberOfCoefficients = 64;
+        this.NumberOfCoefficients = 256;
         _xSize = 1;
         _ySize = pixels.length / 3;
         this.pixels = pixels;

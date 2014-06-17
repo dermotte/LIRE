@@ -94,7 +94,7 @@ public class CEDDTest extends TestCase {
 
     public void testSingleFile() throws IOException {
         CEDD c = new CEDD();
-        BufferedImage img = ImageIO.read(new File("C:\\Java\\Projects\\LireSVN\\testdata\\wang-1000\\652.jpg"));
+        BufferedImage img = ImageIO.read(new File("C:\\Java\\Projects\\LireSVN\\testdata\\UCID\\ucid00001.jpg"));
         c.extract(img);
         String s = Arrays.toString(c.getDoubleHistogram());
         System.out.println("s = " + s);

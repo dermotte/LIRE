@@ -91,7 +91,7 @@ public class GenericDoubleLireFeature implements LireFeature {
     public float getDistance(LireFeature feature) {
         // it is assumed that the histograms are of equal length.
         assert(feature.getDoubleHistogram().length == data.length);
-        return (float) MetricsUtils.distL1(feature.getDoubleHistogram(), data);
+        return (float) MetricsUtils.distL2(feature.getDoubleHistogram(), data);
     }
 
     @Override

@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2014-04-16
+==========
+  - Added and tested LoDe (using global descriptors as local ones)
+  - Created and tested a LocalFeatureHistogramBuilder based on the
+    Apache Commons Math KMeans++ implementation
+  - Fixed several issues with net.semanticmetadata.lire.imageanalysis.bovw.LocalFeatureHistogramBuilder
+
 2014-04-14
 ==========
   - Updated jopensurf to latest svn / git version.

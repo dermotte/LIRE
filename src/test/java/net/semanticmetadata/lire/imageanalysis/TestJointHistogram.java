@@ -60,7 +60,7 @@ public class TestJointHistogram extends TestCase {
         BufferedImage img = ImageIO.read(new FileInputStream("C:\\Java\\Projects\\LireSVN\\testdata\\ferrari\\black\\2828686873_2fa36f83d7_b.jpg"));
         JointHistogram jh = new JointHistogram();
         jh.extract(img);
-        System.out.println(Arrays.toString(jh.descriptor));
+        System.out.println(Arrays.toString(jh.getDoubleHistogram()));
 
         JointHistogram jh2 = new JointHistogram();
         jh2.setByteArrayRepresentation(jh.getByteArrayRepresentation());

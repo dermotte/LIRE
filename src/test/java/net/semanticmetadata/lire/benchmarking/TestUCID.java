@@ -43,7 +43,6 @@ package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
@@ -85,18 +84,22 @@ public class TestUCID extends TestCase {
     private String testExtensive = "testdata/UCID";
     private final String groundTruth = "testdata/ucid.v2.groundtruth.txt";
 
+    //    private String testExtensive = "testdata/UCID.small";
+//    private final String groundTruth = "testdata/ucid.v2.groundtruth.small.txt";
+//
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
     ParallelIndexer parallelIndexer;
 
     protected void setUp() throws Exception {
         super.setUp();
-        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
+        indexPath ="ucid-index-475516671";
+//        indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
         parallelIndexer = new ParallelIndexer(16, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+                // builder.addBuilder(new GenericDocumentBuilder(CEDD.class));
 //                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
@@ -115,7 +118,8 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(RankAndOpponent.class, "jop"));
 //                builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
                 builder.addBuilder(new SurfDocumentBuilder());
-                builder.addBuilder(new LoDeBuilder());
+                builder.addBuilder(new LoDeBuilder(new ScalableColor()));
+                builder.addBuilder(new LoDeBuilder(new CEDD()));
 //                builder.addBuilder(new MSERDocumentBuilder());
 //                builder.addBuilder(new SiftDocumentBuilder());
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
@@ -157,9 +161,14 @@ public class TestUCID extends TestCase {
     public void testMAP() throws IOException {
         // INDEXING ...
         parallelIndexer.run();
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 10000, 128);
+        System.out.println("** SURF BoVW");
+        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
         sh.index();
-        LoDeFeatureHistogramBuilder ldb = new LoDeFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 10000, 128);
+        System.out.println("** SIMPLE BoVW / LoDe SC");
+        LoDeFeatureHistogramBuilder ldb = new LoDeFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new ScalableColor());
+        ldb.index();
+        System.out.println("** SIMPLE BoVW / LoDe CEDD");
+        ldb = new LoDeFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new CEDD());
         ldb.index();
         // VLAD
 //        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))));
@@ -169,7 +178,7 @@ public class TestUCID extends TestCase {
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
 
         System.out.println("Feature\tMAP\tp@10\tER");
-//        computeMAP(new GenericFastImageSearcher(1400, CEDD.class, true, reader), "CEDD", reader);
+        // computeMAP(new GenericFastImageSearcher(1400, CEDD.class, true, reader), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, FCTH.class, true, reader), "FCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, JCD.class, true, reader), "JCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, PHOG.class, true, reader), "PHOG", reader);
@@ -191,8 +200,12 @@ public class TestUCID extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1400, SPLBP.class, true, reader), "SPLBP ", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
-        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW", reader);
-        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName()+"LoDe"), "LoDe SC", reader);
+        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
+        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
+        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
+        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CEDD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), "VLAD-SURF", reader);
 
     }
@@ -213,29 +226,29 @@ public class TestUCID extends TestCase {
                 // ok, we've got a query here for a document ...
                 Document queryDoc = reader.document(i);
                 ImageSearchHits hits = searcher.search(queryDoc, reader);
-                int rank = 0;
+                double rank = 0;
                 double avgPrecision = 0;
                 double found = 0;
                 double tmpP10 = 0;
                 for (int y = 0; y < hits.length(); y++) {
                     String hitFile = getIDfromFileName(hits.doc(y).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
-                    if (!hitFile.equals(fileName)) {
-                        rank++;
-                        if (queries.get(fileName).contains(hitFile)) { // it's a hit.
-                            found++;
-                            // TODO: Compute error rate, etc. here.
-                            avgPrecision += found / rank;
+                    // if (!hitFile.equals(fileName)) {
+                    rank++;
+                    if (queries.get(fileName).contains(hitFile) || hitFile.equals(fileName)) { // it's a hit.
+                        found++;
+                        // TODO: Compute error rate, etc. here.
+                        avgPrecision += found / rank;// * (1d/queries.get(fileName).size());
 //                            if (rank<=60) System.out.print('X');
-                            if (rank <= 10) tmpP10++;
-                        } else {
-                            if (rank == 1) errorRate += 1d;
+                        if (rank <= 10) tmpP10++;
+                    } else {     // nothing has been found.
+                        if (rank == 1) errorRate += 1d;
 //                            if (rank<=60) System.out.print('-');
-                        }
                     }
                 }
+                // }
 //                System.out.println();
-                if (found - queries.get(fileName).size() == 0)
-                    avgPrecision /= (double) queries.get(fileName).size();
+                if (found - queries.get(fileName).size() == 1)
+                    avgPrecision /= (double) (1d + queries.get(fileName).size());
                 else {
                     // some of the results have not been found. We have to deal with it ...
                     System.err.println("Did not find result ;(");
@@ -243,19 +256,19 @@ public class TestUCID extends TestCase {
 
                 // assertTrue(found - queries.get(fileName).size() == 0);
                 map += avgPrecision;
-                p10 += tmpP10 / 3d;
+                p10 += tmpP10;
             }
         }
         errorRate = errorRate / queryCount;
-        map /= queryCount;
-        p10 /= queryCount;
+        map = map / queryCount;
+        p10 = p10 / (queryCount * 10d);
         System.out.print(prefix);
         System.out.format("\t%.5f\t%.5f\t%.5f\n", map, p10, errorRate);
     }
 
     private String getIDfromFileName(String path) {
         // That's the one for Windows. Change for Linux ...
-        return path.substring(path.lastIndexOf('\\') + 1).replace(".png", ".tif");
+        return path.substring(path.lastIndexOf('\\') + 1).replace(".jpg", ".tif");
     }
 
     public void testIndexingSpeed() throws IOException {
@@ -306,7 +319,7 @@ public class TestUCID extends TestCase {
             }
         }
         ms = System.currentTimeMillis() - ms;
-        System.out.printf("%s \t %3.1f \n", featureClass.getName().substring(featureClass.getName().lastIndexOf('.')+1), (double) ms / queryCount);
+        System.out.printf("%s \t %3.1f \n", featureClass.getName().substring(featureClass.getName().lastIndexOf('.') + 1), (double) ms / queryCount);
     }
 
     private void testFeatureSpeed(ArrayList<String> images, LireFeature feature) throws IOException {
@@ -316,7 +329,7 @@ public class TestUCID extends TestCase {
             feature.extract(ImageIO.read(new File(s)));
         }
         ms = System.currentTimeMillis() - ms;
-        System.out.printf("%s \t %3.1f \n", feature.getClass().getName().substring(feature.getClass().getName().lastIndexOf('.')+1), (double) ms / (double) images.size());
+        System.out.printf("%s \t %3.1f \n", feature.getClass().getName().substring(feature.getClass().getName().lastIndexOf('.') + 1), (double) ms / (double) images.size());
     }
 
 

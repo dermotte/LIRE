@@ -107,10 +107,11 @@ public class KMeans {
         // find first clusters:
         clusters = new Cluster[numClusters];
         Set<Integer> medians = selectInitialMedians(numClusters);
+        assert(medians.size() == numClusters); // this has to be the same ...
         Iterator<Integer> mediansIterator = medians.iterator();
         for (int i = 0; i < clusters.length; i++) {
-            clusters[i] = new Cluster();
             double[] descriptor = features.get(mediansIterator.next());
+            clusters[i] = new Cluster(new double[descriptor.length]);   // implicitly setting the length of the mean array.
             System.arraycopy(descriptor, 0, clusters[i].mean, 0, descriptor.length);
         }
     }
@@ -178,7 +179,8 @@ public class KMeans {
      */
     protected void recomputeMeans() {
         int length = features.get(0).length;
-        for (Cluster cluster : clusters) {
+        for (int i = 0; i < clusters.length; i++) {
+            Cluster cluster = clusters[i];
             double[] mean = cluster.mean;
             for (int j = 0; j < length; j++) {
                 mean[j] = 0;
@@ -188,6 +190,15 @@ public class KMeans {
                 if (cluster.members.size() > 1)
                     mean[j] = mean[j] / (double) cluster.members.size();
             }
+            if (cluster.members.size() == 1) {
+                System.err.println("** There is just one member in cluster " + i);
+            } else if (cluster.members.size() < 1) {
+                System.err.println("** There is NO member in cluster " + i);
+                // fill it with a random member?!?
+                int index = (int) Math.floor(Math.random()*features.size());
+                System.arraycopy(features.get(index), 0, clusters[i].mean, 0, clusters[i].mean.length);
+            }
+
         }
     }
 

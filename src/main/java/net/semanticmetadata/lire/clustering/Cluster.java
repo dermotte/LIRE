@@ -106,7 +106,7 @@ public class Cluster implements Comparable<Object> {
     }
 
     public double getDistance(Histogram f) {
-        return getDistance(f.descriptor);
+        return getDistance(f.getDoubleHistogram());
     }
 
     public double getDistance(double[] f) {

@@ -42,7 +42,6 @@
 package net.semanticmetadata.lire.imageanalysis.joint;
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
@@ -56,8 +55,10 @@ import java.util.StringTokenizer;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class JointHistogram extends Histogram implements LireFeature {
+public class JointHistogram implements LireFeature {
     private int[] tmpIntensity = new int[1];
+    double[] descriptor;
+
 
     public void extract(BufferedImage bimg) {
         bimg = ImageUtils.get8BitRGBImage(bimg);

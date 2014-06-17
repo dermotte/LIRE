@@ -51,7 +51,7 @@ import java.awt.image.BufferedImage;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public interface LireFeature {
+public interface LireFeature extends Histogram {
     /**
      * Gives a descriptive name of the feature, i.e. a name to show up in benchmarks, menus, UIs, etc.
      * @return the name of the feature.

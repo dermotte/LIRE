@@ -141,8 +141,8 @@ public class IndexVisualWordsTest extends TestCase {
         ir.close();
         System.out.println("Creating new visual words ...");
         SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
-        surfFeatureHistogramBuilder.indexMissing();
-        System.out.println("Finished.");
+//        surfFeatureHistogramBuilder.indexMissing();
+//        System.out.println("Finished.");
     }
 
     public void testStrings() {

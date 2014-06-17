@@ -53,9 +53,9 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.DefaultSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
+import org.apache.lucene.util.BytesRef;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -70,9 +70,9 @@ import java.util.LinkedList;
 public class VisualWordsImageSearcher extends AbstractImageSearcher {
     private int numMaxHits;
     private String fieldName;
-    //        private Similarity similarity = new DefaultSimilarity();
-//        private Similarity similarity = new MySimilarity();
-    private Similarity similarity = new BM25Similarity();
+    private Similarity similarity = new DefaultSimilarity();
+//    private Similarity similarity = new MySimilarity();
+//    private Similarity similarity = new BM25Similarity();
     QueryParser qp;
 
 
@@ -128,22 +128,55 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
      * This implementation has shown formidable results with the Nister UKBench data set.
      */
     @SuppressWarnings("unused")
-	private static class MySimilarity extends DefaultSimilarity {
-        public float tf(float freq) {
-//            return (float) Math.log(freq);
-            return 1.0f;
+    private static class MySimilarity extends DefaultSimilarity {
+        @Override
+        public float coord(int overlap, int maxOverlap) {
+            return super.coord(overlap, maxOverlap);
         }
 
-        public float idf(int docfreq, int numdocs) {
-            return 1f;
-        }
-
+        @Override
         public float queryNorm(float sumOfSquaredWeights) {
-            return 1;
+            return super.queryNorm(sumOfSquaredWeights);
         }
 
-        public float computeNorm(String field, FieldInvertState state) {
-            return 1;
+        @Override
+        public float lengthNorm(FieldInvertState state) {
+            return super.lengthNorm(state);
+        }
+
+        @Override
+        public float tf(float freq) {
+            return super.tf(freq);
+        }
+
+        @Override
+        public float sloppyFreq(int distance) {
+            return super.sloppyFreq(distance);
+        }
+
+        @Override
+        public float scorePayload(int doc, int start, int end, BytesRef payload) {
+            return super.scorePayload(doc, start, end, payload);
+        }
+
+        @Override
+        public float idf(long docFreq, long numDocs) {
+            return 1f; //super.idf(docFreq, numDocs);
+        }
+
+        @Override
+        public void setDiscountOverlaps(boolean v) {
+            super.setDiscountOverlaps(v);
+        }
+
+        @Override
+        public boolean getDiscountOverlaps() {
+            return super.getDiscountOverlaps();
+        }
+
+        @Override
+        public String toString() {
+            return super.toString();
         }
     }
 }

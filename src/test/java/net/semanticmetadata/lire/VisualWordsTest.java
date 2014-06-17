@@ -59,7 +59,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -105,7 +104,7 @@ public class VisualWordsTest extends TestCase {
             IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
             SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir);
             VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
-            Document doc = sfh.getVisualWords(surfBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
+//            Document doc = sfh.getVisualWords(surfBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
             ImageSearchHits hits = vis.search(ir.document(i), ir);
             FileUtils.saveImageResultsToPng("results_bow_no_tf_" + i, hits, queryImage);
         }
@@ -115,9 +114,9 @@ public class VisualWordsTest extends TestCase {
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
         SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir);
         VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
-        Document doc = sfh.getVisualWords(surfBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
-        ImageSearchHits hits = vis.search(doc, ir);
-        FileUtils.saveImageResultsToPng("results_bow_surf", hits, queryImage);
+//        Document doc = sfh.getVisualWords(surfBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
+//        ImageSearchHits hits = vis.search(doc, ir);
+//        FileUtils.saveImageResultsToPng("results_bow_surf", hits, queryImage);
     }
 
     // -------------< SIFT >--------------------
@@ -159,9 +158,9 @@ public class VisualWordsTest extends TestCase {
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
         SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir);
         VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
-        Document doc = sfh.getVisualWords(siftBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
-        ImageSearchHits hits = vis.search(doc, ir);
-        FileUtils.saveImageResultsToPng("results_bow_sift", hits, queryImage);
+//        Document doc = sfh.getVisualWords(siftBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
+//        ImageSearchHits hits = vis.search(doc, ir);
+//        FileUtils.saveImageResultsToPng("results_bow_sift", hits, queryImage);
     }
 
     // from the developer wiki
@@ -189,7 +188,7 @@ public class VisualWordsTest extends TestCase {
         // employed for creating the vocabulary. "100" is the number of visual words to be created.
         SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(ir, -1, 100);
         // progress monitoring is optional and opens a window showing you the progress.
-        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
+//        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
         sh.index();
     }
 

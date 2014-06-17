@@ -45,6 +45,6 @@ package net.semanticmetadata.lire.imageanalysis;
  * Date: 29.09.2010
  * Time: 16:02:24
  */
-public class Histogram {
-    public double[] descriptor = null;
+public interface Histogram {
+    public double[] getDoubleHistogram();
 }
