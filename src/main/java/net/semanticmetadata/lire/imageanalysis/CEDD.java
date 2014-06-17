@@ -236,16 +236,23 @@ public class CEDD implements LireFeature {
 
                         TempSum++;
 
-                        if (j < (x + Step_X / 2) && i < (y + Step_Y / 2))
-                            PixelsNeighborhood.Area1 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
-                        if (j >= (x + Step_X / 2) && i < (y + Step_Y / 2))
-                            PixelsNeighborhood.Area2 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
-                        if (j < (x + Step_X / 2) && i >= (y + Step_Y / 2))
-                            PixelsNeighborhood.Area3 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
-                        if (j >= (x + Step_X / 2) && i >= (y + Step_Y / 2))
-                            PixelsNeighborhood.Area4 += 4 * ImageGrid[j][i] / (Step_X * Step_Y);
+                        if (j < (x + Step_X / 2) && i < (y + Step_Y / 2)) PixelsNeighborhood.Area1 += (ImageGrid[j][i]);
+                        if (j >= (x + Step_X / 2) && i < (y + Step_Y / 2)) PixelsNeighborhood.Area2 += (ImageGrid[j][i]);
+                        if (j < (x + Step_X / 2) && i >= (y + Step_Y / 2)) PixelsNeighborhood.Area3 += (ImageGrid[j][i]);
+                        if (j >= (x + Step_X / 2) && i >= (y + Step_Y / 2)) PixelsNeighborhood.Area4 += (ImageGrid[j][i]);
+
                     }
                 }
+
+                PixelsNeighborhood.Area1 = (int)(PixelsNeighborhood.Area1 * (4.0 / (Step_X * Step_Y)));
+
+                PixelsNeighborhood.Area2 = (int)(PixelsNeighborhood.Area2 * (4.0 / (Step_X * Step_Y)));
+
+                PixelsNeighborhood.Area3 = (int)(PixelsNeighborhood.Area3 * (4.0 / (Step_X * Step_Y)));
+
+                PixelsNeighborhood.Area4 = (int)(PixelsNeighborhood.Area4 * (4.0 / (Step_X * Step_Y)));
+
+
 
                 MaskValues.Mask1 = Math.abs(PixelsNeighborhood.Area1 * 2 + PixelsNeighborhood.Area2 * -2 + PixelsNeighborhood.Area3 * -2 + PixelsNeighborhood.Area4 * 2);
                 MaskValues.Mask2 = Math.abs(PixelsNeighborhood.Area1 * 1 + PixelsNeighborhood.Area2 * 1 + PixelsNeighborhood.Area3 * -1 + PixelsNeighborhood.Area4 * -1);
@@ -254,6 +261,7 @@ public class CEDD implements LireFeature {
                 MaskValues.Mask5 = Math.abs(PixelsNeighborhood.Area1 * 0 + PixelsNeighborhood.Area2 * Math.sqrt(2) + PixelsNeighborhood.Area3 * -Math.sqrt(2) + PixelsNeighborhood.Area4 * 0);
 
                 Max = Math.max(MaskValues.Mask1, Math.max(MaskValues.Mask2, Math.max(MaskValues.Mask3, Math.max(MaskValues.Mask4, MaskValues.Mask5))));
+
 
                 MaskValues.Mask1 = MaskValues.Mask1 / Max;
                 MaskValues.Mask2 = MaskValues.Mask2 / Max;
