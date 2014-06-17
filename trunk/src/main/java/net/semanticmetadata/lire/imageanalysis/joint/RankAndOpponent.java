@@ -41,7 +41,6 @@
 
 package net.semanticmetadata.lire.imageanalysis.joint;
 
-import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
@@ -55,12 +54,12 @@ import java.util.StringTokenizer;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class RankAndOpponent extends Histogram implements LireFeature {
+public class RankAndOpponent implements LireFeature {
     private int[] tmpIntensity = new int[1];
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
     final double sq3 = Math.sqrt(6d);
-
+    double[] descriptor;
     double o1, o2, o3;
     int tmp;
 

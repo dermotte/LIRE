@@ -42,7 +42,6 @@
 package net.semanticmetadata.lire.imageanalysis.mser;
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
@@ -57,8 +56,10 @@ import java.awt.image.BufferedImage;
  *
  * @author Christine Keim, christine.keim@inode.at
  */
-public class MSERFeature extends Histogram implements LireFeature {
+public class MSERFeature implements LireFeature {
     MSERGrowthHistory mser;
+    double[] descriptor;
+
 
     public MSERFeature(MSERGrowthHistory maxStableExtremalRegion, double[] invariants) {
         this.mser = maxStableExtremalRegion;

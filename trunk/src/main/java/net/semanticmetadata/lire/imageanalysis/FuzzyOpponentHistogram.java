@@ -41,7 +41,6 @@
 
 package net.semanticmetadata.lire.imageanalysis;
 
-import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -73,7 +72,7 @@ import java.util.StringTokenizer;
     ISSN={0162-8828},
 }
 */
-public class FuzzyOpponentHistogram extends Histogram implements LireFeature {
+public class FuzzyOpponentHistogram implements LireFeature {
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
     final double sq3 = Math.sqrt(6d);
@@ -83,6 +82,7 @@ public class FuzzyOpponentHistogram extends Histogram implements LireFeature {
     double[] o2f = new double[4];
     double[] o3f = new double[4];
     private int[] tmpIntensity = new int[1];
+    double[] descriptor;
 
 
     public void extract(BufferedImage bimg) {

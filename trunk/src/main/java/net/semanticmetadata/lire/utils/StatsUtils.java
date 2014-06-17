@@ -67,14 +67,19 @@ public class StatsUtils {
                 tmp.add(i);
             }
             while (tmp.size() > size) {
-                tmp.remove((int) (Math.random() * (double) tmp.size()));
+                tmp.remove((int) Math.floor(Math.random() * (double) tmp.size()));
             }
             set.addAll(tmp);
         } else {
             while (set.size() < size) {
-                set.add((int) (Math.random() * (double) maximum));
+                set.add((int) Math.floor((Math.random() * (double) maximum)));
             }
         }
+//        for (Iterator<Integer> iterator = set.iterator(); iterator.hasNext(); ) {
+//            Integer next = iterator.next();
+//            System.out.print(next + ", ");
+//        }
+//        System.out.println();
         return set;
     }
 }

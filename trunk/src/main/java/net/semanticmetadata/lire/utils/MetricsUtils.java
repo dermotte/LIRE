@@ -255,8 +255,8 @@ public class MetricsUtils {
             tmp2 += hist2[i] * hist2[i];
         }
         if (tmp1 * tmp2 > 0) {
-            return (distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2)));
-        } else return 0d;
+            return Math.max(0, (1d - distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2))));
+        } else return 1d;
     }
 
     public static float distL1(float[] h1, float[] h2) {

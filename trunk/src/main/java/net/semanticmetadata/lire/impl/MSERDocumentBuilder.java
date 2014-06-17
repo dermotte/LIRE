@@ -98,8 +98,8 @@ public class MSERDocumentBuilder extends AbstractDocumentBuilder {
                 boolean skip = false;
                 // add each feature to the document:
                 // check first if NaN!!
-                for (int j = 0; j < f.descriptor.length; j++) {
-                    if (Double.isNaN(f.descriptor[j])) skip = true;
+                for (int j = 0; j < f.getDoubleHistogram().length; j++) {
+                    if (Double.isNaN(f.getDoubleHistogram()[j])) skip = true;
                     break;
                 }
 

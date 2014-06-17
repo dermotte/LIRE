@@ -42,7 +42,6 @@ package net.semanticmetadata.lire.imageanalysis.sift;
 
 
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
@@ -56,7 +55,7 @@ import java.util.logging.Logger;
 /**
  * SIFT feature container
  */
-public class Feature extends Histogram implements Comparable<Feature>, Serializable, LireFeature {
+public class Feature  implements Comparable<Feature>, Serializable, LireFeature {
     /**
      *
      */
@@ -65,6 +64,7 @@ public class Feature extends Histogram implements Comparable<Feature>, Serializa
     public float scale;
     public float orientation;
     public float[] location;
+    double[] descriptor;
 //    public float[] descriptor;
 
     /**

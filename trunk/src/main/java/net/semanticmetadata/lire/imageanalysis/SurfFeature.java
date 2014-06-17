@@ -56,8 +56,9 @@ import java.util.StringTokenizer;
  * Date: 29.09.2010
  * Time: 15:44:14
  */
-public class SurfFeature extends Histogram implements LireFeature {
+public class SurfFeature implements LireFeature {
     SURFInterestPoint sip;
+    double[] descriptor;
 
     public SurfFeature(SURFInterestPoint surfInterestPoint) {
         this.sip = surfInterestPoint;

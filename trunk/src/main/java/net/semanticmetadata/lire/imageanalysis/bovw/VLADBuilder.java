@@ -147,7 +147,7 @@ public class VLADBuilder {
             for (int j = 0; j < fields.length; j++) {
                 LireFeature f = getFeatureInstance();
                 f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                features.add(((Histogram) f).descriptor);
+                features.add(((Histogram) f).getDoubleHistogram());
             }
             k.addImage(file, features);
         }

@@ -80,16 +80,18 @@ public class LoDeBuilder extends AbstractDocumentBuilder {
         IntegralImage integralImage = new IntegralImage(new ImageWrapper(image));
         // originally from Savvas in c#: FastHessian.getIpoints(0.00005f, 4, 2, img);
         // those are the params from JOpenSurf:
-//        FastHessian fh = new FastHessian(integralImage, 5, 2, 0.0004f, 0.81F);
-        FastHessian fh = new FastHessian(integralImage, 4, 2, 0.00005f, 0.81F);
+        FastHessian fh = new FastHessian(integralImage, 5, 2, 0.0004f, 0.81F);
+//        FastHessian fh = new FastHessian(integralImage, 4, 2, 0.00005f, 1f);
         List<SURFInterestPoint> iPoints = fh.getIPoints();
         double s = 0d;
+        int count = 100;
         for (Iterator<SURFInterestPoint> iterator = iPoints.iterator(); iterator.hasNext(); ) {
             SURFInterestPoint next = iterator.next();
             s = next.getScale() * 2.5;
-            // System.out.println("next.getX() = " + Math.floor(next.getX() - s / 2) + ", " + Math.floor(next.getY() - s / 2) + " " + ((int) s));
+//            System.out.println("next.getX() = " + Math.floor(next.getX() - s / 2) + ", " + Math.floor(next.getY() - s / 2) + " " + ((int) s));
             lireFeature.extract(ImageUtils.cropImage(image, (int) Math.floor(next.getX() - s / 2), (int) Math.floor(next.getY() - s / 2), (int) s, (int) s));
-            // System.out.println(s + " - lireFeature = " + lireFeature.getStringRepresentation());
+//            System.out.println(Arrays.toString(lireFeature.getDoubleHistogram()));
+//            System.out.printf("%5.2f\t%5.2f\t%5.2f\t%s\n", next.getX(), next.getY(), next.getScale(), Arrays.toString(lireFeature.getDoubleHistogram()));
             fields.add(new StoredField(lireFeature.getFieldName(), lireFeature.getByteArrayRepresentation()));
         }
         return fields.toArray(new Field[fields.size()]);

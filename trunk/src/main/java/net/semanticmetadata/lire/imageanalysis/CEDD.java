@@ -67,6 +67,7 @@ public class CEDD implements LireFeature {
     private boolean Compact = false;
     //    protected double[] data = new double[144];
     protected byte[] histogram = new byte[144];
+
     int tmp;
     // for tanimoto:
     private double Result, Temp1, Temp2, TempCount1, TempCount2, TempCount3;
@@ -351,7 +352,6 @@ public class CEDD implements LireFeature {
 //        data = qCEDD;  // changed by mlux
         for (int i = 0; i < qCEDD.length; i++) {
             histogram[i] = (byte) qCEDD[i];
-
         }
     }
 
