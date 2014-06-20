@@ -41,10 +41,8 @@
 
 package net.semanticmetadata.lire.utils;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 /**
  * Utility class for serialization issues.
@@ -405,13 +403,14 @@ public class SerializationUtils {
 
     /**
      * Creates a double[] array from a String. It is assumed that the double array is encoded like using {@link #toString(double[])}
+     *
      * @param data
      * @return
      */
     public static double[] toDoubleArray(String data) {
         LinkedList<Double> dl = new LinkedList<Double>();
         StringTokenizer st = new StringTokenizer(data);
-        while(st.hasMoreTokens()) {
+        while (st.hasMoreTokens()) {
             dl.add(Double.parseDouble(st.nextToken()));
         }
         double[] result = new double[dl.size()];
@@ -427,11 +426,12 @@ public class SerializationUtils {
 
     /**
      * A simple string creation method. Can be parsed with {@link #toDoubleArray(String)}.
+     *
      * @param data
      * @return
      */
     public static String toString(double[] data) {
-        StringBuilder sb = new StringBuilder(data.length<<2);
+        StringBuilder sb = new StringBuilder(data.length << 2);
         for (int i = 0; i < data.length; i++) {
             sb.append(data[i]);
             sb.append(' ');
@@ -440,12 +440,59 @@ public class SerializationUtils {
     }
 
     public static String toString(byte[] data) {
-        StringBuilder sb = new StringBuilder(data.length<<2);
+        StringBuilder sb = new StringBuilder(data.length << 2);
         for (int i = 0; i < data.length; i++) {
             sb.append(data[i]);
             sb.append(' ');
         }
         return sb.toString();
+    }
+
+    /**
+     * Reads a double array per line from a text file for the use of code books for local features.
+     * @param in the inputstream the code book is read from.
+     * @return
+     */
+    public static List<double[]> readCodeBook(InputStream in) {
+        LinkedList<double[]> result = null;
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            double[] buffer = new double[1024]; // hope 1024 is enough :)
+            int numDimensions = 0;
+            result = new LinkedList<double[]>();
+            while ((line = br.readLine()) != null) {
+                String[] d = line.split("\\s+");
+                numDimensions = 0;
+                for (int i = 0; i < d.length; i++) {
+                    if (d[i].length() > 0) {
+                        buffer[numDimensions] = Double.parseDouble(d[i]);
+                        numDimensions++;
+                    }
+                }
+                double[] r = new double[numDimensions];
+                System.arraycopy(buffer, 0, r, 0, numDimensions);
+                result.add(r);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static void writeCodeBook(OutputStream out, List<double[]> codeBook) throws IOException {
+        String tab = "\t";
+        String enter = "\n";
+        for (Iterator<double[]> iterator = codeBook.iterator(); iterator.hasNext(); ) {
+            double[] doubles = iterator.next();
+            for (int i = 0; i < doubles.length; i++) {
+                out.write(Double.toString(doubles[i]).getBytes());
+                if (i<doubles.length-1)
+                    out.write(tab.getBytes());
+                else
+                    out.write(enter.getBytes());
+            }
+        }
     }
 }
 

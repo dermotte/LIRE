@@ -88,7 +88,7 @@ public class GenericDocumentBuilder extends AbstractDocumentBuilder {
         try {
             BitSampling.readHashFunctions();
 //            LocalitySensitiveHashing.readHashFunctions();
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Could not read hashes from file when first creating a GenericDocumentBuilder instance.");
             e.printStackTrace();
         }

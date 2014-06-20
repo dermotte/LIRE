@@ -42,7 +42,12 @@ package net.semanticmetadata.lire.utils;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.clustering.Cluster;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Date: 28.09.2010
@@ -138,5 +143,14 @@ public class SerializationUtilsTest extends TestCase {
             assertTrue((tmp >> 20 & bitmask) == (int) test[1]);
             assertTrue((tmp >> 25 & bitmask) == (int) test[0]);
         }
+    }
+
+    public void testReadCodeBook() throws IOException {
+        List<double[]> doubles = SerializationUtils.readCodeBook(new FileInputStream("codebookSCD128.txt"));
+        for (Iterator<double[]> iterator = doubles.iterator(); iterator.hasNext(); ) {
+            double[] next = iterator.next();
+            //System.out.println(Arrays.toString(next));
+        }
+        SerializationUtils.writeCodeBook(System.out, doubles);
     }
 }
