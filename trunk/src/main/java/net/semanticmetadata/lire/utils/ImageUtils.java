@@ -108,12 +108,14 @@ public class ImageUtils {
 
     public static BufferedImage cropImage(BufferedImage image, int fromX, int fromY, int width, int height) {
         assert (width > 0 && height > 0);
+        int toX = Math.min(fromX + width, image.getWidth());
+        int toY = Math.min(fromY + height, image.getHeight());
         // create smaller image
-        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage cropped = new BufferedImage(toX-fromX, toY-fromY, BufferedImage.TYPE_INT_RGB);
         // fast scale (Java 1.4 & 1.5)
-        Graphics g = img.getGraphics();
-        g.drawImage(image,0, 0, img.getWidth(), img.getHeight(), fromX, fromY, fromX + img.getWidth(), fromY + img.getHeight(), null);
-        return img;
+        Graphics g = cropped.getGraphics();
+        g.drawImage(image,0, 0, cropped.getWidth(), cropped.getHeight(), fromX, fromY, toX, toY, null);
+        return cropped;
     }
 
     /**

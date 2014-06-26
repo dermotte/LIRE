@@ -46,7 +46,9 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
@@ -73,7 +75,7 @@ import java.util.*;
  * Date: 14.05.13
  * Time: 10:56
  */
-public class TestUCID extends TestCase {
+public class UCIDBenchmark extends TestCase {
     private String indexPath = "ucid-index";
     // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
@@ -89,7 +91,28 @@ public class TestUCID extends TestCase {
 
     ParallelIndexer parallelIndexer;
 
+    /* configure test of global features by adding them here */
+
+    LireFeature[] globalFeaturesToTest = new LireFeature[]{
+//            new CEDD(),
+//            new PHOG(),
+//            new SPACC(),
+//            new SPCEDD(),
+//            new OpponentHistogram()
+    };
+
+    LireFeature[] simpleFeaturesToTest = new LireFeature[]{
+//            new CEDD(),
+            new ScalableColor()
+//            new OpponentHistogram()
+    };
+
+    boolean testSift = false;
+    boolean testSurf = false;
+
+
     protected void setUp() throws Exception {
+
         super.setUp();
 //        indexPath = "ucid-index-573374558";
         indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
@@ -97,39 +120,23 @@ public class TestUCID extends TestCase {
         parallelIndexer = new ParallelIndexer(16, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-//                builder.addBuilder(new GenericDocumentBuilder(CEDD.class));
-//                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
+                for (int i = 0; i < globalFeaturesToTest.length; i++) {
+                    LireFeature lireFeature = globalFeaturesToTest[i];
+                    builder.addBuilder(new GenericDocumentBuilder(lireFeature.getClass()));
+                }
 
-//                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getJpegCoefficientHistogramDocumentBuilder());
-//                builder.addBuilder(new GenericDocumentBuilder(RankAndOpponent.class, "jop"));
-//                builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
+                for (int i = 0; i < simpleFeaturesToTest.length; i++) {
+                    LireFeature lireFeature = simpleFeaturesToTest[i];
+                    // need to create a feature instance for each thread.
+                    try {
+                        builder.addBuilder(new SimpleBuilder(lireFeature.getClass().newInstance()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
 
-//                builder.addBuilder(new SurfDocumentBuilder());
-                builder.addBuilder(new SimpleBuilder(new ScalableColor()));
-//                builder.addBuilder(new SimpleBuilder(new CEDD()));
-
-//                builder.addBuilder(new MSERDocumentBuilder());
-//                builder.addBuilder(new SiftDocumentBuilder());
-//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
-//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
-//                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
-//                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
+                if (testSift) builder.addBuilder(new SiftDocumentBuilder());
+                if (testSurf) builder.addBuilder(new SurfDocumentBuilder());
             }
         };
 
@@ -164,52 +171,61 @@ public class TestUCID extends TestCase {
     }
 
     public void testMAP() throws IOException {
-        // INDEXING ...
+        // ************************* INDEXING *************************
         parallelIndexer.run();
-//        System.out.println("** SURF BoVW");
-//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
-//        sh.index();
-        System.out.println("** SIMPLE BoVW / LoDe SC");
-        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new ScalableColor());
-        ldb.index();
+
+        if (testSurf) {
+            System.out.println("** SURF BoVW");
+            SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
+            sh.index();
+        }
+
+        if (testSift) {
+            System.out.println("** SIFT BoVW");
+            SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
+            sh.index();
+        }
+
+        for (int i = 0; i < simpleFeaturesToTest.length; i++) {
+            LireFeature lireFeature = simpleFeaturesToTest[i];
+            System.out.println("** SIMPLE BoVW with " + lireFeature.getFeatureName());
+            SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, lireFeature);
+            ldb.index();
+        }
+
+
 //        System.out.println("** SIMPLE BoVW / LoDe CEDD");
 //        ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new CEDD());
 //        ldb.index();
+
         // VLAD
 //        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))));
 //        vladBuilder.index();
 
-        // SEARCHING
+        // ************************* SEARCHING *************************
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
 
         System.out.println("Feature\tMAP\tp@10\tER");
-//        computeMAP(new GenericFastImageSearcher(1400, CEDD.class, true, reader), "CEDD", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, FCTH.class, true, reader), "FCTH", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, JCD.class, true, reader), "JCD", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, PHOG.class, true, reader), "PHOG", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, ColorLayout.class, true, reader), "Color Layout", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, ScalableColor.class, true, reader), "Scalable Color", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, JointHistogram.class, true, reader), "Joint Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
 
-//        computeMAP(new GenericFastImageSearcher(1400, SPCEDD.class, true, reader), "SPCEDD", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, SPJCD.class, true, reader), "SPJCD", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, SPFCTH.class, true, reader), "SPFCTH", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, SPACC.class, true, reader), "SPACC ", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, SPLBP.class, true, reader), "SPLBP ", reader);
-//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
-//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
+        for (int i = 0; i < globalFeaturesToTest.length; i++) {
+            LireFeature lireFeature = globalFeaturesToTest[i];
+            computeMAP(new GenericFastImageSearcher(1400, lireFeature.getClass(), true, reader), lireFeature.getFeatureName(), reader);
+        }
+
 
 //        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
-        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
-        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+        if (testSurf)
+            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+        if (testSift)
+            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
+
+        for (int i = 0; i < simpleFeaturesToTest.length; i++) {
+            LireFeature lireFeature = simpleFeaturesToTest[i];
+            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, lireFeature.getFieldName() + "LoDe_Hist", true, reader), "LoDe L2 " + lireFeature.getFeatureName(), reader);
+        }
+
+//        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CEDD L2", reader);
 
@@ -273,7 +289,7 @@ public class TestUCID extends TestCase {
             }
         }
         for (int i = 0; i < query2id.size(); i++) {
-            fw.write(evalText.get(i+1));
+            fw.write(evalText.get(i + 1));
         }
         fw.close();
         errorRate = errorRate / queryCount;
