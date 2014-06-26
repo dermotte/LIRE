@@ -46,38 +46,38 @@ import org.apache.lucene.index.IndexReader;
 /**
  * Created by mlux_2 on 13.06.2014.
  */
-public class LoDeFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
+public class SimpleFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
     LireFeature lireFeature = new ScalableColor();
 
-    public LoDeFeatureHistogramBuilder(IndexReader reader, LireFeature lireFeature) {
+    public SimpleFeatureHistogramBuilder(IndexReader reader, LireFeature lireFeature) {
         super(reader);
         this.lireFeature = lireFeature;
         init();
     }
 
-    public LoDeFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, LireFeature lireFeature) {
+    public SimpleFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, LireFeature lireFeature) {
         super(reader, numDocsForVocabulary);
         this.lireFeature = lireFeature;
         init();
     }
 
-    public LoDeFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters, LireFeature lireFeature) {
+    public SimpleFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters, LireFeature lireFeature) {
         super(reader, numDocsForVocabulary, numClusters);
         this.lireFeature = lireFeature;
         init();
     }
 
-    public LoDeFeatureHistogramBuilder(IndexReader reader) {
+    public SimpleFeatureHistogramBuilder(IndexReader reader) {
         super(reader);
         init();
     }
 
-    public LoDeFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary) {
+    public SimpleFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary) {
         super(reader, numDocsForVocabulary);
         init();
     }
 
-    public LoDeFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
+    public SimpleFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
         super(reader, numDocsForVocabulary, numClusters);
         init();
     }

@@ -50,8 +50,8 @@ import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.FCTH;
 import net.semanticmetadata.lire.imageanalysis.GenericByteLireFeature;
 import net.semanticmetadata.lire.imageanalysis.JCD;
-import net.semanticmetadata.lire.imageanalysis.bovw.LoDeFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
@@ -126,7 +126,7 @@ public class TestWang extends TestCase {
                builder.addBuilder(new SurfDocumentBuilder());
 //               builder.addBuilder(new MSERDocumentBuilder());
 //               builder.addBuilder(new SiftDocumentBuilder());
-               builder.addBuilder(new LoDeBuilder(new CEDD()));
+               builder.addBuilder(new SimpleBuilder(new CEDD()));
 
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
@@ -163,7 +163,7 @@ public class TestWang extends TestCase {
 //        sh1.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
 //        sh1.index();
 
-        LoDeFeatureHistogramBuilder lodeb = new LoDeFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128, new CEDD());
+        SimpleFeatureHistogramBuilder lodeb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128, new CEDD());
         lodeb.index();
         SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128);
 //        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));

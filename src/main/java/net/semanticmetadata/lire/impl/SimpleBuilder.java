@@ -61,18 +61,18 @@ import java.util.List;
  * sent me the code :))
  * Created by mlux on 13.06.2014.
  */
-public class LoDeBuilder extends AbstractDocumentBuilder {
+public class SimpleBuilder extends AbstractDocumentBuilder {
     LireFeature lireFeature = new ScalableColor();
 
     /**
      * Set the Local Descriptor feature to the one given.
      * @param lireFeature
      */
-    public LoDeBuilder(LireFeature lireFeature) {
+    public SimpleBuilder(LireFeature lireFeature) {
         this.lireFeature = lireFeature;
     }
 
-    public LoDeBuilder() {}
+    public SimpleBuilder() {}
 
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
@@ -84,12 +84,17 @@ public class LoDeBuilder extends AbstractDocumentBuilder {
 //        FastHessian fh = new FastHessian(integralImage, 4, 2, 0.00005f, 1f);
         List<SURFInterestPoint> iPoints = fh.getIPoints();
         double s = 0d;
-        int count = 100;
         for (Iterator<SURFInterestPoint> iterator = iPoints.iterator(); iterator.hasNext(); ) {
             SURFInterestPoint next = iterator.next();
             s = next.getScale() * 2.5;
-//            System.out.println("next.getX() = " + Math.floor(next.getX() - s / 2) + ", " + Math.floor(next.getY() - s / 2) + " " + ((int) s));
-            lireFeature.extract(ImageUtils.cropImage(image, (int) Math.floor(next.getX() - s / 2), (int) Math.floor(next.getY() - s / 2), (int) s, (int) s));
+//            try {
+                lireFeature.extract(ImageUtils.cropImage(image, (int) Math.floor(next.getX() - s / 2), (int) Math.floor(next.getY() - s / 2), (int) s, (int) s));
+//            } catch (Exception e) {
+//                double x = Math.floor(next.getX() - s / 2);
+//                double y = Math.floor(next.getY() - s / 2);
+//                System.err.println("(" + x + ", " + y + ") to ("+(x+(int) s)+", "+(y+(int) s)+") from image size (" + image.getWidth() + ", " + image.getHeight() + ")");
+//                e.printStackTrace();
+//            }
 //            System.out.println(Arrays.toString(lireFeature.getDoubleHistogram()));
 //            System.out.printf("%5.2f\t%5.2f\t%5.2f\t%s\n", next.getX(), next.getY(), next.getScale(), Arrays.toString(lireFeature.getDoubleHistogram()));
             fields.add(new StoredField(lireFeature.getFieldName(), lireFeature.getByteArrayRepresentation()));

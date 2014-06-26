@@ -48,11 +48,11 @@ import java.io.IOException;
 /**
  * Created by mlux_2 on 13.06.2014.
  */
-public class LoDeBuilderTest extends TestCase {
+public class SimpleBuilderTest extends TestCase {
     private String testExtensive = "./testdata/wang-1000";
 
     public void testExtraction() throws IOException {
-        LoDeBuilder b = new LoDeBuilder();
+        SimpleBuilder b = new SimpleBuilder();
         b.createDocument(ImageIO.read(new File("C:\\Java\\Projects\\LireSVN\\testdata\\UCID\\ucid00001.jpg")), "test");
     }
 }

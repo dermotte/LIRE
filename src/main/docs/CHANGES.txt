@@ -3,6 +3,11 @@ CHANGES for LIRE
 
 2014-04-16
 ==========
+  - Re-organized UCI Benchmarking
+  - Renamed LoDe to SIMPLE
+
+2014-04-16
+==========
   - Added and tested LoDe (using global descriptors as local ones)
   - Created and tested a LocalFeatureHistogramBuilder based on the
     Apache Commons Math KMeans++ implementation
