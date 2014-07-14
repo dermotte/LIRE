@@ -69,6 +69,9 @@ import java.util.Stack;
  * at hand reads files from the disk and acts as producer, while several consumer
  * threads extract the features from the given files.
  *
+ * To use this override the method {@link ParallelIndexer#addBuilders} to add your own features.
+ * Check the source of this class -- the main method -- to get an idea.
+ *
  * @author Mathias Lux, mathias@juggle.at, 15.04.13
  */
 
