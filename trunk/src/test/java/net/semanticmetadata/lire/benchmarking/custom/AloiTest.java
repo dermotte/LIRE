@@ -67,6 +67,7 @@ public class AloiTest extends TestCase {
     private String testExtensive = "./testdata/Aloi/png";
     private ChainedDocumentBuilder builder;
     String[] queries = new String[]{
+            "0",
             "12",
             "24",
             "36",
@@ -1093,12 +1094,12 @@ public class AloiTest extends TestCase {
     }
 
     public void testSearch() throws IOException {
-        parallelIndexer.run();
+//        parallelIndexer.run();
         for (int f = 0; f < features.length; f++) {
             System.out.println(features[f].getName());
             GenericFastImageSearcher s = new GenericFastImageSearcher(12000, features[f]);
             IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
-            File out = new File(features[f].getName() + ".csv");
+            File out = new File(features[f].getName() + "_aloi.csv");
             BufferedWriter bw = new BufferedWriter(new FileWriter(out));
             for (int i = 0; i < 500; i++) {
                 if (i%50==0) System.out.print(".");
