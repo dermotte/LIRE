@@ -180,6 +180,7 @@ public class ParallelIndexer implements Runnable {
     }
 
     /**
+     * In this case its appended to the index if there is one already in place.
      * @param numberOfThreads
      * @param indexPath
      * @param imageDirectory  a directory containing all the images somewhere in the child hierarchy.
@@ -195,7 +196,7 @@ public class ParallelIndexer implements Runnable {
      * @param numberOfThreads
      * @param indexPath
      * @param imageDirectory
-     * @param overWrite overwrite (instead of append) the index.
+     * @param overWrite overwrite (instead of append) the index. Set it to true if you want to delete the old index before adding new stuff.
      */
     public ParallelIndexer(int numberOfThreads, String indexPath, String imageDirectory, boolean overWrite) {
         this.numberOfThreads = numberOfThreads;
