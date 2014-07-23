@@ -41,8 +41,11 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.DocumentBuilderFactory;
+import net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+import net.semanticmetadata.lire.imageanalysis.FCTH;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 
 import java.io.File;
@@ -72,9 +75,9 @@ public class ParallelIndexing {
         ParallelIndexer indexer = new ParallelIndexer(6, "index", args[0]) {
             // use this to add you preferred builders. For now we go for CEDD, FCTH and AutoColorCorrelogram
             public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
-                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
+                builder.addBuilder(new GenericDocumentBuilder(CEDD.class));
+                builder.addBuilder(new GenericDocumentBuilder(FCTH.class));
+                builder.addBuilder(new GenericDocumentBuilder(AutoColorCorrelogram.class));
             }
         };
         indexer.run();

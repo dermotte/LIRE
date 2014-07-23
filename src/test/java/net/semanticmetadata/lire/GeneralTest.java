@@ -50,9 +50,9 @@ import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.utils.FileUtils;
-import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -163,6 +163,8 @@ public class GeneralTest extends TestCase {
             IndexWriter iw = LuceneUtils.createIndexWriter(indexPath + "-small", true);
             for (String identifier : testFiles) {
                 Document doc = b.createDocument(new FileInputStream(testFilesPath + identifier), identifier);
+                doc.add(new StoredField("video_file", "surgery1.mp4"));
+                doc.add(new StoredField("timestamp", "25"));
                 iw.addDocument(doc);
             }
             iw.close();
@@ -177,6 +179,7 @@ public class GeneralTest extends TestCase {
                     if (y == 0) {
                         // check if the first result is the query:
                         assertEquals(result.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].equals(query.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), true);
+                        System.out.println(result.getValues("video_file")[0]);
                     } else {
                         // check if they are ordered by distance:
                         assertEquals(hits.score(y) < hits.score(y - 1), true);
