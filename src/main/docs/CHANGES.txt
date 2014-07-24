@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2014-07-24
+==========
+  - Changed ID field in ChainedDocumentBuilder to StringField, based on the suggestion of Berthold Daum
+  - Added public SimpleImageSearchHits(Collection<SimpleResult> results, float maxDistance, boolean useSimilarityScore)
+    based on the suggestion of Berthold Daum
+  - Changed SimpleApplication classes to use the generic classes not the factories.
+
 2014-04-16
 ==========
   - Re-organized UCI Benchmarking

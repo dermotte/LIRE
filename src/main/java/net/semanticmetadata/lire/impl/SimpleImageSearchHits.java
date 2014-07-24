@@ -49,7 +49,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net
+ * This file is part of the LIRE project: http://www.SemanticMetadata.net
  * <br>Date: 02.02.2006
  * <br>Time: 23:56:15
  *
@@ -66,6 +66,24 @@ public class SimpleImageSearchHits implements ImageSearchHits {
         for (Iterator<SimpleResult> iterator = this.results.iterator(); iterator.hasNext(); ) {
             SimpleResult result = iterator.next();
             // result.setDistance(1f - result.getDistance() / maxDistance);
+        }
+    }
+
+    /**
+     * Basic constructor to create results.
+     *
+     * @param results
+     * @param maxDistance
+     * @param useSimilarityScore set to tru is you want similarity scores, otherwise distances will be used. Note that using distance is faster in terms of runtime.
+     */
+    public SimpleImageSearchHits(Collection<SimpleResult> results, float maxDistance, boolean useSimilarityScore) {
+        this.results = new ArrayList<SimpleResult>(results.size());
+        this.results.addAll(results);
+        // this step normalizes and inverts the distance ...
+        // although its now a score or similarity like measure its further called distance
+        for (Iterator<SimpleResult> iterator = this.results.iterator(); iterator.hasNext(); ) {
+            SimpleResult result = iterator.next();
+            if (useSimilarityScore) result.setDistance(1f - result.getDistance() / maxDistance);
         }
     }
 
@@ -104,6 +122,7 @@ public class SimpleImageSearchHits implements ImageSearchHits {
 
     /**
      * Returns the id of the document within the respective Lucene IndexReader
+     *
      * @param position position in the result list
      * @return the id in the IndexReader.
      */
@@ -112,7 +131,7 @@ public class SimpleImageSearchHits implements ImageSearchHits {
     }
 
     @SuppressWarnings("unused")
-	private float sigmoid(float f) {
+    private float sigmoid(float f) {
         double result = 0f;
         result = -1d + 2d / (1d + Math.exp(-2d * f / 0.6));
         return (float) (1d - result);
