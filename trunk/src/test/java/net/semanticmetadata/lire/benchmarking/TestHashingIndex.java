@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.06.13 21:03
+ * Updated: 25.08.14 15:58
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -74,11 +74,13 @@ import java.util.Iterator;
  */
 
 public class TestHashingIndex extends TestCase {
-    private String dataSetImageList = "D:\\DataSets\\Flickrphotos\\imageList.txt";
-    private String dataSetDataOut = "D:\\DataSets\\Flickrphotos\\imageList.out";
+    private String dataSetImageList = "D:\\Java\\Projects\\Lire\\testdata\\flickrphotos.lst";
+//    private String dataSetImageList = "D:\\DataSets\\Flickrphotos\\imageList.txt";
+    private String dataSetDataOut = "D:\\Java\\Projects\\Lire\\testdata\\flickrphotos.out";
+//    private String dataSetDataOut = "D:\\DataSets\\Flickrphotos\\imageList.out";
     private String testIndex = "C:/Temp/idx-test-hashing";
 
-    public void testExtractFeatures(String tmp) {
+    public void testExtractFeatures() {
         ParallelExtractor pe = new ParallelExtractor();
         pe.setFileList(new File(dataSetImageList));
         pe.setOutFile(new File(dataSetDataOut));
@@ -86,14 +88,14 @@ public class TestHashingIndex extends TestCase {
 
         pe.addFeature(new PHOG());
         pe.addFeature(new CEDD());
-        pe.addFeature(new JCD());
-        pe.addFeature(new FCTH());
+//        pe.addFeature(new JCD());
+//        pe.addFeature(new FCTH());
         pe.addFeature(new AutoColorCorrelogram());
         pe.addFeature(new OpponentHistogram());
         pe.addFeature(new SimpleColorHistogram());
         pe.addFeature(new ColorLayout());
         pe.addFeature(new EdgeHistogram());
-        pe.addFeature(new SPCEDD());
+//        pe.addFeature(new SPCEDD());
 
         pe.run();
     }
@@ -101,16 +103,16 @@ public class TestHashingIndex extends TestCase {
     public void testHashing() throws IOException, IllegalAccessException, InstantiationException {
         BitSampling.setBits(12);
         BitSampling.setNumFunctionBundles(150);
-        testHashing(JCD.class, DocumentBuilder.FIELD_NAME_JCD);
+//        testHashing(JCD.class, DocumentBuilder.FIELD_NAME_JCD);
         testHashing(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
-        testHashing(FCTH.class, DocumentBuilder.FIELD_NAME_FCTH);
+//        testHashing(FCTH.class, DocumentBuilder.FIELD_NAME_FCTH);
         testHashing(AutoColorCorrelogram.class, DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM);
         testHashing(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
         testHashing(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
         testHashing(SimpleColorHistogram.class, DocumentBuilder.FIELD_NAME_COLORHISTOGRAM);
         testHashing(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT);
         testHashing(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM);
-        testHashing(SPCEDD.class, "spcedd");
+//        testHashing(SPCEDD.class, "spcedd");
 
 //        BitSampling.bits = 12;
 //        testHashing(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);

@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 03.08.13 09:07
+ * Updated: 27.06.14 13:06
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -102,8 +102,8 @@ public class UCIDBenchmark extends TestCase {
     };
 
     LireFeature[] simpleFeaturesToTest = new LireFeature[]{
-//            new CEDD(),
-            new ScalableColor()
+            new CEDD()
+//            new ScalableColor()
 //            new OpponentHistogram()
     };
 
