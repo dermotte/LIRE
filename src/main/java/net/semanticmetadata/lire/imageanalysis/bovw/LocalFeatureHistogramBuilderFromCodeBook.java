@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 11:21
+ * Updated: 27.06.14 13:06
  */
 package net.semanticmetadata.lire.imageanalysis.bovw;
 
@@ -164,7 +164,7 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
 //        System.out.println("Starting clustering ...");
 //        List<CentroidCluster<DoublePoint>> clusterList = kpp.cluster(features);
         // TODO: Serializing clusters to a file on the disk ...
-        clusters = SerializationUtils.readCodeBook(new FileInputStream("codebookSCD128.txt"));
+        clusters = SerializationUtils.readCodeBook(new FileInputStream("codebookCEDD128.txt"));
         numClusters = clusters.size();
         System.out.println("Clustering finished, " + clusters.size() + " clusters found");
 //        for (Iterator<CentroidCluster<DoublePoint>> iterator = clusterList.iterator(); iterator.hasNext(); ) {
