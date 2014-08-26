@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 25.08.14 15:58
+ * Updated: 26.08.14 12:56
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -106,12 +106,12 @@ public class TestHashingIndex extends TestCase {
 //        testHashing(JCD.class, DocumentBuilder.FIELD_NAME_JCD);
         testHashing(CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
 //        testHashing(FCTH.class, DocumentBuilder.FIELD_NAME_FCTH);
-        testHashing(AutoColorCorrelogram.class, DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM);
-        testHashing(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
         testHashing(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
+        testHashing(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM);
+        testHashing(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
+        testHashing(AutoColorCorrelogram.class, DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM);
         testHashing(SimpleColorHistogram.class, DocumentBuilder.FIELD_NAME_COLORHISTOGRAM);
         testHashing(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT);
-        testHashing(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM);
 //        testHashing(SPCEDD.class, "spcedd");
 
 //        BitSampling.bits = 12;

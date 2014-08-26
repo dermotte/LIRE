@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2014-08-26
+==========
+  - Metric Spaces approach implemented and tested.
+
 2014-07-24
 ==========
   - Changed ID field in ChainedDocumentBuilder to StringField, based on the suggestion of Berthold Daum
