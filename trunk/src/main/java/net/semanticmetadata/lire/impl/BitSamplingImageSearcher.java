@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.07.13 16:44
+ * Updated: 26.08.14 13:20
  */
 
 package net.semanticmetadata.lire.impl;
@@ -223,6 +223,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
                     doc.getBinaryValue(featureFieldName).offset,
                     doc.getBinaryValue(featureFieldName).length);
             return search(doc.getValues(hashesFieldName)[0].split(" "), queryFeature, reader);
+//            return search(doc.getValues(hashesFieldName + "_q")[0].split(" "), queryFeature, reader);  // just for debug if a query feature is stored in the index.
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -232,7 +233,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
     private ImageSearchHits search(String[] hashes, LireFeature queryFeature, IndexReader reader) throws IOException {
         // first search by text:
         IndexSearcher searcher = new IndexSearcher(reader);
-        // searcher.setSimilarity(new BaseSimilarity());
+        searcher.setSimilarity(new BaseSimilarity());
         BooleanQuery query = new BooleanQuery();
         for (int i = 0; i < hashes.length; i++) {
             // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.
