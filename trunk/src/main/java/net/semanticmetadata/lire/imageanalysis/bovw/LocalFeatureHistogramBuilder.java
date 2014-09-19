@@ -47,8 +47,12 @@ import net.semanticmetadata.lire.clustering.ParallelKMeans;
 import net.semanticmetadata.lire.imageanalysis.Histogram;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
-import org.apache.lucene.document.*;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.Bits;
 
@@ -82,6 +86,9 @@ public abstract class LocalFeatureHistogramBuilder {
     protected String clusterFile = "./clusters.dat";
     public static boolean DELETE_LOCAL_FEATURES = true;
     private boolean useParallelClustering = true;
+
+    private boolean normalizeHistogram = true;
+    private boolean termFrequency = true;
 
 
     public LocalFeatureHistogramBuilder(IndexReader reader) {
@@ -260,7 +267,7 @@ public abstract class LocalFeatureHistogramBuilder {
         clusters = Cluster.readClusters(clusterFile);
         //  create & store histograms:
         System.out.println("Creating histograms ...");
-        int[] tmpHist = new int[numClusters];
+        double[] tmpHist = new double[numClusters];
         LireFeature f = getFeatureInstance();
 
         // Needed for check whether the document is deleted.
@@ -283,9 +290,9 @@ public abstract class LocalFeatureHistogramBuilder {
                     f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
                     tmpHist[clusterForFeature((Histogram) f)]++;
                 }
-                normalize(tmpHist);
+                d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(normalize(tmpHist))));
+                quantize(tmpHist);
                 d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
-                d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
                 // now write the new one. we use the identifier to update ;)
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
             }
@@ -307,7 +314,7 @@ public abstract class LocalFeatureHistogramBuilder {
      */
     public Document getVisualWords(Document d) throws IOException {
         clusters = Cluster.readClusters(clusterFile);
-        int[] tmpHist = new int[clusters.length];
+        double[] tmpHist = new double[clusters.length];
         LireFeature f = getFeatureInstance();
         IndexableField[] fields = d.getFields(localFeatureFieldName);
         // find the appropriate cluster for each feature:
@@ -326,19 +333,28 @@ public abstract class LocalFeatureHistogramBuilder {
         return d;
     }
 
-    private double[] normalize(int[] histogram) {
+    /**
+     * Weighting the feature vector for better results. Options are term frequency as well as the employed norm function.
+     * @param histogram
+     * @return
+     */
+    private double[] normalize(double[] histogram) {
         double[] result = new double[histogram.length];
-        double max = 0;
-        for (int i = 0; i < histogram.length; i++) {
-            max = Math.max(max, histogram[i]);
+        if (termFrequency) {
+            for (int i = 0; i < result.length; i++) {
+                if (histogram[i]>0) result[i] = 1 + Math.log(histogram[i]);
+                else result[i] = 0;
+            }
+        } else {
+            for (int i = 0; i < result.length; i++) {
+                result[i] = histogram[i];
+            }
         }
-        for (int i = 0; i < histogram.length; i++) {
-            result[i] = ((double) histogram[i]) / max;
-        }
+        if (normalizeHistogram) result = MetricsUtils.normalizeL2(result);
         return result;
     }
 
-    private void quantize(int[] histogram) {
+    private void quantize(double[] histogram) {
         double max = 0;
         for (int i = 0; i < histogram.length; i++) {
             max = Math.max(max, histogram[i]);
@@ -368,10 +384,10 @@ public abstract class LocalFeatureHistogramBuilder {
         return result;
     }
 
-    private String arrayToVisualWordString(int[] hist) {
+    private String arrayToVisualWordString(double[] hist) {
         StringBuilder sb = new StringBuilder(1024);
         for (int i = 0; i < hist.length; i++) {
-            int visualWordIndex = hist[i];
+            int visualWordIndex = (int) hist[i];
             for (int j = 0; j < visualWordIndex; j++) {
                 sb.append('v');
                 sb.append(i);
@@ -443,7 +459,7 @@ public abstract class LocalFeatureHistogramBuilder {
         }
 
         public void run() {
-            int[] tmpHist = new int[numClusters];
+            double[] tmpHist = new double[numClusters];
             LireFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {

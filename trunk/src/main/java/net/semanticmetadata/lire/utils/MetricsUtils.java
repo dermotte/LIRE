@@ -274,4 +274,58 @@ public class MetricsUtils {
         }
         return sum;
     }
+
+    /**
+     * Max normalization of a double[] histogram. // todo: make it faster and less memory consuming ...
+     * @param histogram
+     * @return
+     */
+    public static double[] normalizeMax(double[] histogram) {
+        double[] result = new double[histogram.length];
+        double max = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            max = Math.max(max, histogram[i]);
+        }
+        for (int i = 0; i < histogram.length; i++) {
+            result[i] = ((double) histogram[i]) / max;
+        }
+        return result;
+    }
+
+    /**
+     * Euclidean normalization of a double[] histogram. // todo: make it faster and less memory consuming ...
+     * @param histogram
+     * @return
+     */
+    public static double[] normalizeL2(double[] histogram) {
+        double[] result = new double[histogram.length];
+        double len = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            len += histogram[i] * histogram[i];
+        }
+        len = Math.sqrt(len);
+        for (int i = 0; i < histogram.length; i++) {
+            result[i] = ((double) histogram[i]) / len;
+        }
+        return result;
+    }
+
+    /**
+     * Euclidean normalization of a double[] histogram.  // todo: make it faster and less memory consuming ...
+     * @param histogram
+     * @return
+     */
+    public static double[] normalizeL1(double[] histogram) {
+        double[] result = new double[histogram.length];
+        double len = 0;
+        for (int i = 0; i < histogram.length; i++) {
+            len += Math.abs(histogram[i]);
+        }
+        for (int i = 0; i < histogram.length; i++) {
+            result[i] = ((double) histogram[i]) / len;
+        }
+        return result;
+    }
+
+
 }

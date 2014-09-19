@@ -51,7 +51,10 @@ import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
-import net.semanticmetadata.lire.impl.*;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.impl.SimpleBuilder;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.document.Document;
@@ -117,8 +120,8 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
 
 //                builder.addBuilder(new SurfDocumentBuilder());
-                builder.addBuilder(new SimpleBuilder(new ScalableColor()));
-//                builder.addBuilder(new SimpleBuilder(new CEDD()));
+//                builder.addBuilder(new SimpleBuilder(new ScalableColor()));
+                builder.addBuilder(new SimpleBuilder(new CEDD()));
 
 //                builder.addBuilder(new MSERDocumentBuilder());
 //                builder.addBuilder(new SiftDocumentBuilder());
@@ -169,12 +172,12 @@ public class TestUCID extends TestCase {
 //        System.out.println("** SURF BoVW");
 //        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
 //        sh.index();
-        System.out.println("** SIMPLE BoVW / LoDe SC");
-        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new ScalableColor());
-        ldb.index();
-//        System.out.println("** SIMPLE BoVW / LoDe CEDD");
-//        ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new CEDD());
+//        System.out.println("** SIMPLE BoVW / LoDe SC");
+//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new ScalableColor());
 //        ldb.index();
+        System.out.println("** SIMPLE BoVW / LoDe CEDD");
+        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1400, 128, new CEDD());
+        ldb.index();
         // VLAD
 //        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))));
 //        vladBuilder.index();
@@ -208,8 +211,8 @@ public class TestUCID extends TestCase {
 
 //        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
-        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
-        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+//        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
+        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
 //        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CEDD L2", reader);
 
