@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2014-08-19
+==========
+  - Bug fixes from Nektarios Anagnostopoulos on CEDD
+  - Changes to SIMPLE and LoCate handling.
+
 2014-08-26
 ==========
   - Metric Spaces approach implemented and tested.

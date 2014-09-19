@@ -163,8 +163,8 @@ public class CEDD implements LireFeature {
                 ImageGridRed[x][y] = (pixel >> 16) & 0xff;
                 ImageGridGreen[x][y] = (pixel >> 8) & 0xff;
                 ImageGridBlue[x][y] = (pixel) & 0xff;
-                int mean = (int) (0.114 * ImageGridBlue[x][y] + 0.587 * ImageGridGreen[x][y] + 0.299 * ImageGridRed[x][y]);
-                ImageGrid[x][y] = mean;
+                //int mean = (int) (0.114 * ImageGridBlue[x][y] + 0.587 * ImageGridGreen[x][y] + 0.299 * ImageGridRed[x][y]);
+                ImageGrid[x][y] = (0.114f * ImageGridBlue[x][y] + 0.587f * ImageGridGreen[x][y] + 0.299f * ImageGridRed[x][y]);
             }
         }
 
