@@ -42,7 +42,16 @@
 package net.semanticmetadata.lire.imageanalysis;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -107,7 +116,7 @@ public class CEDDTest extends TestCase {
     public void testSerialization() throws IOException {
         int bytes = 0;
         int sum = 0;
-        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata/ferrari"), true);
+        ArrayList<File> files = FileUtils.getAllImageFiles(new File("testdata\\UCID"), true);
         for (Iterator<File> iterator = files.iterator(); iterator.hasNext(); ) {
             File next = iterator.next();
             BufferedImage image = ImageIO.read(next);
@@ -116,31 +125,59 @@ public class CEDDTest extends TestCase {
 
             f1.extract(image);
 //            System.out.println(Arrays.toString(f1.getDoubleHistogram()));
-            bytes += f1.getByteArrayRepresentation().length;
-            sum += 144 / 2;
-            f2.setByteArrayRepresentation(f1.getByteArrayRepresentation());
+//            bytes += f1.getByteArrayRepresentation().length;
+//            sum += 144 / 2;
+            byte[] br = f1.getByteArrayRepresentation();
+            f2.setByteArrayRepresentation(br, 0, br.length);
 //            System.out.println(Arrays.toString(f2.getDoubleHistogram()));
             double[] h = f2.getDoubleHistogram();
-            int pos = -1;
-            for (int i = 0; i < h.length; i++) {
-                double v = h[i];
-                if (pos == -1) {
-                    if (v == 0) pos = i;
-                } else if (pos > -1) {
-                    if (v != 0) pos = -1;
-                }
-            }
-            System.out.println("save = " + (144 - pos));
+//            int pos = -1;
+//            for (int i = 0; i < h.length; i++) {
+//                double v = h[i];
+//                if (pos == -1) {
+//                    if (v == 0) pos = i;
+//                } else if (pos > -1) {
+//                    if (v != 0) pos = -1;
+//                }
+//            }
+//            System.out.println("save = " + (144 - pos));
 //            bytes += (168 - pos);
             assertTrue(f2.getDistance(f1) == 0);
             boolean isSame = true;
-//            for (int i = 0; i < f2.getFieldName().length; i++) {
-//                if (f1.data[i] != f2.data[i]) isSame = false;
-//            }
+            for (int i = 0; i < f2.getDoubleHistogram().length; i++) {
+                if (f1.getDoubleHistogram()[i] != f2.getDoubleHistogram()[i]) isSame = false;
+            }
             assertTrue(isSame);
         }
-        double save = 1d - (double) bytes / (double) sum;
-        System.out.println(save * 100 + "% saved");
+//        double save = 1d - (double) bytes / (double) sum;
+//        System.out.println(save * 100 + "% saved");
+    }
+
+    public void testIndexSerialization() throws IOException {
+        ParallelIndexer pi = new ParallelIndexer(8, "test-idx", "testdata\\UCID", true) {
+            @Override
+            public void addBuilders(ChainedDocumentBuilder builder) {
+                builder.addBuilder(new GenericDocumentBuilder(CEDD.class));
+            }
+        };
+        pi.run();
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("test-idx")));
+        CEDD tmp = new CEDD();
+        CEDD idx = new CEDD();
+        for (int i=0; i< ir.maxDoc(); i++) {
+            Document d = ir.document(i);
+            BytesRef ref = d.getBinaryValue(new CEDD().getFieldName());
+            idx.setByteArrayRepresentation(ref.bytes, ref.offset, ref.length);
+            tmp.extract(ImageIO.read(new File(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
+            for (int j = 0; j < tmp.getDoubleHistogram().length; j++) {
+                double v = tmp.getDoubleHistogram()[j];
+                if (Math.abs(v - idx.getDoubleHistogram()[j]) > 0.1) {
+                    System.err.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " error at position " + j);
+                    break;
+                }
+            }
+            // assertEquals((double) idx.getDistance(tmp), 0d, 0.00001);
+        }
     }
 
     public void testNextSerialization() throws IOException {

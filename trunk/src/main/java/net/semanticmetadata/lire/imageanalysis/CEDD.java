@@ -164,7 +164,9 @@ public class CEDD implements LireFeature {
                 ImageGridGreen[x][y] = (pixel >> 8) & 0xff;
                 ImageGridBlue[x][y] = (pixel) & 0xff;
                 //int mean = (int) (0.114 * ImageGridBlue[x][y] + 0.587 * ImageGridGreen[x][y] + 0.299 * ImageGridRed[x][y]);
-                ImageGrid[x][y] = (0.114f * ImageGridBlue[x][y] + 0.587f * ImageGridGreen[x][y] + 0.299f * ImageGridRed[x][y]);
+//                ImageGrid[x][y] = (0.114f * ImageGridBlue[x][y] + 0.587f * ImageGridGreen[x][y] + 0.299f * ImageGridRed[x][y]);
+                ImageGrid[x][y] = (0.299f * ((pixel >> 16) & 0xff) +  0.587f * ((pixel >> 8) & 0xff) + 0.114f * ((pixel) & 0xff)  );
+
             }
         }
 
@@ -475,16 +477,12 @@ public class CEDD implements LireFeature {
      * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
      */
     public void setByteArrayRepresentation(byte[] in) {
-        if ((in.length << 1) < histogram.length) Arrays.fill(histogram, in.length << 1, histogram.length - 1, (byte) 0);
-        for (int i = 0; i < in.length; i++) {
-            tmp = in[i] + 128;
-            histogram[(i << 1) + 1] = ((byte) (tmp & 0x000F));
-            histogram[i << 1] = ((byte) (tmp >> 4));
-        }
+        setByteArrayRepresentation(in, 0, in.length);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        if ((length << 1) < histogram.length) Arrays.fill(histogram, length << 1, histogram.length - 1, (byte) 0);
+        if ((length << 1) < histogram.length)
+            Arrays.fill(histogram, length << 1, histogram.length, (byte) 0);
         for (int i = offset; i < offset + length; i++) {
             tmp = in[i] + 128;
             histogram[((i - offset) << 1) + 1] = ((byte) (tmp & 0x000F));
