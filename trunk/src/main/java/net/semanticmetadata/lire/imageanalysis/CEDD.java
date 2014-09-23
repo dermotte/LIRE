@@ -156,10 +156,10 @@ public class CEDD implements LireFeature {
         for (int i = 0; i < 144; i++) {
             CEDD[i] = 0;
         }
-
+        int pixel;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                int pixel = image.getRGB(x, y);
+                pixel = image.getRGB(x, y);
                 ImageGridRed[x][y] = (pixel >> 16) & 0xff;
                 ImageGridGreen[x][y] = (pixel >> 8) & 0xff;
                 ImageGridBlue[x][y] = (pixel) & 0xff;
