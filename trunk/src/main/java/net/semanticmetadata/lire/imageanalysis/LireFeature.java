@@ -113,14 +113,14 @@ public interface LireFeature extends Histogram {
 
     /**
      * Legacy method from a time, when feature vectors were stored as Strings in Lucene. This is not
-     * recommended, as Strings are immutable and therefore a lot of uneccessary object instances are created.
+     * recommended, as Strings are immutable and therefore a lot of unnecessary object instances are created.
      * @return the feature vector as String.
      */
     java.lang.String getStringRepresentation();
 
     /**
      * Legacy method from a time, when feature vectors were stored as Strings in Lucene. This is not
-     * recommended, as Strings are immutable and therefore a lot of uneccessary object instances are created.
+     * recommended, as Strings are immutable and therefore a lot of unnecessary object instances are created.
      * @param featureVector
      * @see net.semanticmetadata.lire.imageanalysis.LireFeature#getStringRepresentation()
      */
