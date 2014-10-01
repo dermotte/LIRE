@@ -62,6 +62,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="opencvintegration" />
   </component>
 </module>
 

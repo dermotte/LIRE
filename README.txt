@@ -15,11 +15,11 @@ docs:
 http://www.semanticmetadata.net/wiki/doku.php?id=lire:lire
 
 Acknowledgements
-I’d like to thank the numerous people having contributed
+I'd like to thank the numerous people having contributed
 code to Lire or having published their work as open source
 allowing integration into LIRe: Savvas A. Chatzichristofis,
 Manuel Oraze, Lukas Esterle, Roman Kern, Roman Divotkey,
-Katharina Tomanec, Fabrizio Falchi, Bastian Hösch, Janine
+Katharina Tomanec, Fabrizio Falchi, Bastian HÃ¶sch, Janine
 Lachner, Marko Keuschnig, Christian Penz and Benjamin
 Sznajder.
 
