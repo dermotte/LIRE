@@ -39,10 +39,12 @@
 
 package net.semanticmetadata.lire.impl;
 
-import com.stromberglabs.jopensurf.FastHessian;
-import com.stromberglabs.jopensurf.ImageWrapper;
-import com.stromberglabs.jopensurf.IntegralImage;
-import com.stromberglabs.jopensurf.SURFInterestPoint;
+//import com.stromberglabs.jopensurf.FastHessian;
+//import com.stromberglabs.jopensurf.ImageWrapper;
+//import com.stromberglabs.jopensurf.IntegralImage;
+//import com.stromberglabs.jopensurf.SURFInterestPoint;
+import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfExtractor;
+import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
 import net.semanticmetadata.lire.AbstractDocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.ScalableColor;
@@ -53,7 +55,7 @@ import org.apache.lucene.document.StoredField;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Implementation based on the paper Searching Images with MPEG-7 (& MPEG-7-like) Powered Localized
@@ -76,19 +78,23 @@ public class SimpleBuilder extends AbstractDocumentBuilder {
 
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
-        ArrayList<Field> fields = new ArrayList<Field>();
-        IntegralImage integralImage = new IntegralImage(new ImageWrapper(image));
-        // originally from Savvas in c#: FastHessian.getIpoints(0.00005f, 4, 2, img);
-        // those are the params from JOpenSurf:
-        FastHessian fh = new FastHessian(integralImage, 5, 2, 0.0004f, 0.81F);
+//        IntegralImage integralImage = new IntegralImage(new ImageWrapper(image));
+//        originally from Savvas in c#: FastHessian.getIpoints(0.00005f, 4, 2, img);
+//        those are the params from JOpenSurf:
+//        FastHessian fh = new FastHessian(integralImage, 5, 2, 0.0004f, 0.81F);
 //        FastHessian fh = new FastHessian(integralImage, 4, 2, 0.00005f, 1f);
-        List<SURFInterestPoint> iPoints = fh.getIPoints();
-        double s = 0d;
-        for (Iterator<SURFInterestPoint> iterator = iPoints.iterator(); iterator.hasNext(); ) {
-            SURFInterestPoint next = iterator.next();
-            s = next.getScale() * 2.5;
+//        List<SURFInterestPoint> iPoints = fh.getIPoints();
+        ArrayList<Field> fields = new ArrayList<Field>();
+        CvSurfExtractor extractor = new CvSurfExtractor();
+        LinkedList<CvSurfFeature> descriptors = extractor.computeSurfKeypoints(image);
+//        double s = 0d;
+        CvSurfFeature next;
+        for (Iterator<CvSurfFeature> iterator = descriptors.iterator(); iterator.hasNext(); ) {
+            next = iterator.next();
+//            s = next.getScale() * 2.5;
 //            try {
-                lireFeature.extract(ImageUtils.cropImage(image, (int) Math.floor(next.getX() - s / 2), (int) Math.floor(next.getY() - s / 2), (int) s, (int) s));
+//            lireFeature.extract(ImageUtils.cropImage(image, (int) Math.floor(next.getX() - s / 2), (int) Math.floor(next.getY() - s / 2), (int) s, (int) s));
+            lireFeature.extract(ImageUtils.cropImage(image, (int)(next.point[0] - (int)next.size / 2), (int)(next.point[1] - (int)next.size / 2), (int)next.size, (int)next.size));
 //            } catch (Exception e) {
 //                double x = Math.floor(next.getX() - s / 2);
 //                double y = Math.floor(next.getY() - s / 2);
