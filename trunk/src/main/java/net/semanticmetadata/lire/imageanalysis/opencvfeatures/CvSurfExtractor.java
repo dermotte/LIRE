@@ -86,7 +86,7 @@ public class CvSurfExtractor {
             key = myKeys.get(i);
             for(int j=0; j < cols; j++)
             {
-                desc=descriptors.get(i, j);
+                desc[j]=descriptors.get(i, j)[0];
             }
             feat = new CvSurfFeature(key.angle, key.class_id, key.octave, new double[] {key.pt.x, key.pt.y}, key.response, key.size, desc);
             features.add(feat);
