@@ -57,10 +57,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * General class creating bag of visual words vocabularies parallel based on k-means. Works with SIFT, SURF and MSER.
@@ -84,8 +81,8 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
     protected String clusterFile = "./clusters.dat";
     public static boolean DELETE_LOCAL_FEATURES = true;
 
-    private boolean normalizeHistogram = true;
-    private boolean termFrequency = true;
+//    private boolean normalizeHistogram = false;
+//    private boolean termFrequency = false;
 
 
     public LocalFeatureHistogramBuilderFromCodeBook(IndexReader reader) {
@@ -130,7 +127,7 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
      */
     public void index() throws IOException {
 
-        clusters = SerializationUtils.readCodeBook(new FileInputStream("codebookCEDD128.txt"));
+        clusters = SerializationUtils.readCodeBook(new FileInputStream("codebook128PNG.txt"));
         numClusters = clusters.size();
         System.out.println("Clustering finished, " + clusters.size() + " clusters found");
 
@@ -256,21 +253,21 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
      * @param histogram
      * @return
      */
-    private double[] normalize(double[] histogram) {
-        double[] result = new double[histogram.length];
-        if (termFrequency) {
-            for (int i = 0; i < result.length; i++) {
-                if (histogram[i]>0) result[i] = 1 + Math.log(histogram[i]);
-                else result[i] = 0;
-            }
-        } else {
-            for (int i = 0; i < result.length; i++) {
-                result[i] = histogram[i];
-            }
-        }
-        if (normalizeHistogram) result = MetricsUtils.normalizeL2(result);
-        return result;
-    }
+//    private double[] normalize(double[] histogram) {
+//        double[] result = new double[histogram.length];
+//        if (termFrequency) {
+//            for (int i = 0; i < result.length; i++) {
+//                if (histogram[i]>0) result[i] = 1 + Math.log10(histogram[i]);
+//                else result[i] = 0;
+//            }
+//        } else {
+//            for (int i = 0; i < result.length; i++) {
+//                result[i] = histogram[i];
+//            }
+//        }
+//        if (normalizeHistogram) result = MetricsUtils.normalizeL2(result);
+//        return result;
+//    }
 
     private void quantize(double[] histogram) {
         double max = 0;
@@ -401,8 +398,9 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
                         f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
                         tmpHist[clusterForFeature((Histogram) f, clusters)]++;
                     }
-                    d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(normalize(tmpHist))));
-                    quantize(tmpHist);
+                    //d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(normalize(tmpHist)))); //normalize
+                    d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
+                    //quantize(tmpHist);
                     d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
                     // remove local features to save some space if requested:
                     if (DELETE_LOCAL_FEATURES) {
@@ -410,6 +408,9 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
                     }
                     // now write the new one. we use the identifier to update ;)
                     iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
+                    // for debugging ..
+//                    System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(normalize(tmpHist))); //normalize
+//                    System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(tmpHist));
                     if (pm != null) {
                         double len = (double) (end - start);
                         double percent = (double) (i - start) / len * 45d + 50;

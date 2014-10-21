@@ -46,6 +46,7 @@ import org.apache.lucene.index.IndexReader;
 /**
  * Created by mlux_2 on 13.06.2014.
  */
+//public class SimpleFeatureHistogramBuilder extends LocalFeatureHistogramBuilderFromCodeBook {
 public class SimpleFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
     LireFeature lireFeature = new ScalableColor();
 

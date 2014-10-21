@@ -44,24 +44,21 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
 import net.semanticmetadata.lire.clustering.ParallelKMeans;
-import net.semanticmetadata.lire.imageanalysis.GenericByteLireFeature;
-import net.semanticmetadata.lire.imageanalysis.Histogram;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.SurfFeature;
+import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.utils.LuceneUtils;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.Bits;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * General class creating bag of visual words vocabularies parallel based on k-means. Works with SIFT, SURF and MSER.
@@ -72,15 +69,15 @@ import java.util.LinkedList;
  */
 public class VLADBuilder {
     public static boolean DELETE_LOCAL_FEATURES = true;
-    protected String localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
-    protected String vladFieldName = DocumentBuilder.FIELD_NAME_SURF_VLAD;
+    protected String localFeatureFieldName;// = DocumentBuilder.FIELD_NAME_SURF;
+    protected String vladFieldName;// = DocumentBuilder.FIELD_NAME_SURF_VLAD;
     //    protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String clusterFile = "./clusters-vlad.dat";
     IndexReader reader;
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
     // number of documents used to build the vocabulary / clusters.
-    private int numDocsForVocabulary = 1000;
-    private int numClusters = 16;
+    private int numDocsForVocabulary = 500;
+    private int numClusters = 64;
     private Cluster[] clusters = null;
     private ProgressMonitor pm = null;
     private boolean useParallelClustering = true;
@@ -127,6 +124,8 @@ public class VLADBuilder {
      * @throws java.io.IOException
      */
     public void index() throws IOException {
+        localFeatureFieldName = getFeatureInstance().getFieldName();
+        vladFieldName = localFeatureFieldName + "vlad";
         df.setMaximumFractionDigits(3);
         // find the documents for building the vocabulary:
         HashSet<Integer> docIDs = selectVocabularyDocs();
@@ -290,7 +289,7 @@ public class VLADBuilder {
 
                 }
                 normalize(vlad);
-                GenericByteLireFeature feat = new GenericByteLireFeature();
+                GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
                 feat.setData(vlad);
 //                System.out.println(feat.getStringRepresentation());
                 d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
@@ -330,7 +329,7 @@ public class VLADBuilder {
 
         }
         normalize(vlad);
-        GenericByteLireFeature feat = new GenericByteLireFeature();
+        GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
         feat.setData(vlad);
         d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
 //        d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
@@ -345,7 +344,8 @@ public class VLADBuilder {
             sumOfSquares += histogram[i] * histogram[i];
         }
         for (int i = 0; i < histogram.length; i++) {
-            histogram[i] = Math.floor(16d * histogram[i] / Math.sqrt(sumOfSquares));
+//            histogram[i] = Math.floor(16d * histogram[i] / Math.sqrt(sumOfSquares));
+            histogram[i] = histogram[i] / Math.sqrt(sumOfSquares);
         }
 /*        // L1
         double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
@@ -499,7 +499,7 @@ public class VLADBuilder {
                         }
                     }
                     normalize(vlad);
-                    GenericByteLireFeature feat = new GenericByteLireFeature();
+                    GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
                     feat.setData(vlad);
 //                    System.out.println(feat.getStringRepresentation());
                     d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));

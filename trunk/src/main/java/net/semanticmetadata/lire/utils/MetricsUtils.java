@@ -305,7 +305,10 @@ public class MetricsUtils {
         }
         len = Math.sqrt(len);
         for (int i = 0; i < histogram.length; i++) {
-            result[i] = ((double) histogram[i]) / len;
+            if (histogram[i] != 0)
+                result[i] = ((double) histogram[i]) / len;
+            else
+                result[i] = 0;
         }
         return result;
     }
