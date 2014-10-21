@@ -51,13 +51,20 @@ import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.MMapDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -186,6 +193,25 @@ public class GeneralTest extends TestCase {
                     }
                 }
             }
+        }
+    }
+
+    public void testReadIndex() throws IOException {
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("ucid-index-39997508")));
+        for (int k = 0; k < reader.maxDoc(); k++) {
+            Document document = reader.document(k);
+            BytesRef b = document.getField("featureCEDDLoDe_Hist").binaryValue();
+            double[] doubles = SerializationUtils.toDoubleArray(b.bytes, b.offset, b.length);
+            if (document.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0].endsWith("00008.png"))
+                System.out.println(Arrays.toString(doubles));
+        }
+
+        // check lucene tuorials and docs
+        IndexSearcher is = new IndexSearcher(reader);
+        TopDocs td = is.search(new TermQuery(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, "")), 10);
+        for (int i = 0; i < td.scoreDocs.length; i++) {
+            ScoreDoc scoreDoc = td.scoreDocs[i];
+            Document document = reader.document(scoreDoc.doc);
         }
     }
 

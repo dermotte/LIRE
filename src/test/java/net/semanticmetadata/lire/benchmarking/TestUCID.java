@@ -46,15 +46,15 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.*;
+import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSiftFeature;
+import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
+import net.semanticmetadata.lire.imageanalysis.sift.Feature;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.impl.SimpleBuilder;
+import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.document.Document;
@@ -82,6 +82,9 @@ public class TestUCID extends TestCase {
     // I converted all images to PNG (lossless) to save time, space & troubles with Java.
     private String testExtensive = "testdata/UCID";
     private final String groundTruth = "testdata/ucid.v2.groundtruth.txt";
+
+    private int sample = 500;
+    private int clusters = 32;
 
     //    private String testExtensive = "testdata/UCID.small";
 //    private final String groundTruth = "testdata/ucid.v2.groundtruth.small.txt";
@@ -119,12 +122,17 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(RankAndOpponent.class, "jop"));
 //                builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
 
-//                builder.addBuilder(new SurfDocumentBuilder());
-//                builder.addBuilder(new SimpleBuilder(new ScalableColor()));
                 builder.addBuilder(new SimpleBuilder(new CEDD()));
+//                builder.addBuilder(new SimpleBuilder(new AutoColorCorrelogram()));
+//                builder.addBuilder(new SimpleBuilder(new OpponentHistogram()));
+//                builder.addBuilder(new SimpleBuilder(new LocalBinaryPatterns()));
+//                builder.addBuilder(new SimpleBuilder(new RotationInvariantLocalBinaryPatterns()));
+//                builder.addBuilder(new SimpleBuilder(new ScalableColor()));
+//                builder.addBuilder(new SimpleBuilder(new ColorLayout()));
 
-//                builder.addBuilder(new MSERDocumentBuilder());
+//                builder.addBuilder(new SurfDocumentBuilder());
 //                builder.addBuilder(new SiftDocumentBuilder());
+//                builder.addBuilder(new MSERDocumentBuilder());
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
 //                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
@@ -133,6 +141,9 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
+
+//                builder.addBuilder(new CvSurfDocumentBuilder());
+//                builder.addBuilder(new CvSiftDocumentBuilder());
             }
         };
 
@@ -169,17 +180,41 @@ public class TestUCID extends TestCase {
     public void testMAP() throws IOException {
         // INDEXING ...
         parallelIndexer.run();
-//        System.out.println("** SURF BoVW");
-//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
+
+//        System.out.println("** CVSURF BoVW");
+//        CvSurfFeatureHistogramBuilder sh = new CvSurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
 //        sh.index();
-//        System.out.println("** SIMPLE BoVW / LoDe SC");
-//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new ScalableColor());
+//        System.out.println("** CVSIFT BoVW");
+//        CvSiftFeatureHistogramBuilder sh = new CvSiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
+//        sh.index();
+//        System.out.println("** SURF BoVW");
+//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
+//        sh.index();
+//        System.out.println("** SIFT BoVW");
+//        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
+//        sh.index();
+//        System.out.println("** SIMPLE BoVW / LoDe CEDD");
+//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new CEDD());
 //        ldb.index();
-        System.out.println("** SIMPLE BoVW / LoDe CEDD");
-        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1400, 128, new CEDD());
+        System.out.println("** SIMPLE BoVW / LoDe SC");
+        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new ScalableColor());
         ldb.index();
-        // VLAD
+//        System.out.println("** SIMPLE BoVW / LoDe CL");
+//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new ColorLayout());
+//        ldb.index();
+
+//        VLAD
+//        System.out.println("** VLAD");
 //        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))));
+//        vladBuilder.index();
+//
+//        System.out.println("** VLAD");
+//        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters) {
+//            @Override
+//            protected LireFeature getFeatureInstance() {
+//                return new SurfFeature();
+//            }
+//        };
 //        vladBuilder.index();
 
         // SEARCHING
@@ -209,14 +244,99 @@ public class TestUCID extends TestCase {
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
 
-//        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
-        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
 //        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CEDD L2", reader);
 
-//        computeMAP(new GenericFastImageSearcher(1400, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), "VLAD-SURF", reader);
+        //NEK TESTS//
+        //LoCATe
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe CEDD L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe CEDD L2", reader);
+
+        //Simple-SC
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe SC L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe SC L2", reader);
+
+        //Simple-CL
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe CL L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe CL L2", reader);
+
+        //SURF
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, false), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, true), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, false), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, true), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, false), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, true), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, false), "Surf BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, true), "Surf BoVW L2", reader);
+
+        //SIFT
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, false), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, true), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, false), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, true), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, false), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, true), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, false), "Sift BoVW L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, true), "Sift BoVW L2", reader);
+
+        //CVSURF
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, false), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, true), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, false), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, true), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, false), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, true), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, false), "CVSURF L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, true), "CVSURF L2", reader);
+
+        //CVSIFT
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, false), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, false, true), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, false), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, false, true, true), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, false), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, false, true), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, false), "CVSIFT L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader, true, true, true), "CVSIFT L2", reader);
+
+        //VLAD
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF+"vlad", true, reader), "VLAD-CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT + "vlad", true, reader), "VLAD-CVSIFT", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CEDD + "vlad", true, reader), "VLAD-LoDe CEDD L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SCALABLECOLOR + "vlad", true, reader), "VLAD-LoDe SC L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT + "vlad", true, reader), "VLAD-LoDe CL L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT+"vlad", true, reader), "VLAD-SIFT", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF+"vlad", true, reader), "VLAD-SURF", reader);
 
     }
 
@@ -225,9 +345,15 @@ public class TestUCID extends TestCase {
         double errorRate = 0;
         double map = 0;
         double p10 = 0;
+        int errorCount=0;
         // Needed for check whether the document is deleted.
         Bits liveDocs = MultiFields.getLiveDocs(reader);
-        PrintWriter fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "-eval.txt"));
+        PrintWriter fw;
+        if (searcher.toString().contains("ImageSearcherUsingWSs")) {
+            (new File("eval/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();
+            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "/" + clusters + "/" + prefix.replace(' ', '_') + "-eval" + clusters + searcher.toString().split("\\s+")[searcher.toString().split("\\s+").length - 1] + ".txt"));
+        }else
+            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "-eval" + clusters +".txt"));
         Hashtable<Integer, String> evalText = new Hashtable<Integer, String>(260);
         for (int i = 0; i < reader.maxDoc(); i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
@@ -246,7 +372,7 @@ public class TestUCID extends TestCase {
                 for (int y = 0; y < hits.length(); y++) {
                     String hitFile = getIDfromFileName(hits.doc(y).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
                     // TODO: Sort by query ID!
-                    tmpEval += String.format(Locale.US, "%d 1 %s %d %.2f test\n", query2id.get(fileName), hitFile.substring(0, hitFile.lastIndexOf('.')), (int) rank + 1, 100 - hits.score(y));
+                    tmpEval += String.format(Locale.US, "%d 1 %s %d %.2f test\n", query2id.get(fileName), hitFile.substring(0, hitFile.lastIndexOf('.')), (int) rank + 1, hits.score(y));
                     // if (!hitFile.equals(fileName)) {
                     rank++;
                     if (queries.get(fileName).contains(hitFile) || hitFile.equals(fileName)) { // it's a hit.
@@ -262,11 +388,11 @@ public class TestUCID extends TestCase {
                 }
                 // }
 //                System.out.println();
-                if (found - queries.get(fileName).size() == 1)
-                    avgPrecision /= (double) (1d + queries.get(fileName).size());
-                else {
+                avgPrecision /= (double) (1d + queries.get(fileName).size());
+
+                if (!(found - queries.get(fileName).size() == 1)){
                     // some of the results have not been found. We have to deal with it ...
-                    System.err.println("Did not find result ;(");
+                    errorCount++;
                 }
 
                 // assertTrue(found - queries.get(fileName).size() == 0);
@@ -282,9 +408,18 @@ public class TestUCID extends TestCase {
         errorRate = errorRate / queryCount;
         map = map / queryCount;
         p10 = p10 / (queryCount * 10d);
-        System.out.print(prefix);
-        System.out.format("\t%.5f\t%.5f\t%.5f\n", map, p10, errorRate);
-
+//        System.out.print(prefix);
+        String s;
+        if (searcher.toString().contains("ImageSearcherUsingWSs"))
+            s = String.format("%s\t%.4f\t%.4f\t%.4f\t(%s)", prefix, map, p10, errorRate, searcher.toString().split("\\s+")[searcher.toString().split("\\s+").length-1]);
+        else
+            s = String.format("%s\t%.4f\t%.4f\t%.4f", prefix, map, p10, errorRate);
+        if (errorCount>0) {
+            // some of the results have not been found. We have to deal with it ...
+            //System.err.println("Did not find result ;(  (" + errorCount + ")");
+            s += "\t~~\tDid not find result ;(\t(" + errorCount + ")";
+        }
+        System.out.println(s);
     }
 
     private String getIDfromFileName(String path) {

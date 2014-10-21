@@ -68,16 +68,16 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
     protected Logger logger = Logger.getLogger(getClass().getName());
     Class<?> descriptorClass;
     String fieldName;
-    private LireFeature cachedInstance = null;
-    private boolean isCaching = false;
+    protected LireFeature cachedInstance = null;
+    protected boolean isCaching = false;
 
-    private LinkedList<byte[]> featureCache;
-    private IndexReader reader;
+    protected LinkedList<byte[]> featureCache;
+    protected IndexReader reader;
 
-    private int maxHits = 10;
+    protected int maxHits = 10;
     protected TreeSet<SimpleResult> docs;
-    private float maxDistance;
-    private boolean useSimilarityScore = false;
+    protected float maxDistance;
+    protected boolean useSimilarityScore = false;
 
     /**
      * Creates a new ImageSearcher for the given feature.
@@ -149,7 +149,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         init();
     }
 
-    private void init() {
+    protected void init() {
         // put all respective features into an in-memory cache ...
         if (isCaching && reader != null) {
             int docs = reader.numDocs();

@@ -59,6 +59,7 @@
 package net.semanticmetadata.lire.clustering;
 
 import net.semanticmetadata.lire.imageanalysis.Histogram;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.io.FileInputStream;
@@ -110,12 +111,11 @@ public class Cluster implements Comparable<Object> {
     }
 
     public double getDistance(double[] f) {
-        double d = 0;
-        // now using L1 for faster results ...
-        for (int i = 0; i < f.length; i++) {
-            d += Math.abs(mean[i] - f[i]);
-        }
-        return d;
+//        L1
+//        return MetricsUtils.distL1(mean, f);
+
+//        L2
+        return MetricsUtils.distL2(mean, f);
     }
 
     /**
