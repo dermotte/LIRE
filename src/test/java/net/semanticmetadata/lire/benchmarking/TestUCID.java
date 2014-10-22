@@ -193,12 +193,15 @@ public class TestUCID extends TestCase {
 //        System.out.println("** SIFT BoVW");
 //        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
 //        sh.index();
-//        System.out.println("** SIMPLE BoVW / LoDe CEDD");
-//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new CEDD());
-//        ldb.index();
-        System.out.println("** SIMPLE BoVW / LoDe SC");
-        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new ScalableColor());
+        System.out.println("** SIMPLE BoVW / LoDe CEDD");
+        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new CEDD());
         ldb.index();
+//        System.out.println("** SIMPLE BoVW / LoDe AutoColorCorrelogram");
+//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new AutoColorCorrelogram());
+//        ldb.index();
+//        System.out.println("** SIMPLE BoVW / LoDe SC");
+//        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new ScalableColor());
+//        ldb.index();
 //        System.out.println("** SIMPLE BoVW / LoDe CL");
 //        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new ColorLayout());
 //        ldb.index();
@@ -252,27 +255,38 @@ public class TestUCID extends TestCase {
 //        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
 
         //NEK TESTS//
-        //LoCATe
+        //Simple-CEDD ~ LoCATe
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe CEDD L2", reader);
-//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe CEDD L2", reader);
+        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe CEDD L2", reader);
+
+        //AutoColorCorrelogram
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "Color Correlation", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "Color Correlation", reader);
 
         //Simple-SC
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe SC L2", reader);
-        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, false, false), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, false, true), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, true, false), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, false, true, true), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, false, false), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, false, true), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, true, false), "LoDe SC L2", reader);
+//        computeMAP(new ImageSearcherUsingWSs(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader, true, true, true), "LoDe SC L2", reader);
 
         //Simple-CL
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader), "LoDe CL L2", reader);

@@ -47,6 +47,11 @@ public class ImageSearcherUsingWSs extends GenericFastImageSearcher {
         termFrequency = tf;
         inverseDocFrequency = idf;
         normalizeHistogram = n;
+        setWS();
+    }
+
+    private void setWS()
+    {
         if (termFrequency)
         {
             if (inverseDocFrequency)
