@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 13.09.13 18:35
+ * Updated: 07.11.14 14:16
  */
 
 package net.semanticmetadata.lire;
@@ -217,10 +217,10 @@ public class GeneralTest extends TestCase {
 
     public void testIndexLarge() throws IOException {
 //        ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Temp\\testImagelogos"), true);
-        ArrayList<String> images = FileUtils.getAllImages(new File("C:\\Java\\Projects\\LireSVN\\testdata\\flickr-10000"), false);
+        ArrayList<String> images = FileUtils.getAllImages(new File("testdata/UCID"), false);
         IndexWriter iw = LuceneUtils.createIndexWriter("index-large", true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         // select one feature for the large index:
-        int featureIndex = 13;
+        int featureIndex = 0;
         int count = 0;
         long ms = System.currentTimeMillis();
         DocumentBuilder builder = new ChainedDocumentBuilder();
@@ -296,7 +296,7 @@ public class GeneralTest extends TestCase {
 //            queryDocID = 877 * (i + 1);
             IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("index-large")));
             // select one feature for the large index:
-            int featureIndex = 13;
+            int featureIndex = 0;
             int count = 0;
             long ms = System.currentTimeMillis();
             ImageSearchHits hits = searchers[featureIndex].search(reader.document(queryDocID), reader);
