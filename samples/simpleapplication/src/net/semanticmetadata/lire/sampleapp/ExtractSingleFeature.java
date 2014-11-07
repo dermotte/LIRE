@@ -36,34 +36,60 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.11.14 14:12
+ * Updated: 07.11.14 14:43
  */
 
-package net.semanticmetadata.lire.indexing;
+package net.semanticmetadata.lire.sampleapp;
 
-import org.apache.lucene.codecs.FilterCodec;
-import org.apache.lucene.codecs.StoredFieldsFormat;
-import org.apache.lucene.codecs.lucene410.Lucene410Codec;
-import org.apache.lucene.codecs.lucene42.Lucene42Codec;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
- * Custom stored fields compression configuration. Smaller chunk size and faster compression routine.
- * Code based on the suggestions of Savia Beson.
- * <br/>
- * Note that the class net.semanticmetadata.lire.indexing.LireCustomCodec has to be registered in
- * META-INF/services, in a file called org.apache.lucene.codecs.Codec
+ * This file is part of LIRE, a Java library for content based image retrieval.
  *
- * @autor Mathias Lux, mathias@juggle.at, 2013-06-24
+ * @author Mathias Lux, mathias@juggle.at, 07.11.2014
  */
-public final class LireCustomCodec extends FilterCodec {
-
-    public LireCustomCodec() {
-        super("LireCustomCodec", new Lucene410Codec());
+public class ExtractSingleFeature {
+    public static void main(String[] args) {
+        BufferedImage img = null;
+        LireFeature f = null;
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("-i")) {
+                // infile ...
+                try {
+                    img = ImageIO.read(new FileInputStream(args[i + 1]));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    printHelp();
+                }
+            } else if (arg.startsWith("-f")) {
+                // feature selection.
+                try {
+                    f = (LireFeature) Class.forName(args[i + 1]).newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    printHelp();
+                }
+            }
+        }
+        if (img == null) printHelp();
+        if (f == null) {
+            f = new CEDD();
+        }
+        System.out.println("Extracting " + f.getClass().getName() + ".");
+        f.extract(img);
+        System.out.printf(Arrays.toString(f.getDoubleHistogram()));
     }
 
-    @Override
-    public StoredFieldsFormat storedFieldsFormat() {
-        return new LireFeatureStoredFieldFormat();
+    private static void printHelp() {
+        System.exit(1);
     }
-
 }
+

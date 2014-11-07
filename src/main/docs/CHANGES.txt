@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2014-11-07
+==========
+  - Updated to Lucene 4.10.2
+  - Added ExtractSingleFeature to simpleapplication.
+  - added OpenCV to lib (Nektarios Anagnostopoulos)
+  - Fixes to benchmarking and SIMPLE implementation (Nektarios Anagnostopoulos)
+
 2014-08-23
 ==========
   - Bug fixes from Nektarios Anagnostopoulos on CEDD

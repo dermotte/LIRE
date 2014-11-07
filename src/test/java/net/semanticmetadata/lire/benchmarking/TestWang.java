@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.08.13 12:03
+ * Updated: 07.11.14 14:26
  */
 
 package net.semanticmetadata.lire.benchmarking;
@@ -46,10 +46,7 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.FCTH;
-import net.semanticmetadata.lire.imageanalysis.GenericByteLireFeature;
-import net.semanticmetadata.lire.imageanalysis.JCD;
+import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
@@ -123,7 +120,7 @@ public class TestWang extends TestCase {
 //               builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
 //               builder.addBuilder(new GenericDocumentBuilder(RankAndOpponent.class, "jop"));
 //               builder.addBuilder(new GenericFastDocumentBuilder(FuzzyOpponentHistogram.class, "opHist"));
-               builder.addBuilder(new SurfDocumentBuilder());
+//               builder.addBuilder(new SurfDocumentBuilder());
 //               builder.addBuilder(new MSERDocumentBuilder());
 //               builder.addBuilder(new SiftDocumentBuilder());
                builder.addBuilder(new SimpleBuilder(new CEDD()));
@@ -165,9 +162,9 @@ public class TestWang extends TestCase {
 
         SimpleFeatureHistogramBuilder lodeb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128, new CEDD());
         lodeb.index();
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128);
+//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128);
 //        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
-        sh.index();
+//        sh.index();
 //        MSERFeatureHistogramBuilder sh2 = new MSERFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
 //        sh2.index();
         // in case of VLAD
@@ -266,12 +263,12 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, true, reader), "RILBP", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP", reader);
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
-        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");
-        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName()+"LoDe"), "LoDe SC", reader);
-        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, (new CEDD()).getFieldName()+"LoDe_Hist", true, reader), "LoDe-generic", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName()+"LoDe"), "LoDe SC", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, (new CEDD()).getFieldName()+"LoDe_Hist", true, reader), "LoDe-generic", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS), "SIFT BoVW", reader);
-
+        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "Simple CEDD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), "VLAD-SURF", reader);
 
     }

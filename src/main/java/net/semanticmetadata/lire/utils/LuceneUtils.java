@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 07.11.14 14:10
  */
 
 package net.semanticmetadata.lire.utils;
@@ -66,7 +68,7 @@ public class LuceneUtils {
     /**
      * Currently employed version of Lucene
      */
-    public static final Version LUCENE_VERSION = Version.LUCENE_42;
+    public static final Version LUCENE_VERSION = Version.LUCENE_4_10_2;
 
     /**
      * Different types of analyzers
@@ -103,9 +105,9 @@ public class LuceneUtils {
         // set the analyzer according to the method params
         Analyzer tmpAnalyzer = null;
         if (analyzer == AnalyzerType.SimpleAnalyzer)
-            tmpAnalyzer = new SimpleAnalyzer(LUCENE_VERSION);    // LetterTokenizer with LowerCaseFilter
+            tmpAnalyzer = new SimpleAnalyzer();    // LetterTokenizer with LowerCaseFilter
         else if (analyzer == AnalyzerType.WhitespaceAnalyzer)
-            tmpAnalyzer = new WhitespaceAnalyzer(LUCENE_VERSION);  // WhitespaceTokenizer
+            tmpAnalyzer = new WhitespaceAnalyzer();  // WhitespaceTokenizer
         else if (analyzer == AnalyzerType.KeywordAnalyzer)
             tmpAnalyzer = new KeywordAnalyzer(); // entire string as one token.
 
@@ -124,8 +126,8 @@ public class LuceneUtils {
     public static IndexWriter createIndexWriter(Directory directory, boolean create, AnalyzerType analyzer, double RAMBufferSize) throws IOException {
         // set the analyzer according to the method params
         Analyzer tmpAnalyzer = null;
-        if (analyzer == AnalyzerType.SimpleAnalyzer) tmpAnalyzer = new SimpleAnalyzer(LUCENE_VERSION);
-        else if (analyzer == AnalyzerType.WhitespaceAnalyzer) tmpAnalyzer = new WhitespaceAnalyzer(LUCENE_VERSION);
+        if (analyzer == AnalyzerType.SimpleAnalyzer) tmpAnalyzer = new SimpleAnalyzer();
+        else if (analyzer == AnalyzerType.WhitespaceAnalyzer) tmpAnalyzer = new WhitespaceAnalyzer();
 
         // The config
         IndexWriterConfig config = new IndexWriterConfig(LUCENE_VERSION, tmpAnalyzer);
