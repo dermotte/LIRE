@@ -71,6 +71,7 @@ public class VLADBuilder {
     public static boolean DELETE_LOCAL_FEATURES = true;
     protected String localFeatureFieldName;// = DocumentBuilder.FIELD_NAME_SURF;
     protected String vladFieldName;// = DocumentBuilder.FIELD_NAME_SURF_VLAD;
+//    private LireFeature lireFeature = new ScalableColor();
     //    protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String clusterFile = "./clusters-vlad.dat";
     IndexReader reader;
@@ -114,6 +115,13 @@ public class VLADBuilder {
         this.numClusters = numClusters;
         this.reader = reader;
     }
+
+//    public VLADBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters, LireFeature lireFeature) {
+//        this.numDocsForVocabulary = numDocsForVocabulary;
+//        this.numClusters = numClusters;
+//        this.reader = reader;
+//        this.lireFeature = lireFeature;
+//    }
 
     /**
      * Uses an existing index, where each and every document should have a set of local features. A number of
@@ -311,16 +319,13 @@ public class VLADBuilder {
      */
     public Document getVisualWords(Document d) throws IOException {  // TODO: Adapt to VLAD!
         clusters = Cluster.readClusters(clusterFile);
-        double[] vlad = null;
+        double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
+        Arrays.fill(vlad, 0d);
         LireFeature f = getFeatureInstance();
         IndexableField[] fields = d.getFields(localFeatureFieldName);
         // find the appropriate cluster for each feature:
         for (int j = 0; j < fields.length; j++) {
             f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-            if (vlad == null) {
-                vlad = new double[clusters.length * f.getDoubleHistogram().length];
-                Arrays.fill(vlad, 0d);
-            }
             int clusterIndex = clusterForFeature((Histogram) f);
             double[] mean = clusters[clusterIndex].getMean();
             for (int k = 0; k < f.getDoubleHistogram().length; k++) {
@@ -343,9 +348,11 @@ public class VLADBuilder {
         for (int i = 0; i < histogram.length; i++) {
             sumOfSquares += histogram[i] * histogram[i];
         }
-        for (int i = 0; i < histogram.length; i++) {
+        if (sumOfSquares>0) {
+            for (int i = 0; i < histogram.length; i++) {
 //            histogram[i] = Math.floor(16d * histogram[i] / Math.sqrt(sumOfSquares));
-            histogram[i] = histogram[i] / Math.sqrt(sumOfSquares);
+                histogram[i] = histogram[i] / Math.sqrt(sumOfSquares);
+            }
         }
 /*        // L1
         double min = Double.MAX_VALUE, max = Double.MIN_VALUE;
@@ -425,6 +432,18 @@ public class VLADBuilder {
         return new SurfFeature();
     }
 
+//    private LireFeature getFeatureInstance() {
+//        LireFeature result = null;
+//        try {
+//            result =  lireFeature.getClass().newInstance();
+//        } catch (InstantiationException e) {
+//            e.printStackTrace();
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+//    }
+
     private String getDuration(double time) {
         double min = (System.currentTimeMillis() - time) / (1000 * 60);
         double sec = (min - Math.floor(min)) * 60;
@@ -481,18 +500,16 @@ public class VLADBuilder {
                     // remove the fields if they are already there ...
                     d.removeField(vladFieldName);
 //                    d.removeField(localFeatureHistFieldName);
-                    double[] vlad = null;
-
+                    double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
+                    Arrays.fill(vlad, 0d);
+                    int clusterIndex;
+                    double[] mean;
                     // VLAD - Vector of Locally Aggregated Descriptors
                     for (int j = 0; j < fields.length; j++) {
                         f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                        if (vlad == null) {  // init vlad if it is null.
-                            vlad = new double[clusters.length * f.getDoubleHistogram().length];
-                            Arrays.fill(vlad, 0d);
-                        }
-                        int clusterIndex = clusterForFeature((Histogram) f);
+                        clusterIndex = clusterForFeature((Histogram) f);
 //                        System.out.println("clusterIndex = " + clusterIndex);
-                        double[] mean = clusters[clusterIndex].getMean();
+                        mean = clusters[clusterIndex].getMean();
                         for (int k = 0; k < f.getDoubleHistogram().length; k++) {
 //                            System.out.println((clusterIndex*f.getDoubleHistogram().length+k) + " - mean: " + mean.length + " - feature: " + f.getDoubleHistogram().length);
                             vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
