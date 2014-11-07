@@ -47,10 +47,12 @@ import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.*;
+import net.semanticmetadata.lire.imageanalysis.bovw.CvSiftFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.CvSurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSiftFeature;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
-import net.semanticmetadata.lire.imageanalysis.sift.Feature;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
@@ -73,24 +75,27 @@ import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
- * User: mlux
- * Date: 14.05.13
- * Time: 10:56
+ * User: nek.anag
+ * Date: 30.10.14
+ * Time: 14:05
  */
-public class TestUCID extends TestCase {
-    // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
-    // I converted all images to PNG (lossless) to save time, space & troubles with Java.
+public class TestUniversal extends TestCase {
+
+    //UCID
     private String db = "UCID";
     private String indexPath = "ucid-index";
     private String testExtensive = "testdata/UCID";
     private final String groundTruth = "testdata/ucid.v2.groundtruth.txt";
 
-    private int sample = 500;
-    private int clusters = 32;
+    //UKBench
+//    private String db = "UKB";
+//    private String indexPath = "ukbench-index";
+//    private String testExtensive = "testdata/ukbench";
+//    private final String groundTruth = "testdata/NisterQueriesforLire.txt";
 
-//    private String testExtensive = "testdata/UCID.small";
-//    private final String groundTruth = "testdata/ucid.v2.groundtruth.small.txt";
-//
+    private int sample = 500;
+    private int clusters = 512; //Set to 0 if Global!!
+
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
     private HashMap<String, Integer> query2id;
@@ -99,7 +104,6 @@ public class TestUCID extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-//        indexPath = "ucid-index-573374558";
         indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
         parallelIndexer = new ParallelIndexer(16, indexPath, testExtensive, true) {
@@ -114,7 +118,6 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-
 //                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
@@ -140,6 +143,7 @@ public class TestUCID extends TestCase {
                 //GLOBAL Tests
 //                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
+//                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
@@ -151,6 +155,7 @@ public class TestUCID extends TestCase {
                 //Tests for SIMPLE
                 builder.addBuilder(new SimpleBuilder(new CEDD()));
 //                builder.addBuilder(new SimpleBuilder(new FCTH()));
+//                builder.addBuilder(new SimpleBuilder(new JCD()));
 //                builder.addBuilder(new SimpleBuilder(new AutoColorCorrelogram()));
 //                builder.addBuilder(new SimpleBuilder(new OpponentHistogram()));
 //                builder.addBuilder(new SimpleBuilder(new LocalBinaryPatterns()));
@@ -213,17 +218,17 @@ public class TestUCID extends TestCase {
 //        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
 //        sh.index();
 
-//        Test for SIMPLE
+        //Test for SIMPLE
         System.out.println("** SIMPLE BoVW using CEDD");
         SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new CEDD());
         ldb.index();
 
-        //Test for VLAD
-//        System.out.println("** VLAD using CvSiftfFeature");
+//        //Test for VLAD
+//        System.out.println("** VLAD using JCD");
 //        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters) {
 //            @Override
 //            protected LireFeature getFeatureInstance() {
-//                return new CvSiftFeature();
+//                return new JCD();
 //            }
 //        };
 //        vladBuilder.index();
@@ -235,36 +240,39 @@ public class TestUCID extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, CEDD.class, true, reader), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, true, reader), "PHOG", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, true, reader), "Scalable Color", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, true, reader), "Color Layout", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, true, reader), "Scalable Color", reader);
+
+
+//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, true, reader), "PHOG", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, JointHistogram.class, true, reader), "Joint Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
 
 //        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, true, reader), "SPCEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, true, reader), "SPJCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, true, reader), "SPFCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, true, reader), "SPACC ", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP ", reader);
-//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
-//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
+//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura", reader);
+//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura", reader);
 
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
-//        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
-//        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
 
         //NEK TESTS for SIMPLE//
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "Simple CEDD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new FCTH()).getFieldName() + "LoDe_Hist", true, reader), "Simple FCTH L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new JCD()).getFieldName() + "LoDe_Hist", true, reader), "Simple JCD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader), "Simple AutoColCorrel L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new OpponentHistogram()).getFieldName() + "LoDe_Hist", true, reader), "Simple OppHist L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new LocalBinaryPatterns()).getFieldName() + "LoDe_Hist", true, reader), "Simple LBP L2", reader);
@@ -280,6 +288,7 @@ public class TestUCID extends TestCase {
         //perform weighting schemes for SIMPLE
         performWSs((new CEDD()).getFieldName() + "LoDe_Hist", "Simple CEDD L2", reader);
 //        performWSs((new FCTH()).getFieldName() + "LoDe_Hist", "Simple FCTH L2", reader);
+//        performWSs((new JCD()).getFieldName() + "LoDe_Hist", "Simple JCD L2", reader);
 //        performWSs((new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", "Simple AutoColCorrel L2", reader);
 //        performWSs((new OpponentHistogram()).getFieldName() + "LoDe_Hist", "Simple OppHist L2", reader);
 //        performWSs((new LocalBinaryPatterns()).getFieldName() + "LoDe_Hist", "Simple LBP L2", reader);
@@ -297,6 +306,7 @@ public class TestUCID extends TestCase {
         //VLAD
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CEDD + "vlad", true, reader), "VLAD-Simple CEDD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_FCTH + "vlad", true, reader), "VLAD-Simple FCTH L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_JCD + "vlad", true, reader), "VLAD-Simple JCD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM + "vlad", true, reader), "VLAD-Simple AutoColCorrel L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM + "vlad", true, reader), "VLAD-Simple OppHist L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "vlad", true, reader), "VLAD-Simple LBP L2", reader);
@@ -333,11 +343,15 @@ public class TestUCID extends TestCase {
         Bits liveDocs = MultiFields.getLiveDocs(reader);
         PrintWriter fw;
         if (searcher.toString().contains("ImageSearcherUsingWSs")) {
-            (new File("eval/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();
-            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "/" + clusters + "/" + prefix.replace(' ', '_') + "-" + db + clusters + searcher.toString().split("\\s+")[searcher.toString().split("\\s+").length - 1] + ".txt"));
-        }else
-            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "-" + db + clusters +".txt"));
-//            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "-" + db + "Global.txt")); //forGlobal
+            (new File("eval/" + db + "/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();
+            fw = new PrintWriter(new File("eval/" + db + "/" + prefix.replace(' ', '_') + "/" + clusters + "/" + prefix.replace(' ', '_') + "-" + db + clusters + searcher.toString().split("\\s+")[searcher.toString().split("\\s+").length - 1] + ".txt"));
+        }else {
+            (new File("eval/" + db + "/")).mkdirs();
+            if (clusters>0)
+                fw = new PrintWriter(new File("eval/" + db + "/" + prefix.replace(' ', '_') + "-" + db + clusters +".txt"));
+            else
+                fw = new PrintWriter(new File("eval/" + db + "/" + prefix.replace(' ', '_') + "-" + db + "Global.txt")); //forGlobal
+        }
         Hashtable<Integer, String> evalText = new Hashtable<Integer, String>(260);
         for (int i = 0; i < reader.maxDoc(); i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
@@ -411,7 +425,8 @@ public class TestUCID extends TestCase {
 
     private String getIDfromFileName(String path) {
         // That's the one for Windows. Change for Linux ...
-        return path.substring(path.lastIndexOf('\\') + 1).replace(".jpg", ".tif");
+//        return path.substring(path.lastIndexOf('\\') + 1).replace(".jpg", ".tif");
+        return path.substring(path.lastIndexOf('\\') + 1);
     }
 
     public void testIndexingSpeed() throws IOException {

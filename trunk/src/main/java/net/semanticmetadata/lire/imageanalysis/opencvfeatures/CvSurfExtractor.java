@@ -55,6 +55,7 @@ public class CvSurfExtractor {
             writer.close();
             extractor.read(temp.getPath());
             detector.read(temp.getPath());
+            temp.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -108,6 +109,7 @@ public class CvSurfExtractor {
             writer.write(settings);
             writer.close();
             detector.read(temp.getPath());
+            temp.deleteOnExit();
         } catch (IOException e) {
             e.printStackTrace();
         }
