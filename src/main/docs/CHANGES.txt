@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2014-11-17
+==========
+  - Bugfix in cluster writing and reading (Nektarios Anagnostopoulos)
+  - Architectural re-arrangement of internal methods in BoVW implementation (Nektarios Anagnostopoulos)
+
 2014-11-07
 ==========
   - Updated to Lucene 4.10.2
