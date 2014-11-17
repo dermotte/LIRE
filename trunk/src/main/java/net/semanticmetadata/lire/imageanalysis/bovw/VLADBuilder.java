@@ -44,21 +44,24 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
 import net.semanticmetadata.lire.clustering.ParallelKMeans;
-import net.semanticmetadata.lire.imageanalysis.*;
+import net.semanticmetadata.lire.imageanalysis.GenericDoubleLireFeature;
+import net.semanticmetadata.lire.imageanalysis.Histogram;
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
 import net.semanticmetadata.lire.utils.LuceneUtils;
-import net.semanticmetadata.lire.utils.MetricsUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.*;
 import org.apache.lucene.util.Bits;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * General class creating bag of visual words vocabularies parallel based on k-means. Works with SIFT, SURF and MSER.
@@ -319,26 +322,29 @@ public class VLADBuilder {
      */
     public Document getVisualWords(Document d) throws IOException {  // TODO: Adapt to VLAD!
         clusters = Cluster.readClusters(clusterFile);
-        double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
-        Arrays.fill(vlad, 0d);
+//        double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
+//        Arrays.fill(vlad, 0d);
         LireFeature f = getFeatureInstance();
-        IndexableField[] fields = d.getFields(localFeatureFieldName);
-        // find the appropriate cluster for each feature:
-        for (int j = 0; j < fields.length; j++) {
-            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-            int clusterIndex = clusterForFeature((Histogram) f);
-            double[] mean = clusters[clusterIndex].getMean();
-            for (int k = 0; k < f.getDoubleHistogram().length; k++) {
-                vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
-            }
+//        IndexableField[] fields = d.getFields(localFeatureFieldName);
+//        // find the appropriate cluster for each feature:
+//        for (int j = 0; j < fields.length; j++) {
+//            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+//            int clusterIndex = clusterForFeature((Histogram) f);
+//            double[] mean = clusters[clusterIndex].getMean();
+//            for (int k = 0; k < f.getDoubleHistogram().length; k++) {
+//                vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
+//            }
+//
+//        }
+//        normalize(vlad);
+//        GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
+//        feat.setData(vlad);
+//        d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
+////        d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
+//        d.removeFields(localFeatureFieldName);
 
-        }
-        normalize(vlad);
-        GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
-        feat.setData(vlad);
-        d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
-//        d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
-        d.removeFields(localFeatureFieldName);
+        createVisualWords(d, f);
+
         return d;
     }
 
@@ -496,36 +502,37 @@ public class VLADBuilder {
 //                        tmpHist[j] = 0;
 //                    }
                     Document d = reader.document(i);
-                    IndexableField[] fields = d.getFields(localFeatureFieldName);
-                    // remove the fields if they are already there ...
-                    d.removeField(vladFieldName);
-//                    d.removeField(localFeatureHistFieldName);
-                    double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
-                    Arrays.fill(vlad, 0d);
-                    int clusterIndex;
-                    double[] mean;
-                    // VLAD - Vector of Locally Aggregated Descriptors
-                    for (int j = 0; j < fields.length; j++) {
-                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                        clusterIndex = clusterForFeature((Histogram) f);
-//                        System.out.println("clusterIndex = " + clusterIndex);
-                        mean = clusters[clusterIndex].getMean();
-                        for (int k = 0; k < f.getDoubleHistogram().length; k++) {
-//                            System.out.println((clusterIndex*f.getDoubleHistogram().length+k) + " - mean: " + mean.length + " - feature: " + f.getDoubleHistogram().length);
-                            vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
-                        }
-                    }
-                    normalize(vlad);
-                    GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
-                    feat.setData(vlad);
-//                    System.out.println(feat.getStringRepresentation());
-                    d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
-//                    d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
-
-                    // remove local features to save some space if requested:
-                    if (DELETE_LOCAL_FEATURES) {
-                        d.removeFields(localFeatureFieldName);
-                    }
+                    createVisualWords(d, f);
+//                    IndexableField[] fields = d.getFields(localFeatureFieldName);
+//                    // remove the fields if they are already there ...
+//                    d.removeField(vladFieldName);
+////                    d.removeField(localFeatureHistFieldName);
+//                    double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
+//                    Arrays.fill(vlad, 0d);
+//                    int clusterIndex;
+//                    double[] mean;
+//                    // VLAD - Vector of Locally Aggregated Descriptors
+//                    for (int j = 0; j < fields.length; j++) {
+//                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+//                        clusterIndex = clusterForFeature((Histogram) f);
+////                        System.out.println("clusterIndex = " + clusterIndex);
+//                        mean = clusters[clusterIndex].getMean();
+//                        for (int k = 0; k < f.getDoubleHistogram().length; k++) {
+////                            System.out.println((clusterIndex*f.getDoubleHistogram().length+k) + " - mean: " + mean.length + " - feature: " + f.getDoubleHistogram().length);
+//                            vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
+//                        }
+//                    }
+//                    normalize(vlad);
+//                    GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
+//                    feat.setData(vlad);
+////                    System.out.println(feat.getStringRepresentation());
+//                    d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
+////                    d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
+//
+//                    // remove local features to save some space if requested:
+//                    if (DELETE_LOCAL_FEATURES) {
+//                        d.removeFields(localFeatureFieldName);
+//                    }
                     // now write the new one. we use the identifier to update ;)
                     iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
                     if (pm != null) {
@@ -540,5 +547,42 @@ public class VLADBuilder {
                 }
             }
         }
+    }
+
+    private void createVisualWords(Document d, LireFeature f)
+    {
+        IndexableField[] fields = d.getFields(localFeatureFieldName);
+        // remove the fields if they are already there ...
+        d.removeField(vladFieldName);
+//        d.removeField(localFeatureHistFieldName);
+        double[] vlad = new double[clusters.length * (clusters[0].getMean()).length];
+        Arrays.fill(vlad, 0d);
+        int clusterIndex;
+        double[] mean;
+        // VLAD - Vector of Locally Aggregated Descriptors
+        for (int j = 0; j < fields.length; j++) {
+            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+            clusterIndex = clusterForFeature((Histogram) f);
+//            ystem.out.println("clusterIndex = " + clusterIndex);
+            mean = clusters[clusterIndex].getMean();
+            for (int k = 0; k < f.getDoubleHistogram().length; k++) {
+//                System.out.println((clusterIndex*f.getDoubleHistogram().length+k) + " - mean: " + mean.length + " - feature: " + f.getDoubleHistogram().length);
+                vlad[clusterIndex * f.getDoubleHistogram().length + k] += f.getDoubleHistogram()[k] - mean[k];
+            }
+        }
+        normalize(vlad);
+        GenericDoubleLireFeature feat = new GenericDoubleLireFeature();
+        feat.setData(vlad);
+//        System.out.println(feat.getStringRepresentation());
+        d.add(new StoredField(vladFieldName, feat.getByteArrayRepresentation()));
+//        d.add(new StringField(localFeatureHistFieldName, SerializationUtils.arrayToString(tmpHist), Field.Store.YES));
+
+        // remove local features to save some space if requested:
+        if (DELETE_LOCAL_FEATURES) {
+            d.removeFields(localFeatureFieldName);
+        }
+
+        // for debugging ..
+//        System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(vlad));
     }
 }

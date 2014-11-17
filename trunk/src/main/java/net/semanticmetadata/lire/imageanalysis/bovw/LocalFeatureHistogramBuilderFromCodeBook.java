@@ -57,7 +57,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * General class creating bag of visual words vocabularies parallel based on k-means. Works with SIFT, SURF and MSER.
@@ -226,28 +229,31 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
      * @return
      * @throws java.io.IOException
      */
-    /*
+
     public Document getVisualWords(Document d) throws IOException {
-        clusters = Cluster.readClusters(clusterFile);
-        int[] tmpHist = new int[clusters.length];
+        clusters = SerializationUtils.readCodeBook(new FileInputStream("codebook128PNG.txt"));
+//        double[] tmpHist = new double[clusters.size()];
         LireFeature f = getFeatureInstance();
-        IndexableField[] fields = d.getFields(localFeatureFieldName);
-        // find the appropriate cluster for each feature:
-        for (int j = 0; j < fields.length; j++) {
-            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-            tmpHist[clusterForFeature(f, clusterList)]++;
-        }
-        quantize(tmpHist);
-        byte[] data = new byte[tmpHist.length];
-        for (int i = 0; i < data.length; i++) {
-            data[i] = (byte) tmpHist[i];
-        }
-        d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
-        d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
-        d.removeFields(localFeatureFieldName);
+//        IndexableField[] fields = d.getFields(localFeatureFieldName);
+//        // find the appropriate cluster for each feature:
+//        for (int j = 0; j < fields.length; j++) {
+//            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+//            tmpHist[clusterForFeature(f, clusters)]++;
+//        }
+//        //quantize(tmpHist);
+//        byte[] data = new byte[tmpHist.length];
+//        for (int i = 0; i < data.length; i++) {
+//            data[i] = (byte) tmpHist[i];
+//        }
+//        d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
+//        d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+//        d.removeFields(localFeatureFieldName);
+
+        createVisualWords(d, f);
+
         return d;
     }
-    */
+
     /**
      * Weighting the feature vector for better results. Options are term frequency as well as the employed norm function.
      * @param histogram
@@ -379,38 +385,39 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
         }
 
         public void run() {
-            double[] tmpHist = new double[numClusters];
+//            double[] tmpHist = new double[numClusters];
             LireFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {
 //                    if (!reader.isDeleted(i)) {    // TODO!
-                    for (int j = 0; j < tmpHist.length; j++) {
-                        tmpHist[j] = 0;
-                    }
+//                    for (int j = 0; j < tmpHist.length; j++) {
+//                        tmpHist[j] = 0;
+//                    }
                     Document d = reader.document(i);
-                    IndexableField[] fields = d.getFields(localFeatureFieldName);
-                    // remove the fields if they are already there ...
-                    d.removeField(visualWordsFieldName);
-                    d.removeField(localFeatureHistFieldName);
-
-                    // find the appropriate cluster for each feature:
-                    for (int j = 0; j < fields.length; j++) {
-                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                        tmpHist[clusterForFeature((Histogram) f, clusters)]++;
-                    }
-                    //d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(normalize(tmpHist)))); //normalize
-                    d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
-                    //quantize(tmpHist);
-                    d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
-                    // remove local features to save some space if requested:
-                    if (DELETE_LOCAL_FEATURES) {
-                        d.removeFields(localFeatureFieldName);
-                    }
+                    createVisualWords(d, f);
+//                    IndexableField[] fields = d.getFields(localFeatureFieldName);
+//                    // remove the fields if they are already there ...
+//                    d.removeField(visualWordsFieldName);
+//                    d.removeField(localFeatureHistFieldName);
+//
+//                    // find the appropriate cluster for each feature:
+//                    for (int j = 0; j < fields.length; j++) {
+//                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+//                        tmpHist[clusterForFeature((Histogram) f, clusters)]++;
+//                    }
+//                    d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
+//                    //quantize(tmpHist);
+//                    d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+//                    // remove local features to save some space if requested:
+//                    if (DELETE_LOCAL_FEATURES) {
+//                        d.removeFields(localFeatureFieldName);
+//                    }
+//                    // now write the new one. we use the identifier to update ;)
+//                    iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
+//                    // for debugging ..
+////                    System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(tmpHist));
                     // now write the new one. we use the identifier to update ;)
                     iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
-                    // for debugging ..
-//                    System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(normalize(tmpHist))); //normalize
-//                    System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(tmpHist));
                     if (pm != null) {
                         double len = (double) (end - start);
                         double percent = (double) (i - start) / len * 45d + 50;
@@ -423,5 +430,30 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
                 }
             }
         }
+    }
+
+    private void createVisualWords(Document d, LireFeature f)
+    {
+        double[] tmpHist = new double[numClusters];
+        IndexableField[] fields = d.getFields(localFeatureFieldName);
+        // remove the fields if they are already there ...
+        d.removeField(visualWordsFieldName);
+        d.removeField(localFeatureHistFieldName);
+
+        // find the appropriate cluster for each feature:
+        for (int j = 0; j < fields.length; j++) {
+            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
+            tmpHist[clusterForFeature((Histogram) f, clusters)]++;
+        }
+        d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
+        //quantize(tmpHist);
+        d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+        // remove local features to save some space if requested:
+        if (DELETE_LOCAL_FEATURES) {
+            d.removeFields(localFeatureFieldName);
+        }
+
+        // for debugging ..
+//        System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(tmpHist));
     }
 }

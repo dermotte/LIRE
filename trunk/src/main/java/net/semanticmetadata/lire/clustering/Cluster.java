@@ -134,6 +134,7 @@ public class Cluster implements Comparable<Object> {
     public static void writeClusters(Cluster[] clusters, String file) throws IOException {
         FileOutputStream fout = new FileOutputStream(file);
         fout.write(SerializationUtils.toBytes(clusters.length));
+        fout.write(SerializationUtils.toBytes((clusters[0].getMean()).length));
         for (int i = 0; i < clusters.length; i++) {
             fout.write(clusters[i].getByteRepresentation());
         }
@@ -146,10 +147,12 @@ public class Cluster implements Comparable<Object> {
         byte[] tmp = new byte[4];
         fin.read(tmp, 0, 4);
         Cluster[] result = new Cluster[SerializationUtils.toInt(tmp)];
-        tmp = new byte[128 * 8];
+        fin.read(tmp, 0, 4);
+        int size = SerializationUtils.toInt(tmp);
+        tmp = new byte[size * 8];
         for (int i = 0; i < result.length; i++) {
-            int bytesRead = fin.read(tmp, 0, 128 * 8);
-            if (bytesRead != 128 * 8) System.err.println("Didn't read enough bytes ...");
+            int bytesRead = fin.read(tmp, 0, size * 8);
+            if (bytesRead != size * 8) System.err.println("Didn't read enough bytes ...");
             result[i] = new Cluster();
             result[i].setByteRepresentation(tmp);
         }
