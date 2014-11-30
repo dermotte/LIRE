@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 13.09.13 18:35
+ * Updated: 30.11.14 13:51
  */
 
 package net.semanticmetadata.lire.utils;
@@ -75,8 +75,8 @@ public class ImageUtils {
             scaleFactor = ((double) maxSideLength / originalHeight);
         }
         // create new image
-        if (scaleFactor < 1 && (int) (originalWidth * scaleFactor) > 1 && (int) (originalHeight * scaleFactor) > 1) {
-            BufferedImage img = new BufferedImage((int) (originalWidth * scaleFactor), (int) (originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
+        if (scaleFactor < 1 && (int) Math.round(originalWidth * scaleFactor) > 1 && (int) Math.round(originalHeight * scaleFactor) > 1) {
+            BufferedImage img = new BufferedImage((int) Math.round(originalWidth * scaleFactor), (int) Math.round(originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
             // fast scale (Java 1.4 & 1.5)
             Graphics g = img.getGraphics();
 //        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);

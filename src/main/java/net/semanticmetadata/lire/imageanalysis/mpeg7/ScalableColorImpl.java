@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 29.11.14 10:23
  */
 package net.semanticmetadata.lire.imageanalysis.mpeg7;
 
@@ -345,8 +347,12 @@ public class ScalableColorImpl {
             //convertRgbToHsv
             int[] hsv = new int[3];
             WritableRaster raster = img.getRaster();
-            int[] pixel = new int[3];
-
+            int[] pixel;     // fix from Patti Spala Nov-27-2014
+            if (raster.getNumBands() > 3) {
+                pixel = new int[raster.getNumBands()];
+            } else {
+                pixel = new int[3];
+            }
             for (int i = 0; i < imageColSize; i += 3) {
                 raster.getPixel((i / 3) % _xSize, (i / 3) / _xSize, pixel);
                 convertRgbToHsv(pixel[0], pixel[1], pixel[2], hsv);

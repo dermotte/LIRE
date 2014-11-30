@@ -1,6 +1,14 @@
 CHANGES for LIRE
 ================
 
+2014-11-28
+==========
+  - Changed dimension calculation to Math.round (instead of Math.floor) in image scaling in ImageUtils
+
+2014-11-28
+==========
+  - Bugfix in ScalableColorImpl from fix from Patti Spala for images with more than 3 bands, ie. alpha channel.
+
 2014-11-17
 ==========
   - Bugfix in cluster writing and reading (Nektarios Anagnostopoulos)
