@@ -58,10 +58,10 @@ import java.util.*;
  * and put the data files into one single index. Images are references relatively to the data file,
  * so it should work fine for network file systems.
  * <p/>
- * File format is specified as: (12(345)+)+ with 1-5 being ...
+ * File format is specified as: (12(345)+('-1'))+ with 1-5 being ...
  * <p/>
- * 1. Length of the file hashFunctionsFileName [4 bytes], an int n giving the number of bytes for the file hashFunctionsFileName
- * 2. File hashFunctionsFileName, relative to the outfile [n bytes, see above]
+ * 1. Length of the file name [4 bytes], an int n giving the number of bytes for the file name
+ * 2. File name, relative to the outfile [n bytes, see above]
  * 3. Feature index [1 byte], see static members
  * 4. Feature value length [4 bytes], an int k giving the number of bytes encoding the value
  * 5. Feature value [k bytes, see above]
@@ -467,7 +467,7 @@ public class ParallelExtractor implements Runnable {
                         // finally write everything to the stream - in case no exception was thrown..
                         synchronized (dos) {
                             dos.write(myBuffer, 0, bufferCount);
-                            dos.write(-1);
+                            dos.write(-1); // that's the separator
                             dos.flush();
                         }
                     }
