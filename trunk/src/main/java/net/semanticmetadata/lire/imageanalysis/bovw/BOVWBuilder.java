@@ -59,6 +59,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -70,44 +71,48 @@ import java.util.LinkedList;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public abstract class LocalFeatureHistogramBuilder {
+public class BOVWBuilder {
     IndexReader reader;
     // number of documents used to build the vocabulary / clusters.
-    private int numDocsForVocabulary = 100;
+    private int numDocsForVocabulary = 500;
     private int numClusters = 512;
     private Cluster[] clusters = null;
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
     private ProgressMonitor pm = null;
 
-    protected String localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
-    protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
-    protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
-    protected String clusterFile = "./clusters.dat";
+    protected LireFeature lireFeature;
+    protected String localFeatureFieldName;
+    protected String visualWordsFieldName;
+    protected String localFeatureHistFieldName;
+    protected String clusterFile;
+
     public static boolean DELETE_LOCAL_FEATURES = true;
     private boolean useParallelClustering = true;
 
-//    private boolean normalizeHistogram = false;
-//    private boolean termFrequency = false;
-
-
-    public LocalFeatureHistogramBuilder(IndexReader reader) {
+    /**
+     *
+     * @param reader
+     * @deprecated
+     */
+    public BOVWBuilder(IndexReader reader) {
         this.reader = reader;
     }
 
     /**
-     * Creates a new instance of the LocalFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
+     * Creates a new instance of the BOVWBuilder using the given reader. The numDocsForVocabulary
      * indicates how many documents of the index are used to build the vocabulary (clusters).
      *
      * @param reader               the reader used to open the Lucene index,
      * @param numDocsForVocabulary gives the number of documents for building the vocabulary (clusters).
+     * @deprecated
      */
-    public LocalFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary) {
+    public BOVWBuilder(IndexReader reader, int numDocsForVocabulary) {
         this.reader = reader;
         this.numDocsForVocabulary = numDocsForVocabulary;
     }
 
     /**
-     * Creates a new instance of the LocalFeatureHistogramBuilder using the given reader. The numDocsForVocabulary
+     * Creates a new instance of the BOVWBuilder using the given reader. The numDocsForVocabulary
      * indicates how many documents of the index are used to build the vocabulary (clusters). The numClusters gives
      * the number of clusters k-means should find. Note that this number should be lower than the number of features,
      * otherwise an exception will be thrown while indexing.
@@ -115,11 +120,63 @@ public abstract class LocalFeatureHistogramBuilder {
      * @param reader               the index reader
      * @param numDocsForVocabulary the number of documents that should be sampled for building the visual vocabulary
      * @param numClusters          the size of the visual vocabulary
+     * @deprecated
      */
-    public LocalFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
+    public BOVWBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
         this.numDocsForVocabulary = numDocsForVocabulary;
         this.numClusters = numClusters;
         this.reader = reader;
+    }
+
+    /**
+     * Creates a new instance of the BOVWBuilder using the given reader. TODO: write
+     *
+     * @param reader               the index reader
+     * @param lireFeature          lireFeature used
+     */
+    public BOVWBuilder(IndexReader reader, LireFeature lireFeature) {
+        this.reader = reader;
+        this.lireFeature = lireFeature;
+    }
+
+    /**
+     * Creates a new instance of the BOVWBuilder using the given reader. The numDocsForVocabulary
+     * indicates how many documents of the index are used to build the vocabulary (clusters).
+     * TODO: write
+     *
+     * @param reader               the index reader
+     * @param lireFeature          lireFeature used
+     * @param numDocsForVocabulary the number of documents that should be sampled for building the visual vocabulary
+     */
+    public BOVWBuilder(IndexReader reader, LireFeature lireFeature, int numDocsForVocabulary) {
+        this.numDocsForVocabulary = numDocsForVocabulary;
+        this.reader = reader;
+        this.lireFeature = lireFeature;
+    }
+
+    /**
+     * Creates a new instance of the BOVWBuilder using the given reader. The numDocsForVocabulary
+     * indicates how many documents of the index are used to build the vocabulary (clusters). The numClusters gives
+     * the number of clusters k-means should find. Note that this number should be lower than the number of features,
+     * otherwise an exception will be thrown while indexing. TODO: write
+     *
+     * @param reader               the index reader
+     * @param lireFeature          lireFeature used
+     * @param numDocsForVocabulary the number of documents that should be sampled for building the visual vocabulary
+     * @param numClusters          the size of the visual vocabulary
+     */
+    public BOVWBuilder(IndexReader reader, LireFeature lireFeature, int numDocsForVocabulary, int numClusters) {
+        this.numDocsForVocabulary = numDocsForVocabulary;
+        this.numClusters = numClusters;
+        this.reader = reader;
+        this.lireFeature = lireFeature;
+    }
+
+    protected void init() {
+        localFeatureFieldName = lireFeature.getFieldName();
+        visualWordsFieldName = lireFeature.getFieldName() + DocumentBuilder.FIELD_NAME_BOVW;
+        localFeatureHistFieldName = lireFeature.getFieldName()+ DocumentBuilder.FIELD_NAME_BOVW_VECTOR;
+        clusterFile = "./clusters-bovw" + lireFeature.getFeatureName() +  ".dat";
     }
 
     /**
@@ -131,6 +188,7 @@ public abstract class LocalFeatureHistogramBuilder {
      * @throws java.io.IOException
      */
     public void index() throws IOException {
+        init();
         df.setMaximumFractionDigits(3);
         // find the documents for building the vocabulary:
         HashSet<Integer> docIDs = selectVocabularyDocs();
@@ -214,7 +272,7 @@ public abstract class LocalFeatureHistogramBuilder {
         //  create & store histograms:
         System.out.println("Creating histograms ...");
         time = System.currentTimeMillis();
-        int[] tmpHist = new int[numClusters];
+//        int[] tmpHist = new int[numClusters];
         IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer, 256d);
         if (pm != null) { // set to 50 of 100 after clustering.
             pm.setProgress(50);
@@ -262,11 +320,11 @@ public abstract class LocalFeatureHistogramBuilder {
 
 
     public void indexMissing() throws IOException {
+        init();
         // Reading clusters from disk:
         clusters = Cluster.readClusters(clusterFile);
         //  create & store histograms:
         System.out.println("Creating histograms ...");
-        double[] tmpHist = new double[numClusters];
         LireFeature f = getFeatureInstance();
 
         // Needed for check whether the document is deleted.
@@ -277,26 +335,13 @@ public abstract class LocalFeatureHistogramBuilder {
                 false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
         for (int i = 0; i < reader.maxDoc(); i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
-            for (int j = 0; j < tmpHist.length; j++) {
-                tmpHist[j] = 0;
-            }
             Document d = reader.document(i);
             // Only if there are no values yet:
             if (d.getValues(visualWordsFieldName) == null || d.getValues(visualWordsFieldName).length == 0) {
-                IndexableField[] fields = d.getFields(localFeatureFieldName);
-                // find the appropriate cluster for each feature:
-                for (int j = 0; j < fields.length; j++) {
-                    f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-                    tmpHist[clusterForFeature((Histogram) f)]++;
-                }
-                //d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(normalize(tmpHist)))); //normalize
-                d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
-                //quantize(tmpHist);
-                d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+                createVisualWords(d, f);
                 // now write the new one. we use the identifier to update ;)
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
             }
-//            }
         }
         iw.commit();
         // added to permanently remove the deleted docs.
@@ -314,56 +359,12 @@ public abstract class LocalFeatureHistogramBuilder {
      */
     public Document getVisualWords(Document d) throws IOException {
         clusters = Cluster.readClusters(clusterFile);
-//        double[] tmpHist = new double[clusters.length];
         LireFeature f = getFeatureInstance();
-//        IndexableField[] fields = d.getFields(localFeatureFieldName);
-//        // remove the fields if they are already there ...
-//        d.removeField(visualWordsFieldName);
-//        d.removeField(localFeatureHistFieldName);
-//        // find the appropriate cluster for each feature:
-//        for (int j = 0; j < fields.length; j++) {
-//            f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-//            tmpHist[clusterForFeature((Histogram) f)]++;
-//        }
-////        byte[] data = new byte[tmpHist.length];
-////        for (int i = 0; i < data.length; i++) {
-////            data[i] = (byte) tmpHist[i];
-////        }
-//        d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
-//        //quantize(tmpHist);
-//        d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
-//        // remove local features to save some space if requested:
-//        if (DELETE_LOCAL_FEATURES) {
-//            d.removeFields(localFeatureFieldName);
-//        }
-//        // for debugging ..
-//        System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(tmpHist));
-
         createVisualWords(d, f);
 
         return d;
     }
 
-    /**
-     * Weighting the feature vector for better results. Options are term frequency as well as the employed norm function.
-     * @param histogram
-     * @return
-     */
-//    private double[] normalize(double[] histogram) {
-//        double[] result = new double[histogram.length];
-//        if (termFrequency) {
-//            for (int i = 0; i < result.length; i++) {
-//                if (histogram[i]>0) result[i] = 1 + Math.log10(histogram[i]);
-//                else result[i] = 0;
-//            }
-//        } else {
-//            for (int i = 0; i < result.length; i++) {
-//                result[i] = histogram[i];
-//            }
-//        }
-//        if (normalizeHistogram) result = MetricsUtils.normalizeL2(result);
-//        return result;
-//    }
 
     private void quantize(double[] histogram) {
         double max = 0;
@@ -400,8 +401,8 @@ public abstract class LocalFeatureHistogramBuilder {
         for (int i = 0; i < hist.length; i++) {
             int visualWordIndex = (int) hist[i];
             for (int j = 0; j < visualWordIndex; j++) {
-                sb.append('v');
-                sb.append(i);
+                // sb.append('v');
+                sb.append(Integer.toHexString(i));
                 sb.append(' ');
             }
         }
@@ -455,7 +456,19 @@ public abstract class LocalFeatureHistogramBuilder {
         }
     }
 
-    protected abstract LireFeature getFeatureInstance();
+//    protected abstract LireFeature getFeatureInstance();
+
+    protected LireFeature getFeatureInstance() {
+        LireFeature result = null;
+        try {
+            result =  lireFeature.getClass().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     private class Indexer implements Runnable {
         int start, end;
@@ -470,40 +483,11 @@ public abstract class LocalFeatureHistogramBuilder {
         }
 
         public void run() {
-            //double[] tmpHist = new double[numClusters];
             LireFeature f = getFeatureInstance();
             for (int i = start; i < end; i++) {
                 try {
-//                    if (!reader.isDeleted(i)) {    // TODO!
-//                    for (int j = 0; j < tmpHist.length; j++) {
-//                        tmpHist[j] = 0;
-//                    }
                     Document d = reader.document(i);
                     createVisualWords(d, f);
-//                    IndexableField[] fields = d.getFields(localFeatureFieldName);
-//                    // remove the fields if they are already there ...
-//                    d.removeField(visualWordsFieldName);
-//                    d.removeField(localFeatureHistFieldName);
-//
-//                    // find the appropriate cluster for each feature:
-//                    for (int j = 0; j < fields.length; j++) {
-//                        f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
-//                        tmpHist[clusterForFeature((Histogram) f)]++;
-//                    }
-//                    //d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(normalize(tmpHist)))); //normalize
-//                    d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
-//                    //quantize(tmpHist);
-//                    d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
-//                    // remove local features to save some space if requested:
-//                    if (DELETE_LOCAL_FEATURES) {
-//                        d.removeFields(localFeatureFieldName);
-//                    }
-//
-//                    // now write the new one. we use the identifier to update ;)
-//                    iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
-//                    // for debugging ..
-//                    System.out.println(d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + " " + Arrays.toString(tmpHist));
-                    // now write the new one. we use the identifier to update ;)
                     iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
                     if (pm != null) {
                         double len = (double) (end - start);
@@ -522,6 +506,7 @@ public abstract class LocalFeatureHistogramBuilder {
     private void createVisualWords(Document d, LireFeature f)
     {
         double[] tmpHist = new double[numClusters];
+        Arrays.fill(tmpHist, 0d);
         IndexableField[] fields = d.getFields(localFeatureFieldName);
         // remove the fields if they are already there ...
         d.removeField(visualWordsFieldName);
@@ -532,9 +517,9 @@ public abstract class LocalFeatureHistogramBuilder {
             f.setByteArrayRepresentation(fields[j].binaryValue().bytes, fields[j].binaryValue().offset, fields[j].binaryValue().length);
             tmpHist[clusterForFeature((Histogram) f)]++;
         }
-        d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
         //quantize(tmpHist);
         d.add(new TextField(visualWordsFieldName, arrayToVisualWordString(tmpHist), Field.Store.YES));
+        d.add(new StoredField(localFeatureHistFieldName, SerializationUtils.toByteArray(tmpHist)));
         // remove local features to save some space if requested:
         if (DELETE_LOCAL_FEATURES) {
             d.removeFields(localFeatureFieldName);

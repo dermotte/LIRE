@@ -44,7 +44,8 @@ package net.semanticmetadata.lire.benchmarking;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
@@ -111,7 +112,7 @@ public class TestNister extends TestCase {
         System.out.println("Index copied to " + pathName + ".");
         IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(pathName)));
 //        SiftFeatureHistogramBuilder sfh = new SiftFeatureHistogramBuilder(reader, 1000, numVisualWords);
-        SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(reader, 2000, numVisualWords);
+        BOVWBuilder sfh = new BOVWBuilder(reader, new SurfFeature(), 2000, numVisualWords);
         sfh.index();
         reader.close();
     }
@@ -120,7 +121,7 @@ public class TestNister extends TestCase {
 //        ImageSearcher vis = new GenericImageSearcher(4, SimpleFeature.class, "featureSURFHistogram");
 //        ImageSearcher vis = new GenericFastImageSearcher(4, CEDD.class, DocumentBuilder.FIELD_NAME_CEDD);
 //        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
-        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(4, similarity, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
         IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(pathName)));
 
         int queryID, resultID;

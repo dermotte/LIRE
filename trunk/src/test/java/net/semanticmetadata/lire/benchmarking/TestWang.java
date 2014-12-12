@@ -47,9 +47,9 @@ import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.ImageSearcherFactory;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureBOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.sift.Feature;
 import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -160,7 +160,7 @@ public class TestWang extends TestCase {
 //        sh1.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
 //        sh1.index();
 
-        SimpleFeatureHistogramBuilder lodeb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128, new CEDD());
+        SimpleFeatureBOVWBuilder lodeb = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.CVSURF, 1000, 128);
         lodeb.index();
 //        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128);
 //        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
@@ -191,9 +191,9 @@ public class TestWang extends TestCase {
     }
 
     public void doParams(int numDocs, int numClusters) throws IOException {
-        SiftFeatureHistogramBuilder sh1 = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), numDocs, numClusters);
+        BOVWBuilder sh1 = new BOVWBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), new Feature(), numDocs, numClusters);
         sh1.index();
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), numDocs, numClusters);
+        BOVWBuilder sh = new BOVWBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), new SurfFeature(), numDocs, numClusters);
         sh.index();
         System.out.println("*******************************************");
         System.out.println("SiftFeatureHistogramBuilder sh1 = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), " + numDocs + ", " + numClusters + ");");
@@ -263,7 +263,7 @@ public class TestWang extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, true, reader), "RILBP", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP", reader);
 //        computeMAP(ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(1000), "JPEG Coeffs");
-//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "SURF BoVW", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW), "SURF BoVW", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS), "MSER BoVW");
 //        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName()+"LoDe"), "LoDe SC", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, (new CEDD()).getFieldName()+"LoDe_Hist", true, reader), "LoDe-generic", reader);

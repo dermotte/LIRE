@@ -78,9 +78,12 @@ public abstract class LocalFeatureHistogramBuilderFromCodeBook {
     DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
     private ProgressMonitor pm = null;
 
+//    protected String localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
+//    protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
+//    protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
     protected String localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
-    protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
-    protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
+    protected String visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW;
+    protected String localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR;
     protected String clusterFile = "./clusters.dat";
     public static boolean DELETE_LOCAL_FEATURES = true;
 

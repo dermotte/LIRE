@@ -101,29 +101,28 @@ public interface DocumentBuilder {
     public static final String FIELD_NAME_LOCAL_BINARY_PATTERNS = "featLBP";
     public static final String FIELD_NAME_LUMINANCE_LAYOUT = "featLumLay";
     public static final String FIELD_NAME_MSER = "featureMSER";
-    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM = "featureMSERHistogram";
-    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureMSERHistogramVWords";
+//    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM = "featureMSERHistogram";
+//    public static final String FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS = "featureMSERHistogramVWords";
     public static final String FIELD_NAME_OPPONENT_HISTOGRAM = "featOpHist";
     public static final String FIELD_NAME_PHOG = "featPHOG";
     public static final String FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS = "featRILBP";
     public static final String FIELD_NAME_SCALABLECOLOR = "descriptorScalableColor";
     public static final String FIELD_NAME_SIFT = "featureSift";
-    public static final String FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM = "featureSiftHistogram";
-    public static final String FIELD_NAME_SIFT_VISUAL_WORDS = "featureSiftHistogramVWords";
-    public static final String FIELD_NAME_SIFT_VLAD = "featSiftVlad";
+//    public static final String FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM = "featureSiftHistogram";
+//    public static final String FIELD_NAME_SIFT_VISUAL_WORDS = "featureSiftHistogramVWords";
     public static final String FIELD_NAME_CVSIFT = "featureCvSift";
-    public static final String FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM = "featureCvSiftHistogram";
-    public static final String FIELD_NAME_CVSIFT_VISUAL_WORDS = "featureCvSiftHistogramVWords";
-    public static final String FIELD_NAME_CVSIFT_VLAD = "featCvSiftVlad";
     public static final String FIELD_NAME_SURF = "featureSurf";
-    public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSurfHistogram";
-    public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
-    public static final String FIELD_NAME_SURF_VLAD = "featSurfVlad";
+//    public static final String FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM = "featureSurfHistogram";
+//    public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
+//    public static final String FIELD_NAME_SURF_VLAD = "featSurfVlad";
     public static final String FIELD_NAME_CVSURF = "featureCvSurf";
-    public static final String FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM = "featureCvSurfHistogram";
-    public static final String FIELD_NAME_CVSURF_VISUAL_WORDS = "featureCvSurfHistogramVWords";
-    public static final String FIELD_NAME_CVSURF_VLAD = "featCvSurfVlad";
     public static final String FIELD_NAME_TAMURA = "featureTAMURA";
+
+    public static final String FIELD_NAME_SIMPLE = "SIMPLE";
+    public static final String FIELD_NAME_BOVW = "BOVW";
+    public static final String FIELD_NAME_BOVW_VECTOR = "BOVWVec";
+    public static final String FIELD_NAME_VLAD = "VLAD";
+    public static final String FIELD_NAME_VLAD_VECTOR = "VLADVec";
 
 
 

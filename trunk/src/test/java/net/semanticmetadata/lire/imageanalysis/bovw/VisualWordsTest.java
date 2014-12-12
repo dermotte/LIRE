@@ -42,6 +42,7 @@ package net.semanticmetadata.lire.imageanalysis.bovw;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import org.apache.lucene.document.Document;
@@ -65,9 +66,9 @@ public class VisualWordsTest extends TestCase {
         BufferedImage image = ImageIO.read(new File("./wang-1000/0.jpg"));
         SurfDocumentBuilder sb = new SurfDocumentBuilder();
         Document d = sb.createDocument(image, "query");
-        SurfFeatureHistogramBuilder sfb = new SurfFeatureHistogramBuilder(reader);
+        BOVWBuilder sfb = new BOVWBuilder(reader, new SurfFeature());
 //        d = sfb.getVisualWords(d);
-        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(3, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(3, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
         ImageSearchHits hits = searcher.search(d, reader);
         for (int i = 0; i < hits.length(); i++) {
             hits.doc(i);

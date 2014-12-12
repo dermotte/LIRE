@@ -40,8 +40,9 @@
 package net.semanticmetadata.lire;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.sift.Feature;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
@@ -94,7 +95,7 @@ public class VisualWordsTest extends TestCase {
         };
         pin.run();
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-        SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir, 1000, 50);
+        BOVWBuilder sfh = new BOVWBuilder(ir, new SurfFeature(), 1000, 50);
         sfh.index();
     }
 
@@ -102,8 +103,8 @@ public class VisualWordsTest extends TestCase {
         int[] docIDs = new int[]{7886, 1600, 4611, 4833, 4260, 2044, 7658};
         for (int i : docIDs) {
             IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-            SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir);
-            VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+            BOVWBuilder sfh = new BOVWBuilder(ir,new SurfFeature());
+            VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
 //            Document doc = sfh.getVisualWords(surfBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
             ImageSearchHits hits = vis.search(ir.document(i), ir);
             FileUtils.saveImageResultsToPng("results_bow_no_tf_" + i, hits, queryImage);
@@ -112,8 +113,8 @@ public class VisualWordsTest extends TestCase {
 
     public void testSearchExternalImageSurf() throws IOException {
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-        SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir);
-        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        BOVWBuilder sfh = new BOVWBuilder(ir, new SurfFeature());
+        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
 //        Document doc = sfh.getVisualWords(surfBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
 //        ImageSearchHits hits = vis.search(doc, ir);
 //        FileUtils.saveImageResultsToPng("results_bow_surf", hits, queryImage);
@@ -139,7 +140,7 @@ public class VisualWordsTest extends TestCase {
         }
         iw.close();
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-        SiftFeatureHistogramBuilder sfh = new SiftFeatureHistogramBuilder(ir, 1000, 500);
+        BOVWBuilder sfh = new BOVWBuilder(ir, new Feature(), 1000, 500);
         sfh.index();
     }
 
@@ -148,7 +149,7 @@ public class VisualWordsTest extends TestCase {
         for (int i : docIDs) {
             System.out.println("i = " + i);
             IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-            VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
+            VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW);
             ImageSearchHits hits = vis.search(ir.document(i), ir);
             FileUtils.saveImageResultsToPng("results_bow_no_tf_sift_" + i, hits, queryImage);
         }
@@ -156,8 +157,8 @@ public class VisualWordsTest extends TestCase {
 
     public void testSearchExternalImageSift() throws IOException {
         IndexReader ir = DirectoryReader.open(FSDirectory.open(indexPath));
-        SurfFeatureHistogramBuilder sfh = new SurfFeatureHistogramBuilder(ir);
-        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS);
+        BOVWBuilder sfh = new BOVWBuilder(ir, new SurfFeature());
+        VisualWordsImageSearcher vis = new VisualWordsImageSearcher(10, DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW);
 //        Document doc = sfh.getVisualWords(siftBuilder.createDocument(ImageIO.read(new File(queryImage)), queryImage));
 //        ImageSearchHits hits = vis.search(doc, ir);
 //        FileUtils.saveImageResultsToPng("results_bow_sift", hits, queryImage);
@@ -186,7 +187,7 @@ public class VisualWordsTest extends TestCase {
         IndexReader ir = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         // create a BoVW indexer, "-1" means that half of the images in the index are
         // employed for creating the vocabulary. "100" is the number of visual words to be created.
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(ir, -1, 100);
+        BOVWBuilder sh = new BOVWBuilder(ir, new SurfFeature(), -1, 100);
         // progress monitoring is optional and opens a window showing you the progress.
 //        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
         sh.index();
@@ -195,7 +196,7 @@ public class VisualWordsTest extends TestCase {
     public void testWikiSearchIndex() throws IOException {
         String indexPath = "./bovw-test";
         VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(10,
-                DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+                DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
         IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         // let's take the first document for a query:
         Document query = reader.document(2);

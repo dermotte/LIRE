@@ -49,8 +49,9 @@ import org.apache.lucene.index.IndexReader;
  * Time: 09:38:53
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @deprecated
  */
-public class SurfFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
+public class SurfFeatureHistogramBuilder extends BOVWBuilder {
     public SurfFeatureHistogramBuilder(IndexReader reader) {
         super(reader);
         init();
@@ -71,10 +72,14 @@ public class SurfFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
         return new SurfFeature();
     }
 
-    private void init() {
+    protected void init() {
+//        localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
+//        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
+//        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
+
         localFeatureFieldName = DocumentBuilder.FIELD_NAME_SURF;
-        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS;
-        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM;
+        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW;
+        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR;
         clusterFile = "./clusters-surf.dat";
     }
 }

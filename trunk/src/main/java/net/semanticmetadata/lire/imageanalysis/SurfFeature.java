@@ -79,7 +79,7 @@ public class SurfFeature implements LireFeature {
     }
 
     public String getStringRepresentation() {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public void setStringRepresentation(String s) {

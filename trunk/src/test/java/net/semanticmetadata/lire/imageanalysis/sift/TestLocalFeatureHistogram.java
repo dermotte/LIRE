@@ -42,8 +42,8 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.clustering.Cluster;
 import net.semanticmetadata.lire.clustering.KMeans;
-import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
@@ -181,7 +181,7 @@ public class TestLocalFeatureHistogram extends TestCase {
     public void testCreateLocalFeatureHistogram() throws IOException {
 //        testSiftIndexing();
 
-        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File("sift-idx"))), 2000);
+        BOVWBuilder sh = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File("sift-idx"))), new Feature(), 2000);
         sh.index();
         testFindimages();
     }
@@ -189,7 +189,7 @@ public class TestLocalFeatureHistogram extends TestCase {
     public void testCreateSurfFeatureHistogram() throws IOException {
 //        testSiftIndexing();
 
-        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File("surf-idx"))), 500, 1000);
+        BOVWBuilder sh = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File("surf-idx"))), new SurfFeature(), 500, 1000);
         sh.index();
 //        testFindimages();
     }
@@ -269,9 +269,9 @@ public class TestLocalFeatureHistogram extends TestCase {
 //        IndexReader reader = IndexReader.open(FSDirectory.open(new File("surf-idx")));
 //        int docID = 414;
 //
-//        String query = reader.document(docID).getValues(DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS)[0];
+//        String query = reader.document(docID).getValues(DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW)[0];
 //        System.out.println("query = " + query);
-//        QueryParser qp = new QueryParser(Version.LUCENE_30, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+//        QueryParser qp = new QueryParser(Version.LUCENE_30, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
 //        IndexSearcher isearcher = new IndexSearcher(reader);
 //        isearcher.setSimilarity(new Similarity() {
 //            @Override

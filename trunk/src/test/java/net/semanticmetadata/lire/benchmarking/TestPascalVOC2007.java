@@ -92,11 +92,11 @@ public class TestPascalVOC2007 extends TestCase {
         indexFiles(images, builder, indexPath);
 
 //        in case of "bag of visual words" ...
-//        SiftFeatureHistogramBuilder sh1 = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
+//        BOVWBuilder sh1 = new BOVWBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), new Feature(), 200, 8000);
 //        sh1.index();
-//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
+//        BOVWBuilder sh = new BOVWBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), new SurfFeature(), 200, 8000);
 //        sh.index();
-//        MSERFeatureHistogramBuilder sh = new MSERFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 200, 8000);
+//        BOVWBuilder sh = new BOVWBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), new MSERFeature(), 200, 8000);
 //        sh.index();
 
         System.out.println("-< Indexing finished >--------------");

@@ -36,45 +36,55 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
  */
+
 package net.semanticmetadata.lire.imageanalysis.bovw;
 
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.mser.MSERFeature;
+import net.semanticmetadata.lire.impl.SimpleBuilder;
 import org.apache.lucene.index.IndexReader;
 
 /**
- * ...
- * Date: 24.09.2008
- * Time: 09:38:53
- *
- * @author Mathias Lux, mathias@juggle.at
+ * Created by mlux_2 on 13.06.2014.
  */
-public class MSERFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
-    public MSERFeatureHistogramBuilder(IndexReader reader) {
+//public class SimpleFeatureBOVWBuilder extends LocalFeatureHistogramBuilderFromCodeBook {
+public class SimpleFeatureBOVWBuilder extends BOVWBuilder {
+    private SimpleBuilder.KeypointDetector detector;
+
+    public SimpleFeatureBOVWBuilder(IndexReader reader) {
         super(reader);
-        init();
     }
 
-    public MSERFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary) {
+    public SimpleFeatureBOVWBuilder(IndexReader reader, int numDocsForVocabulary) {
         super(reader, numDocsForVocabulary);
-        init();
     }
 
-    public MSERFeatureHistogramBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
+    public SimpleFeatureBOVWBuilder(IndexReader reader, int numDocsForVocabulary, int numClusters) {
         super(reader, numDocsForVocabulary, numClusters);
-        init();
     }
+
+    public SimpleFeatureBOVWBuilder(IndexReader reader, LireFeature lireFeature, SimpleBuilder.KeypointDetector detector) {
+        super(reader, lireFeature);
+        this.detector = detector;
+    }
+
+    public SimpleFeatureBOVWBuilder(IndexReader reader, LireFeature lireFeature, SimpleBuilder.KeypointDetector detector, int numDocsForVocabulary) {
+        super(reader, lireFeature, numDocsForVocabulary);
+        this.detector = detector;
+    }
+
+    public SimpleFeatureBOVWBuilder(IndexReader reader, LireFeature lireFeature, SimpleBuilder.KeypointDetector detector, int numDocsForVocabulary, int numClusters) {
+        super(reader, lireFeature, numDocsForVocabulary, numClusters);
+        this.detector = detector;
+    }
+
+
 
     @Override
-    protected LireFeature getFeatureInstance() {
-        return new MSERFeature();
-    }
-
-    private void init() {
-        localFeatureFieldName = DocumentBuilder.FIELD_NAME_MSER;
-        visualWordsFieldName = DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS;
-        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM;
-        clusterFile = "./clusters-mser.dat";
+    protected void init() {
+        localFeatureFieldName = DocumentBuilder.FIELD_NAME_SIMPLE + lireFeature.getFieldName() + (new SimpleBuilder()).getDetector(detector);
+        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SIMPLE +  lireFeature.getFieldName()+ (new SimpleBuilder()).getDetector(detector) + DocumentBuilder.FIELD_NAME_BOVW;
+        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SIMPLE +  lireFeature.getFieldName()+ (new SimpleBuilder()).getDetector(detector) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR;
+        clusterFile = "./clusters-simpleBovw" + lireFeature.getFeatureName() + (new SimpleBuilder()).getDetector(detector).replace("det","") + ".dat";
     }
 }

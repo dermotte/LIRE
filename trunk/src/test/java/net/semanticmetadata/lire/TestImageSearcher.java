@@ -229,7 +229,7 @@ public class TestImageSearcher extends TestCase {
 
     public void testMSERHistogramSearcher() throws IOException {
         String query = "312.jpg";
-        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(25, DocumentBuilder.FIELD_NAME_MSER_LOCAL_FEATURE_HISTOGRAM_VISUAL_WORDS);
+        VisualWordsImageSearcher searcher = new VisualWordsImageSearcher(25, DocumentBuilder.FIELD_NAME_MSER + DocumentBuilder.FIELD_NAME_BOVW);
         IndexReader reader = DirectoryReader.open(FSDirectory.open(new File("wang-index")));
         ImageSearchHits hits = searcher.search(findDoc(reader, query), reader);
         saveToHtml("mser", hits, query);

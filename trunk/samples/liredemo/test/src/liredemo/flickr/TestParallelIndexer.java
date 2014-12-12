@@ -34,7 +34,6 @@ import junit.framework.TestCase;
 import liredemo.indexing.MetadataBuilder;
 import liredemo.indexing.ParallelIndexer;
 import net.semanticmetadata.lire.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
@@ -83,8 +82,8 @@ public class TestParallelIndexer extends TestCase {
 
     public void testBovwIndexing() throws IOException {
 //        SurfFeatureHistogramBuilder indexer = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File("./index-mirflickr"))), 8000, 2000);
-        SurfFeatureHistogramBuilder indexer = new SurfFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), 8000, 2000);
-//        LocalFeatureHistogramBuilder.DELETE_LOCAL_FEATURES = true;
+        BOVWBuilder indexer = new BOVWBuilder(IndexReader.open(FSDirectory.open(new File(indexPath))), new SurfFeature(), 8000, 2000);
+//        BOVWBuilder.DELETE_LOCAL_FEATURES = true;
         indexer.setProgressMonitor(new javax.swing.ProgressMonitor(null, "", "", 0, 100));
         indexer.index();
     }
@@ -116,7 +115,7 @@ public class TestParallelIndexer extends TestCase {
     }
 
     public void testSearchTime() throws IOException {
-        ImageSearcher ceddImageSearcher = new VisualWordsImageSearcher(100, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
+        ImageSearcher ceddImageSearcher = new VisualWordsImageSearcher(100, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
 //        ImageSearcher ceddImageSearcher = ImageSearcherFactory.createCEDDImageSearcher(100);
         IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
 //        IndexReader reader = IndexReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath + "-reduced"))));

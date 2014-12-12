@@ -52,7 +52,7 @@ CHANGES for LIRE
   - Added and tested LoDe (using global descriptors as local ones)
   - Created and tested a LocalFeatureHistogramBuilder based on the
     Apache Commons Math KMeans++ implementation
-  - Fixed several issues with net.semanticmetadata.lire.imageanalysis.bovw.LocalFeatureHistogramBuilder
+  - Fixed several issues with net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder
 
 2014-04-14
 ==========

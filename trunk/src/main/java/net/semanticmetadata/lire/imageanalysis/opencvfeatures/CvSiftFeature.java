@@ -48,15 +48,15 @@ public class CvSiftFeature implements Serializable, LireFeature {
     }
 
     public String getStringRepresentation() {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public void setStringRepresentation(String featureVector) {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public void extract(BufferedImage image) {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public byte[] getByteArrayRepresentation() {
