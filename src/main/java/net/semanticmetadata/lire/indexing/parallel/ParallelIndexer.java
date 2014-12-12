@@ -281,6 +281,7 @@ public class ParallelIndexer implements Runnable {
             writer.commit();
             writer.close();
             threadFinished = true;
+            // add local feature hist here
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

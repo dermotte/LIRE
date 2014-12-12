@@ -170,15 +170,15 @@ public class BasicFeatures implements LireFeature {
     }
 
     public byte[] getByteArrayRepresentation() {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public void setByteArrayRepresentation(byte[] in) {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     public double[] getDoubleHistogram() {

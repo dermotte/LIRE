@@ -169,7 +169,7 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
     }
 
     public void extract(BufferedImage bimg) {
-        throw new UnsupportedOperationException("No implemented!");
+        throw new UnsupportedOperationException("Not implemented!");
     }
 
     /**

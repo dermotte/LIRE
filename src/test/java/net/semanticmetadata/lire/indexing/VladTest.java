@@ -57,7 +57,7 @@ public class VladTest extends TestCase {
     public void testSearch() throws IOException {
         IndexReader reader = DirectoryReader.open(MMapDirectory.open(new File(indexPath)));
         VLADBuilder vladBuilder = new VLADBuilder(reader);
-        GenericFastImageSearcher searcher = new GenericFastImageSearcher(1000, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader);
+        GenericFastImageSearcher searcher = new GenericFastImageSearcher(1000, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader);
         DocumentBuilder db = new SurfDocumentBuilder();
         Document d = db.createDocument(new FileInputStream(new File("./testdata/wang-1000/99.jpg")), "./testdata/wang-1000/99.jpg");
         d = vladBuilder.getVisualWords(d);

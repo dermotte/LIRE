@@ -46,13 +46,13 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.*;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureBOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureVLADBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSiftFeature;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
 import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
@@ -71,24 +71,24 @@ import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
- * User: mlux
- * Date: 14.05.13
- * Time: 10:56
+ * User: nek.anag
+ * Date: 15.11.14
+ * Time: 11:25
  */
-public class TestUCID extends TestCase {
-    // if you don't have the images you can get them here: http://homepages.lboro.ac.uk/~cogs/datasets/ucid/ucid.html
-    // I converted all images to PNG (lossless) to save time, space & troubles with Java.
-    private String db = "UCID";
-    private String indexPath = "ucid-index";
-    private String testExtensive = "testdata/UCID_png";
-    private final String groundTruth = "testdata/queries/ucid.v2.groundtruth.txt";
+public class TestZuBuD extends TestCase {
+
+    //ZuBuD
+    private String db = "ZuBuD";
+    private String indexPath = "zubud-index";
+    private String testExtensive = "testdata/png-ZuBuD";
+    private String testExtensiveQueries = "testdata/qimage";
+    LinkedList<Document> queriesList;
+    private final String groundTruth = "testdata/queries/ZuBuDQueries.txt";
+
 
     private int sample = 500;
-    private int clusters = 512;
+    private int clusters = 512; //Set 0 if Global!!
 
-//    private String testExtensive = "testdata/UCID.small";
-//    private final String groundTruth = "testdata/ucid.v2.groundtruth.small.txt";
-//
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
     private HashMap<String, Integer> query2id;
@@ -97,7 +97,6 @@ public class TestUCID extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-//        indexPath = "ucid-index-573374558";
         indexPath += "-" + System.currentTimeMillis() % (1000 * 60 * 60 * 24 * 7);
         // Setting up DocumentBuilder:
         parallelIndexer = new ParallelIndexer(16, indexPath, testExtensive, true) {
@@ -112,7 +111,6 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
-
 //                builder.addBuilder(DocumentBuilderFactory.getTamuraDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getGaborDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getLuminanceLayoutDocumentBuilder());
@@ -125,14 +123,9 @@ public class TestUCID extends TestCase {
 //                builder.addBuilder(new CvSurfDocumentBuilder());
 //                builder.addBuilder(new CvSiftDocumentBuilder());
 //                builder.addBuilder(new MSERDocumentBuilder());
-//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
 
 
                 //GLOBAL Tests
@@ -230,6 +223,27 @@ public class TestUCID extends TestCase {
 //        SimpleFeatureVLADBuilder simpleVladBuilder = new SimpleFeatureVLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.CVSURF, sample, clusters);
 //        simpleVladBuilder.index();
 
+
+        queriesList = new LinkedList<Document>();
+        queriesList.clear();
+        if (testExtensiveQueries != null)
+        {
+            ChainedDocumentBuilder documentBuilder = new ChainedDocumentBuilder();
+            parallelIndexer.addBuilders(documentBuilder);
+            System.out.println("Getting all queries in " + testExtensiveQueries + ".");
+            List<String> files = files = FileUtils.getAllImages(new File(testExtensiveQueries), true);
+            for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
+                String path = iterator.next();
+                Document query = documentBuilder.createDocument(ImageIO.read(new File(path)), path);
+//                queriesList.add(query);
+//                queriesList.add(bovwBuilder.getVisualWords(query));
+//                queriesList.add(vladBuilder.getVisualWords(query));
+                queriesList.add(simpleBovwBuilder.getVisualWords(query));
+//                queriesList.add(simpleVladBuilder.getVisualWords(query));
+            }
+        }
+
+
         // SEARCHING
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
 
@@ -237,32 +251,33 @@ public class TestUCID extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, CEDD.class, true, reader), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, true, reader), "PHOG", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, true, reader), "Scalable Color", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, true, reader), "Color Layout", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, true, reader), "Scalable Color", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, JointHistogram.class, true, reader), "Joint Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "Opponent Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "Color Correlation", reader);
 
 //        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, true, reader), "SPCEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, true, reader), "SPJCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, true, reader), "SPFCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, true, reader), "SPACC ", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatterns.class, "lbp", true, reader), "LBP ", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, RotationInvariantLocalBinaryPatterns.class, "rlbp"), "RILBP ", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP ", reader);
-//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
-//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1400), "Tamura", reader);
+
+//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, true, reader), "PHOG", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, JointHistogram.class, true, reader), "Joint Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
+//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura", reader);
+//        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura", reader);
 
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW), "Surf BoVW Lucene", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
-//        computeMAP(new VisualWordsImageSearcher(1400, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
-//        computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
-//        computeMAP(new VisualWordsImageSearcher(1400, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "LoDe SC L2", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
 
         //NEK TESTS for SIMPLE//
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_CEDD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW CEDD CVSURF", reader);
@@ -336,20 +351,25 @@ public class TestUCID extends TestCase {
         Bits liveDocs = MultiFields.getLiveDocs(reader);
         PrintWriter fw;
         if (searcher.toString().contains("ImageSearcherUsingWSs")) {
-            (new File("eval/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();
-            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "/" + clusters + "/" + prefix.replace(' ', '_') + "-" + db + clusters + searcher.toString().split("\\s+")[searcher.toString().split("\\s+").length - 1] + ".txt"));
-        }else
-            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "-" + db + clusters +".txt"));
-//            fw = new PrintWriter(new File("eval/" + prefix.replace(' ', '_') + "-" + db + "Global.txt")); //forGlobal
+            (new File("eval/" + db + "/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();
+            fw = new PrintWriter(new File("eval/" + db + "/" + prefix.replace(' ', '_') + "/" + clusters + "/" + prefix.replace(' ', '_') + "-" + db + clusters + searcher.toString().split("\\s+")[searcher.toString().split("\\s+").length - 1] + ".txt"));
+        }else {
+            (new File("eval/" + db + "/")).mkdirs();
+            if (clusters>0)
+                fw = new PrintWriter(new File("eval/" + db + "/" + prefix.replace(' ', '_') + "-" + db + clusters +".txt"));
+            else
+                fw = new PrintWriter(new File("eval/" + db + "/" + prefix.replace(' ', '_') + "-" + db + "Global.txt")); //forGlobal
+        }
         Hashtable<Integer, String> evalText = new Hashtable<Integer, String>(260);
-        for (int i = 0; i < reader.maxDoc(); i++) {
+        for (int i = 0; i < queriesList.size(); i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
-            String fileName = getIDfromFileName(reader.document(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+            String fileName = getIDfromFileName(queriesList.get(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
             if (queries.keySet().contains(fileName)) {
                 String tmpEval = "";
                 queryCount += 1d;
                 // ok, we've got a query here for a document ...
-                Document queryDoc = reader.document(i);
+//                Document queryDoc = reader.document(i);
+                Document queryDoc = queriesList.get(i);
                 ImageSearchHits hits = searcher.search(queryDoc, reader);
                 double rank = 0;
                 double avgPrecision = 0;
@@ -377,10 +397,10 @@ public class TestUCID extends TestCase {
                 }
                 // }
 //                System.out.println();
-                avgPrecision /= (double) (1d + queries.get(fileName).size());
-//                avgPrecision /= (double) (queries.get(fileName).size());
+//                avgPrecision /= (double) (1d + queries.get(fileName).size()); // TODO: check!!
+                avgPrecision /= (double) (queries.get(fileName).size());
 
-                if (!(found - queries.get(fileName).size() == 1)){
+                if (!(found - queries.get(fileName).size() == 0)){
                     // some of the results have not been found. We have to deal with it ...
                     errorCount++;
                 }
@@ -414,7 +434,8 @@ public class TestUCID extends TestCase {
 
     private String getIDfromFileName(String path) {
         // That's the one for Windows. Change for Linux ...
-        return path.substring(path.lastIndexOf('\\') + 1).replace(".jpg", ".tif");
+//        return path.substring(path.lastIndexOf('\\') + 1).replace(".jpg", ".tif");
+        return path.substring(path.lastIndexOf('\\') + 1);
     }
 
     public void testIndexingSpeed() throws IOException {

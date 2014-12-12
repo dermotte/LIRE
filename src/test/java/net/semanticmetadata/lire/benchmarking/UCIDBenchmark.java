@@ -46,9 +46,9 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.SiftFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureBOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.sift.Feature;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
@@ -176,26 +176,26 @@ public class UCIDBenchmark extends TestCase {
 
         if (testSurf) {
             System.out.println("** SURF BoVW");
-            SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
+            BOVWBuilder sh = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new SurfFeature(), 500, 128);
             sh.index();
         }
 
         if (testSift) {
             System.out.println("** SIFT BoVW");
-            SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128);
+            BOVWBuilder sh = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new Feature(), 500, 128);
             sh.index();
         }
 
         for (int i = 0; i < simpleFeaturesToTest.length; i++) {
             LireFeature lireFeature = simpleFeaturesToTest[i];
             System.out.println("** SIMPLE BoVW with " + lireFeature.getFeatureName());
-            SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, lireFeature);
+            SimpleFeatureBOVWBuilder ldb = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), lireFeature, SimpleBuilder.KeypointDetector.CVSURF, 500, 128);
             ldb.index();
         }
 
 
 //        System.out.println("** SIMPLE BoVW / LoDe CEDD");
-//        ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new CEDD());
+//        ldb = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 500, 128, new CEDD());
 //        ldb.index();
 
         // VLAD
@@ -213,11 +213,13 @@ public class UCIDBenchmark extends TestCase {
         }
 
 
-//        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
+//        computeMAP(new VisualWordsImageSearcher(1400, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW), "Surf BoVW Lucene", reader);
         if (testSurf)
-            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+//            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
+            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Surf BoVW L2", reader);
         if (testSift)
-            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
+//            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
+            computeMAP(new GenericFastImageSearcher(1400, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Sift BoVW L2", reader);
 
         for (int i = 0; i < simpleFeaturesToTest.length; i++) {
             LireFeature lireFeature = simpleFeaturesToTest[i];

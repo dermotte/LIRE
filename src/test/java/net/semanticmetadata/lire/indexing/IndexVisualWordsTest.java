@@ -41,7 +41,8 @@ package net.semanticmetadata.lire.indexing;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SurfFeatureHistogramBuilder;
+import net.semanticmetadata.lire.imageanalysis.SurfFeature;
+import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
 import net.semanticmetadata.lire.utils.FileUtils;
@@ -82,7 +83,7 @@ public class IndexVisualWordsTest extends TestCase {
 //        SiftFeatureHistogramBuilder siftFeatureHistogramBuilder = new SiftFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
 //        siftFeatureHistogramBuilder.index();
         System.out.println("-< Creating SURF based histograms >--------------");
-        SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
+        BOVWBuilder surfFeatureHistogramBuilder = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), new SurfFeature(), numSamples, clusters);
         surfFeatureHistogramBuilder.index();
 //        System.out.println("-< Creating MSER based histograms >--------------");
 //        MSERFeatureHistogramBuilder mserFeatureHistogramBuilder = new MSERFeatureHistogramBuilder(IndexReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
@@ -130,8 +131,10 @@ public class IndexVisualWordsTest extends TestCase {
         int maxDocs = ir.maxDoc();
         for (int i = 0; i < maxDocs / 10; i++) {
             Document d = ir.document(i);
-            d.removeFields(DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS);
-            d.removeFields(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM);
+//            d.removeFields(DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
+            d.removeFields(DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
+//            d.removeFields(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM);
+            d.removeFields(DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR);
 //            d.removeFields(DocumentBuilder.FIELD_NAME_SURF);
             iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
         }
@@ -140,7 +143,7 @@ public class IndexVisualWordsTest extends TestCase {
         iw.close();
         ir.close();
         System.out.println("Creating new visual words ...");
-        SurfFeatureHistogramBuilder surfFeatureHistogramBuilder = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), numSamples, clusters);
+        BOVWBuilder surfFeatureHistogramBuilder = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(index))), new SurfFeature(), numSamples, clusters);
 //        surfFeatureHistogramBuilder.indexMissing();
 //        System.out.println("Finished.");
     }

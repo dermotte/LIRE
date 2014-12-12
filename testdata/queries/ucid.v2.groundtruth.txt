@@ -1,0 +1,1181 @@
+# UCID v2 ground truth file
+#
+# Query1:
+#    Model1forQuery1
+#    Model2forQuery1
+#    ...
+# 
+# Query2:
+#    Model1forQuery2
+#    ...
+
+
+ucid00001.png:
+  ucid00015.png
+  ucid00038.png
+  ucid00240.png
+
+ucid00009.png:
+  ucid00010.png
+
+ucid00013.png:
+  ucid00014.png
+
+ucid00029.png:
+  ucid00028.png
+  ucid00210.png
+
+ucid00060.png:
+  ucid00061.png
+
+ucid00063.png:
+  ucid00064.png
+  ucid00065.png
+
+ucid00072.png:
+  ucid00074.png
+
+ucid00085.png:
+  ucid00088.png
+
+ucid00089.png:
+  ucid00090.png
+
+ucid00095.png:
+  ucid00096.png
+
+ucid00100.png:
+  ucid00098.png
+
+ucid00103.png:
+  ucid00104.png
+
+ucid00110.png:
+  ucid00107.png
+  ucid00108.png
+
+ucid00112.png:
+  ucid00105.png
+
+ucid00114.png:
+  ucid00115.png
+  ucid00117.png
+
+ucid00121.png:
+  ucid00119.png
+  ucid00120.png
+  ucid00122.png
+  ucid00123.png
+  ucid00124.png
+  ucid00219.png
+  ucid00222.png
+  ucid00223.png
+
+ucid00125.png:
+  ucid00124.png
+
+ucid00127.png:
+  ucid00126.png
+
+ucid00133.png:
+  ucid00134.png
+
+ucid00136.png:
+  ucid00141.png
+  ucid00142.png
+
+ucid00137.png:
+  ucid00138.png
+  ucid00139.png
+  ucid00153.png
+
+ucid00143.png:
+  ucid00144.png
+
+ucid00145.png:
+  ucid00146.png
+
+ucid00149.png:
+  ucid00150.png
+
+ucid00156.png:
+  ucid00157.png
+  ucid00158.png
+  ucid00159.png
+
+ucid00163.png:
+  ucid00162.png
+  ucid00164.png
+
+ucid00167.png:
+  ucid00168.png
+
+ucid00171.png:
+  ucid00170.png
+
+ucid00172.png:
+  ucid00173.png
+
+ucid00180.png:
+  ucid00181.png
+  ucid00185.png
+
+ucid00183.png:
+  ucid00182.png
+
+ucid00192.png:
+  ucid00034.png
+
+ucid00196.png:
+  ucid00197.png
+
+ucid00198.png:
+  ucid00199.png
+
+ucid00200.png:
+  ucid00201.png
+
+ucid00203.png:
+  ucid00204.png
+
+ucid00206.png:
+  ucid00030.png
+  ucid00031.png
+  ucid00032.png
+  ucid00075.png
+  ucid00187.png
+  ucid00188.png
+  ucid00189.png
+  ucid00190.png
+  ucid00191.png
+  ucid00207.png
+  ucid00208.png
+  ucid00209.png
+
+ucid00212.png:
+  ucid00211.png
+  ucid00213.png
+  ucid00214.png
+
+ucid00217.png:
+  ucid00215.png
+  ucid00216.png
+  ucid00218.png
+
+ucid00229.png:
+  ucid00225.png
+  ucid00226.png
+  ucid00227.png
+  ucid00228.png
+  ucid00230.png
+
+ucid00231.png:
+  ucid00232.png
+  ucid00233.png
+
+ucid00234.png:
+  ucid00235.png
+  ucid00236.png
+
+ucid00239.png:
+  ucid00019.png
+  ucid00020.png
+  ucid00238.png
+
+ucid00243.png:
+  ucid00242.png
+  ucid00244.png
+
+ucid00249.png:
+  ucid00248.png
+
+ucid00251.png:
+  ucid00253.png
+
+ucid00254.png:
+  ucid00255.png
+  ucid00256.png
+  ucid00259.png
+  ucid00375.png
+
+ucid00262.png:
+  ucid00263.png
+  ucid00264.png
+
+ucid00265.png:
+  ucid00266.png
+  ucid00267.png
+
+ucid00268.png:
+  ucid00269.png
+
+ucid00273.png:
+  ucid00272.png
+
+ucid00274.png:
+  ucid00277.png
+
+ucid00275.png:
+  ucid00276.png
+
+ucid00278.png:
+  ucid00281.png
+
+ucid00284.png:
+  ucid00285.png
+
+ucid00286.png:
+  ucid00287.png
+
+ucid00288.png:
+  ucid00289.png
+
+ucid00290.png:
+  ucid00291.png
+  ucid00332.png
+
+ucid00292.png:
+  ucid00293.png
+
+ucid00295.png:
+  ucid00296.png
+
+ucid00297.png:
+  ucid00298.png
+
+ucid00300.png:
+  ucid00301.png
+  ucid00302.png
+
+ucid00303.png:
+  ucid00325.png
+
+ucid00307.png:
+  ucid00282.png
+  ucid00306.png
+
+ucid00308.png:
+  ucid00309.png
+
+ucid00312.png:
+  ucid00250.png
+
+ucid00320.png:
+  ucid00319.png
+  ucid00321.png
+  ucid00376.png
+  ucid00391.png
+
+ucid00323.png:
+  ucid00322.png
+
+ucid00326.png:
+  ucid00327.png
+
+ucid00329.png:
+  ucid00330.png
+
+ucid00334.png:
+  ucid00335.png
+
+ucid00336.png:
+  ucid00337.png
+
+ucid00340.png:
+  ucid00339.png
+  ucid00354.png
+  ucid00355.png
+  ucid00356.png
+  ucid00357.png
+  ucid00362.png
+  ucid00363.png
+  ucid00364.png
+  ucid00392.png
+  ucid00393.png
+
+ucid00341.png:
+  ucid00342.png
+
+ucid00344.png:
+  ucid00502.png
+  ucid00504.png
+  ucid00506.png
+  ucid00508.png
+  ucid00509.png
+  ucid00530.png
+  ucid00531.png
+  ucid01175.png
+  ucid01177.png
+  ucid01179.png
+  ucid01181.png
+  ucid01183.png
+  ucid01184.png
+  ucid01191.png
+  ucid01199.png
+
+ucid00346.png:
+  ucid00347.png
+
+ucid00351.png:
+  ucid00387.png
+  ucid00423.png
+  ucid00424.png
+  ucid00425.png
+  ucid00426.png
+
+ucid00352.png:
+  ucid00368.png
+  ucid00369.png
+  ucid00370.png
+  ucid00371.png
+  ucid00372.png
+  ucid00491.png
+
+
+ucid00358.png:
+  ucid00359.png
+
+ucid00360.png:
+  ucid00361.png
+
+ucid00365.png:
+  ucid00366.png
+  ucid00367.png
+
+ucid00373.png:
+  ucid00382.png
+  ucid00385.png
+  ucid00389.png
+
+ucid00374.png:
+  ucid00384.png
+  ucid00388.png
+  ucid00390.png
+
+ucid00380.png:
+  ucid00377.png
+  ucid00378.png
+  ucid00379.png
+  ucid00381.png
+  ucid00383.png
+  ucid00386.png
+  ucid00396.png
+  ucid00397.png
+  ucid00421.png
+  ucid00493.png
+
+ucid00394.png:
+  ucid00395.png
+
+ucid00401.png:
+  ucid00402.png
+
+ucid00403.png:
+  ucid00404.png
+
+ucid00418.png:
+  ucid00417.png
+
+ucid00419.png:
+  ucid00415.png
+
+ucid00428.png:
+  ucid00427.png
+
+ucid00429.png:
+  ucid00430.png
+
+ucid00431.png:
+  ucid00432.png
+
+ucid00434.png:
+  ucid00433.png
+  ucid00435.png
+
+ucid00437.png:
+  ucid00438.png
+  ucid00440.png
+  ucid00441.png
+
+ucid00445.png:
+  ucid00446.png
+  ucid00447.png
+  ucid00448.png
+
+ucid00450.png:
+  ucid00449.png
+
+ucid00455.png:
+  ucid00454.png
+  ucid00456.png
+
+ucid00457.png:
+  ucid00458.png
+
+ucid00460.png:
+  ucid00461.png
+
+ucid00463.png:
+  ucid00464.png
+  ucid00465.png
+
+ucid00466.png:
+  ucid00488.png
+  ucid00489.png
+
+ucid00467.png:
+  ucid00468.png
+
+ucid00474.png:
+  ucid00475.png
+
+ucid00477.png:
+  ucid00478.png
+
+ucid00482.png:
+  ucid00483.png
+
+ucid00484.png:
+  ucid00485.png
+
+ucid00486.png:
+  ucid00487.png
+
+ucid00494.png:
+  ucid00338.png
+
+ucid00497.png:
+  ucid00535.png
+
+ucid00498.png:
+  ucid00499.png
+  ucid00536.png
+  ucid01168.png
+
+ucid00500.png:
+  ucid00539.png
+
+ucid00501.png:
+  ucid01165.png
+  ucid01166.png
+
+ucid00505.png:
+  ucid01194.png
+
+ucid00513.png:
+  ucid00512.png
+  ucid00516.png
+  ucid00517.png
+  ucid00522.png
+
+ucid00514.png:
+  ucid00518.png
+  ucid00520.png
+
+ucid00523.png:
+  ucid00524.png
+
+ucid00526.png:
+  ucid00528.png
+
+ucid00527.png:
+  ucid01182.png
+
+ucid00532.png:
+  ucid00533.png
+
+ucid00534.png:
+  ucid00540.png
+
+ucid00541.png:
+  ucid00543.png
+  ucid00562.png
+
+ucid00548.png:
+  ucid00544.png
+  ucid00545.png
+  ucid00546.png
+  ucid00547.png
+  ucid00549.png
+  ucid00550.png
+  ucid00551.png
+  ucid00552.png
+  ucid00553.png
+  ucid00554.png
+  ucid00555.png
+  ucid00556.png
+  ucid00557.png
+  ucid00558.png
+  ucid00559.png
+  ucid00560.png
+  ucid00561.png
+
+ucid00565.png:
+  ucid00563.png
+  ucid00564.png
+  ucid00566.png
+  ucid00567.png
+  ucid00574.png
+
+ucid00568.png:
+  ucid00570.png
+
+ucid00571.png:
+  ucid00620.png
+
+ucid00577.png:
+  ucid00576.png
+  ucid00578.png
+
+ucid00575.png:
+  ucid00582.png
+
+ucid00583.png:
+  ucid00573.png
+  ucid00584.png
+  ucid00585.png
+  ucid00586.png
+  ucid00588.png
+  ucid00593.png
+  ucid00594.png
+  ucid00595.png
+  ucid00614.png
+  ucid00615.png
+
+ucid00587.png:
+  ucid00589.png
+  ucid00591.png
+  ucid00592.png
+  ucid00597.png
+  ucid00601.png
+  ucid00602.png
+
+ucid00598.png:
+  ucid00604.png
+
+ucid00600.png:
+  ucid00605.png
+
+ucid00608.png:
+  ucid00609.png
+  ucid00611.png
+  ucid00612.png
+
+ucid00617.png:
+  ucid00584.png
+  ucid00616.png
+
+ucid00618.png:
+  ucid00619.png
+
+ucid00621.png:
+  ucid00622.png
+  ucid00623.png
+  ucid00628.png
+  ucid00629.png
+
+ucid00626.png:
+  ucid00579.png
+  ucid00580.png
+  ucid00624.png
+  ucid00627.png
+  ucid00630.png
+  ucid00631.png
+  ucid00632.png
+  ucid00636.png
+
+ucid00634.png:
+  ucid00635.png
+
+ucid00636.png:
+  ucid00637.png
+
+ucid00638.png:
+  ucid00639.png
+  ucid00686.png
+  ucid00689.png
+  ucid00693.png
+
+ucid00640.png:
+  ucid00642.png
+  ucid00643.png
+  ucid00690.png
+
+ucid00641.png:
+  ucid00691.png
+  ucid00699.png
+
+ucid00645.png:
+  ucid00648.png
+  ucid00681.png
+  ucid00729.png
+
+ucid00647.png:
+  ucid00655.png
+  ucid00667.png
+  ucid00668.png
+  ucid00671.png
+  ucid00672.png
+  ucid00723.png
+  ucid00732.png
+
+ucid00649.png:
+  ucid00652.png
+  ucid00679.png
+
+ucid00650.png:
+  ucid00646.png
+  ucid00651.png
+  ucid00678.png
+  ucid00685.png
+  ucid00721.png
+  ucid00728.png
+
+ucid00653.png:
+  ucid00673.png
+
+ucid00661.png:
+  ucid00662.png
+  ucid00717.png
+  ucid00718.png
+
+ucid00664.png:
+  ucid00665.png
+
+ucid00669.png:
+  ucid00644.png
+  ucid00692.png
+  ucid00724.png
+
+ucid00677.png:
+  ucid00725.png
+
+ucid00682.png:
+  ucid00688.png
+  ucid00730.png
+
+ucid00683.png:
+  ucid00676.png
+  ucid00684.png
+  ucid00731.png
+
+ucid00695.png:
+  ucid00675.png
+  ucid00694.png
+  ucid00698.png
+  ucid00701.png
+  ucid00702.png
+  ucid00703.png
+  ucid00704.png
+  ucid00705.png
+  ucid00711.png
+  ucid00712.png
+
+ucid00708.png:
+  ucid00697.png
+  ucid00707.png
+  ucid00710.png
+
+ucid00713.png:
+  ucid00709.png
+  ucid00737.png
+  ucid00738.png
+
+ucid00714.png:
+  ucid00715.png
+  ucid00716.png
+
+ucid00726.png:
+  ucid00733.png
+
+ucid00727.png:
+  ucid00734.png
+  ucid00735.png
+
+ucid00739.png:
+  ucid00719.png
+  ucid00740.png
+  ucid00741.png
+
+ucid00743.png:
+  ucid00657.png
+  ucid00659.png
+
+ucid00749.png:
+  ucid00784.png
+  ucid00946.png
+  ucid00951.png
+  ucid00956.png
+  ucid00961.png
+  ucid00977.png
+
+ucid00752.png:
+  ucid00754.png
+  ucid00757.png
+
+ucid00766.png:
+  ucid01146.png
+
+ucid00775.png:
+  ucid00792.png
+  ucid00983.png
+
+ucid00777.png:
+  ucid00772.png
+  ucid00776.png
+  ucid00791.png
+
+ucid00781.png:
+  ucid00761.png
+  ucid00765.png
+  ucid01122.png
+  ucid01124.png
+  ucid01145.png
+
+ucid00785.png:
+  ucid00747.png
+  ucid00748.png
+  ucid00751.png
+  ucid00782.png
+  ucid00783.png
+  ucid00798.png
+  ucid00938.png
+  ucid00940.png
+  ucid00948.png
+  ucid00950.png
+  ucid00963.png
+  ucid01077.png
+
+ucid00799.png:
+  ucid00800.png
+
+ucid00801.png:
+  ucid00802.png
+  ucid00844.png
+
+ucid00803.png:
+  ucid00804.png
+  ucid00805.png
+  ucid00806.png
+  ucid00807.png
+  ucid00808.png
+  ucid00809.png
+  ucid01131.png
+  ucid01134.png
+  ucid01143.png
+
+ucid00810.png:
+  ucid00760.png
+  ucid00762.png
+  ucid00763.png
+  ucid00811.png
+  ucid00892.png
+  ucid00893.png
+  ucid00898.png
+
+ucid00812.png:
+  ucid00813.png
+  ucid00814.png
+  ucid00815.png
+
+ucid00819.png:
+  ucid00816.png
+  ucid00817.png
+  ucid00818.png
+  ucid00820.png
+  ucid00892.png
+
+ucid00824.png:
+  ucid00822.png
+  ucid00823.png
+  ucid00825.png
+  ucid00826.png
+
+ucid00827.png:
+  ucid00828.png
+  ucid00829.png
+  ucid00874.png
+  ucid01025.png
+
+ucid00831.png:
+  ucid00832.png
+  ucid00833.png
+  ucid00834.png
+  ucid00837.png
+  ucid00840.png
+  ucid00841.png
+
+ucid00838.png:
+  ucid00839.png
+
+ucid00850.png:
+  ucid01031.png
+  ucid01064.png
+
+ucid00853.png:
+  ucid01032.png
+  ucid01067.png
+
+ucid00855.png:
+  ucid01033.png
+  ucid01068.png
+
+ucid00856.png:
+  ucid00845.png
+  ucid01034.png
+  ucid01069.png
+
+ucid00857.png:
+  ucid00858.png
+  ucid00863.png
+  ucid00864.png
+  ucid00865.png
+  ucid01038.png
+
+ucid00860.png:
+  ucid00859.png
+  ucid00861.png
+  ucid00862.png
+
+ucid00868.png:
+  ucid00867.png
+  ucid00869.png
+  ucid00870.png
+  ucid00871.png
+
+ucid00879.png:
+  ucid00877.png
+  ucid00878.png
+  ucid00880.png
+  ucid00881.png
+
+ucid00884.png:
+  ucid00883.png
+  ucid00888.png
+
+ucid00889.png:
+  ucid00891.png
+  ucid00895.png
+
+ucid00894.png:
+  ucid00926.png
+  ucid00928.png
+
+ucid00896.png:
+  ucid00897.png
+  ucid00899.png
+  ucid00900.png
+  ucid00910.png
+  ucid00925.png
+
+ucid00902.png:
+  ucid00901.png
+  ucid00904.png
+  ucid00905.png
+
+ucid00903.png:
+  ucid00909.png
+  ucid00914.png
+
+ucid00906.png:
+  ucid00907.png
+
+ucid00917.png:
+  ucid01008.png
+
+ucid00919.png:
+  ucid00918.png
+
+ucid00920.png:
+  ucid00927.png
+  ucid00929.png
+  ucid00933.png
+
+ucid00924.png:
+  ucid00931.png
+  ucid00935.png
+
+ucid00932.png:
+  ucid00924.png
+  ucid00936.png
+
+ucid00937.png:
+  ucid00758.png
+  ucid00793.png
+  ucid00794.png
+  ucid00795.png
+  ucid00797.png
+  ucid00939.png
+  ucid00952.png
+  ucid00958.png
+  ucid00965.png
+  ucid00966.png
+  ucid00967.png
+  ucid00973.png
+  ucid00979.png
+  ucid01004.png
+  ucid01076.png
+  ucid01141.png
+
+ucid00944.png:
+  ucid00941.png
+
+ucid00945.png:
+  ucid00949.png
+
+ucid00947.png:
+  ucid00955.png
+
+ucid00953.png:
+  ucid01005.png
+
+ucid00957.png:
+  ucid00959.png
+
+
+ucid00962.png:
+  ucid00954.png
+  ucid00960.png
+  ucid00976.png
+
+ucid00970.png:
+  ucid00974.png
+  ucid00975.png
+  ucid00978.png
+
+ucid00980.png:
+  ucid00981.png
+  ucid00984.png
+
+ucid00986.png:
+  ucid00744.png
+  ucid00746.png
+  ucid00759.png
+  ucid00994.png
+  ucid00999.png
+  ucid01123.png
+  ucid01147.png
+
+ucid00989.png:
+  ucid00987.png
+
+ucid01009.png:
+  ucid01010.png
+  ucid01011.png
+  ucid01012.png
+  ucid01013.png
+  ucid01014.png
+
+ucid01015.png:
+  ucid01016.png
+
+ucid01017.png:
+  ucid01019.png
+  ucid01020.png
+
+ucid01022.png:
+  ucid01061.png
+
+ucid01023.png:
+  ucid01024.png
+  ucid01026.png
+  ucid01037.png
+
+ucid01030.png:
+  ucid00849.png
+  ucid01063.png
+
+ucid01035.png:
+  ucid01036.png
+
+ucid01039.png:
+  ucid01040.png
+  ucid01041.png
+
+ucid01043.png:
+  ucid01044.png
+  ucid01045.png
+
+ucid01050.png:
+  ucid01049.png
+  ucid01051.png
+
+ucid01052.png:
+  ucid01056.png
+
+ucid01059.png:
+  ucid01060.png
+
+ucid01073.png:
+  ucid01072.png
+  ucid01074.png
+
+ucid01083.png:
+  ucid01081.png
+  ucid01084.png
+
+ucid01079.png:
+  ucid01086.png
+  ucid01089.png
+
+ucid01090.png:
+  ucid01091.png
+
+ucid01096.png:
+  ucid01097.png
+
+ucid01099.png:
+  ucid01100.png
+
+ucid01101.png:
+  ucid01102.png
+  ucid01103.png
+
+ucid01104.png:
+  ucid01105.png
+
+ucid01106.png:
+  ucid01107.png
+
+ucid01116.png:
+  ucid01115.png
+
+ucid01117.png:
+  ucid01118.png
+
+ucid01125.png:
+  ucid00764.png
+  ucid00786.png
+  ucid00985.png
+  ucid00995.png
+
+ucid01135.png:
+  ucid01136.png
+
+ucid01137.png:
+  ucid01139.png
+
+ucid01144.png:
+  ucid00972.png
+  ucid01000.png
+  ucid01003.png
+  ucid01132.png
+
+ucid01153.png:
+  ucid01152.png
+  ucid01154.png
+
+ucid01161.png:
+  ucid01160.png
+  ucid01162.png
+  ucid01163.png
+
+ucid01171.png:
+  ucid01172.png
+  ucid01173.png
+
+ucid01195.png:
+  ucid01196.png
+  ucid01197.png
+  ucid01198.png
+  ucid01200.png
+
+ucid01201.png:
+  ucid01202.png
+  ucid01226.png
+  ucid01227.png
+  ucid01228.png
+  ucid01229.png
+  ucid01231.png
+  ucid01237.png
+
+ucid01209.png:
+  ucid01208.png
+  ucid01213.png
+
+ucid01216.png:
+  ucid01219.png
+
+ucid01225.png:
+  ucid01224.png
+
+ucid01238.png:
+  ucid01239.png
+
+ucid01247.png:
+  ucid01246.png
+  ucid01251.png
+
+ucid01248.png:
+  ucid01249.png
+  ucid01250.png
+
+ucid01253.png:
+  ucid01252.png
+  ucid01254.png
+  ucid01256.png
+
+ucid01262.png:
+  ucid01259.png
+
+ucid01261.png:
+  ucid01263.png
+
+ucid01268.png:
+  ucid01270.png
+  ucid01271.png
+
+ucid01273.png:
+  ucid01275.png
+  ucid01286.png
+  ucid01287.png
+  ucid01288.png
+
+ucid01278.png:
+  ucid01279.png
+
+ucid01283.png:
+  ucid01284.png
+
+ucid01291.png:
+  ucid01289.png
+  ucid01290.png
+  ucid01292.png
+  ucid01293.png
+  ucid01294.png
+  ucid01295.png
+
+ucid01302.png:
+  ucid01311.png
+
+ucid01303.png:
+  ucid01310.png
+
+ucid01307.png:
+  ucid01301.png
+  ucid01306.png
+  ucid01309.png
+  ucid01312.png
+  ucid01313.png
+
+ucid01314.png:
+  ucid01315.png
+  ucid01316.png
+  ucid01317.png
+
+ucid01320.png:
+  ucid01319.png
+
+ucid01324.png:
+  ucid01325.png
+
+ucid01326.png:
+  ucid01327.png
+  ucid01328.png
+  ucid01329.png
+
+ucid01334.png:
+  ucid01335.png
+  ucid01336.png
+
+

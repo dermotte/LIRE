@@ -55,6 +55,7 @@ public class MetricsUtils {
      * @return
      */
     public static double distL1(int[] h1, int[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += Math.abs(h1[i] - h2[i]);
@@ -63,6 +64,7 @@ public class MetricsUtils {
     }
 
     public static double distL1(double[] h1, double[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += Math.abs(h1[i] - h2[i]);
@@ -78,6 +80,7 @@ public class MetricsUtils {
      * @return
      */
     public static double distL2(int[] h1, int[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] - h2[i]) * (h1[i] - h2[i]);
@@ -93,6 +96,7 @@ public class MetricsUtils {
      * @return
      */
     public static double distL2(double[] h1, double[] h2) {
+//        assert (h1.length == h2.length);
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] - h2[i]) * (h1[i] - h2[i]);
@@ -108,6 +112,7 @@ public class MetricsUtils {
      * @return
      */
     public static float distL2(float[] h1, float[] h2) {
+        assert (h1.length == h2.length);
         float sum = 0f;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] - h2[i]) * (h1[i] - h2[i]);
@@ -125,6 +130,7 @@ public class MetricsUtils {
      * @return
      */
     public static double jsd(int[] h1, int[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] > 0 ? h1[i] * Math.log(2d * h1[i] / (h1[i] + h2[i])) : 0) +
@@ -134,6 +140,7 @@ public class MetricsUtils {
     }
 
     public static double jsd(byte[] h1, byte[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] > 0 ? h1[i] * Math.log(2d * h1[i] / (h1[i] + h2[i])) : 0) +
@@ -143,6 +150,7 @@ public class MetricsUtils {
     }
 
     public static float jsd(float[] h1, float[] h2) {
+        assert (h1.length == h2.length);
         float sum = 0f;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] > 0 ? (h1[i] / 2f) * Math.log((2f * h1[i]) / (h1[i] + h2[i])) : 0) +
@@ -152,6 +160,7 @@ public class MetricsUtils {
     }
 
     public static float jsd(double[] h1, double[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0f;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] > 0 ? (h1[i] / 2f) * Math.log((2f * h1[i]) / (h1[i] + h2[i])) : 0) +
@@ -161,6 +170,7 @@ public class MetricsUtils {
     }
 
     public static double tanimoto(int[] h1, int[] h2) {
+        assert (h1.length == h2.length);
         double result = 0;
         double tmp1 = 0;
         double tmp2 = 0;
@@ -190,6 +200,7 @@ public class MetricsUtils {
     }
 
     public static double tanimoto(float[] h1, float[] h2) {
+        assert (h1.length == h2.length);
         double result = 0;
         double tmp1 = 0;
         double tmp2 = 0;
@@ -219,6 +230,7 @@ public class MetricsUtils {
     }
 
     public static double tanimoto(double[] h1, double[] h2) {
+        assert (h1.length == h2.length);
         double result = 0;
         double tmp1 = 0;
         double tmp2 = 0;
@@ -247,6 +259,7 @@ public class MetricsUtils {
     }
 
     public static double cosineCoefficient(double[] hist1, double[] hist2) {
+        assert (hist1.length == hist2.length);
         double distance = 0;
         double tmp1 = 0, tmp2 = 0;
         for (int i = 0; i < hist1.length; i++) {
@@ -260,6 +273,7 @@ public class MetricsUtils {
     }
 
     public static float distL1(float[] h1, float[] h2) {
+        assert (h1.length == h2.length);
         float sum = 0f;
         for (int i = 0; i < h1.length; i++) {
             sum += Math.abs(h1[i] - h2[i]);
@@ -268,6 +282,7 @@ public class MetricsUtils {
     }
 
     public static double distL1(byte[] h1, byte[] h2) {
+        assert (h1.length == h2.length);
         double sum = 0f;
         for (int i = 0; i < h1.length; i++) {
             sum += Math.abs(h1[i] - h2[i]);

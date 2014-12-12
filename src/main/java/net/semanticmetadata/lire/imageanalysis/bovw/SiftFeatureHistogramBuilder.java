@@ -50,8 +50,9 @@ import org.apache.lucene.index.IndexReader;
  * @author Mathias Lux, mathias@juggle.at
  *         Date: 18.10.11
  *         Time: 11:15
+ * @deprecated
  */
-public class SiftFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
+public class SiftFeatureHistogramBuilder extends BOVWBuilder {
     public SiftFeatureHistogramBuilder(IndexReader reader) {
         super(reader);
         init();
@@ -67,10 +68,14 @@ public class SiftFeatureHistogramBuilder extends LocalFeatureHistogramBuilder {
         init();
     }
 
-    private void init() {
+    protected void init() {
+//        localFeatureFieldName = DocumentBuilder.FIELD_NAME_SIFT;
+//        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS;
+//        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM;
+
         localFeatureFieldName = DocumentBuilder.FIELD_NAME_SIFT;
-        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS;
-        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM;
+        visualWordsFieldName = DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW;
+        localFeatureHistFieldName = DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW_VECTOR;
         clusterFile = "./clusters-sift.dat";
     }
 

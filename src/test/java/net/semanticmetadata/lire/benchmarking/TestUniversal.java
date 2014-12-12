@@ -47,16 +47,10 @@ import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
 import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.CvSiftFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.CvSurfFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureHistogramBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder;
+import net.semanticmetadata.lire.imageanalysis.bovw.*;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSiftFeature;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPACC;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPCEDD;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPFCTH;
-import net.semanticmetadata.lire.imageanalysis.spatialpyramid.SPJCD;
+import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
 import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
@@ -84,17 +78,30 @@ public class TestUniversal extends TestCase {
     //UCID
     private String db = "UCID";
     private String indexPath = "ucid-index";
-    private String testExtensive = "testdata/UCID";
-    private final String groundTruth = "testdata/ucid.v2.groundtruth.txt";
+    private String testExtensive = "testdata/UCID_png";
+    private final String groundTruth = "testdata/queries/ucid.v2.groundtruth.txt";
 
     //UKBench
 //    private String db = "UKB";
 //    private String indexPath = "ukbench-index";
 //    private String testExtensive = "testdata/ukbench";
-//    private final String groundTruth = "testdata/NisterQueriesforLire.txt";
+//    private final String groundTruth = "testdata/queries/NisterQueries.txt";
+
+    //Wang
+//    private String db = "Wang";
+//    private String indexPath = "wang-index";
+//    private String testExtensive = "testdata/wang";
+//    private final String groundTruth = "testdata/queries/WangQueries.txt";
+
+    //Holidays
+//    private String db = "Hol";
+//    private String indexPath = "holidays-index";
+//    private String testExtensive = "testdata/Holidays.small";
+//    private final String groundTruth = "testdata/queries/HolidaysQueries.txt";
+
 
     private int sample = 500;
-    private int clusters = 512; //Set to 0 if Global!!
+    private int clusters = 512; //Set 0 if Global!!
 
     private ChainedDocumentBuilder builder;
     private HashMap<String, List<String>> queries;
@@ -130,14 +137,9 @@ public class TestUniversal extends TestCase {
 //                builder.addBuilder(new CvSurfDocumentBuilder());
 //                builder.addBuilder(new CvSiftDocumentBuilder());
 //                builder.addBuilder(new MSERDocumentBuilder());
-//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
-//                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatterns.class, "lbp"));
 //                builder.addBuilder(new GenericDocumentBuilder(LocalBinaryPatternsAndOpponent.class, "jhl"));
 //                builder.addBuilder(new GenericDocumentBuilder(RotationInvariantLocalBinaryPatterns.class, "rlbp"));
-//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
 
 
                 //GLOBAL Tests
@@ -152,18 +154,29 @@ public class TestUniversal extends TestCase {
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 
-                //Tests for SIMPLE
-                builder.addBuilder(new SimpleBuilder(new CEDD()));
-//                builder.addBuilder(new SimpleBuilder(new FCTH()));
-//                builder.addBuilder(new SimpleBuilder(new JCD()));
-//                builder.addBuilder(new SimpleBuilder(new AutoColorCorrelogram()));
-//                builder.addBuilder(new SimpleBuilder(new OpponentHistogram()));
-//                builder.addBuilder(new SimpleBuilder(new LocalBinaryPatterns()));
-//                builder.addBuilder(new SimpleBuilder(new RotationInvariantLocalBinaryPatterns()));
-//                builder.addBuilder(new SimpleBuilder(new ScalableColor()));
-//                builder.addBuilder(new SimpleBuilder(new ColorLayout()));
-//                builder.addBuilder(new SimpleBuilder(new EdgeHistogram()));
+//                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPJCD.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPACC.class));
+//                builder.addBuilder(new GenericDocumentBuilder(SPLBP.class));
 
+
+                //Tests for SIMPLE
+                builder.addBuilder(new SimpleBuilder(new CEDD(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new CEDD(), SimpleBuilder.KeypointDetector.CVSIFT));
+//                builder.addBuilder(new SimpleBuilder(new CEDD(), SimpleBuilder.KeypointDetector.Random));
+//                builder.addBuilder(new SimpleBuilder(new CEDD(), SimpleBuilder.KeypointDetector.GaussRandom));
+//
+//                builder.addBuilder(new SimpleBuilder(new FCTH(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new JCD(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new AutoColorCorrelogram(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new OpponentHistogram(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new LocalBinaryPatterns(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new RotationInvariantLocalBinaryPatterns(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new ScalableColor(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new ColorLayout(), SimpleBuilder.KeypointDetector.CVSURF));
+//                builder.addBuilder(new SimpleBuilder(new EdgeHistogram(), SimpleBuilder.KeypointDetector.CVSURF));
+//
 //                builder.addBuilder(new CvSurfDocumentBuilder());
 //                builder.addBuilder(new CvSiftDocumentBuilder());
 //                builder.addBuilder(new SurfDocumentBuilder());
@@ -205,33 +218,28 @@ public class TestUniversal extends TestCase {
         // INDEXING ...
         parallelIndexer.run();
 
+//        System.out.println("** Aggregate features");
+//        AggregateFeatures aggregateFeatures = new AggregateFeatures(DirectoryReader.open(FSDirectory.open(new File(indexPath))));
+//        aggregateFeatures.aggregate();
+
 //        System.out.println("** CVSURF BoVW");
-//        CvSurfFeatureHistogramBuilder sh = new CvSurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
-//        sh.index();
+//        BOVWBuilder bovwBuilderSURF = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CvSurfFeature(), sample, clusters);
+//        bovwBuilderSURF.index();
 //        System.out.println("** CVSIFT BoVW");
-//        CvSiftFeatureHistogramBuilder sh = new CvSiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
-//        sh.index();
-//        System.out.println("** SURF BoVW");
-//        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
-//        sh.index();
-//        System.out.println("** SIFT BoVW");
-//        SiftFeatureHistogramBuilder sh = new SiftFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters);
-//        sh.index();
+//        BOVWBuilder bovwBuilder = new BOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CvSiftFeature(), sample, clusters);
+//        bovwBuilder.index();
 
-        //Test for SIMPLE
-        System.out.println("** SIMPLE BoVW using CEDD");
-        SimpleFeatureHistogramBuilder ldb = new SimpleFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters, new CEDD());
-        ldb.index();
-
-//        //Test for VLAD
-//        System.out.println("** VLAD using JCD");
-//        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), sample, clusters) {
-//            @Override
-//            protected LireFeature getFeatureInstance() {
-//                return new JCD();
-//            }
-//        };
+//        System.out.println("** CVSIFT VLAD");
+//        VLADBuilder vladBuilder = new VLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CvSiftFeature(), sample, clusters);
 //        vladBuilder.index();
+
+        System.out.println("** SIMPLE BoVW using CEDD and CVSURF");
+        SimpleFeatureBOVWBuilder simpleBovwBuilder = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.CVSURF, sample, clusters);
+        simpleBovwBuilder.index();
+
+//        System.out.println("** SIMPLE VLAD using CEDD and CVSURF");
+//        SimpleFeatureVLADBuilder simpleVladBuilder = new SimpleFeatureVLADBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.CVSURF, sample, clusters);
+//        simpleVladBuilder.index();
 
         // SEARCHING
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
@@ -248,21 +256,20 @@ public class TestUniversal extends TestCase {
 //        computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, true, reader), "Color Layout", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
 
-
-//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, true, reader), "PHOG", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, JointHistogram.class, true, reader), "Joint Histogram", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
-
 //        computeMAP(new GenericFastImageSearcher(1000, SPCEDD.class, true, reader), "SPCEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPJCD.class, true, reader), "SPJCD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPFCTH.class, true, reader), "SPFCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPACC.class, true, reader), "SPACC ", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SPLBP.class, true, reader), "SPLBP ", reader);
+
+//        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, true, reader), "PHOG", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, JointHistogram.class, true, reader), "Joint Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, LocalBinaryPatternsAndOpponent.class, "jhl", true, reader), "JHL ", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura", reader);
 //        computeMAP(ImageSearcherFactory.createTamuraImageSearcher(1000), "Tamura", reader);
 
-//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF_VISUAL_WORDS), "Surf BoVW Lucene", reader);
+//        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW), "Surf BoVW Lucene", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, (new ScalableColor()).getFieldName() + "LoDe"), "LoDe SC Lucene", reader);
@@ -270,55 +277,53 @@ public class TestUniversal extends TestCase {
 //        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName() + "LoDe"), "LoDe CEDD Lucene", reader);
 
         //NEK TESTS for SIMPLE//
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "Simple CEDD L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new FCTH()).getFieldName() + "LoDe_Hist", true, reader), "Simple FCTH L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new JCD()).getFieldName() + "LoDe_Hist", true, reader), "Simple JCD L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", true, reader), "Simple AutoColCorrel L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new OpponentHistogram()).getFieldName() + "LoDe_Hist", true, reader), "Simple OppHist L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new LocalBinaryPatterns()).getFieldName() + "LoDe_Hist", true, reader), "Simple LBP L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new RotationInvariantLocalBinaryPatterns()).getFieldName() + "LoDe_Hist", true, reader), "Simple RILBP L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new ScalableColor()).getFieldName() + "LoDe_Hist", true, reader), "Simple SC L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new ColorLayout()).getFieldName() + "LoDe_Hist", true, reader), "Simple CL L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new EdgeHistogram()).getFieldName() + "LoDe_Hist", true, reader), "Simple EH L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "Surf BoVW L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "Sift BoVW L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, true, reader), "CVSURF L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, true, reader), "CVSIFT L2", reader);
-
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_CEDD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW CEDD CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_FCTH + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW FCTH CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_JCD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW JCD CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW AutoColCorrel CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW OppHist CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW LBP CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW RILBP CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_SCALABLECOLOR + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW SC CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_COLORLAYOUT + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW CL CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Simple BOVW EH CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "CVSURF BoVW", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "CVSIFT BoVW", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Surf BoVW", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "Sift BoVW", reader);
+//
         //perform weighting schemes for SIMPLE
-        performWSs((new CEDD()).getFieldName() + "LoDe_Hist", "Simple CEDD L2", reader);
-//        performWSs((new FCTH()).getFieldName() + "LoDe_Hist", "Simple FCTH L2", reader);
-//        performWSs((new JCD()).getFieldName() + "LoDe_Hist", "Simple JCD L2", reader);
-//        performWSs((new AutoColorCorrelogram()).getFieldName() + "LoDe_Hist", "Simple AutoColCorrel L2", reader);
-//        performWSs((new OpponentHistogram()).getFieldName() + "LoDe_Hist", "Simple OppHist L2", reader);
-//        performWSs((new LocalBinaryPatterns()).getFieldName() + "LoDe_Hist", "Simple LBP L2", reader);
-//        performWSs((new RotationInvariantLocalBinaryPatterns()).getFieldName() + "LoDe_Hist", "Simple RILBP L2", reader);
-//        performWSs((new ScalableColor()).getFieldName() + "LoDe_Hist", "Simple SC L2", reader);
-//        performWSs((new ColorLayout()).getFieldName() + "LoDe_Hist", "Simple CL L2", reader);
-//        performWSs((new EdgeHistogram()).getFieldName() + "LoDe_Hist", "Simple EH L2", reader);
-
-//        performWSs(DocumentBuilder.FIELD_NAME_CVSURF_LOCAL_FEATURE_HISTOGRAM, "CVSURF BoVW L2", reader);
-//        performWSs(DocumentBuilder.FIELD_NAME_CVSIFT_LOCAL_FEATURE_HISTOGRAM, "CVSIFT BoVW L2", reader);
-//        performWSs(DocumentBuilder.FIELD_NAME_SURF_LOCAL_FEATURE_HISTOGRAM, "Surf BoVW L2", reader);
-//        performWSs(DocumentBuilder.FIELD_NAME_SIFT_LOCAL_FEATURE_HISTOGRAM, "Sift BoVW L2", reader);
+        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_CEDD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW CEDD CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_FCTH + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW FCTH CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_JCD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW JCD CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW AutoColCorrel CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW OppHist CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW LBP CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW RILBP CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_SCALABLECOLOR + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW SC CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_COLORLAYOUT + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW CL CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Simple BOVW EH CVSURF", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_CVSURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "CVSURF BoVW", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_CVSIFT + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "CVSIFT BoVW", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Surf BoVW", reader);
+//        performWSs(DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "Sift BoVW", reader);
 
 
         //VLAD
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CEDD + "vlad", true, reader), "VLAD-Simple CEDD L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_FCTH + "vlad", true, reader), "VLAD-Simple FCTH L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_JCD + "vlad", true, reader), "VLAD-Simple JCD L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM + "vlad", true, reader), "VLAD-Simple AutoColCorrel L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM + "vlad", true, reader), "VLAD-Simple OppHist L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + "vlad", true, reader), "VLAD-Simple LBP L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS + "vlad", true, reader), "VLAD-Simple RILBP L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SCALABLECOLOR + "vlad", true, reader), "VLAD-Simple SC L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT + "vlad", true, reader), "VLAD-Simple CL L2", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + "vlad", true, reader), "VLAD-Simple EH L2", reader);
-
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF+"vlad", true, reader), "VLAD-CVSURF", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT + "vlad", true, reader), "VLAD-CVSIFT", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF+"vlad", true, reader), "VLAD-SURF", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT+"vlad", true, reader), "VLAD-SIFT", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_CEDD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD CEDD CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_FCTH + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD FCTH CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_JCD + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD JCD CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD AutoColCorrel CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD OppHist CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD LBP CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_ROTATION_INVARIANT_LOCAL_BINARY_PATTERNS + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD RILBP CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_SCALABLECOLOR + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD SC CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_COLORLAYOUT + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD CL CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIMPLE + DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM + SimpleBuilder.Detector_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Simple VLAD EH CVSURF", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "CVSURF VLAD", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_CVSIFT + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "CVSIFT VLAD", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Surf VLAD", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, DocumentBuilder.FIELD_NAME_SIFT + DocumentBuilder.FIELD_NAME_VLAD_VECTOR, true, reader), "Sift VLAD", reader);
     }
 
     public void performWSs (String fieldName, String prefix, IndexReader reader) throws IOException
@@ -403,7 +408,7 @@ public class TestUniversal extends TestCase {
             }
         }
         for (int i = 0; i < query2id.size(); i++) {
-            fw.write(evalText.get(i+1));
+            fw.write(evalText.get(i + 1));
         }
         fw.close();
         errorRate = errorRate / queryCount;
