@@ -59,10 +59,13 @@ import org.apache.lucene.store.FSDirectory;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Logger;
 
 /**
  * This class allows for creating indexes in a parallel manner. The class
@@ -76,10 +79,11 @@ import java.util.Stack;
  */
 
 public class ParallelIndexer implements Runnable {
+    private Logger log = Logger.getLogger(this.getClass().getName());
     private int numberOfThreads = 10;
     private String indexPath;
     private String imageDirectory;
-    Stack<WorkItem> images = new Stack<WorkItem>();
+//    Stack<WorkItem> images = new Stack<WorkItem>();
     IndexWriter writer;
     File imageList = null;
     boolean ended = false;
@@ -89,6 +93,7 @@ public class ParallelIndexer implements Runnable {
     private IndexWriterConfig.OpenMode openMode = IndexWriterConfig.OpenMode.CREATE_OR_APPEND;
     // all xx seconds a status message will be displayed
     private int monitoringInterval = 30;
+    private LinkedBlockingQueue<WorkItem> queue = new LinkedBlockingQueue<WorkItem>(100);
 
     public static void main(String[] args) {
         String indexPath = null;
@@ -319,7 +324,7 @@ public class ParallelIndexer implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+images.size()+" images currently in queue).");
+                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+queue.size()+" images currently in queue).");
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -337,44 +342,22 @@ public class ParallelIndexer implements Runnable {
                 String path = iterator.next();
                 File next = new File(path);
                 try {
-//                    tmpImage = ImageIO.read(next);
-                    int fileSize = (int) next.length();
-                    byte[] buffer = new byte[fileSize];
-                    FileInputStream fis = new FileInputStream(next);
-                    fis.read(buffer);
-                    synchronized (images) {
-                        path = next.getCanonicalPath();
-                        // TODO: add re-write rule for path here!
-//                        path = path.replace("E:\\WIPO-conv\\convert", "");
-//                        path = path.replace("D:\\Temp\\WIPO-US\\jpg_", "");
-                        // this helps a lot for slow computers ....
-                        if (images.size()>500) images.wait(5000);
-                        images.add(new WorkItem(path, buffer));
-                        tmpSize = images.size();
-                        images.notifyAll();
-                    }
-                    try {
-                        // it's actually hard to manage the amount of memory used to cache images.
-                        // On faster computers it turns out to be good to have a big cache, on
-                        // slower ones the cache poses a serious problem and leads to memory and GC exceptions.
-                        // iy you encounter still memory errors, then try to use more threads.
-                        if (tmpSize > 500) Thread.sleep(50);
-                        else if (tmpSize > 1000) Thread.sleep(5000);
-                        else if (tmpSize > 2000) Thread.sleep(50000);
-                        else if (tmpSize > 3000) Thread.sleep(500000);
-                        else Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    byte[] buffer = Files.readAllBytes(Paths.get(path)); // JDK 7 only!
+                    path = next.getCanonicalPath();
+                    queue.put(new WorkItem(path, buffer));
                 } catch (Exception e) {
                     System.err.println("Could not open " + path + ". " + e.getMessage());
-//                    e.printStackTrace();
                 }
             }
-            synchronized (images) {
-                ended = true;
-                images.notifyAll();
+            for (int i = 0; i<numberOfThreads*3; i++)  {
+                String s = null; byte[] b = null;
+                try {
+                    queue.put(new WorkItem(s, b));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            ended = true;
         }
     }
 
@@ -393,36 +376,59 @@ public class ParallelIndexer implements Runnable {
 
         public void run() {
             while (!locallyEnded) {
-                synchronized (images) {
-                    // we wait for the stack to be either filled or empty & not being filled any more.
-                    while (images.empty() && !ended) {
-                        try {
-                            images.wait(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    // make sure the thread locally knows that the end has come (outer loop)
-                    if (images.empty() && ended)
+                tmp = null;
+                try {
+                    tmp = queue.take();
+                    if (tmp.getFileName() == null) {
                         locallyEnded = true;
-                    // well the last thing we want is an exception in the very last round.
-                    if (!images.empty() && !locallyEnded) {
-                        tmp = images.pop();
+                    } else {
                         count++;
                         overallCount++;
                     }
+                } catch (InterruptedException e) {
+                    // e.printStackTrace();
+                    log.severe(e.getMessage());
                 }
                 try {
-                    if (!locallyEnded) {
+                    if (!locallyEnded && tmp!=null) {
                         ByteArrayInputStream b = new ByteArrayInputStream(tmp.getBuffer());
                         BufferedImage img = ImageIO.read(b);
                         Document d = builder.createDocument(img, tmp.getFileName());
                         writer.addDocument(d);
                     }
-                } catch (Exception e) {
-                    System.err.println("[ParallelIndexer] Could not handle file " + tmp.getFileName() + ": "  + e.getMessage());
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    // e.printStackTrace();
+                    log.severe(e.getMessage());
                 }
+//                synchronized (images) {
+//                    // we wait for the stack to be either filled or empty & not being filled any more.
+//                    while (images.empty() && !ended) {
+//                        try {
+//                            images.wait(10);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    // make sure the thread locally knows that the end has come (outer loop)
+//                    if (images.empty() && ended)
+//                        locallyEnded = true;
+//                    // well the last thing we want is an exception in the very last round.
+//                    if (!images.empty() && !locallyEnded) {
+//                        count++;
+//                        overallCount++;
+//                    }
+//                }
+//                try {
+//                    if (!locallyEnded) {
+//                        ByteArrayInputStream b = new ByteArrayInputStream(tmp.getBuffer());
+//                        BufferedImage img = ImageIO.read(b);
+//                        Document d = builder.createDocument(img, tmp.getFileName());
+//                        writer.addDocument(d);
+//                    }
+//                } catch (Exception e) {
+//                    System.err.println("[ParallelIndexer] Could not handle file " + tmp.getFileName() + ": "  + e.getMessage());
+//                    e.printStackTrace();
+//                }
             }
 //            System.out.println("Images analyzed: " + count);
         }

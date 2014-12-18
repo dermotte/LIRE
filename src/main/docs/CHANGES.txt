@@ -1,6 +1,14 @@
 CHANGES for LIRE
 ================
 
+2014-12-18
+==========
+  - Changed ParallelIndexer to using LinkedBlockingQueue and Files.readAllBytes(...) Note: JDK 7 only!
+
+2014-12-12
+==========
+  - Re-Factored handling of local features (Nektarios Anagnostopoulos)
+
 2014-11-28
 ==========
   - Changed dimension calculation to Math.round (instead of Math.floor) in image scaling in ImageUtils
