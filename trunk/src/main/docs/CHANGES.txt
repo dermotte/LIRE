@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2015-01-02
+==========
+  - Moved documentation from online wiki to .md files. Using tool from mkdocs.org top generate static online site.
+
 2014-12-18
 ==========
   - Changed ParallelIndexer to using LinkedBlockingQueue and Files.readAllBytes(...) Note: JDK 7 only!
@@ -8,6 +12,10 @@ CHANGES for LIRE
 2014-12-12
 ==========
   - Re-Factored handling of local features (Nektarios Anagnostopoulos)
+
+2014-11-28
+==========
+  - Added file read function to FileUtils.
 
 2014-11-28
 ==========

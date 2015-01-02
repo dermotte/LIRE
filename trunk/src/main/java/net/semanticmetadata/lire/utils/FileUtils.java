@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 09.12.14 10:27
  */
 
 package net.semanticmetadata.lire.utils;
@@ -48,6 +50,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -393,6 +397,38 @@ public class FileUtils {
         } catch (Exception e) {
             result = false;
         }
+        return result;
+    }
+
+    /**
+     * Reads a whole file into a StringBuffer based on java.nio
+     * @param file the file to open.
+     * @param stringBuilder to write the File to.
+     * @throws IOException
+     */
+    public static void readWholeFile(File file, StringBuilder stringBuilder) throws IOException {
+        long length =file.length();
+        MappedByteBuffer in = new FileInputStream(file).getChannel().map(
+                FileChannel.MapMode.READ_ONLY, 0, length);
+        int i = 0;
+        while (i < length)
+            stringBuilder.append((char) in.get(i++));
+    }
+
+
+    /**
+     * Reads a whole file into a StringBuffer based on java.nio
+     * @param file the file to open.
+     * @throws IOException
+     */
+    public static byte[] readFileToByteArray(File file) throws IOException {
+        int length = (int) file.length();
+        MappedByteBuffer in = new FileInputStream(file).getChannel().map(
+                FileChannel.MapMode.READ_ONLY, 0, length);
+        int i = 0;
+        byte[] result = new byte[length];
+        while (i < length)
+            result[i] = in.get(i++);
         return result;
     }
 
