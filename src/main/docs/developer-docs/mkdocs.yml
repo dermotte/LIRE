@@ -1,0 +1,12 @@
+site_name: LIRE Documentation
+site_url: http://www.semanticmetadata.net
+pages:
+- [index.md, Home]
+- [lirefaq.md, FAQ]
+- [createindex.md, Basics, Create Index]
+- [searchindex.md, Basics, Search]
+- [bovw.md, Advanced, Bag of Visual Words]
+- [autocolorcorrelation.md, Advanced, AutoColorCorrelogram]
+- [applyfilters.md, Advanced, Applying Filters]
+- [imageread.md, Other, Image Handling]
+theme: bootstrap
