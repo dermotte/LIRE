@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 16.07.13 15:44
+ * Updated: 02.01.15 20:50
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -143,13 +143,14 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageList) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
-                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, DocumentBuilder.FIELD_NAME_COLORHISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(AutoColorCorrelogram.class, true));
                 }
             };
 
@@ -157,13 +158,14 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, DocumentBuilder.FIELD_NAME_JCD, true));
-                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, DocumentBuilder.FIELD_NAME_COLORLAYOUT, true));
-                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM, true));
-                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, DocumentBuilder.FIELD_NAME_COLORHISTOGRAM, true));
+                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(AutoColorCorrelogram.class, true));
                 }
             };
         }

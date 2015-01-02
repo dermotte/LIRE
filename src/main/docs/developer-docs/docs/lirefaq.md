@@ -1,5 +1,6 @@
 # Frequently Asked Questions 
-If you can't find any answer to your questions please drop a mail to the LIRE mailing list: https://groups.google.com/forum/#!forum/lire-dev
+If you can't find any answer to your questions please drop a mail to the [LIRE mailing list](https://groups.google.com/forum/#!forum/lire-dev). 
+If you are in need for a license or need consulting, please contact me directly. 
 
 ## I don't know how to compile this. Can you help me?
 I'm really sorry, but that is something I can't help you with. There are great [Java tutorials](http://docs.oracle.com/javase/tutorial/) 
@@ -15,27 +16,27 @@ index a photo collection, browse the index and retrieve similar photos. Furtherm
 on top of Lire has been integrated. Find the application and more infos on the application here: [LIRE](http://www.semanticmetadata.net/lire/)
 
 
-# How do I create an index for images using Lire? #
+## How do I create an index for images using Lire? #
 Please consult the following wiki page: [How to create an index with Lire?](createindex.md)
 
-# How do I search for similar images using Lire?
+## How do I search for similar images using Lire?
 Note that you will need an index for searching for similar images, so cerate an index for your image repository. Consult 
 [How to create an index with Lire?](createindex.md) for detailed explanation on how to create the index. Then consult 
 the following wiki page: [How to search for similar images with Lire?](searchindex.md)
 
-# Where are the sources of Lire?
+## Where are the sources of Lire?
 The content based image retrieval library, that comes with Lire is part of the Caliph & Emir project. The sources of 
 Caliph and Emir are available at http://sourceforge.net/projects/caliph-emir/. For more 
 information on Caliph & Emir visit http://www.SemanticMetadata.net.
 
-# How many images can Lire manage to index & retrieve?
+## How many images can Lire manage to index & retrieve?
 Normally I'd say up to 10^6 images are no problem for LIRE. However the size of the index is not the only criterion for 
 good performance: If there are many concurrent users, they will lock each other out from the index, and the average 
 performance will be rather bad. Also there are -- in addition to linear search -- implementations for hashing, bag of 
 visual words and metric spaces inverted indexing included in Lire. These are advanced methods requiring some more 
 knowledge upon the methods from the developers, but they are well known and typically work fine with millions of images.
 
-# Which image formats are supported by Lire?
+## Which image formats are supported by Lire?
 As Lire uses the [[http://java.sun.com/javase/6/docs/api/javax/imageio/ImageIO.html|javax.imageio.ImageIO]] class all 
 formats your JDK supports can be indexed by Lire. If you stick to JPG and PNG you're on the save side. As far as I know 
 BMP and GIF are also supported out of the box. For Java 1.6 the list of supported formats is in the 
@@ -43,14 +44,14 @@ BMP and GIF are also supported out of the box. For Java 1.6 the list of supporte
 party libraries like Apache Sanselan, OpenIMAJ, Twelve Monkeys or ImageJ to decode images and create a BufferedImage 
 instance, which can be handled by Lire. See also [this page](imageread.md).
 
-# I can't find the classes from at.lux.imageanalysis. Where are they?
+## I can't find the classes from at.lux.imageanalysis. Where are they?
 The classes from ``at.lux.imageanalysis`` are in the ``caliph-emir-cbir.jar`` that comes in the lib folder of the Lire 
 distribution. They are part of the Caliph & Emir project and separated from the rest as they are built on top of 
 other people's code. The source is available from Caliph & Emir. With newer Lire distributions these classes have been 
 moved to the Lire development trunk and the external libary is no longer needed.
 
 
-# Which one is the right ImageSearcher? 
+## Which one is the right ImageSearcher? 
 This is a horribly complicated question. It heavily depends on (i) the domain of your images and (ii) the features 
 you indexed (== the employed DocumentBuilder). For (i) you have to take a look at your data set and decide yourself. 
 Try to implement different approaches and compare the results to each other. There are methods to measure this based on 
@@ -62,7 +63,7 @@ searching.
 
 Other than that I offer consulting services for implementation and testing.
 
-# Can I use multiple features for search? 
+## Can I use multiple features for search? 
 This depends very much on the way how you combine the features. You should not add or subtract relevance scores -- not 
 even weighted! That's because of the fact that the metric spaces, spanned by each feature, are not compatible (no real 
 scientific explanation, but still you might get the idea). Possible approaches are

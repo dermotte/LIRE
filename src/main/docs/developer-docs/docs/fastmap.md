@@ -1,6 +1,9 @@
-====== FastMap in Lire ======
+# FastMap in Lire
 
-Using the FastMap class the feature space can be reduced to an arbitrary number of dimensions. The implementation supports one time fast mapping (e.g. for visualization) and iterative fast mapping. Note that for the iterative way the layout will get worse with the number of inserted points after the first run as the algorithm is not meant to be used like that. So in your implementation do a re-map from time to time.
+Using the FastMap class the feature space can be reduced to an arbitrary number of dimensions. The implementation 
+supports one time fast mapping (e.g. for visualization) and iterative fast mapping. Note that for the iterative way 
+the layout will get worse with the number of inserted points after the first run as the algorithm is not meant to be 
+used like that. So in your implementation do a re-map from time to time.
 
 For iterative FastMap use the SavedPivots class and store it along with the information which descriptor class was used.
 
