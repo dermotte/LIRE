@@ -70,6 +70,8 @@ import java.util.*;
  * <p/>
  * Note that the outfile has to be in a folder parent to all images!
  *
+ * // TODO: Change to LinkedBlockingQueue and Files.readAllBytes.
+ *
  * @author Mathias Lux, mathias@juggle.at, 08.03.13
  */
 public class ParallelExtractor implements Runnable {

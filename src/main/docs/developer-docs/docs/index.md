@@ -1,7 +1,7 @@
 # Lire - Lucene Image REtrieval
 
 The LIRE (Lucene Image REtrieval) library a simple way to create a Lucene index of image features for content based 
-image retrieval (CBIR). The implemented features are 
+image retrieval (CBIR). There is no complete list of features, but these are some of them:
 
   * ScalableColor, ColorLayout and EdgeHistogram [MPEG-7](http://mpeg.chiariglione.org/standards/mpeg-7/mpeg-7.htm)
   * CEDD and FCTH (contributed by [Savvas Chatzichristofis](http://savvash.blogspot.com/))
