@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 02.01.15 20:50
+ * Updated: 16.01.15 09:48
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -143,13 +143,14 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageList) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(AutoColorCorrelogram.class, true));
                 }
             };
@@ -158,13 +159,14 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, true));
-                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(JointHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(ColorLayout.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(EdgeHistogram.class, true));
+//                    builder.addBuilder(new GenericDocumentBuilder(SimpleColorHistogram.class, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(AutoColorCorrelogram.class, true));
                 }
             };
@@ -284,7 +286,11 @@ public class ParallelIndexer implements Runnable {
                 iterator.next().join();
             }
             long l1 = System.currentTimeMillis() - l;
-            System.out.println("Analyzed " + overallCount + " images in " + l1 / 1000 + " seconds, ~" + ((overallCount>0)?(l1 / overallCount):"n.a.") + " ms each.");
+            int seconds = (int) (l1 / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            // System.out.println("Analyzed " + overallCount + " images in " + seconds + " seconds, ~" + ((overallCount>0)?(l1 / overallCount):"n.a.") + " ms each.");
+            System.out.printf("Analyzed %d images in %03d:%02d ~ %3.2f ms each.\n", overallCount, minutes, seconds, ((overallCount > 0) ? ((float) l1 / (float) overallCount) : -1f));
             writer.commit();
             writer.close();
             threadFinished = true;
@@ -326,7 +332,13 @@ public class ParallelIndexer implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+queue.size()+" images currently in queue).");
+                    int seconds = (int) (time / 1000);
+                    int minutes = seconds / 60;
+                    seconds = seconds % 60;
+                    // System.out.println("Analyzed " + overallCount + " images in " + seconds + " seconds, ~" + ((overallCount>0)?(l1 / overallCount):"n.a.") + " ms each.");
+                    System.out.printf("Analyzed %d images in %03d:%02d ~ %3.2f ms each. (queue size is %d)\n", 
+                            overallCount, minutes, seconds, ((overallCount > 0) ? ((float) time / (float) overallCount) : -1f), queue.size());
+//                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount>0)?(time / overallCount):"n.a.") + " ms each ("+queue.size()+" images currently in queue).");
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();

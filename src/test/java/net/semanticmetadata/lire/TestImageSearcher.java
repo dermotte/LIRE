@@ -32,24 +32,36 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 18.01.15 08:07
  */
 
 package net.semanticmetadata.lire;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.ScalableColor;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.impl.custom.SingleNddCeddImageSearcher;
+import net.semanticmetadata.lire.impl.SimpleResult;
 import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.BytesRef;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * This file is part of Caliph & Emir
@@ -263,4 +275,220 @@ public class TestImageSearcher extends TestCase {
         bw.close();
     }
 
+    public void testCachingSearcher() throws IOException {
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("C:\\Temp\\test-100k-cedd-idx")));
+        GenericFastImageSearcher is = new GenericFastImageSearcher(1, CEDD.class, true, ir);
+        SingleNddCeddImageSearcher nis = new SingleNddCeddImageSearcher(ir);
+        LinkedList<Document> q = new LinkedList<Document>();
+        for (int i = 0; i < Math.min(1000, ir.maxDoc()); i++) {
+            q.add(ir.document(i));
+        }
+
+        long time = System.currentTimeMillis();
+        int count = 0;
+        for (Iterator<Document> iterator = q.iterator(); iterator.hasNext(); ) {
+            Document next = iterator.next();
+            String id = is.search(next, ir).doc(0).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            CEDD cedd = new CEDD();
+            BytesRef binaryValue = next.getBinaryValue(cedd.getFieldName());
+            cedd.setByteArrayRepresentation(binaryValue.bytes, binaryValue.offset, binaryValue.length);
+
+            String s = nis.findMostSimilar(cedd).getDocument().getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            String qID = next.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            System.out.println(s.equals(id) + " " + id.equals(qID) + " " + qID.equals(s));
+            count++;
+            if (count > 100) break;
+        }
+        long l = System.currentTimeMillis() - time;
+        System.out.printf("Tested %d search requests on %d documents: overall time of %d:%02d, %.2f ms per search", count, ir.maxDoc(), l / (1000 * 60), (l / 1000) % 60, ((float) l / (float) count));
+
+    }
+
+    public void testCustomCachingSearcher() throws IOException {
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("C:\\Temp\\test-100k-cedd-idx")));
+        SingleNddCeddImageSearcher is = new SingleNddCeddImageSearcher(ir);
+
+        LinkedList<LireFeature> q = new LinkedList<LireFeature>();
+        for (int i = 0; i < ir.maxDoc(); i++) {
+            Document d = ir.document(i);
+            CEDD cedd = new CEDD();
+            BytesRef binaryValue = d.getBinaryValue(cedd.getFieldName());
+            cedd.setByteArrayRepresentation(binaryValue.bytes, binaryValue.offset, binaryValue.length);
+            q.add(cedd);
+        }
+
+        long time = System.currentTimeMillis();
+        int count = 0;
+        for (Iterator<LireFeature> iterator = q.iterator(); iterator.hasNext(); ) {
+            LireFeature next = iterator.next();
+            is.findMostSimilar(next);
+            count++;
+            if (count > 100) break;
+        }
+        long l = System.currentTimeMillis() - time;
+        System.out.printf("Tested %d search requests on %d documents: overall time of %d:%02d, %.2f ms per search", count, ir.maxDoc(), l / (1000 * 60), (l / 1000) % 60, ((float) l / (float) count));
+    }
+
+    public void testCachingSearcherParallel() throws IOException, InterruptedException {
+        final IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("C:\\Temp\\test-100k-cedd-idx")));
+        SingleNddCeddImageSearcher is = new SingleNddCeddImageSearcher(ir);
+
+        LinkedList<LireFeature> q = new LinkedList<LireFeature>();
+        for (int i = 0; i < ir.maxDoc(); i++) {
+            Document d = ir.document(i);
+            CEDD cedd = new CEDD();
+            BytesRef binaryValue = d.getBinaryValue(cedd.getFieldName());
+            cedd.setByteArrayRepresentation(binaryValue.bytes, binaryValue.offset, binaryValue.length);
+            q.add(cedd);
+        }
+
+        int count = 0;
+        Thread[] searchers = new Thread[3];
+        final LinkedBlockingQueue<LireFeature> queryQueue = new LinkedBlockingQueue<LireFeature>(1000);
+        for (int i = 0; i < searchers.length; i++) {
+            searchers[i] = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SingleNddCeddImageSearcher is = new SingleNddCeddImageSearcher(ir);
+                    LireFeature remove;
+                    while ((remove = queryQueue.remove()) instanceof CEDD) {
+                        try {
+                            is.findMostSimilar(remove);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            });
+            searchers[i].start();
+        }
+        long time = System.currentTimeMillis();
+        for (Iterator<LireFeature> iterator = q.iterator(); iterator.hasNext() && count < 1000; ) {
+            LireFeature next = iterator.next();
+            try {
+                queryQueue.put(next);
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < 8; i++) {
+            queryQueue.put(new ScalableColor());
+        }
+        for (int i = 0; i < searchers.length; i++) {
+            searchers[i].join();
+        }
+        long l = System.currentTimeMillis() - time;
+        System.out.printf("Tested %d search requests on %d documents: overall time of %d:%02d, %.2f ms per search", count, ir.maxDoc(), l / (1000 * 60), (l / 1000) % 60, ((float) l / (float) count));
+    }
+
+    public void testCachingSearcherParallelWithBundling() throws IOException, InterruptedException {
+        final IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("C:\\Temp\\test-100k-cedd-idx")));
+
+        LinkedList<LireFeature> q = new LinkedList<LireFeature>();
+        for (int i = 0; i < ir.maxDoc(); i++) {
+            Document d = ir.document(i);
+            CEDD cedd = new CEDD();
+            BytesRef binaryValue = d.getBinaryValue(cedd.getFieldName());
+            cedd.setByteArrayRepresentation(binaryValue.bytes, binaryValue.offset, binaryValue.length);
+            q.add(cedd);
+        }
+
+        int count = 0;
+        Thread[] searchers = new Thread[4];
+        final LinkedBlockingQueue<WorkItem> queryQueue = new LinkedBlockingQueue<WorkItem>(100);
+        for (int i = 0; i < searchers.length; i++) {
+            searchers[i] = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    SingleNddCeddImageSearcher is = new SingleNddCeddImageSearcher(ir);
+                    WorkItem remove;
+                    while ((remove = queryQueue.remove()).features != null) {
+                        try {
+                            SimpleResult[] hits = is.findMostSimilar(remove.features);
+                            for (int j = 0; j < hits.length; j++) {
+                                if (hits[j].getIndexNumber() != remove.id[j]) System.err.println("oops");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+            });
+            searchers[i].start();
+        }
+        long time = System.currentTimeMillis();
+        LireFeature[] qarr = new LireFeature[10];
+        int[] iarr = new int[10];
+        int currentIndex = 0;
+        int bundleCount = 0;
+        Iterator<LireFeature> iterator = q.iterator();
+        while (iterator.hasNext() && bundleCount < 200) {
+            LireFeature next = iterator.next();
+            try {
+                iarr[currentIndex] = count;
+                qarr[currentIndex++] = next;
+                if (currentIndex >= qarr.length) { // do bundled search
+                    currentIndex = 0;
+                    queryQueue.put(new WorkItem(qarr.clone(), iarr.clone()));
+                    bundleCount++;
+                }
+                count++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        for (int i = 0; i < 8; i++) {
+            queryQueue.put(new WorkItem(null, null));
+        }
+        for (int i = 0; i < searchers.length; i++) {
+            searchers[i].join();
+        }
+        long l = System.currentTimeMillis() - time;
+        System.out.printf("Tested %d search requests on %d documents: overall time of %d:%02d, %.2f ms per search", count, ir.maxDoc(), l / (1000 * 60), (l / 1000) % 60, ((float) l / (float) count));
+    }
+
+    public void testCachingSearcherBundling() throws IOException {
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("C:\\Temp\\test-100k-cedd-idx")));
+        SingleNddCeddImageSearcher is = new SingleNddCeddImageSearcher(ir);
+
+        LinkedList<LireFeature> q = new LinkedList<LireFeature>();
+        for (int i = 0; i < ir.maxDoc(); i++) {
+            Document d = ir.document(i);
+            CEDD cedd = new CEDD();
+            BytesRef binaryValue = d.getBinaryValue(cedd.getFieldName());
+            cedd.setByteArrayRepresentation(binaryValue.bytes, binaryValue.offset, binaryValue.length);
+            q.add(cedd);
+        }
+
+        long time = System.currentTimeMillis();
+        int count = 0;
+        LireFeature[] qarr = new LireFeature[10];
+        int currentIndex = 0;
+        for (Iterator<LireFeature> iterator = q.iterator(); iterator.hasNext(); ) {
+            LireFeature next = iterator.next();
+            qarr[currentIndex++] = next;
+            if (currentIndex >= qarr.length) { // do bundled search
+                currentIndex = 0;
+                is.findMostSimilar(qarr);
+            }
+            count++;
+            if (count > 999 & currentIndex == 0) break;
+        }
+        long l = System.currentTimeMillis() - time;
+        System.out.printf("Tested %d search requests on %d documents: overall time of %d:%02d, %.2f ms per search", count, ir.maxDoc(), l / (1000 * 60), (l / 1000) % 60, ((float) l / (float) count));
+    }
+
+}
+
+class WorkItem {
+    LireFeature[] features;
+    int[] id;
+
+    public WorkItem(LireFeature[] features, int[] id) {
+        this.features = features;
+        this.id = id;
+    }
 }
