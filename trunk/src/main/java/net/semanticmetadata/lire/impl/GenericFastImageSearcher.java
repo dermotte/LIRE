@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 11:12
+ * Updated: 18.01.15 07:31
  */
 package net.semanticmetadata.lire.impl;
 
@@ -45,6 +45,7 @@ import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageDuplicates;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.sift.FloatArray;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -255,7 +256,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
      * @throws java.io.IOException
      */
     protected float findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
-        maxDistance = -1f;
+        maxDistance = Float.MAX_VALUE;
 //        overallMaxDistance = -1f;
 
         // clear result set ...
@@ -273,10 +274,6 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
                 d = reader.document(i);
                 tmpDistance = getDistance(d, lireFeature);
                 assert (tmpDistance >= 0);
-                // if it is the first document:
-                if (maxDistance < 0) {
-                    maxDistance = tmpDistance;
-                }
                 // if the array is not full yet:
                 if (this.docs.size() < maxHits) {
                     this.docs.add(new SimpleResult(tmpDistance, d, i));
@@ -296,31 +293,22 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
             int count = 0;
             for (Iterator<byte[]> iterator = featureCache.iterator(); iterator.hasNext(); ) {
                 cachedInstance.setByteArrayRepresentation(iterator.next());
-                if (reader.hasDeletions() && !liveDocs.get(count)) {
-                    count++;
-                    continue; // if it is deleted, just ignore it.
-                } else {
-                    tmpDistance = lireFeature.getDistance(cachedInstance);
-                    assert (tmpDistance >= 0);
-                    // if it is the first document:
-                    if (maxDistance < 0) {
-                        maxDistance = tmpDistance;
-                    }
-                    // if the array is not full yet:
-                    if (this.docs.size() < maxHits) {
-                        this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
-                        if (tmpDistance > maxDistance) maxDistance = tmpDistance;
-                    } else if (tmpDistance < maxDistance) {
-                        // if it is nearer to the sample than at least on of the current set:
-                        // remove the last one ...
-                        this.docs.remove(this.docs.last());
-                        // add the new one ...
-                        this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
-                        // and set our new distance border ...
-                        maxDistance = this.docs.last().getDistance();
-                    }
-                    count++;
+                tmpDistance = lireFeature.getDistance(cachedInstance);
+                assert (tmpDistance >= 0);
+                // if the array is not full yet:
+                if (this.docs.size() < maxHits) {
+                    this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
+                    if (tmpDistance > maxDistance) maxDistance = tmpDistance;
+                } else if (tmpDistance < maxDistance) {
+                    // if it is nearer to the sample than at least on of the current set:
+                    // remove the last one ...
+                    this.docs.remove(this.docs.last());
+                    // add the new one ...
+                    this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
+                    // and set our new distance border ...
+                    maxDistance = this.docs.last().getDistance();
                 }
+                count++;
             }
         }
         return maxDistance;

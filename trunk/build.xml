@@ -36,7 +36,7 @@
   ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
   ~  http://www.semanticmetadata.net/lire, http://www.lire-project.net
   ~
-  ~ Updated: 03.08.13 10:16
+  ~ Updated: 18.01.15 07:52
   -->
 
 <project name="Lire" default="compile" basedir=".">
@@ -97,7 +97,7 @@
         <javac srcdir="${src}" destdir="${build}" debug="true" debuglevel="lines,vars,source">
             <classpath refid="classpath.path"/>
             <exclude name="**/ClassifierTest.java"/>
-            <exclude name="**/HashingSearchBasedClassifierMod.java"/>
+            <exclude name="**/net.semanticmetadata.lire.classifiers.HashingSearchBasedClassifierMod.java"/>
         </javac>
         <copy todir="${build}">
             <fileset dir="${src}">

@@ -1,6 +1,21 @@
 CHANGES for LIRE
 ================
 
+2015-01-18
+==========
+  - Added custom implementation of a caching searcher
+  - fixed a performance issue in GenericFastImageSearcher
+  - refactored weka depending classes into a sample directory
+
+2015-01-16
+==========
+  - Made output of ParallelIndexer more readable.
+  - Added a getter to CEDD
+
+2015-01-15
+==========
+  - Updated documentation
+
 2015-01-02
 ==========
   - Moved documentation from online wiki to .md files. Using tool from mkdocs.org top generate static online site.

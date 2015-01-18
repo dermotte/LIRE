@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.08.13 12:08
+ * Updated: 16.01.15 10:26
  */
 
 package net.semanticmetadata.lire.imageanalysis;
@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.imageanalysis;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.cedd.*;
 import net.semanticmetadata.lire.utils.ImageUtils;
+import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
@@ -414,6 +415,10 @@ public class CEDD implements LireFeature {
             sum += a[i] * b[i];
         }
         return sum;
+    }
+
+    public byte[] getByteHistogram() {
+        return histogram;
     }
 
     public String getStringRepresentation() { // added by mlux

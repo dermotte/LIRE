@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 07.11.14 14:10
+ * Updated: 18.01.15 07:40
  */
 
 package net.semanticmetadata.lire.utils;
@@ -150,6 +150,15 @@ public class LuceneUtils {
      */
     public static IndexWriter createIndexWriter(String indexPath, boolean create) throws IOException {
         return createIndexWriter(indexPath, create, AnalyzerType.SimpleAnalyzer);
+    }
+
+    /**
+     * Optimizes an index.
+     * @param iw
+     * @throws IOException
+     */
+    public static void optimizeIndex(IndexWriter iw) throws IOException {
+        iw.forceMerge(0);
     }
 
     /**
