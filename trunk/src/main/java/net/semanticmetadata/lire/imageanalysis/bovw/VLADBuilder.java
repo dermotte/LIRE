@@ -455,7 +455,7 @@ public class VLADBuilder {
 //        return new SurfFeature();
 //    }
 
-    private LireFeature getFeatureInstance() {
+    protected LireFeature getFeatureInstance() {
         LireFeature result = null;
         try {
             result =  lireFeature.getClass().newInstance();

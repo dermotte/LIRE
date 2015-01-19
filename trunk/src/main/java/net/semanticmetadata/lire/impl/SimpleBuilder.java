@@ -258,6 +258,24 @@ public class SimpleBuilder extends AbstractDocumentBuilder {
             throw new UnsupportedOperationException("Something was wrong in returning the used detector");
     }
 
+    public String getFieldName(KeypointDetector detector, LireFeature feature)
+    {
+        if (detector == KeypointDetector.CVSURF) {
+            return DocumentBuilder.FIELD_NAME_SIMPLE + feature.getFieldName() + getDetector(detector);
+        }
+        else if (detector == KeypointDetector.CVSIFT){
+            return DocumentBuilder.FIELD_NAME_SIMPLE + feature.getFieldName() + getDetector(detector);
+        }
+        else if (detector == KeypointDetector.Random){
+            return DocumentBuilder.FIELD_NAME_SIMPLE + feature.getFieldName() + getDetector(detector);
+        }
+        else if (detector == KeypointDetector.GaussRandom){
+            return DocumentBuilder.FIELD_NAME_SIMPLE + feature.getFieldName() + getDetector(detector);
+        }
+        else
+            throw new UnsupportedOperationException("Something was wrong in returning the used detector");
+    }
+
     private class keypoint
     {
         public int X;

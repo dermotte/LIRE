@@ -18,25 +18,25 @@ public class CvSurfFeature implements Serializable, LireFeature {
     public double[] point;
     public float response;
     public float size;
-    double[] descriptor;
+    double[] feature;
 
     public CvSurfFeature() {
     }
 
-    public CvSurfFeature(float ang, int cl, int o, double[] pt, float res, float s, double[] desc) {
+    public CvSurfFeature(float ang, int cl, int o, double[] pt, float res, float s, double[] feat) {
         angle = ang;
         class_id = cl;
         octave = o;
         point = pt;
         response = res;
         size = s;
-        descriptor = desc;
+        feature = feat;
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < descriptor.length; i++) {
-            sb.append(descriptor[i]);
+        for (int i = 0; i < feature.length; i++) {
+            sb.append(feature[i]);
             sb.append(' ');
         }
         return sb.toString();
@@ -44,7 +44,7 @@ public class CvSurfFeature implements Serializable, LireFeature {
 
     public float getDistance(LireFeature f) {
         if (!(f instanceof CvSurfFeature)) return -1;
-        return (float) MetricsUtils.distL2(descriptor, ((CvSurfFeature) f).descriptor);
+        return (float) MetricsUtils.distL2(feature, ((CvSurfFeature) f).feature);
     }
 
     public String getStringRepresentation() {
@@ -60,19 +60,19 @@ public class CvSurfFeature implements Serializable, LireFeature {
     }
 
     public byte[] getByteArrayRepresentation() {
-        return SerializationUtils.toByteArray(descriptor);
+        return SerializationUtils.toByteArray(feature);
     }
 
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = SerializationUtils.toDoubleArray(in);
+        feature = SerializationUtils.toDoubleArray(in);
     }
 
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = SerializationUtils.toDoubleArray(in, offset, length);
+        feature = SerializationUtils.toDoubleArray(in, offset, length);
     }
 
     public double[] getDoubleHistogram() {
-        return descriptor;
+        return feature;
     }
 
     @Override

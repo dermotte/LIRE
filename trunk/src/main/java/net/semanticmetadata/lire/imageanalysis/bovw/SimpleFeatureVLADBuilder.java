@@ -40,9 +40,10 @@ public class SimpleFeatureVLADBuilder extends VLADBuilder{
 
     @Override
     protected void init() {
-        localFeatureFieldName = DocumentBuilder.FIELD_NAME_SIMPLE + lireFeature.getFieldName() + (new SimpleBuilder()).getDetector(detector);
-        vladFieldName = DocumentBuilder.FIELD_NAME_SIMPLE +  lireFeature.getFieldName()+ (new SimpleBuilder()).getDetector(detector) + DocumentBuilder.FIELD_NAME_VLAD;
-        vladHistFieldName = DocumentBuilder.FIELD_NAME_SIMPLE +  lireFeature.getFieldName() + (new SimpleBuilder()).getDetector(detector) + DocumentBuilder.FIELD_NAME_VLAD_VECTOR;
+        String fname = (new SimpleBuilder()).getFieldName(detector, getFeatureInstance());
+        localFeatureFieldName = fname;
+        vladFieldName = fname + DocumentBuilder.FIELD_NAME_VLAD;
+        vladHistFieldName = fname + DocumentBuilder.FIELD_NAME_VLAD_VECTOR;
         clusterFile = "./clusters-simpleVlad" + lireFeature.getFeatureName() + (new SimpleBuilder()).getDetector(detector).replace("det","") + ".dat";
     }
 }
