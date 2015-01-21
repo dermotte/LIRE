@@ -41,10 +41,9 @@
 
 package net.semanticmetadata.lire.indexing.parallel;
 
-import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
-import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
+import net.semanticmetadata.lire.imageanalysis.OpponentHistogram;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
 import net.semanticmetadata.lire.indexing.LireCustomCodec;
@@ -143,7 +142,8 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageList) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, false));
+                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, false));
 //                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
@@ -159,7 +159,8 @@ public class ParallelIndexer implements Runnable {
             p = new ParallelIndexer(numThreads, indexPath, imageDirectory) {
                 @Override
                 public void addBuilders(ChainedDocumentBuilder builder) {
-                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, true));
+                    builder.addBuilder(new GenericDocumentBuilder(CEDD.class, false));
+                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, false));
 //                    builder.addBuilder(new GenericDocumentBuilder(PHOG.class, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(JCD.class, true));
 //                    builder.addBuilder(new GenericDocumentBuilder(OpponentHistogram.class, true));
