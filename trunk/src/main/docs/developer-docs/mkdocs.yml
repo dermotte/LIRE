@@ -8,6 +8,7 @@ pages:
 - [createindex.md, Basics, Create Index]
 - [searchindex.md, Basics, Search]
 - [bovw.md, Advanced, Bag of Visual Words]
+- [simple.md, Advanced, SIMPLE Local Features]
 - [autocolorcorrelation.md, Advanced, AutoColorCorrelogram]
 - [applyfilters.md, Advanced, Applying Filters]
 - [lireinternals.md, Other, LIRE Internals]
