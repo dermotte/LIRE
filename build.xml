@@ -36,7 +36,7 @@
   ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
   ~  http://www.semanticmetadata.net/lire, http://www.lire-project.net
   ~
-  ~ Updated: 18.01.15 07:52
+  ~ Updated: 29.01.15 09:41
   -->
 
 <project name="Lire" default="compile" basedir=".">
@@ -60,7 +60,7 @@
     <property name="config" value="src/main/config"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9.4 beta_2"/>
+    <property name="versionstring" value="0.9.5"/>
     <!-- path to test files -->
     <property name="test" value="test"/>
     <!-- path to documentation like README or CHANGES -->

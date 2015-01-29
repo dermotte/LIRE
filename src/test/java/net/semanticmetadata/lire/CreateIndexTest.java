@@ -32,9 +32,11 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 21.01.15 08:29
  */
 
 package net.semanticmetadata.lire;
@@ -130,6 +132,11 @@ public class CreateIndexTest extends TestCase {
     public void testCreateBigIndex() throws IOException {
         ArrayList<String> images = FileUtils.getAllImages(new File(testExtensive), true);
         indexFiles(images, getDocumentBuilder(), indexPath + "-big-index");
+    }
+    
+    public void testParallelIndexing() {
+        
+        
     }
 
     private void indexFiles(ArrayList<String> images, DocumentBuilder builder, String indexPath) throws IOException {
