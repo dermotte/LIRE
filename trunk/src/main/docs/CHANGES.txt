@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2015-02-10
+==========
+  - bug fix in BOVWBuilder based on bug report by Haihui Cai
+
 2015-01-18
 ==========
   - Added custom implementation of a caching searcher
