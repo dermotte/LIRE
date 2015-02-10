@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 11.07.13 11:21
+ * Updated: 10.02.15 09:05
  */
 package net.semanticmetadata.lire.imageanalysis.bovw;
 
@@ -358,6 +358,7 @@ public class BOVWBuilder {
      * @throws IOException
      */
     public Document getVisualWords(Document d) throws IOException {
+        init(); // bug report by Haihui Cai
         clusters = Cluster.readClusters(clusterFile);
         LireFeature f = getFeatureInstance();
         createVisualWords(d, f);
