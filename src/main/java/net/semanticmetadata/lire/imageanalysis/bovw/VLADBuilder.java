@@ -358,6 +358,7 @@ public class VLADBuilder {
      * @throws java.io.IOException
      */
     public Document getVisualWords(Document d) throws IOException {  // TODO: Adapt to VLAD!
+        init();
         clusters = Cluster.readClusters(clusterFile);
         LireFeature f = getFeatureInstance();
         createVisualWords(d, f);
