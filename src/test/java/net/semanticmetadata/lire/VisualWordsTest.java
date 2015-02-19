@@ -32,21 +32,22 @@
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
  *
  * Copyright statement:
- * --------------------
+ * ====================
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
+ *
+ * Updated: 13.02.15 17:34
  */
 
 package net.semanticmetadata.lire;
 
 import junit.framework.TestCase;
+import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.SurfFeature;
 import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
 import net.semanticmetadata.lire.imageanalysis.sift.Feature;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.SiftDocumentBuilder;
-import net.semanticmetadata.lire.impl.SurfDocumentBuilder;
-import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
+import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -203,6 +204,20 @@ public class VisualWordsTest extends TestCase {
         ImageSearchHits hits = searcher.search(query, reader);
         // show or analyze your results ....
         FileUtils.saveImageResultsToPng("bovw", hits, query.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+    }
+    
+    public void testCvSurfBuilder() throws IOException {
+        String imageDirectory = "D:\\Temp\\imagew\\source_images";
+        ParallelIndexer indexer = new ParallelIndexer(4, indexPath.getName(), imageDirectory) {
+            // use this to add you preferred builders.
+            public void addBuilders(ChainedDocumentBuilder builder) {
+                builder.addBuilder(new CvSurfDocumentBuilder());
+            }
+        };
+        indexer.run();
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(indexPath));
+        BOVWBuilder sh = new BOVWBuilder(reader, new CvSurfFeature(), 5000, 512);
+        sh.index();
     }
 
 

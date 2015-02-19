@@ -1,6 +1,15 @@
 CHANGES for LIRE
 ================
 
+2015-02-13
+==========
+  - Bug fix in LireDemo build file
+  
+2015-02-13
+==========
+  - SimpleBuilder: Changed size selection to lookup table. -> 12% faster.
+  - SimpleBuilder: Reduced String concats & "new" in loops.
+
 2015-02-10
 ==========
   - bug fix in BOVWBuilder based on bug report by Haihui Cai

@@ -36,7 +36,7 @@
   ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
   ~  http://www.semanticmetadata.net/lire, http://www.lire-project.net
   ~
-  ~ Updated: 03.08.13 10:28
+  ~ Updated: 19.02.15 21:02
   -->
 
 <project name="LireDemoRelease" default="release" basedir=".">
@@ -74,7 +74,7 @@
     <property name="src" value="src"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="0.9.4_beta"/>
+    <property name="versionstring" value="0.9.5"/>
 
     <!-- define the classpath  -->
     <path id="classpath.path">
@@ -115,7 +115,7 @@
         <mkdir dir="${dist}/lib"/>
 
         <echo file="default.mf" append="false">Main-Class: liredemo.LireDemoFrame
-Class-Path: lib/commons-math3-3.2.jar lib/JOpenSurf.jar lib/lire.jar lib/lucene-core-4.4.0.jar lib/lucene-queryparser-4.4.0.jar lib/lucene-analyzers-common-4.4.0.jar lib/metadata-extractor-2.3.1.jar
+Class-Path: lib/commons-math3-3.2.jar lib/JOpenSurf.jar lib/lire.jar lib/lucene-core-4.10.2.jar lib/lucene-queryparser-4.10.2.jar lib/lucene-analyzers-common-4.10.2.jar lib/metadata-extractor-2.3.1.jar
         </echo>
 
         <copy todir="${dist}/lib">

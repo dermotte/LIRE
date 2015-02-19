@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *  
- * Updated: 18.01.15 09:37
+ * Updated: 13.02.15 19:17
  */
 package net.semanticmetadata.lire.impl.custom;
 
@@ -70,8 +70,8 @@ import java.util.logging.Logger;
  */
 public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
     protected Logger logger = Logger.getLogger(getClass().getName());
-    Class<?> descriptorClass;
-    String fieldName;
+    Class<?> descriptorClass = CEDD.class;
+    String fieldName = null;
     protected LireFeature cachedInstance = null;
     protected boolean isCaching = true;
 
@@ -108,16 +108,28 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
         init(reader);
     }
 
+    /**
+     * Eventually to be used with other LireFeature classes.
+     * @param reader
+     * @param approximate
+     * @param descriptorClass
+     */
+    public SingleNddCeddImageSearcher(IndexReader reader, boolean approximate, Class descriptorClass, String fieldName) {
+        this.halfDimensions = approximate;
+        this.descriptorClass = descriptorClass;
+        this.fieldName = fieldName;
+        init(reader);
+    }
+
     protected void init(IndexReader reader) {
         this.reader = reader;
         if (reader.hasDeletions()) {
             throw new UnsupportedOperationException("The index has to be optimized first to be cached! Use IndexWriter.forceMerge(0) to do this.");
         } 
         docs = new TreeSet<SimpleResult>();
-        this.descriptorClass = CEDD.class;
         try {
             this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
-            this.fieldName = this.cachedInstance.getFieldName();
+            if (fieldName == null) fieldName = this.cachedInstance.getFieldName();
         } catch (InstantiationException e) {
             logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
         } catch (IllegalAccessException e) {
