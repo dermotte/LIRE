@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *  http://www.semanticmetadata.net/lire, http://www.lire-project.net
  *
- * Updated: 29.01.15 09:39
+ * Updated: 13.02.15 18:04
  */
 
 package net.semanticmetadata.lire.indexing.parallel;
@@ -253,7 +253,7 @@ public class ParallelIndexer implements Runnable {
     }
 
     public void run() {
-        IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer(LuceneUtils.LUCENE_VERSION));
+        IndexWriterConfig config = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION, new StandardAnalyzer());
         config.setOpenMode(openMode);
         config.setCodec(new LireCustomCodec());
         try {
@@ -270,7 +270,7 @@ public class ParallelIndexer implements Runnable {
                 }
             }
             numImages = files.size();
-            System.out.println("Indexing " + files.size() + " images.");
+            System.out.printf("Indexing %d images\n", files.size());
             Thread p = new Thread(new Producer());
             p.start();
             LinkedList<Thread> threads = new LinkedList<Thread>();
