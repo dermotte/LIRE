@@ -116,7 +116,12 @@ public interface DocumentBuilder {
 //    public static final String FIELD_NAME_SURF_VISUAL_WORDS = "featureSurfHistogramVWords";
 //    public static final String FIELD_NAME_SURF_VLAD = "featSurfVlad";
     public static final String FIELD_NAME_CVSURF = "featureCvSurf";
+    public static final String FIELD_NAME_CVOPPSIFT = "featureCvOppSift";
+    public static final String FIELD_NAME_CVORB = "featureCvOrb";
+    public static final String FIELD_NAME_CVBRISK = "featureCvBrisk";
     public static final String FIELD_NAME_TAMURA = "featureTAMURA";
+    public static final String FIELD_NAME_SELF_SIMILARITIES = "featureSelfSimilarities";
+
 
     public static final String FIELD_NAME_SIMPLE = "SIMPLE";
     public static final String FIELD_NAME_BOVW = "BOVW";

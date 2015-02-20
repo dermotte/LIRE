@@ -26,19 +26,21 @@ public class CvSurfExtractor {
     private double hessianThreshold=500.0;
     private int nOctaves=4;
     private int nOctaveLayers=2;
-    private Boolean extended=true;
-    private Boolean upright=false;
+    private int extended=1;
+    private int upright=0;
+
+//    private boolean passingParams = false;
 
     public CvSurfExtractor(){
-
     }
 
-    public CvSurfExtractor(double hessianThres, int Octaves, int OctaveLayers, Boolean extend, Boolean upr){
-        hessianThreshold = hessianThres;
-        nOctaves = Octaves;
-        nOctaveLayers = OctaveLayers;
-        extended = extend;
-        upright = upr;
+    public CvSurfExtractor(double hessianThreshold, int nOctaves, int nOctaveLayers, int extended, int upright){
+        this.hessianThreshold = hessianThreshold;
+        this.nOctaves = nOctaves;
+        this.nOctaveLayers = nOctaveLayers;
+        this.extended = extended;
+        this.upright = upright;
+//        this.passingParams = true;
     }
 
     public LinkedList<CvSurfFeature> computeSurfFeatures(BufferedImage img) {
@@ -46,19 +48,21 @@ public class CvSurfExtractor {
 
         FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
         DescriptorExtractor extractor = DescriptorExtractor.create(DescriptorExtractor.SURF);
-        try {
-            File temp = File.createTempFile("tempFile", ".tmp");
-            //String settings = "%YAML:1.0\nhessianThreshold: 500.0\nnOctaves: 4\nnOctaveLayers: 2\nextended: true\nupright: false";
-            String settings = "%YAML:1.0\nhessianThreshold: "+hessianThreshold+"\nnOctaves: "+nOctaves+"\nnOctaveLayers: "+nOctaveLayers+"\nextended: "+extended+"\nupright: "+upright;
-            FileWriter writer = new FileWriter(temp, false);
-            writer.write(settings);
-            writer.close();
-            extractor.read(temp.getPath());
-            detector.read(temp.getPath());
-            temp.deleteOnExit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        if (passingParams) {
+            try {
+                File temp = File.createTempFile("tempFile", ".tmp");
+                //String settings = "%YAML:1.0\nhessianThreshold: 500.0\nnOctaves: 4\nnOctaveLayers: 2\nextended: true\nupright: false";
+                String settings = "%YAML:1.0\nhessianThreshold: " + hessianThreshold + "\nnOctaves: " + nOctaves + "\nnOctaveLayers: " + nOctaveLayers + "\nextended: " + extended + "\nupright: " + upright;
+                FileWriter writer = new FileWriter(temp, false);
+                writer.write(settings);
+                writer.close();
+                extractor.read(temp.getPath());
+                detector.read(temp.getPath());
+                temp.deleteOnExit();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//        }
         MatOfKeyPoint keypoints = new MatOfKeyPoint();
         Mat descriptors = new Mat();
         List<KeyPoint> myKeys;
@@ -101,18 +105,20 @@ public class CvSurfExtractor {
         System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
 
         FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
-        try {
-            File temp = File.createTempFile("tempFile", ".tmp");
-            //String settings = "%YAML:1.0\nhessianThreshold: 500.0\nnOctaves: 4\nnOctaveLayers: 2\nextended: true\nupright: false";
-            String settings = "%YAML:1.0\nhessianThreshold: "+hessianThreshold+"\nnOctaves: "+nOctaves+"\nnOctaveLayers: "+nOctaveLayers+"\nextended: "+extended+"\nupright: "+upright;
-            FileWriter writer = new FileWriter(temp, false);
-            writer.write(settings);
-            writer.close();
-            detector.read(temp.getPath());
-            temp.deleteOnExit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        if (passingParams) {
+            try {
+                File temp = File.createTempFile("tempFile", ".tmp");
+                //String settings = "%YAML:1.0\nhessianThreshold: 500.0\nnOctaves: 4\nnOctaveLayers: 2\nextended: true\nupright: false";
+                String settings = "%YAML:1.0\nhessianThreshold: " + hessianThreshold + "\nnOctaves: " + nOctaves + "\nnOctaveLayers: " + nOctaveLayers + "\nextended: " + extended + "\nupright: " + upright;
+                FileWriter writer = new FileWriter(temp, false);
+                writer.write(settings);
+                writer.close();
+                detector.read(temp.getPath());
+                temp.deleteOnExit();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//        }
         MatOfKeyPoint keypoints = new MatOfKeyPoint();
         List<KeyPoint> myKeys;
 //        Mat img_object = Highgui.imread(image, 0); //0 = CV_LOAD_IMAGE_GRAYSCALE
