@@ -17,7 +17,7 @@
   ~ We kindly ask you to refer the any or one of the following publications in
   ~ any publication mentioning or employing Lire:
   ~
-  ~ Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+  ~ Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval ~
   ~ An Extensible Java CBIR Library. In proceedings of the 16th ACM International
   ~ Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
   ~ URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -32,7 +32,7 @@
   ~ URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
   ~
   ~ Copyright statement:
-  ~ --------------------
+  ~ ~~~~~~~~~~~~~~~~~~~~
   ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
   ~     http://www.semanticmetadata.net/lire, http://www.lire-project.net
   -->
@@ -81,22 +81,22 @@
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>4.2.0</version>
+			<version>4.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
-			<version>4.2.0</version>
+			<version>4.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>4.2.0</version>
+			<version>4.10.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
-			<version>3.1.1</version>
+			<version>3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.stromberglabs</groupId>
