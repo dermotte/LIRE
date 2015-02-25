@@ -72,9 +72,10 @@ import java.util.*;
 public class TestSimple extends TestCase {
     //myDatabase
     private String indexPath = "myDatabase-index";
+//    private final String indexPath = "myDatabase-index-000000000";
     private final String collectionPath = "C:\\myDatabase";
     private final String queriesOutsideCollectionPath = "C:\\qimages";
-    private final String queriesFile = "C:\\queriesFile.txt";
+    private final String queriesFile = "queriesFile.txt";
 
     private int sample = 2000;  //Sample to create codebook
     private int clusters = 512; //Number of clusters for codebook
@@ -101,7 +102,7 @@ public class TestSimple extends TestCase {
         // Getting the queries:
         BufferedReader br = new BufferedReader(new FileReader(queriesFile));
         String line;
-        allQueries = new HashSet<String>(260);
+        allQueries = new HashSet<String>(100);
         while ((line = br.readLine()) != null) {
             line = line.trim();
             if (line.startsWith("#") || line.length() < 4) continue;
@@ -112,20 +113,26 @@ public class TestSimple extends TestCase {
     }
 
     public void testMAP() throws IOException {
+///*
+
         // INDEXING ...
         parallelIndexer.run();
 
         System.out.println("** SIMPLE BoVW using CEDD and Rand");
         SimpleFeatureBOVWBuilder simpleBovwBuilderCEDD = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.Random, sample, clusters);
+//        simpleBovwBuilderCEDD.setDeleteLocalFeatures(false);
         simpleBovwBuilderCEDD.index();
 
 //        System.out.println("** SIMPLE BoVW using FCTH and Rand");
 //        SimpleFeatureBOVWBuilder simpleBovwBuilderFCTH = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new FCTH(), SimpleBuilder.KeypointDetector.Random, sample, clusters);
+////        simpleBovwBuilderFCTH.setDeleteLocalFeatures(false);
 //        simpleBovwBuilderFCTH.index();
-
+//
 //        System.out.println("** SIMPLE BoVW using JCD and Rand");
 //        SimpleFeatureBOVWBuilder simpleBovwBuilderJCD = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new JCD(), SimpleBuilder.KeypointDetector.Random, sample, clusters);
 //        simpleBovwBuilderJCD.index();
+
+//*/
 
 
         // Read queries tha are not included in the collection
@@ -133,6 +140,9 @@ public class TestSimple extends TestCase {
         outsideQueries.clear();
         if (queriesOutsideCollectionPath != null)
         {
+            SimpleFeatureBOVWBuilder sCEDDBuilderforQueries = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.Random);
+//            SimpleFeatureBOVWBuilder sFCTHBuilderforQueries = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new FCTH(), SimpleBuilder.KeypointDetector.Random);
+//            SimpleFeatureBOVWBuilder sJCDBuilderforQueries = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new JCD(), SimpleBuilder.KeypointDetector.Random);
             ChainedDocumentBuilder documentBuilder = new ChainedDocumentBuilder();
             parallelIndexer.addBuilders(documentBuilder);
             System.out.println("Getting all queries in " + queriesOutsideCollectionPath + ".");
@@ -142,9 +152,10 @@ public class TestSimple extends TestCase {
             for (Iterator<String> iterator = files.iterator(); iterator.hasNext(); ) {
                 path = iterator.next();
                 query = documentBuilder.createDocument(ImageIO.read(new File(path)), path);
-                outsideQueries.add(simpleBovwBuilderCEDD.getVisualWords(query));
-//                outsideQueries.add(simpleBovwBuilderFCTH.getVisualWords(query));
-//                outsideQueries.add(simpleBovwBuilderJCD.getVisualWords(query));
+                query = sCEDDBuilderforQueries.getVisualWords(query);
+//                query = sFCTHBuilderforQueries.getVisualWords(query);
+//                query = sJCDBuilderforQueries.getVisualWords(query);
+                outsideQueries.add(query);
             }
         }
 
@@ -153,12 +164,11 @@ public class TestSimple extends TestCase {
 
         System.out.println("Searching...");
 
-        //NEK TESTS for SIMPLE//
         doSearch(new GenericFastImageSearcher(30, GenericDoubleLireFeature.class, (new SimpleBuilder()).getFieldName(SimpleBuilder.KeypointDetector.Random, new CEDD()) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "SimpleCEDDRand", reader);
 //        doSearch(new GenericFastImageSearcher(30, GenericDoubleLireFeature.class, (new SimpleBuilder()).getFieldName(SimpleBuilder.KeypointDetector.Random, new FCTH()) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "SimpleFCTHRand", reader);
 //        doSearch(new GenericFastImageSearcher(30, GenericDoubleLireFeature.class, (new SimpleBuilder()).getFieldName(SimpleBuilder.KeypointDetector.Random, new JCD()) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, true, reader), "SimpleJCDRand", reader);
 //
-        //perform weighting schemes for SIMPLE
+        //perform weighting schemes
 //        performWSs((new SimpleBuilder()).getFieldName(SimpleBuilder.KeypointDetector.Random, new CEDD()) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "SimpleCEDDRand", reader);
 //        performWSs((new SimpleBuilder()).getFieldName(SimpleBuilder.KeypointDetector.Random, new FCTH()) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "SimpleFCTHRand", reader);
 //        performWSs((new SimpleBuilder()).getFieldName(SimpleBuilder.KeypointDetector.Random, new JCD()) + DocumentBuilder.FIELD_NAME_BOVW_VECTOR, "SimpleJCDRand", reader);
