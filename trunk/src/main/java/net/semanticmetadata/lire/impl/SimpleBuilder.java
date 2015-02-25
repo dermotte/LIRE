@@ -67,6 +67,7 @@ import java.util.Random;
  * Created by mlux on 13.06.2014.
  */
 public class SimpleBuilder extends AbstractDocumentBuilder {
+    public static final int MAX_IMAGE_DIMENSION = 1024;
     public static final String Detector_CVSURF = "detCVSURF";
     public static final String Detector_CVSIFT = "detCVSIFT";
     public static final String Detector_RANDOM = "detRandom";
@@ -104,17 +105,23 @@ public class SimpleBuilder extends AbstractDocumentBuilder {
 
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
+        BufferedImage bimg = image;
+        // Scaling image is especially with the correlogram features very important!
+        // All images are scaled to guarantee a certain upper limit for indexing.
+        if (Math.max(image.getHeight(), image.getWidth()) > MAX_IMAGE_DIMENSION) {
+            bimg = ImageUtils.scaleImage(image, MAX_IMAGE_DIMENSION);
+        }
         if (kpdetect == KeypointDetector.CVSURF) {
-            return useCVSURF(image);
+            return useCVSURF(bimg);
         }
         else if (kpdetect == KeypointDetector.CVSIFT){
-            return useCVSIFT(image);
+            return useCVSIFT(bimg);
         }
         else if (kpdetect == KeypointDetector.Random){
-            return useRandom(image);
+            return useRandom(bimg);
         }
         else if (kpdetect == KeypointDetector.GaussRandom){
-            return useGaussRandom(image);
+            return useGaussRandom(bimg);
         }
         else
             throw new UnsupportedOperationException("Something was wrong in setting the desired detector");
