@@ -36,62 +36,47 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
  */
-package net.semanticmetadata.lire.imageanalysis.utils;
+
+package net.semanticmetadata.lire.utils;
+
+import net.semanticmetadata.lire.benchmarking.TestGeneral;
+import net.semanticmetadata.lire.imageanalysis.utils.ColorConversion;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
- * This class provides some basic routines for color space conversion on a pixel basis.
- * Date: 28.05.2008
- * Time: 11:27:46
- *
- * @author Mathias Lux, mathias@juggle.at
+ * Created by mlux on 25.02.2015.
  */
-public class ColorConversion {
-    /**
-     * Adapted from ImageJ documentation:
-     * http://www.f4.fhtw-berlin.de/~barthel/ImageJ/ColorInspector//HTMLHelp/farbraumJava.htm
-     *
-     * @param r   from [0-255]
-     * @param g   from [0-255]
-     * @param b   from [0-255]
-     * @param hsv where HSV values (results) are stored. hsv[0] is h from [0-359], hsv[1] is s from [0-100] and hsv[2] is v from [0-100]
-     */
-    public static void rgb2hsv(int r, int g, int b, int hsv[]) {
-
-        int min;    //Min. value of RGB
-        int max;    //Max. value of RGB
-        int delMax; //Delta RGB value
-
-        min = Math.min(r, g);
-        min = Math.min(min, b);
-
-        max = Math.max(r, g);
-        max = Math.max(max, b);
-
-        delMax = max - min;
-
-        float H = 0f, S = 0f;
-        float V = max / 255f;
-
-        if (delMax == 0) {
-            H = 0f;
-            S = 0f;
-        } else {
-            S = delMax / 255f;
-            if (r == max) {
-                if (g >= b) {
-                    H = ((g / 255f - b / 255f) / (delMax / 255f)) * 60;
-                } else {
-                    H = ((g / 255f - b / 255f) / ( delMax / 255f)) * 60 + 360;
+public class HistogramTest extends TestGeneral {
+    public void testCountHueValues() throws IOException {
+        int[] histogram = new int[360];
+        int[] hsv = new int[3];
+        ArrayList<String> images = FileUtils.getAllImages(new File("testdata/ferrari"), true);
+        for (Iterator<String> iterator = images.iterator(); iterator.hasNext(); ) {
+            String s = iterator.next();
+            BufferedImage image = ImageIO.read(new FileInputStream(s));
+            WritableRaster raster = image.getRaster();
+            int[] pixel = new int[3];
+            for (int i = 0; i < raster.getWidth(); i++) {
+                for (int j = 0; j < raster.getHeight(); j++) {
+                    raster.getPixel(i, j, pixel);
+                    ColorConversion.rgb2hsv(pixel[0],pixel[1],pixel[2], hsv);
+                    // check for color hue.
+                    if (hsv[1] > 15 && hsv[2] > 15)
+                        histogram[hsv[0]]++;
                 }
-            } else if (g == max) {
-                H = (2 + (b / 255f - r / 255f) / (delMax / 255f)) * 60;
-            } else if (b == max) {
-                H = (4 + (r / 255f - g / 255f) / (delMax / 255f)) * 60;
             }
         }
-        hsv[0] = (int) (H);
-        hsv[1] = (int) (S * 100);
-        hsv[2] = (int) (V * 100);
-    }
 
+        for (int i = 0; i < histogram.length; i++) {
+            System.out.printf("%d\t%d\n", i, histogram[i]);
+        }
+    }
 }
