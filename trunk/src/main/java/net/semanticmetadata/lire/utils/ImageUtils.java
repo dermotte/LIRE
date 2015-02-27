@@ -76,7 +76,8 @@ public class ImageUtils {
         }
         // create new image
         if (scaleFactor < 1 && (int) Math.round(originalWidth * scaleFactor) > 1 && (int) Math.round(originalHeight * scaleFactor) > 1) {
-            BufferedImage img = new BufferedImage((int) Math.round(originalWidth * scaleFactor), (int) Math.round(originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
+//            BufferedImage img = new BufferedImage((int) Math.round(originalWidth * scaleFactor), (int) Math.round(originalHeight * scaleFactor), BufferedImage.TYPE_INT_RGB);
+            BufferedImage img = new BufferedImage((int) Math.round(originalWidth * scaleFactor), (int) Math.round(originalHeight * scaleFactor), image.getType());
             // fast scale (Java 1.4 & 1.5)
             Graphics g = img.getGraphics();
 //        ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);

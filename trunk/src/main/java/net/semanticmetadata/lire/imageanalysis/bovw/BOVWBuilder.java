@@ -333,6 +333,7 @@ public class BOVWBuilder {
         // based on bug report from Einav Itamar <einavitamar@gmail.com>
         IndexWriter iw = LuceneUtils.createIndexWriter(((DirectoryReader) reader).directory(),
                 false, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
+        int counter = 0;
         for (int i = 0; i < reader.maxDoc(); i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
             Document d = reader.document(i);
@@ -341,8 +342,10 @@ public class BOVWBuilder {
                 createVisualWords(d, f);
                 // now write the new one. we use the identifier to update ;)
                 iw.updateDocument(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]), d);
+                counter++;
             }
         }
+        System.out.println(counter + " Documents were updated");
         iw.commit();
         // added to permanently remove the deleted docs.
         iw.forceMerge(1);
