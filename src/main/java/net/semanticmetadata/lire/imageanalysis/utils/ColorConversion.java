@@ -56,37 +56,25 @@ public class ColorConversion {
      * @param hsv where HSV values (results) are stored. hsv[0] is h from [0-359], hsv[1] is s from [0-100] and hsv[2] is v from [0-100]
      */
     public static void rgb2hsv(int r, int g, int b, int hsv[]) {
-
-        int min;    //Min. value of RGB
-        int max;    //Max. value of RGB
-        int delMax; //Delta RGB value
-
-        min = Math.min(r, g);
-        min = Math.min(min, b);
-
-        max = Math.max(r, g);
-        max = Math.max(max, b);
-
-        delMax = max - min;
+        int min = Math.min(Math.min(r, g), b);  //Min. value of RGB
+        int max = Math.max(Math.max(r, g), b);  //Max. value of RGB
+        float delta = (float) max - min;        //Delta RGB value
 
         float H = 0f, S = 0f;
         float V = max / 255f;
 
-        if (delMax == 0) {
-            H = 0f;
-            S = 0f;
-        } else {
-            S = delMax / 255f;
+        if (delta != 0) {
+            S = (delta / max);
             if (r == max) {
                 if (g >= b) {
-                    H = ((g / 255f - b / 255f) / (delMax / 255f)) * 60;
+                    H = ((g - b) / delta) * 60;
                 } else {
-                    H = ((g / 255f - b / 255f) / ( delMax / 255f)) * 60 + 360;
+                    H = ((g - b) / delta) * 60 + 360;
                 }
             } else if (g == max) {
-                H = (2 + (b / 255f - r / 255f) / (delMax / 255f)) * 60;
-            } else if (b == max) {
-                H = (4 + (r / 255f - g / 255f) / (delMax / 255f)) * 60;
+                H = (2 + ((b - r) / delta)) * 60;
+            } else {
+                H = (4 + ((r - g) / delta)) * 60;
             }
         }
         hsv[0] = (int) (H);
