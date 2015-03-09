@@ -22,7 +22,8 @@ With Lire you can easily [create an index](createindex.md) and [search through t
   
 I recommend to start with taking a look at the [SimpleApplication](https://code.google.com/p/lire/source/browse/#svn%2Ftrunk%2Fsamples%2Fsimpleapplication%253Fstate%253Dclosed) 
 package of LIRE, which covers the most needed stuff including indexing, search and extraction of image features for use 
-in other applications.    
+in other applications. It's also a good idea to work on the current SVN version of LIRE:
+[How to check out and set up LIRE in the IDEA IDE](https://www.youtube.com/watch?v=vG_yvB_UfAU&list=PLkb7TymgoWW4zfjepAmYNz03ABDQWGHfl).
 
 If you are searching for the Solr plugin of LIRE ... it's still under construction. Some global features are working fine 
 and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr)
