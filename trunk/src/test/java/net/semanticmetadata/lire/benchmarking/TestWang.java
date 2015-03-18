@@ -42,15 +42,13 @@
 package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.ImageSearcherFactory;
+import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureBOVWBuilder;
 import net.semanticmetadata.lire.imageanalysis.sift.Feature;
-import net.semanticmetadata.lire.impl.*;
+import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.impl.ParallelImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
@@ -100,14 +98,14 @@ public class TestWang extends TestCase {
         parallelIndexer = new ParallelIndexer(8, indexPath, testExtensive, true) {
             @Override
             public void addBuilders(ChainedDocumentBuilder builder) {
-//                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getCEDDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorLayoutBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getEdgeHistogramBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getFCTHDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJCDDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getJointHistogramDocumentBuilder());
-//                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
+                builder.addBuilder(DocumentBuilderFactory.getOpponentHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getPHOGDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getColorHistogramDocumentBuilder());
 //                builder.addBuilder(DocumentBuilderFactory.getScalableColorBuilder());
@@ -123,7 +121,7 @@ public class TestWang extends TestCase {
 //               builder.addBuilder(new SurfDocumentBuilder());
 //               builder.addBuilder(new MSERDocumentBuilder());
 //               builder.addBuilder(new SiftDocumentBuilder());
-               builder.addBuilder(new SimpleBuilder(new CEDD()));
+//               builder.addBuilder(new SimpleBuilder(new CEDD()));
 
 //                builder.addBuilder(new GenericDocumentBuilder(SPCEDD.class));
 //                builder.addBuilder(new GenericDocumentBuilder(SPFCTH.class));
@@ -160,8 +158,8 @@ public class TestWang extends TestCase {
 //        sh1.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
 //        sh1.index();
 
-        SimpleFeatureBOVWBuilder lodeb = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.CVSURF, 1000, 128);
-        lodeb.index();
+//        SimpleFeatureBOVWBuilder lodeb = new SimpleFeatureBOVWBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), new CEDD(), SimpleBuilder.KeypointDetector.CVSURF, 1000, 128);
+//        lodeb.index();
 //        SurfFeatureHistogramBuilder sh = new SurfFeatureHistogramBuilder(DirectoryReader.open(FSDirectory.open(new File(indexPath))), 1000, 128);
 //        sh.setProgressMonitor(new ProgressMonitor(null, "", "", 0, 100));
 //        sh.index();
@@ -237,13 +235,13 @@ public class TestWang extends TestCase {
 //        computeMAP(ImageSearcherFactory.createColorHistogramImageSearcher(1000), "Color Histogram - JSD");
 //        SimpleColorHistogram.DEFAULT_DISTANCE_FUNCTION = SimpleColorHistogram.DistanceFunction.TANIMOTO;
 
-//        computeMAP(new GenericFastImageSearcher(1000, CEDD.class), "CEDD", reader);
+        computeMAP(new GenericFastImageSearcher(1000, CEDD.class), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "Color Correlogram", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, true, reader), "Color Layout", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, true, reader), "Edge Histogram", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
-//        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "OpponentHistogram", reader);
+        computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, true, reader), "OpponentHistogram", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, PHOG.class, DocumentBuilder.FIELD_NAME_PHOG, true, reader), "PHOG", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, SimpleColorHistogram.class, true, reader), "RGB Color Histogram", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, true, reader), "Scalable Color", reader);
@@ -268,7 +266,7 @@ public class TestWang extends TestCase {
 //        computeMAP(new VisualWordsImageSearcher(1000, (new CEDD()).getFieldName()+"LoDe"), "LoDe SC", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, (new CEDD()).getFieldName()+"LoDe_Hist", true, reader), "LoDe-generic", reader);
 //        computeMAP(new VisualWordsImageSearcher(1000, DocumentBuilder.FIELD_NAME_SIFT_VISUAL_WORDS), "SIFT BoVW", reader);
-        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "Simple CEDD L2", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, GenericDoubleLireFeature.class, (new CEDD()).getFieldName() + "LoDe_Hist", true, reader), "Simple CEDD L2", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericByteLireFeature.class, DocumentBuilder.FIELD_NAME_SURF_VLAD, true, reader), "VLAD-SURF", reader);
 
     }
