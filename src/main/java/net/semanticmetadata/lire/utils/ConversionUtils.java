@@ -57,7 +57,6 @@ public class ConversionUtils {
         double[] result = new double[in.length];
         for (int i = 0; i < in.length; i++) {
             result[i] = (double) in[i];
-
         }
         return result;
     }
@@ -66,7 +65,6 @@ public class ConversionUtils {
         double[] result = new double[in.length];
         for (int i = 0; i < in.length; i++) {
             result[i] = (double) in[i];
-
         }
         return result;
     }

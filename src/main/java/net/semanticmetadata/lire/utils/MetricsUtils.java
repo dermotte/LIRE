@@ -111,13 +111,13 @@ public class MetricsUtils {
      * @param h2
      * @return
      */
-    public static float distL2(float[] h1, float[] h2) {
+    public static double distL2(float[] h1, float[] h2) {
         assert (h1.length == h2.length);
-        float sum = 0f;
+        double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += (h1[i] - h2[i]) * (h1[i] - h2[i]);
         }
-        return (float) Math.sqrt(sum);
+        return Math.sqrt(sum);
     }
 
     /**
@@ -149,33 +149,33 @@ public class MetricsUtils {
         return sum;
     }
 
-    public static float jsd(float[] h1, float[] h2) {
+    public static double jsd(float[] h1, float[] h2) {
         assert (h1.length == h2.length);
-        float sum = 0f;
+        double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
-            sum += (h1[i] > 0 ? (h1[i] / 2f) * Math.log((2f * h1[i]) / (h1[i] + h2[i])) : 0) +
-                    (h2[i] > 0 ? (h2[i] / 2f) * Math.log((2f * h2[i]) / (h1[i] + h2[i])) : 0);
+            sum += (h1[i] > 0 ? (h1[i] / 2d) * Math.log((2d * h1[i]) / (h1[i] + h2[i])) : 0) +
+                    (h2[i] > 0 ? (h2[i] / 2d) * Math.log((2d * h2[i]) / (h1[i] + h2[i])) : 0);
         }
         return sum;
     }
 
-    public static float jsd(double[] h1, double[] h2) {
+    public static double jsd(double[] h1, double[] h2) {
         assert (h1.length == h2.length);
-        double sum = 0f;
+        double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
-            sum += (h1[i] > 0 ? (h1[i] / 2f) * Math.log((2f * h1[i]) / (h1[i] + h2[i])) : 0) +
-                    (h2[i] > 0 ? (h2[i] / 2f) * Math.log((2f * h2[i]) / (h1[i] + h2[i])) : 0);
+            sum += (h1[i] > 0 ? (h1[i] / 2d) * Math.log((2d * h1[i]) / (h1[i] + h2[i])) : 0) +
+                    (h2[i] > 0 ? (h2[i] / 2d) * Math.log((2d * h2[i]) / (h1[i] + h2[i])) : 0);
         }
-        return (float) sum;
+        return sum;
     }
 
     public static double tanimoto(int[] h1, int[] h2) {
         assert (h1.length == h2.length);
-        double result = 0;
-        double tmp1 = 0;
-        double tmp2 = 0;
+        double result = 0d;
+        double tmp1 = 0d;
+        double tmp2 = 0d;
 
-        double tmpCnt1 = 0, tmpCnt2 = 0, tmpCnt3 = 0;
+        double tmpCnt1 = 0d, tmpCnt2 = 0d, tmpCnt3 = 0d;
 
         for (int i = 0; i < h1.length; i++) {
             tmp1 += h1[i];
@@ -201,9 +201,9 @@ public class MetricsUtils {
 
     public static double tanimoto(float[] h1, float[] h2) {
         assert (h1.length == h2.length);
-        double result = 0;
-        double tmp1 = 0;
-        double tmp2 = 0;
+        double result = 0d;
+        double tmp1 = 0d;
+        double tmp2 = 0d;
 
         double tmpCnt1 = 0, tmpCnt2 = 0, tmpCnt3 = 0;
 
@@ -231,9 +231,9 @@ public class MetricsUtils {
 
     public static double tanimoto(double[] h1, double[] h2) {
         assert (h1.length == h2.length);
-        double result = 0;
-        double tmp1 = 0;
-        double tmp2 = 0;
+        double result = 0d;
+        double tmp1 = 0d;
+        double tmp2 = 0d;
 
         double tmpCnt1 = 0, tmpCnt2 = 0, tmpCnt3 = 0;
 
@@ -260,8 +260,8 @@ public class MetricsUtils {
 
     public static double cosineCoefficient(double[] hist1, double[] hist2) {
         assert (hist1.length == hist2.length);
-        double distance = 0;
-        double tmp1 = 0, tmp2 = 0;
+        double distance = 0d;
+        double tmp1 = 0d, tmp2 = 0d;
         for (int i = 0; i < hist1.length; i++) {
             distance += hist1[i] * hist2[i];
             tmp1 += hist1[i] * hist1[i];
@@ -272,9 +272,9 @@ public class MetricsUtils {
         } else return 1d;
     }
 
-    public static float distL1(float[] h1, float[] h2) {
+    public static double distL1(float[] h1, float[] h2) {
         assert (h1.length == h2.length);
-        float sum = 0f;
+        double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += Math.abs(h1[i] - h2[i]);
         }
@@ -283,7 +283,7 @@ public class MetricsUtils {
 
     public static double distL1(byte[] h1, byte[] h2) {
         assert (h1.length == h2.length);
-        double sum = 0f;
+        double sum = 0d;
         for (int i = 0; i < h1.length; i++) {
             sum += Math.abs(h1[i] - h2[i]);
         }
@@ -297,7 +297,7 @@ public class MetricsUtils {
      */
     public static double[] normalizeMax(double[] histogram) {
         double[] result = new double[histogram.length];
-        double max = 0;
+        double max = 0d;
         for (int i = 0; i < histogram.length; i++) {
             max = Math.max(max, histogram[i]);
         }
@@ -314,7 +314,7 @@ public class MetricsUtils {
      */
     public static double[] normalizeL2(double[] histogram) {
         double[] result = new double[histogram.length];
-        double len = 0;
+        double len = 0d;
         for (int i = 0; i < histogram.length; i++) {
             len += histogram[i] * histogram[i];
         }
@@ -335,7 +335,7 @@ public class MetricsUtils {
      */
     public static double[] normalizeL1(double[] histogram) {
         double[] result = new double[histogram.length];
-        double len = 0;
+        double len = 0d;
         for (int i = 0; i < histogram.length; i++) {
             len += Math.abs(histogram[i]);
         }

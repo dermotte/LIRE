@@ -41,15 +41,21 @@
 
 package net.semanticmetadata.lire.utils;
 
-import net.semanticmetadata.lire.indexing.LireCustomCodec;
+import net.semanticmetadata.lire.indexers.LireCustomCodec;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.IOContext;
+import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
@@ -63,6 +69,9 @@ import java.io.IOException;
  * User: Mathias
  * Date: 03.08.11
  * Time: 09:33
+ *
+ * @author Mathias Lux, mathias@juggle.at
+ * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class LuceneUtils {
     /**
@@ -74,10 +83,20 @@ public class LuceneUtils {
      * Different types of analyzers
      */
     public enum AnalyzerType {
-        SimpleAnalyzer, WhitespaceAnalyzer, KeywordAnalyzer
+        SimpleAnalyzer, WhitespaceAnalyzer, KeywordAnalyzer, StandardAnalyzer
     }
 
-    ;
+    /**
+     * Creates an IndexWriter for given index path, with a SimpleAnalyzer.
+     *
+     * @param indexPath the path to the index directory
+     * @param create    set to true if you want to create a new index
+     * @return the IndexWriter
+     * @throws IOException
+     */
+    public static IndexWriter createIndexWriter(String indexPath, boolean create) throws IOException {
+        return createIndexWriter(indexPath, create, AnalyzerType.SimpleAnalyzer);                       //TODO: Simple or Standar ??
+    }
 
     /**
      * Creates an IndexWriter for given index path, with given analyzer.
@@ -110,6 +129,8 @@ public class LuceneUtils {
             tmpAnalyzer = new WhitespaceAnalyzer();  // WhitespaceTokenizer
         else if (analyzer == AnalyzerType.KeywordAnalyzer)
             tmpAnalyzer = new KeywordAnalyzer(); // entire string as one token.
+        else if (analyzer == AnalyzerType.StandardAnalyzer)
+            tmpAnalyzer = new StandardAnalyzer();
 
         // The config
         IndexWriterConfig config = new IndexWriterConfig(LUCENE_VERSION, tmpAnalyzer);
@@ -119,7 +140,6 @@ public class LuceneUtils {
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND); // create new if none is there, append otherwise.
 
         config.setCodec(new LireCustomCodec());
-
         return new IndexWriter(directory, config);
     }
 
@@ -141,25 +161,61 @@ public class LuceneUtils {
     }
 
     /**
-     * Creates an IndexWriter for given index path, with a SimpleAnalyzer.
-     *
-     * @param indexPath the path to the index directory
-     * @param create    set to true if you want to create a new index
-     * @return the IndexWriter
-     * @throws IOException
-     */
-    public static IndexWriter createIndexWriter(String indexPath, boolean create) throws IOException {
-        return createIndexWriter(indexPath, create, AnalyzerType.SimpleAnalyzer);
-    }
-
-    /**
      * Optimizes an index.
      * @param iw
      * @throws IOException
      */
-    public static void optimizeIndex(IndexWriter iw) throws IOException {
-        iw.forceMerge(0);
+    public static void optimizeWriter(IndexWriter iw) throws IOException {
+        iw.forceMerge(1);
     }
+
+    public static void commitWriter(IndexWriter iw) throws IOException {
+        iw.commit();
+    }
+
+    public static void closeWriter(IndexWriter iw) throws IOException {
+        iw.close();
+    }
+
+
+
+
+    public static IndexReader openIndexReader(String indexPath) throws IOException {
+        return openIndexReader(FSDirectory.open(new File(indexPath)), false);
+    }
+
+    public static IndexReader openIndexReader(String indexPath, boolean RAMDirectory) throws IOException {
+        return openIndexReader(FSDirectory.open(new File(indexPath)), RAMDirectory);
+    }
+
+    public static IndexReader openIndexReader(Directory directory) throws IOException {
+        return openIndexReader(directory, false);
+    }
+
+    public static IndexReader openIndexReader(Directory directory, boolean RAMDirectory) throws IOException {
+        if (RAMDirectory)
+            return DirectoryReader.open(new RAMDirectory(directory, IOContext.READONCE));
+        else
+            return DirectoryReader.open(directory);
+    }
+
+    public static IndexReader openIndexReader(IndexWriter writer, boolean applyDeletes) throws IOException {
+        return DirectoryReader.open(writer, applyDeletes);
+    }
+
+    public static void closeReader(IndexReader reader) throws IOException {
+        reader.close();
+    }
+
+
+    public static IndexSearcher openIndexSearcher(IndexReader reader){
+        return new IndexSearcher(reader);
+    }
+
+
+
+
+
 
     /**
      * Method for 'converting' ByteRefs to bytes. This is a horrible way to do it. Main goal is to make it work. Later

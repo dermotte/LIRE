@@ -41,20 +41,21 @@
 
 package net.semanticmetadata.lire.utils;
 
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.ColorLayout;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.TopDocs;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.List;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.io.File;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -65,6 +66,7 @@ import java.util.zip.ZipOutputStream;
  *
  * @author Mathias Lux, mathias@juggle.at
  * @author sangupta, sandy.pec@gmail.com (closed streams in finally clause)
+ * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class FileUtils {
     enum FileTypes {JPG, GIF, TIF, PNG, PDF, UNKNOWN};
@@ -183,7 +185,7 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
-    public static String saveImageResultsToHtml(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
+    public static String saveImageResultsToHtml(String prefix, ImageSearchHits hits, String queryImage, IndexReader reader) throws IOException {
         long l = System.currentTimeMillis() / 1000;
         String fileName = "results-" + prefix + "-" + l + ".html";
         BufferedWriter bw = new BufferedWriter(new FileWriter(fileName));
@@ -194,7 +196,7 @@ public class FileUtils {
         bw.write("<a href=\"file://" + queryImage + "\"><img src=\"file://" + queryImage + "\"></a><p>\n");
         bw.write("<h3>results</h3>\n");
         for (int i = 0; i < hits.length(); i++) {
-            bw.write(hits.score(i) + " - <a href=\"file://" + hits.doc(i).get("descriptorImageIdentifier") + "\"><img src=\"file://" + hits.doc(i).get("descriptorImageIdentifier") + "\"></a><p>\n");
+            bw.write(hits.score(i) + " - <a href=\"file://" + reader.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + "\"><img src=\"file://" + reader.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + "\"></a><p>\n");
         }
         bw.write("</body>\n" +
                 "</html>");
@@ -257,13 +259,13 @@ public class FileUtils {
     }
 
 
-    public static void saveImageResultsToPng(String prefix, ImageSearchHits hits, String queryImage) throws IOException {
+    public static void saveImageResultsToPng(String prefix, ImageSearchHits hits, String queryImage, IndexReader reader) throws IOException {
         LinkedList<BufferedImage> results = new LinkedList<BufferedImage>();
         int width = 0;
         for (int i = 0; i < hits.length(); i++) {
             // hits.score(i)
             // hits.doc(i).get("descriptorImageIdentifier")
-            BufferedImage tmp = ImageIO.read(new FileInputStream(hits.doc(i).get("descriptorImageIdentifier")));
+            BufferedImage tmp = ImageIO.read(new FileInputStream(reader.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]));
 //            if (tmp.getHeight() > 200) {
             double factor = 200d / ((double) tmp.getHeight());
             tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);
@@ -348,37 +350,37 @@ public class FileUtils {
      * @throws IOException
      */
     @SuppressWarnings("unused")
-	private static FileTypes identifyFileType(File file) throws IOException {
+    private static FileTypes identifyFileType(File file) throws IOException {
         byte[] buffer = new byte[8];
         InputStream in = null;
         try {
-			in = new FileInputStream(file);
-	        in.read(buffer);
-	        if ((buffer[0] == -119) && (buffer[1] == 0x50) && (buffer[2] == 0x4E) && (buffer[3] == 0x47)) {
-	            // PNG: 89 50 4E 47 ...
-	            return FileTypes.PNG;
-	        } else if ((buffer[0] == 0xFF) && (buffer[1] == 0xD8)) {
-	            // JPEG image files begin with FF D8 and end with FF D9
-	            return FileTypes.JPG;
-	        } else if ((buffer[0] == 0x25) && (buffer[1] == 0x50) && (buffer[2] == 0x44) && (buffer[3] == 0x46)) {
-	            // PDF 25 50 44 46
-	            return FileTypes.PDF;
-	        } else if ((buffer[0] == 0x49) && (buffer[1] == 0x49) && (buffer[2] == 0x2A) && (buffer[3] == 0x00)) {
-	            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
-	            return FileTypes.TIF;
-	        } else if ((buffer[0] == 0x4D) && (buffer[1] == 0x4D) && (buffer[2] == 0x00) && (buffer[3] == 0x2A)) {
-	            // TIFF: 49 49 2A 00 or 4D 4D 00 2A
-	            return FileTypes.TIF;
-	        } else if ((buffer[0] == 0x47) && (buffer[1] == 0x49) && (buffer[2] == 0x46) && (buffer[3] == 0x38)) {
-	            // GIF: 47 49 46 38 ...
-	            return FileTypes.GIF;
-	        } else {
-	            return FileTypes.UNKNOWN;
-	        }
+            in = new FileInputStream(file);
+            in.read(buffer);
+            if ((buffer[0] == -119) && (buffer[1] == 0x50) && (buffer[2] == 0x4E) && (buffer[3] == 0x47)) {
+                // PNG: 89 50 4E 47 ...
+                return FileTypes.PNG;
+            } else if ((buffer[0] == 0xFF) && (buffer[1] == 0xD8)) {
+                // JPEG image files begin with FF D8 and end with FF D9
+                return FileTypes.JPG;
+            } else if ((buffer[0] == 0x25) && (buffer[1] == 0x50) && (buffer[2] == 0x44) && (buffer[3] == 0x46)) {
+                // PDF 25 50 44 46
+                return FileTypes.PDF;
+            } else if ((buffer[0] == 0x49) && (buffer[1] == 0x49) && (buffer[2] == 0x2A) && (buffer[3] == 0x00)) {
+                // TIFF: 49 49 2A 00 or 4D 4D 00 2A
+                return FileTypes.TIF;
+            } else if ((buffer[0] == 0x4D) && (buffer[1] == 0x4D) && (buffer[2] == 0x00) && (buffer[3] == 0x2A)) {
+                // TIFF: 49 49 2A 00 or 4D 4D 00 2A
+                return FileTypes.TIF;
+            } else if ((buffer[0] == 0x47) && (buffer[1] == 0x49) && (buffer[2] == 0x46) && (buffer[3] == 0x38)) {
+                // GIF: 47 49 46 38 ...
+                return FileTypes.GIF;
+            } else {
+                return FileTypes.UNKNOWN;
+            }
         } finally {
-        	if(in != null) {
-        		in.close();
-        	}
+            if(in != null) {
+                in.close();
+            }
         }
     }
 
@@ -398,6 +400,20 @@ public class FileUtils {
             result = false;
         }
         return result;
+    }
+
+    public static ArrayList<String> readFileLines(File directory, boolean descendIntoSubDirectories) throws IOException {
+        ArrayList<String> resultList = new ArrayList<String>(256);
+        String[] extensions = new String[]{"jpg", "JPG", "jpeg", "png", "gif", "tif", "tiff"};
+
+        System.out.print("Getting all images in " + directory.getCanonicalPath() + " " + ((descendIntoSubDirectories) ? "including" : "not including") + " those in subdirectories");
+        java.util.List<File> files = (LinkedList<File>) org.apache.commons.io.FileUtils.listFiles(directory, extensions, descendIntoSubDirectories);
+        System.out.println(" ~ Found " + files.size() + " images");
+        for (File file : files) {
+            resultList.add(file.getCanonicalPath());
+        }
+
+        return resultList;
     }
 
     /**
