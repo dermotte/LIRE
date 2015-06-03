@@ -36,7 +36,7 @@ target/*
 .settings/*
 testindextest/*
 index-large-new/*
-*.obj
+#*.obj
 duplicate__*
 bovw-test/*
 index-*/*
