@@ -39,9 +39,6 @@
 
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.AbstractImageSearcher;
-import net.semanticmetadata.lire.ImageDuplicates;
-import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
@@ -71,7 +68,7 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
     private int numMaxHits;
     private String fieldName;
     private Similarity similarity = new DefaultSimilarity();
-//    private Similarity similarity = new MySimilarity();
+    //    private Similarity similarity = new MySimilarity();
 //    private Similarity similarity = new BM25Similarity();
     QueryParser qp;
 
@@ -105,11 +102,11 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
             tq = qp.parse(queryString);
             TopDocs docs = isearcher.search(tq, numMaxHits);
             LinkedList<SimpleResult> res = new LinkedList<SimpleResult>();
-            float maxDistance = 0;
+            double maxDistance = 0d;
             for (int i = 0; i < docs.scoreDocs.length; i++) {
-                float d = 1f / docs.scoreDocs[i].score;
+                double d = 1d / docs.scoreDocs[i].score;
                 maxDistance = Math.max(d, maxDistance);
-                SimpleResult sr = new SimpleResult(d, reader.document(docs.scoreDocs[i].doc), i);
+                SimpleResult sr = new SimpleResult(d, docs.scoreDocs[i].doc);
                 res.add(sr);
             }
             sh = new SimpleImageSearchHits(res, maxDistance);

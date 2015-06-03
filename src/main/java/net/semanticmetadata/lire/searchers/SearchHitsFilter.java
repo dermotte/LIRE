@@ -51,7 +51,7 @@ import java.io.IOException;
  * Created 03.08.11, 10:28 <br/>
  *
  * @author Mathias Lux, mathias@juggle.at
- * @see net.semanticmetadata.lire.filter.RerankFilter
+ * @see net.semanticmetadata.lire.filters.RerankFilter
  */
 public interface SearchHitsFilter {
     /**
@@ -61,7 +61,7 @@ public interface SearchHitsFilter {
      * @param query the original query document
      * @return
      */
-    public ImageSearchHits filter(ImageSearchHits results, Document query);
+    public ImageSearchHits filter(ImageSearchHits results, IndexReader reader, Document query);
 
     /**
      * Filters the result list of a Lucene search based on image features.

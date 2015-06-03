@@ -40,13 +40,17 @@
  */
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.AbstractImageSearcher;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageDuplicates;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
-import net.semanticmetadata.lire.utils.ImageUtils;
+import net.semanticmetadata.lire.aggregators.Aggregator;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.builders.GlobalDocumentBuilder;
+import net.semanticmetadata.lire.builders.LocalDocumentBuilder;
+import net.semanticmetadata.lire.builders.SimpleDocumentBuilder;
+import net.semanticmetadata.lire.classifiers.Cluster;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.SIMPLE.SimpleExtractor;
+import net.semanticmetadata.lire.indexers.parallel.ExtractorItem;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiFields;
@@ -55,112 +59,211 @@ import org.apache.lucene.util.Bits;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Level;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 /**
- * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net
- * <br>Date: 01.02.2006
- * <br>Time: 00:17:02
+ * Created by mlux on 01/02/2006.
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class GenericFastImageSearcher extends AbstractImageSearcher {
     protected Logger logger = Logger.getLogger(getClass().getName());
-    Class<?> descriptorClass;
-    String fieldName;
+    protected String fieldName, codebookName;
     protected LireFeature cachedInstance = null;
+    protected ExtractorItem extractorItem;
     protected boolean isCaching = false;
 
-    protected LinkedList<byte[]> featureCache;
-    protected IndexReader reader;
+    protected LinkedHashMap<Integer, byte[]> featureCache = null;
+    protected IndexReader reader = null;
 
-    protected int maxHits = 10;
-    protected TreeSet<SimpleResult> docs;
-    protected float maxDistance;
+    protected int maxHits = 50;
+    protected TreeSet<SimpleResult> docs = new TreeSet<SimpleResult>();
+    protected double maxDistance;
     protected boolean useSimilarityScore = false;
 
-    /**
-     * Creates a new ImageSearcher for the given feature.
-     *
-     * @param maxHits         the maximum number of hits
-     * @param descriptorClass the feature class. It has to implement {@link LireFeature}
-     * @param fieldName       a custom field name for the index.
-     * @see LireFeature
-     */
-    public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName) {
+    Aggregator aggregator;
+    private String codebooksDir;
+
+    protected LinkedBlockingQueue<Map.Entry<Integer, byte[]>> queue = new LinkedBlockingQueue<Map.Entry<Integer, byte[]>>(100);
+    protected int numThreads = DocumentBuilder.NUM_OF_THREADS;
+
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends GlobalFeature> globalFeature) {
         this.maxHits = maxHits;
-        docs = new TreeSet<SimpleResult>();
-        this.descriptorClass = descriptorClass;
-        this.fieldName = fieldName;
+        this.extractorItem = new ExtractorItem(globalFeature);
+        this.fieldName = extractorItem.getFieldName();
         try {
-            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
+            this.cachedInstance = (GlobalFeature)extractorItem.getExtractorInstance().getClass().newInstance();
         } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
+            e.printStackTrace();
         }
         init();
     }
 
-    /**
-     * Creates a new ImageSearcher for the given feature.
-     *
-     * @param maxHits            the maximum number of hits
-     * @param descriptorClass    the feature class. It has to implement {@link LireFeature}
-     * @param fieldName          a custom field name for the index.
-     * @param useSimilarityScore return similarity values normalized in [0,1] instead of distance values for results.
-     * @see LireFeature
-     */
-    public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName, boolean useSimilarityScore) {
+    public GenericFastImageSearcher(int maxHits, Class<? extends LocalFeatureExtractor> localFeatureExtractor, Aggregator aggregator, int codebookSize, String codebooksDir) {
         this.maxHits = maxHits;
-        docs = new TreeSet<SimpleResult>();
-        this.descriptorClass = descriptorClass;
-        this.fieldName = fieldName;
+        this.codebooksDir = codebooksDir;
+        this.extractorItem = new ExtractorItem(localFeatureExtractor);
+        this.fieldName = extractorItem.getFieldName() + aggregator.getFieldName() + codebookSize;
+        try {
+            this.cachedInstance = ((LocalFeatureExtractor)extractorItem.getExtractorInstance()).getClassOfFeatures().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.aggregator = aggregator;
+        init();
+    }
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector, Aggregator aggregator, int codebookSize, String codebooksDir) {
+        this.maxHits = maxHits;
+        this.codebooksDir = codebooksDir;
+        this.extractorItem = new ExtractorItem(globalFeatureClass, detector);
+        this.fieldName = extractorItem.getFieldName() + aggregator.getFieldName() + codebookSize;
+        try {
+            this.cachedInstance = ((SimpleExtractor)extractorItem.getExtractorInstance()).getClassOfFeatures().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.aggregator = aggregator;
+        init();
+    }
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends GlobalFeature> globalFeature, boolean isCaching, IndexReader reader) {
+        this.maxHits = maxHits;
+        this.extractorItem = new ExtractorItem(globalFeature);
+        this.fieldName = extractorItem.getFieldName();
+        try {
+            this.cachedInstance = (GlobalFeature)extractorItem.getExtractorInstance().getClass().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.isCaching = isCaching;
+        this.reader = reader;
+        init();
+    }
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends LocalFeatureExtractor> localFeatureExtractor, Aggregator aggregator, int codebookSize, boolean isCaching, IndexReader reader, String codebooksDir) {
+        this.maxHits = maxHits;
+        this.codebooksDir = codebooksDir;
+        this.extractorItem = new ExtractorItem(localFeatureExtractor);
+        this.fieldName = extractorItem.getFieldName() + aggregator.getFieldName() + codebookSize;
+        this.codebookName = extractorItem.getFieldName() + codebookSize;
+        try {
+            this.cachedInstance = ((LocalFeatureExtractor)extractorItem.getExtractorInstance()).getClassOfFeatures().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.isCaching = isCaching;
+        this.reader = reader;
+        this.aggregator = aggregator;
+        init();
+    }
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector, Aggregator aggregator, int codebookSize, boolean isCaching, IndexReader reader, String codebooksDir) {
+        this.maxHits = maxHits;
+        this.codebooksDir = codebooksDir;
+        this.extractorItem = new ExtractorItem(globalFeatureClass, detector);
+        this.fieldName = extractorItem.getFieldName() + aggregator.getFieldName() + codebookSize;
+        this.codebookName = extractorItem.getFieldName() + codebookSize;
+        try {
+            this.cachedInstance = ((SimpleExtractor)extractorItem.getExtractorInstance()).getClassOfFeatures().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.isCaching = isCaching;
+        this.reader = reader;
+        this.aggregator = aggregator;
+        init();
+    }
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends GlobalFeature> globalFeature, boolean isCaching, IndexReader reader, boolean useSimilarityScore) {
+        this.maxHits = maxHits;
+        this.extractorItem = new ExtractorItem(globalFeature);
+        this.fieldName = extractorItem.getFieldName();
+        try {
+            this.cachedInstance = (GlobalFeature)extractorItem.getExtractorInstance().getClass().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
         this.useSimilarityScore = useSimilarityScore;
-        try {
-            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
-        }
+        this.isCaching = isCaching;
+        this.reader = reader;
         init();
     }
 
-    /**
-     * Creates a new ImageSearcher for the given feature.
-     *
-     * @param maxHits         the maximum number of hits
-     * @param descriptorClass the feature class. It has to implement {@link LireFeature}
-     * @see LireFeature
-     */
-    public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass) {
+    public GenericFastImageSearcher(int maxHits, Class<? extends LocalFeatureExtractor> localFeatureExtractor, Aggregator aggregator, int codebookSize, boolean isCaching, IndexReader reader, boolean useSimilarityScore, String codebooksDir) {
         this.maxHits = maxHits;
-        docs = new TreeSet<SimpleResult>();
-        this.descriptorClass = descriptorClass;
+        this.codebooksDir = codebooksDir;
+        this.extractorItem = new ExtractorItem(localFeatureExtractor);
+        this.fieldName = extractorItem.getFieldName() + aggregator.getFieldName() + codebookSize;
+        this.codebookName = extractorItem.getFieldName() + codebookSize;
         try {
-            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
+            this.cachedInstance = ((LocalFeatureExtractor)extractorItem.getExtractorInstance()).getClassOfFeatures().newInstance();
         } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
+            e.printStackTrace();
         }
-        this.fieldName = cachedInstance.getFieldName();
+        this.useSimilarityScore = useSimilarityScore;
+        this.isCaching = isCaching;
+        this.reader = reader;
+        this.aggregator = aggregator;
         init();
     }
+
+    public GenericFastImageSearcher(int maxHits, Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector, Aggregator aggregator, int codebookSize, boolean isCaching, IndexReader reader, boolean useSimilarityScore, String codebooksDir) {
+        this.maxHits = maxHits;
+        this.codebooksDir = codebooksDir;
+        this.extractorItem = new ExtractorItem(globalFeatureClass, detector);
+        this.fieldName = extractorItem.getFieldName() + aggregator.getFieldName() + codebookSize;
+        this.codebookName = extractorItem.getFieldName() + codebookSize;
+        try {
+            this.cachedInstance = ((SimpleExtractor)extractorItem.getExtractorInstance()).getClassOfFeatures().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.useSimilarityScore = useSimilarityScore;
+        this.isCaching = isCaching;
+        this.reader = reader;
+        this.aggregator = aggregator;
+        init();
+    }
+
 
     protected void init() {
         // put all respective features into an in-memory cache ...
         if (isCaching && reader != null) {
+            Bits liveDocs = MultiFields.getLiveDocs(reader);
             int docs = reader.numDocs();
-            featureCache = new LinkedList<byte[]>();
+            featureCache = new LinkedHashMap<Integer, byte[]>(docs);
             try {
                 Document d;
                 for (int i = 0; i < docs; i++) {
-                    d = reader.document(i);
-                    cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
-                    featureCache.add(cachedInstance.getByteArrayRepresentation());
+                    if (!(reader.hasDeletions() && !liveDocs.get(i))) {
+                        d = reader.document(i);
+                        cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+//                        featureCache.put(i, new SearchItem(cachedInstance.getByteArrayRepresentation(), new SimpleResult(-1d, i, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
+//                        featureCache.put(i, new SearchItem(i, cachedInstance.getByteArrayRepresentation(), d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]));
+                        featureCache.put(i, cachedInstance.getByteArrayRepresentation());
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -168,103 +271,22 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         }
     }
 
-    /**
-     * Creates a n ImageSearcher for the given feature. If isCaching is set to true, the features will be hold in memory,
-     * which speeds up search significantly. However, this takes sometimes a lot of memory, so use it carefully.
-     *
-     * @param maxHits         the maximum number of hits
-     * @param descriptorClass the feature class. It has to implement {@link LireFeature}
-     * @param fieldName       a custom field name for the index.
-     * @param isCaching       set to true if you want to search in-memory.
-     * @param reader          the IndexReader used for accessing the index.
-     */
-    public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, String fieldName, boolean isCaching, IndexReader reader) {
-        this.isCaching = isCaching;
-        this.maxHits = maxHits;
-        docs = new TreeSet<SimpleResult>();
-        this.descriptorClass = descriptorClass;
-        this.fieldName = fieldName;
-        try {
-            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
-        }
-        this.reader = reader;
-        init();
-    }
-
-    /**
-     * Creates a n ImageSearcher for the given feature. If isCaching is set to true, the features will be hold in memory,
-     * which speeds up search significantly. However, this takes sometimes a lot of memory, so use it carefully.
-     *
-     * @param maxHits         the maximum number of hits
-     * @param descriptorClass the feature class. It has to implement {@link LireFeature}
-     * @param isCaching
-     * @param reader          reader the IndexReader used for accessing the index.
-     */
-    public GenericFastImageSearcher(int maxHits, Class<?> descriptorClass, boolean isCaching, IndexReader reader) {
-        this.isCaching = isCaching;
-        this.maxHits = maxHits;
-        docs = new TreeSet<SimpleResult>();
-        this.descriptorClass = descriptorClass;
-        try {
-            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
-        }
-        this.reader = reader;
-        this.fieldName = cachedInstance.getFieldName();
-        init();
-    }
-
-    public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
-        logger.finer("Starting extraction.");
-        LireFeature lireFeature = null;
-        SimpleImageSearchHits searchHits = null;
-        try {
-            lireFeature = (LireFeature) descriptorClass.newInstance();
-            // Scaling image is especially with the correlogram features very important!
-            BufferedImage bimg = image;
-            if (Math.max(image.getHeight(), image.getWidth()) > GenericDocumentBuilder.MAX_IMAGE_DIMENSION) {
-                bimg = ImageUtils.scaleImage(image, GenericDocumentBuilder.MAX_IMAGE_DIMENSION);
-            }
-            lireFeature.extract(bimg);
-            logger.fine("Extraction from image finished");
-
-            float maxDistance = findSimilar(reader, lireFeature);
-            if (!useSimilarityScore) {
-                searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
-            } else {
-                searchHits = new SimpleImageSearchHits(this.docs, maxDistance, useSimilarityScore);
-            }
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
-        }
-        return searchHits;
-    }
 
     /**
      * @param reader
      * @param lireFeature
      * @return the maximum distance found for normalizing.
-     * @throws java.io.IOException
+     * @throws IOException
      */
-    protected float findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
-        maxDistance = Float.MAX_VALUE;
-//        overallMaxDistance = -1f;
+    protected double findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
+        maxDistance = -1d;
 
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
         Bits liveDocs = MultiFields.getLiveDocs(reader);
         Document d;
-        float tmpDistance;
+        double tmpDistance;
         int docs = reader.numDocs();
         if (!isCaching) {
             // we read each and every document from the index and then we compare it to the query.
@@ -276,42 +298,144 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
                 assert (tmpDistance >= 0);
                 // if the array is not full yet:
                 if (this.docs.size() < maxHits) {
-                    this.docs.add(new SimpleResult(tmpDistance, d, i));
+                    this.docs.add(new SimpleResult(tmpDistance, i));
                     if (tmpDistance > maxDistance) maxDistance = tmpDistance;
                 } else if (tmpDistance < maxDistance) {
                     // if it is nearer to the sample than at least on of the current set:
                     // remove the last one ...
                     this.docs.remove(this.docs.last());
                     // add the new one ...
-                    this.docs.add(new SimpleResult(tmpDistance, d, i));
+                    this.docs.add(new SimpleResult(tmpDistance, i));
                     // and set our new distance border ...
                     maxDistance = this.docs.last().getDistance();
                 }
             }
         } else {
-            // we use the in-memory cache to find the matching docs from the index.
-            int count = 0;
-            for (Iterator<byte[]> iterator = featureCache.iterator(); iterator.hasNext(); ) {
-                cachedInstance.setByteArrayRepresentation(iterator.next());
-                tmpDistance = lireFeature.getDistance(cachedInstance);
-                assert (tmpDistance >= 0);
-                // if the array is not full yet:
-                if (this.docs.size() < maxHits) {
-                    this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
-                    if (tmpDistance > maxDistance) maxDistance = tmpDistance;
-                } else if (tmpDistance < maxDistance) {
-                    // if it is nearer to the sample than at least on of the current set:
-                    // remove the last one ...
-                    this.docs.remove(this.docs.last());
-                    // add the new one ...
-                    this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
-                    // and set our new distance border ...
-                    maxDistance = this.docs.last().getDistance();
+            LinkedList<Consumer> tasks = new LinkedList<Consumer>();
+            LinkedList<Thread> threads = new LinkedList<Thread>();
+            Consumer consumer;
+            Thread thread;
+            Thread p = new Thread(new Producer());
+            p.start();
+            for (int i = 0; i < numThreads; i++) {
+                consumer = new Consumer(lireFeature);
+                thread = new Thread(consumer);
+                thread.start();
+                tasks.add(consumer);
+                threads.add(thread);
+            }
+            for (Thread next : threads) {
+                try {
+                    next.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                count++;
+            }
+            TreeSet<SimpleResult> tmpDocs;
+            boolean flag;
+            SimpleResult simpleResult;
+            for (Consumer task : tasks) {
+                tmpDocs = task.getResult();
+                flag = true;
+                while (flag && (tmpDocs.size() > 0)){
+                    simpleResult = tmpDocs.pollFirst();
+                    if (this.docs.size() < maxHits) {
+                        this.docs.add(simpleResult);
+                        if (simpleResult.getDistance() > maxDistance) maxDistance = simpleResult.getDistance();
+                    } else if (simpleResult.getDistance() < maxDistance) {
+//                        this.docs.remove(this.docs.last());
+                        this.docs.pollLast();
+                        this.docs.add(simpleResult);
+                        maxDistance = this.docs.last().getDistance();
+                    } else flag = false;
+                }
             }
         }
         return maxDistance;
+    }
+
+    class Producer implements Runnable {
+
+        private Producer() {
+            queue.clear();
+        }
+
+        public void run() {
+            for (Map.Entry<Integer, byte[]> documentEntry : featureCache.entrySet()) {
+                try {
+                    queue.put(documentEntry);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            LinkedHashMap<Integer, byte[]> tmpMap = new LinkedHashMap<Integer, byte[]>(numThreads * 3);
+            for (int i = 1; i < numThreads * 3; i++)  {
+                tmpMap.put(-i, null);
+            }
+            for (Map.Entry<Integer, byte[]> documentEntry : tmpMap.entrySet()) {
+                try {
+                    queue.put(documentEntry);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private class Consumer implements Runnable {
+        private boolean locallyEnded = false;
+        private TreeSet<SimpleResult> localDocs  = new TreeSet<SimpleResult>();
+        private LireFeature localCachedInstance;
+        private LireFeature localLireFeature;
+
+        private Consumer(LireFeature lireFeature) {
+            try {
+                this.localCachedInstance = cachedInstance.getClass().newInstance();
+                this.localLireFeature = lireFeature.getClass().newInstance();
+                this.localLireFeature.setByteArrayRepresentation(lireFeature.getByteArrayRepresentation());
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run() {
+            Map.Entry<Integer, byte[]> tmp;
+            double tmpDistance;
+            double localMaxDistance = -1d;
+            while (!locallyEnded) {
+                try {
+                    tmp = queue.take();
+                    if (tmp.getKey() < 0 ) locallyEnded = true;
+                    if (!locallyEnded) {    // && tmp != -1
+                        localCachedInstance.setByteArrayRepresentation(tmp.getValue());
+                        tmpDistance = localLireFeature.getDistance(localCachedInstance);
+                        assert (tmpDistance >= 0);
+                        // if the array is not full yet:
+                        if (localDocs.size() < maxHits) {
+                            localDocs.add(new SimpleResult(tmpDistance, tmp.getKey()));
+                            if (tmpDistance > localMaxDistance) localMaxDistance = tmpDistance;
+                        } else if (tmpDistance < localMaxDistance) {
+                            // if it is nearer to the sample than at least on of the current set:
+                            // remove the last one ...
+//                            localDocs.remove(localDocs.last());
+                            localDocs.pollLast();
+                            // add the new one ...
+                            localDocs.add(new SimpleResult(tmpDistance, tmp.getKey()));
+                            // and set our new distance border ...
+                            localMaxDistance = localDocs.last().getDistance();
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.getMessage();
+                }
+            }
+        }
+
+        public TreeSet<SimpleResult> getResult() {
+            return localDocs;
+        }
     }
 
     /**
@@ -321,91 +445,134 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
      * @param lireFeature
      * @return the distance between the given feature and the feature stored in the document.
      */
-    protected float getDistance(Document document, LireFeature lireFeature) {
+    protected double getDistance(Document document, LireFeature lireFeature) {
         if (document.getField(fieldName).binaryValue() != null && document.getField(fieldName).binaryValue().length > 0) {
             cachedInstance.setByteArrayRepresentation(document.getField(fieldName).binaryValue().bytes, document.getField(fieldName).binaryValue().offset, document.getField(fieldName).binaryValue().length);
             return lireFeature.getDistance(cachedInstance);
         } else {
-            logger.warning("No feature stored in this document! (" + descriptorClass.getName() + ")");
+            logger.warning("No feature stored in this document! (" + extractorItem.getExtractorClass().getName() + ")");
         }
-        return 0f;
+        return 0d;
     }
 
     public ImageSearchHits search(Document doc, IndexReader reader) throws IOException {
         SimpleImageSearchHits searchHits = null;
-        try {
-            LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
+//        try {
+        LireFeature lireFeature = extractorItem.getFeatureInstance();
 
-            if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
-                lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
-            float maxDistance = findSimilar(reader, lireFeature);
+        if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
+            lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
+        double maxDistance = findSimilar(reader, lireFeature);
 
+        if (!useSimilarityScore) {
+            searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
+        } else {
+            searchHits = new SimpleImageSearchHits(this.docs, maxDistance, useSimilarityScore);
+        }
+//        } catch (InstantiationException e) {
+//            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
+//        } catch (IllegalAccessException e) {
+//            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
+//        }
+        return searchHits;
+    }
+
+    public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
+        logger.finer("Starting extraction.");
+        SimpleImageSearchHits searchHits = null;
+
+        if (extractorItem.isGlobal()){
+            GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder();
+            GlobalFeature globalFeature = globalDocumentBuilder.extractGlobalFeature(image, (GlobalFeature) extractorItem.getExtractorInstance());
+
+            double maxDistance = findSimilar(reader, globalFeature);
             if (!useSimilarityScore) {
                 searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
             } else {
                 searchHits = new SimpleImageSearchHits(this.docs, maxDistance, useSimilarityScore);
             }
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
-        }
+        } else if (extractorItem.isLocal()){
+            LocalDocumentBuilder localDocumentBuilder = new LocalDocumentBuilder();
+            LocalFeatureExtractor localFeatureExtractor = localDocumentBuilder.extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
+            aggregator.createVisualWords(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
+            extractorItem.getFeatureInstance().setByteArrayRepresentation(aggregator.getByteVectorRepresentation());
+
+            double maxDistance = findSimilar(reader, extractorItem.getFeatureInstance());
+            if (!useSimilarityScore) {
+                searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
+            } else {
+                searchHits = new SimpleImageSearchHits(this.docs, maxDistance, useSimilarityScore);
+            }
+        } else if (extractorItem.isSimple()){
+            SimpleDocumentBuilder simpleDocumentBuilder = new SimpleDocumentBuilder();
+            LocalFeatureExtractor localFeatureExtractor = simpleDocumentBuilder.extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
+            aggregator.createVisualWords(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
+            extractorItem.getFeatureInstance().setByteArrayRepresentation(aggregator.getByteVectorRepresentation());
+            double maxDistance = findSimilar(reader, extractorItem.getFeatureInstance());
+            if (!useSimilarityScore) {
+                searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
+            } else {
+                searchHits = new SimpleImageSearchHits(this.docs, maxDistance, useSimilarityScore);
+            }
+        } else throw new UnsupportedOperationException("");
+
         return searchHits;
+
     }
 
     public ImageDuplicates findDuplicates(IndexReader reader) throws IOException {
         // get the first document:
         SimpleImageDuplicates simpleImageDuplicates = null;
-        try {
+//        try {
 //            if (!IndexReader.indexExists(reader.directory()))
 //                throw new FileNotFoundException("No index found at this specific location.");
-            Document doc = reader.document(0);
+        Document doc = reader.document(0);
 
-            LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
-            if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
-                lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
+        LireFeature lireFeature = extractorItem.getFeatureInstance();
+        if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
+            lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
 
-            HashMap<Float, List<String>> duplicates = new HashMap<Float, List<String>>();
+        HashMap<Double, List<String>> duplicates = new HashMap<Double, List<String>>();
 
-            // Needed for check whether the document is deleted.
-            Bits liveDocs = MultiFields.getLiveDocs(reader);
+        // Needed for check whether the document is deleted.
+        Bits liveDocs = MultiFields.getLiveDocs(reader);
 
-            int docs = reader.numDocs();
-            int numDuplicates = 0;
-            for (int i = 0; i < docs; i++) {
-                if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
+        int docs = reader.numDocs();
+        int numDuplicates = 0;
+        for (int i = 0; i < docs; i++) {
+            if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
-                Document d = reader.document(i);
-                float distance = getDistance(d, lireFeature);
+            Document d = reader.document(i);
+            double distance = getDistance(d, lireFeature);
 
-                if (!duplicates.containsKey(distance)) {
-                    duplicates.put(distance, new LinkedList<String>());
-                } else {
-                    numDuplicates++;
-                }
-                duplicates.get(distance).add(d.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+            if (!duplicates.containsKey(distance)) {
+                duplicates.put(distance, new LinkedList<String>());
+            } else {
+                numDuplicates++;
             }
-
-            if (numDuplicates == 0) return null;
-
-            LinkedList<List<String>> results = new LinkedList<List<String>>();
-            for (float f : duplicates.keySet()) {
-                if (duplicates.get(f).size() > 1) {
-                    results.add(duplicates.get(f));
-                }
-            }
-            simpleImageDuplicates = new SimpleImageDuplicates(results);
-        } catch (InstantiationException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
-        } catch (IllegalAccessException e) {
-            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
+            duplicates.get(distance).add(d.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
         }
+
+        if (numDuplicates == 0) return null;
+
+        LinkedList<List<String>> results = new LinkedList<List<String>>();
+        for (double d : duplicates.keySet()) {
+            if (duplicates.get(d).size() > 1) {
+                results.add(duplicates.get(d));
+            }
+        }
+        simpleImageDuplicates = new SimpleImageDuplicates(results);
+//        } catch (InstantiationException e) {
+//            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
+//        } catch (IllegalAccessException e) {
+//            logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
+//        }
         return simpleImageDuplicates;
 
     }
 
     public String toString() {
-        return "GenericSearcher using " + descriptorClass.getName();
+        return "GenericSearcher using " + extractorItem.getExtractorClass().getName();
     }
 
 }

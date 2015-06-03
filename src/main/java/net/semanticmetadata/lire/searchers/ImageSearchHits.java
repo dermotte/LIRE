@@ -39,8 +39,6 @@
 
 package net.semanticmetadata.lire.searchers;
 
-import org.apache.lucene.document.Document;
-
 /**
  * This class simulates the original Lucene Hits object.
  * Please note the only a certain number of results are returned.<br>
@@ -69,13 +67,18 @@ public interface ImageSearchHits {
      * @param position defines the position
      * @return the score of the document at given position. The lower the better (its a distance measure).
      */
-    public float score(int position);
+    public double score(int position);
 
-    /**
-     * Returns the document at given position
-     *
-     * @param position defines the position.
-     * @return the document at given position.
-     */
-    public Document doc(int position);
+//    /**
+//     * Returns the document at given position
+//     *
+//     * @param position defines the position.
+//     * @return the document at given position.
+//     */
+//    public Document doc(int position);
+
+    //TODO: description
+    public int readerID(int position);
+
+//    public String path(int position);
 }

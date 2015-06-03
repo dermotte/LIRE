@@ -38,9 +38,11 @@
  */
 package net.semanticmetadata.lire.searchers.custom;
 
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.searchers.SimpleImageSearchHits;
+import net.semanticmetadata.lire.searchers.SimpleResult;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -58,6 +60,8 @@ import java.util.logging.Logger;
  * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net
  * <br>Date: 01.02.2006
  * <br>Time: 00:17:02
+ *
+ * TODO: revisit for performance, feature caching, etc.
  *
  * @author Mathias Lux, mathias@juggle.at
  */
@@ -78,19 +82,19 @@ public class TopDocsImageSearcher {
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader, TopDocs results) throws IOException {
         logger.finer("Starting extraction.");
-        LireFeature lireFeature = null;
+        GlobalFeature globalFeature = null;
         SimpleImageSearchHits searchHits = null;
         try {
-            lireFeature = (LireFeature) descriptorClass.newInstance();
+            globalFeature = (GlobalFeature) descriptorClass.newInstance();
             // Scaling image is especially with the correlogram features very important!
             BufferedImage bimg = image;
-            if (Math.max(image.getHeight(), image.getWidth()) > GenericDocumentBuilder.MAX_IMAGE_DIMENSION) {
-                bimg = ImageUtils.scaleImage(image, GenericDocumentBuilder.MAX_IMAGE_DIMENSION);
+            if (Math.max(image.getHeight(), image.getWidth()) > DocumentBuilder.MAX_IMAGE_DIMENSION) {
+                bimg = ImageUtils.scaleImage(image, DocumentBuilder.MAX_IMAGE_DIMENSION);
             }
-            lireFeature.extract(bimg);
+            globalFeature.extract(bimg);
             logger.fine("Extraction from image finished");
 
-            float maxDistance = findSimilar(results, reader, lireFeature);
+            double maxDistance = findSimilar(results, reader, globalFeature);
             searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
         } catch (InstantiationException e) {
             logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
@@ -103,12 +107,12 @@ public class TopDocsImageSearcher {
     /**
      * @param results
      * @param reader
-     * @param lireFeature
+     * @param globalFeature
      * @return the maximum distance found for normalizing.
      * @throws java.io.IOException
      */
-    protected float findSimilar(TopDocs results, IndexReader reader, LireFeature lireFeature) throws IOException {
-        float maxDistance = -1f, overallMaxDistance = -1f;
+    protected double findSimilar(TopDocs results, IndexReader reader, GlobalFeature globalFeature) throws IOException {
+        double maxDistance = -1d, overallMaxDistance = -1d;
         boolean hasDeletions = reader.hasDeletions();
 
         // clear result set ...
@@ -121,7 +125,7 @@ public class TopDocsImageSearcher {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
             Document d = reader.document(results.scoreDocs[i].doc);
-            float distance = getDistance(d, lireFeature);
+            double distance = getDistance(d, globalFeature);
             assert (distance >= 0);
             // calculate the overall max distance to normalize score afterwards
             if (overallMaxDistance < distance) {
@@ -133,14 +137,14 @@ public class TopDocsImageSearcher {
             }
             // if the array is not full yet:
             if (this.docs.size() < maxHits) {
-                this.docs.add(new SimpleResult(distance, d, i));
+                this.docs.add(new SimpleResult(distance, results.scoreDocs[i].doc));
                 if (distance > maxDistance) maxDistance = distance;
             } else if (distance < maxDistance) {
                 // if it is nearer to the sample than at least on of the current set:
                 // remove the last one ...
                 this.docs.remove(this.docs.last());
                 // add the new one ...
-                this.docs.add(new SimpleResult(distance, d, i));
+                this.docs.add(new SimpleResult(distance, results.scoreDocs[i].doc));
                 // and set our new distance border ...
                 maxDistance = this.docs.last().getDistance();
             }
@@ -148,18 +152,13 @@ public class TopDocsImageSearcher {
         return maxDistance;
     }
 
-    protected float getDistance(Document d, LireFeature lireFeature) {
-        float distance = 0f;
-        LireFeature lf;
+    protected double getDistance(Document d, GlobalFeature globalFeature) {
+        double distance = 0d;
+        GlobalFeature lf;
         try {
-            lf = (LireFeature) descriptorClass.newInstance();
-            String[] cls = d.getValues(fieldName);
-            if (cls != null && cls.length > 0) {
-                lf.setStringRepresentation(cls[0]);
-                distance = lireFeature.getDistance(lf);
-            } else {
-                logger.warning("No feature stored in this document!");
-            }
+            lf = (GlobalFeature) descriptorClass.newInstance();
+            lf.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+            distance = globalFeature.getDistance(lf);
         } catch (InstantiationException e) {
             logger.log(Level.SEVERE, "Error instantiating class for generic image searcher: " + e.getMessage());
         } catch (IllegalAccessException e) {
@@ -169,15 +168,14 @@ public class TopDocsImageSearcher {
         return distance;
     }
 
-    public ImageSearchHits search(TopDocs results, Document doc, IndexReader reader) throws IOException {
+    public ImageSearchHits search(TopDocs results, Document d, IndexReader reader) throws IOException {
         SimpleImageSearchHits searchHits = null;
         try {
-            LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
+            GlobalFeature lf;// = (GlobalFeature) descriptorClass.newInstance();
 
-            String[] cls = doc.getValues(fieldName);
-            if (cls != null && cls.length > 0)
-                lireFeature.setStringRepresentation(cls[0]);
-            float maxDistance = findSimilar(results, reader, lireFeature);
+            lf = (GlobalFeature) descriptorClass.newInstance();
+            lf.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+            double maxDistance = findSimilar(results, reader, lf);
 
             searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
         } catch (InstantiationException e) {

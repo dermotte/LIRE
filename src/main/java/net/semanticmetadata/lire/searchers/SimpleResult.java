@@ -41,8 +41,6 @@
 
 package net.semanticmetadata.lire.searchers;
 
-import org.apache.lucene.document.Document;
-
 /**
  * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net
  * <br>Date: 03.02.2006
@@ -51,14 +49,9 @@ import org.apache.lucene.document.Document;
  * @author Mathias Lux, mathias@juggle.at
  */
 public class SimpleResult implements Comparable<SimpleResult> {
-    private float distance;
-    private Document document;
-    private int indexNumber = 0;
-
-//    public SimpleResult(float distance, Document document) {
-//        this.distance = distance;
-//        this.document = document;
-//    }
+    //    private Document document;
+    private double distance = -1d;
+    private int indexNumber = -1;
 
     /**
      * Constructor for a result. The indexNumer is needed for sorting issues. Problem is that the TreeMap used for
@@ -69,35 +62,35 @@ public class SimpleResult implements Comparable<SimpleResult> {
      * are in the index twice, appear in the result list in the order they are found in the index. See also compareTo(...)
      * method.
      * @param distance the actual distance to the query
-     * @param document the document instance form the Lucene index
+    //     * @param document the document instance form the Lucene index
      * @param indexNumber the running number from the IndexReader. Needed for sorting issues in the result TreeMap.
      */
-    public SimpleResult(float distance, Document document, int indexNumber) {
+    public SimpleResult(double distance, int indexNumber) {
         this.distance = distance;
-        this.document = document;
         this.indexNumber = indexNumber;
     }
 
-    public float getDistance() {
+    public double getDistance() {
         assert (distance >= 0);
         return distance;
     }
 
-    public void setDistance(float distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
-    }
-
-    public Document getDocument() {
-        return document;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
     }
 
     public int getIndexNumber() {
         return indexNumber;
     }
+
+
+//    public Document getDocument() {
+//        return document;
+//    }
+
+//    public void setDocument(Document document) {
+//        this.document = document;
+//    }
 
     /**
      * Compare the distance values to allow sorting in a tree map. If the distance value is the same, but the document
@@ -118,7 +111,8 @@ public class SimpleResult implements Comparable<SimpleResult> {
     public boolean equals(Object obj) {
         // it's not the same if it's not the same class.
         if (! (obj instanceof SimpleResult)) return false;
-        // it's the same if the document is the same, regardless of the distance.
-        else return (document.equals(((SimpleResult)obj).document) && indexNumber == ((SimpleResult)obj).indexNumber);
+            // it's the same if the document is the same, regardless of the distance.
+//        else return (document.equals(((SimpleResult)obj).document) && indexNumber == ((SimpleResult)obj).indexNumber);
+        else return (indexNumber == ((SimpleResult)obj).indexNumber);
     }
 }

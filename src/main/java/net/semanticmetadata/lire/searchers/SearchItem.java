@@ -1,5 +1,5 @@
 /*
- * This file is part of the LIRE project: http://www.semanticmetadata.net/lire
+ * This file is part of the LIRE project: http://lire-project.net
  * LIRE is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,7 +17,7 @@
  * We kindly ask you to refer the any or one of the following publications in
  * any publication mentioning or employing Lire:
  *
- * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval â€“
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
  * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
  * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
  * URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -30,38 +30,30 @@
  * Mathias Lux, Oge Marques. Visual Information Retrieval using Java and LIRE
  * Morgan & Claypool, 2013
  * URL: http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025
- *
- * Copyright statement:
- * --------------------
- * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
- *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
  */
 
 package net.semanticmetadata.lire.searchers;
 
-import java.util.List;
-
 /**
- * This class implements the format for returning found duplicates.<br>
- * <p/>
- * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net
- * <br>Date: 04.08.2006
- * <br>Time: 10:20:20
+ * Created by Nektarios on 20/3/2015.
  *
- * @author Mathias Lux, mathias@juggle.at
+ * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
-public class SimpleImageDuplicates implements ImageDuplicates {
-    private List<List<String>> duplicates;
+public class SearchItem {
+    private byte[] buffer;
+    protected SimpleResult simpleResult;
 
-    public SimpleImageDuplicates(List<List<String>> duplicates) {
-        this.duplicates = duplicates;
+    public SearchItem(byte[] buffer, SimpleResult simpleResult) {
+        this.buffer = buffer;
+        this.simpleResult = simpleResult;
     }
 
-    public int length() {
-        return duplicates.size();
-    }
 
-    public List<String> getDuplicate(int position) {
-        return duplicates.get(position);
+    public byte[] getBuffer () { return buffer; }
+
+    public void setBuffer(byte[] buffer) { this.buffer = buffer; }
+
+    public SimpleResult getSimpleResult() {
+        return simpleResult;
     }
 }

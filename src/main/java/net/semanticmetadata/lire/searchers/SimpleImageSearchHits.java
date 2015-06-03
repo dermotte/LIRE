@@ -41,9 +41,6 @@
 
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.ImageSearchHits;
-import org.apache.lucene.document.Document;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -58,15 +55,15 @@ import java.util.Iterator;
 public class SimpleImageSearchHits implements ImageSearchHits {
     ArrayList<SimpleResult> results;
 
-    public SimpleImageSearchHits(Collection<SimpleResult> results, float maxDistance) {
+    public SimpleImageSearchHits(Collection<SimpleResult> results, double maxDistance) {
         this.results = new ArrayList<SimpleResult>(results.size());
         this.results.addAll(results);
         // this step normalizes and inverts the distance ...
         // although its now a score or similarity like measure its further called distance
-        for (Iterator<SimpleResult> iterator = this.results.iterator(); iterator.hasNext(); ) {
-            SimpleResult result = iterator.next();
-            // result.setDistance(1f - result.getDistance() / maxDistance);
-        }
+//        for (Iterator<SimpleResult> iterator = this.results.iterator(); iterator.hasNext(); ) {
+//            SimpleResult result = iterator.next();
+//            // result.setDistance(1f - result.getDistance() / maxDistance);
+//        }
     }
 
     /**
@@ -74,16 +71,16 @@ public class SimpleImageSearchHits implements ImageSearchHits {
      *
      * @param results
      * @param maxDistance
-     * @param useSimilarityScore set to tru is you want similarity scores, otherwise distances will be used. Note that using distance is faster in terms of runtime.
+     * @param useSimilarityScore set to true is you want similarity scores, otherwise distances will be used. Note that using distance is faster in terms of runtime.
      */
-    public SimpleImageSearchHits(Collection<SimpleResult> results, float maxDistance, boolean useSimilarityScore) {
+    public SimpleImageSearchHits(Collection<SimpleResult> results, double maxDistance, boolean useSimilarityScore) {
         this.results = new ArrayList<SimpleResult>(results.size());
         this.results.addAll(results);
         // this step normalizes and inverts the distance ...
         // although its now a score or similarity like measure its further called distance
         for (Iterator<SimpleResult> iterator = this.results.iterator(); iterator.hasNext(); ) {
             SimpleResult result = iterator.next();
-            if (useSimilarityScore) result.setDistance(1f - result.getDistance() / maxDistance);
+            if (useSimilarityScore) result.setDistance(1d - result.getDistance() / maxDistance);
         }
     }
 
@@ -106,19 +103,19 @@ public class SimpleImageSearchHits implements ImageSearchHits {
      * @param position defines the position
      * @return the score of the document at given position. The lower the better (its a distance measure).
      */
-    public float score(int position) {
+    public double score(int position) {
         return results.get(position).getDistance();
     }
 
-    /**
-     * Returns the document at given position
-     *
-     * @param position defines the position.
-     * @return the document at given position.
-     */
-    public Document doc(int position) {
-        return results.get(position).getDocument();
-    }
+//    /**
+//     * Returns the document at given position
+//     *
+//     * @param position defines the position.
+//     * @return the document at given position.
+//     */
+//    public Document doc(int position) {
+//        return results.get(position).getDocument();
+//    }
 
     /**
      * Returns the id of the document within the respective Lucene IndexReader
@@ -130,10 +127,14 @@ public class SimpleImageSearchHits implements ImageSearchHits {
         return results.get(position).getIndexNumber();
     }
 
+//    public String path(int position) {
+//        return results.get(position).getPath();
+//    }
+
     @SuppressWarnings("unused")
-    private float sigmoid(float f) {
-        double result = 0f;
+    private double sigmoid(float f) {
+        double result = 0d;
         result = -1d + 2d / (1d + Math.exp(-2d * f / 0.6));
-        return (float) (1d - result);
+        return (1d - result);
     }
 }

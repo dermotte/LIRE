@@ -40,14 +40,9 @@
  */
 package net.semanticmetadata.lire.searchers.custom;
 
-import net.semanticmetadata.lire.AbstractImageSearcher;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageDuplicates;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.searchers.SimpleImageSearchHits;
-import net.semanticmetadata.lire.searchers.SimpleResult;
+import net.semanticmetadata.lire.searchers.*;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -69,7 +64,7 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
     protected Logger logger = Logger.getLogger(getClass().getName());
     Class<?> descriptorClass = CEDD.class;
     String fieldName = null;
-    protected LireFeature cachedInstance = null;
+    protected GlobalFeature cachedInstance = null;
     protected boolean isCaching = true;
 
     protected ArrayList<double[]> featureCache;
@@ -86,7 +81,7 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
 
     /**
      * Creates a new ImageSearcher for searching just one single image based on CEDD from a RAM cached data set.
-     * 
+     *
      * @param reader the index reader pointing to the index. It will be cached first, so changes will not be reflected in this instance. 
      */
     public SingleNddCeddImageSearcher(IndexReader reader) {
@@ -96,7 +91,7 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
     /**
      * Creates a new ImageSearcher for searching just one single image based on CEDD from a RAM cached data set. 
      * Set approximate to true if you want to speed up search and loose accuracy.
-     *  
+     *
      * @param reader the index reader pointing to the index. It will be cached first, so changes will not be reflected in this instance.
      * @param approximate set to true if you want to trade accuracy to speed, setting to true is faster (~ double speed), but less accurate                             
      */
@@ -122,10 +117,10 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
         this.reader = reader;
         if (reader.hasDeletions()) {
             throw new UnsupportedOperationException("The index has to be optimized first to be cached! Use IndexWriter.forceMerge(0) to do this.");
-        } 
+        }
         docs = new TreeSet<SimpleResult>();
         try {
-            this.cachedInstance = (LireFeature) this.descriptorClass.newInstance();
+            this.cachedInstance = (GlobalFeature) this.descriptorClass.newInstance();
             if (fieldName == null) fieldName = this.cachedInstance.getFieldName();
         } catch (InstantiationException e) {
             logger.log(Level.SEVERE, "Error instantiating class for generic image searcher (" + descriptorClass.getName() + "): " + e.getMessage());
@@ -143,9 +138,9 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
                     cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
                     // normalize features,o we can use L1
                     if (!halfDimensions) {
-                        featureCache.add(normalize(cachedInstance.getDoubleHistogram()));
+                        featureCache.add(normalize(cachedInstance.getFeatureVector()));
                     } else {
-                        featureCache.add(crunch(cachedInstance.getDoubleHistogram()));
+                        featureCache.add(crunch(cachedInstance.getFeatureVector()));
                     }
                 }
             } catch (IOException e) {
@@ -181,12 +176,12 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
 
     /**
      * @param reader
-     * @param lireFeature
+     * @param globalFeature
      * @return the maximum distance found for normalizing.
      * @throws java.io.IOException
      */
-    protected float findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
-        maxDistance = Double.MAX_VALUE;
+    protected double findSimilar(IndexReader reader, GlobalFeature globalFeature) throws IOException {
+        maxDistance = -1;
 
         // clear result set ...
         docs.clear();
@@ -196,9 +191,9 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
         int count = 0;
         double[] doubleHistogram;
         if (!halfDimensions) {
-            doubleHistogram = normalize(lireFeature.getDoubleHistogram());
+            doubleHistogram = normalize(globalFeature.getFeatureVector());
         } else {
-            doubleHistogram = crunch(lireFeature.getDoubleHistogram());
+            doubleHistogram = crunch(globalFeature.getFeatureVector());
         }
         double[] tmp;
         int index = -1;
@@ -212,20 +207,20 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
             }
             count++;
         }
-        this.docs.add(new SimpleResult((float) maxDistance, reader.document(index), index));
-        return (float) maxDistance;
+        this.docs.add(new SimpleResult(maxDistance, index));
+        return maxDistance;
     }
 
-    public SimpleResult findMostSimilar(LireFeature lireFeature) throws IOException {
-        findSimilar(reader, lireFeature);
+    public SimpleResult findMostSimilar(GlobalFeature globalFeature) throws IOException {
+        findSimilar(reader, globalFeature);
         return docs.first();
     }
 
-    public SimpleResult[] findMostSimilar(LireFeature[] lireFeature) throws IOException {
-        return findMostSimilar(lireFeature, 0, lireFeature.length);
+    public SimpleResult[] findMostSimilar(GlobalFeature[] globalFeatures) throws IOException {
+        return findMostSimilar(globalFeatures, 0, globalFeatures.length);
     }
 
-    public SimpleResult[] findMostSimilar(LireFeature[] lireFeature, int offset, int length) throws IOException {
+    public SimpleResult[] findMostSimilar(GlobalFeature[] globalFeatures, int offset, int length) throws IOException {
         double[] maxDistanceArray = new double[length - offset];
         Arrays.fill(maxDistanceArray, Double.MAX_VALUE);
 
@@ -240,9 +235,9 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
         }
         for (int i = 0; i < dhs.length; i++) {
             if (!halfDimensions) {
-                dhs[i] = normalize(lireFeature[offset + i].getDoubleHistogram());
+                dhs[i] = normalize(globalFeatures[offset + i].getFeatureVector());
             } else {
-                dhs[i] = crunch(lireFeature[offset + i].getDoubleHistogram());
+                dhs[i] = crunch(globalFeatures[offset + i].getFeatureVector());
             }
         }
         double[] tmp;
@@ -263,7 +258,7 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
         SimpleResult[] results = new SimpleResult[length];
         for (int i = 0; i < results.length; i++) {
             if (indexes[i] >= 0 && indexes[i] < reader.maxDoc())
-                results[i] = new SimpleResult((float) maxDistanceArray[i], reader.document(indexes[i]), indexes[i]);
+                results[i] = new SimpleResult(maxDistanceArray[i], indexes[i]);
             else
                 results[i] = null;
         }
@@ -274,27 +269,27 @@ public class SingleNddCeddImageSearcher extends AbstractImageSearcher {
      * Main similarity method called for each and every document in the index.
      *
      * @param document
-     * @param lireFeature
+     * @param globalFeature
      * @return the distance between the given feature and the feature stored in the document.
      */
-    protected float getDistance(Document document, LireFeature lireFeature) {
+    protected double getDistance(Document document, GlobalFeature globalFeature) {
         if (document.getField(fieldName).binaryValue() != null && document.getField(fieldName).binaryValue().length > 0) {
             cachedInstance.setByteArrayRepresentation(document.getField(fieldName).binaryValue().bytes, document.getField(fieldName).binaryValue().offset, document.getField(fieldName).binaryValue().length);
-            return lireFeature.getDistance(cachedInstance);
+            return globalFeature.getDistance(cachedInstance);
         } else {
             logger.warning("No feature stored in this document! (" + descriptorClass.getName() + ")");
         }
-        return 0f;
+        return 0d;
     }
 
     public ImageSearchHits search(Document doc, IndexReader reader) throws IOException {
         SimpleImageSearchHits searchHits = null;
         try {
-            LireFeature lireFeature = (LireFeature) descriptorClass.newInstance();
+            GlobalFeature globalFeature = (GlobalFeature) descriptorClass.newInstance();
 
             if (doc.getField(fieldName).binaryValue() != null && doc.getField(fieldName).binaryValue().length > 0)
-                lireFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
-            float maxDistance = findSimilar(reader, lireFeature);
+                globalFeature.setByteArrayRepresentation(doc.getField(fieldName).binaryValue().bytes, doc.getField(fieldName).binaryValue().offset, doc.getField(fieldName).binaryValue().length);
+            double maxDistance = findSimilar(reader, globalFeature);
 
             if (!useSimilarityScore) {
                 searchHits = new SimpleImageSearchHits(this.docs, maxDistance);

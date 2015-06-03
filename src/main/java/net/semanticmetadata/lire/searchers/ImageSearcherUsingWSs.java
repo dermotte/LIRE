@@ -1,15 +1,18 @@
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.utils.MetricsUtils;
+import net.semanticmetadata.lire.aggregators.Aggregator;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.SIMPLE.SimpleExtractor;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.util.Bits;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Created by Nektarios on 9/10/2014.
@@ -21,28 +24,16 @@ public class ImageSearcherUsingWSs extends GenericFastImageSearcher {
     private boolean normalizeHistogram = false;
     private String ws = "nnn";
 
-    public ImageSearcherUsingWSs(int maxHits, Class<?> descriptorClass, String fieldName) {
-        super(maxHits, descriptorClass, fieldName);
+    public ImageSearcherUsingWSs(int maxHits, Class<? extends LocalFeatureExtractor> localFeatureExtractor, Aggregator aggregator, int codebookSize, IndexReader reader, String codebooksDir, boolean tf, boolean idf, boolean n) {
+        super(maxHits, localFeatureExtractor, aggregator, codebookSize, true, reader, codebooksDir);
+        termFrequency = tf;
+        inverseDocFrequency = idf;
+        normalizeHistogram = n;
+        setWS();
     }
 
-    public ImageSearcherUsingWSs(int maxHits, Class<?> descriptorClass, String fieldName, boolean useSimilarityScore) {
-        super(maxHits, descriptorClass, fieldName, useSimilarityScore);
-    }
-
-    public ImageSearcherUsingWSs(int maxHits, Class<?> descriptorClass) {
-        super(maxHits, descriptorClass);
-    }
-
-    public ImageSearcherUsingWSs(int maxHits, Class<?> descriptorClass, String fieldName, boolean isCaching, IndexReader reader) {
-        super(maxHits, descriptorClass, fieldName, isCaching, reader);
-    }
-
-    public ImageSearcherUsingWSs(int maxHits, Class<?> descriptorClass, boolean isCaching, IndexReader reader) {
-        super(maxHits, descriptorClass, isCaching, reader);
-    }
-
-    public ImageSearcherUsingWSs(int maxHits, Class<?> descriptorClass, String fieldName, boolean isCaching, IndexReader reader, boolean tf, boolean idf, boolean n) {
-        super(maxHits, descriptorClass, fieldName, isCaching, reader);
+    public ImageSearcherUsingWSs(int maxHits, Class<? extends GlobalFeature> globalFeature, SimpleExtractor.KeypointDetector detector, Aggregator aggregator, int codebookSize, IndexReader reader, String codebooksDir, boolean tf, boolean idf, boolean n) {
+        super(maxHits, globalFeature, detector, aggregator, codebookSize, true, reader, codebooksDir);
         termFrequency = tf;
         inverseDocFrequency = idf;
         normalizeHistogram = n;
@@ -85,24 +76,116 @@ public class ImageSearcherUsingWSs extends GenericFastImageSearcher {
                     ws = "nnn";
             }
         }
+
+        LinkedList<Thread> threads = new LinkedList<Thread>();
+        Thread thread;
+        Thread p = new Thread(new Producer());
+        p.start();
+        for (int i = 0; i < numThreads; i++) {
+            thread = new Thread(new Compute());
+            thread.start();
+            threads.add(thread);
+        }
+        for (Thread next : threads) {
+            try {
+                next.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    protected void init() {
-        isCaching = true;
-        // put all respective features into an in-memory cache ...
-        if (isCaching && reader != null) {
-            int docs = reader.numDocs();
-            featureCache = new LinkedList<byte[]>();
+    private class Compute implements Runnable {
+        private boolean locallyEnded = false;
+        private LireFeature localCachedInstance;
+
+        private Compute() {
             try {
-                Document d;
-                for (int i = 0; i < docs; i++) {
-                    d = reader.document(i);
-                    cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
-                    featureCache.add(cachedInstance.getByteArrayRepresentation());
-                    if (idfValues == null)
-                        idfValues = new double[cachedInstance.getDoubleHistogram().length];
-                    for (int j = 0; j < cachedInstance.getDoubleHistogram().length; j++) {
-                        if (cachedInstance.getDoubleHistogram()[j] > 0d) idfValues[j]++;
+                this.localCachedInstance = cachedInstance.getClass().newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run() {
+            Map.Entry<Integer, byte[]> tmp;
+            while (!locallyEnded) {
+                try {
+                    tmp = queue.take();
+                    if (tmp.getKey() < 0 ) locallyEnded = true;
+                    if (!locallyEnded) {    // && tmp != -1
+                        localCachedInstance.setByteArrayRepresentation(tmp.getValue());
+                        computeFeatureCache(localCachedInstance);
+                        featureCache.put(tmp.getKey(), localCachedInstance.getByteArrayRepresentation());
+//                        tmp.getValue().setBuffer(localCachedInstance.getByteArrayRepresentation());
+                    }
+                } catch (InterruptedException e) {
+                    e.getMessage();
+                }
+            }
+        }
+    }
+
+    private void computeFeatureCache(LireFeature f) {
+        double[] v = f.getFeatureVector();
+        if (termFrequency) {
+            for (int i = 0; i < v.length; i++) {
+                if (v[i] > 0) v[i] = 1 + Math.log10(v[i]);
+            }
+        }
+        if (inverseDocFrequency) {
+            for (int i = 0; i < v.length; i++) {
+                if (idfValues[i] > 0) {
+                    v[i] = Math.log10((double) reader.numDocs() / idfValues[i]) * v[i];
+                }
+            }
+        }
+        if (normalizeHistogram) {
+            double len = 0;
+            for (double next : v) {
+                len += next * next;
+            }
+            len = Math.sqrt(len);
+            for (int i = 0; i < v.length; i++) {
+                if (v[i] != 0)
+                    v[i] /= len;
+            }
+        }
+    }
+
+
+    protected void init() {
+        // put all respective features into an in-memory cache ...
+        if (reader != null && reader.numDocs() > 0) {
+            Bits liveDocs = MultiFields.getLiveDocs(reader);
+            int docs = reader.numDocs();
+            featureCache = new LinkedHashMap<Integer, byte[]>(docs);
+            try {
+                int counter = 0;
+                while ((reader.hasDeletions() && !liveDocs.get(counter))&&(counter<docs)){
+                    counter++;
+                }
+
+                Document d = reader.document(counter);
+                cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+//                featureCache.put(counter, new SearchItem(cachedInstance.getByteArrayRepresentation(), new SimpleResult(-1d, counter, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
+                featureCache.put(counter, cachedInstance.getByteArrayRepresentation());
+                idfValues = new double[cachedInstance.getFeatureVector().length];
+                for (int j = 0; j < cachedInstance.getFeatureVector().length; j++) {
+                    if (cachedInstance.getFeatureVector()[j] > 0d) idfValues[j]++;
+                }
+                counter++;
+                for (int i = counter; i < docs; i++) {
+                    if (!(reader.hasDeletions() && !liveDocs.get(i))) {
+                        d = reader.document(i);
+                        cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+                        featureCache.put(i, cachedInstance.getByteArrayRepresentation());
+//                        featureCache.put(i, new SearchItem(cachedInstance.getByteArrayRepresentation(), new SimpleResult(-1d, i, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
+                        for (int j = 0; j < cachedInstance.getFeatureVector().length; j++) {
+                            if (cachedInstance.getFeatureVector()[j] > 0d) idfValues[j]++;
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -115,133 +198,151 @@ public class ImageSearcherUsingWSs extends GenericFastImageSearcher {
      * @param reader
      * @param lireFeature
      * @return the maximum distance found for normalizing.
-     * @throws java.io.IOException
+     * @throws IOException
      */
-    protected float findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
-        maxDistance = -1f;
+    protected double findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
+        maxDistance = -1d;
 //        overallMaxDistance = -1f;
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
-        Document d;
-        float tmpDistance;
-        int docs = reader.numDocs();
+//        Bits liveDocs = MultiFields.getLiveDocs(reader);
+//        Document d;
+//        float tmpDistance;
+//        int docs = reader.numDocs();
         if (!isCaching) {
-            // we read each and every document from the index and then we compare it to the query.
-            for (int i = 0; i < docs; i++) {
-                if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
-
-                d = reader.document(i);
-                tmpDistance = getDistance(d, lireFeature);
-                assert (tmpDistance >= 0);
-                // if it is the first document:
-                if (maxDistance < 0) {
-                    maxDistance = tmpDistance;
-                }
-                // if the array is not full yet:
-                if (this.docs.size() < maxHits) {
-                    this.docs.add(new SimpleResult(tmpDistance, d, i));
-                    if (tmpDistance > maxDistance) maxDistance = tmpDistance;
-                } else if (tmpDistance < maxDistance) {
-                    // if it is nearer to the sample than at least on of the current set:
-                    // remove the last one ...
-                    this.docs.remove(this.docs.last());
-                    // add the new one ...
-                    this.docs.add(new SimpleResult(tmpDistance, d, i));
-                    // and set our new distance border ...
-                    maxDistance = this.docs.last().getDistance();
+            throw new UnsupportedOperationException("ImageSearcherUsingWSs works only with Caching!!!");
+        } else {
+            LinkedList<Consumer> tasks = new LinkedList<Consumer>();
+            LinkedList<Thread> threads = new LinkedList<Thread>();
+            Consumer consumer;
+            Thread thread;
+            Thread p = new Thread(new Producer());
+            p.start();
+            for (int i = 0; i < numThreads; i++) {
+                consumer = new Consumer(lireFeature);
+                thread = new Thread(consumer);
+                thread.start();
+                tasks.add(consumer);
+                threads.add(thread);
+            }
+            for (Thread next : threads) {
+                try {
+                    next.join();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-        } else {
-            // we use the in-memory cache to find the matching docs from the index.
-            int count = 0;
-            for (Iterator<byte[]> iterator = featureCache.iterator(); iterator.hasNext(); ) {
-                cachedInstance.setByteArrayRepresentation(iterator.next());
-                if (reader.hasDeletions() && !liveDocs.get(count)) {
-                    count++;
-                    continue; // if it is deleted, just ignore it.
-                } else {
-                    tmpDistance = getDistance(cachedInstance, lireFeature, reader);
-                    assert (tmpDistance >= 0) : tmpDistance;
-                    // if it is the first document:
-                    if (maxDistance < 0) {
-                        maxDistance = tmpDistance;
-                    }
-                    // if the array is not full yet:
+            TreeSet<SimpleResult> tmpDocs;
+            boolean flag;
+            SimpleResult simpleResult;
+            for (Consumer task : tasks) {
+                tmpDocs = task.getResult();
+                flag = true;
+                while (flag && (tmpDocs.size() > 0)){
+                    simpleResult = tmpDocs.pollFirst();
                     if (this.docs.size() < maxHits) {
-                        this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
-                        if (tmpDistance > maxDistance) maxDistance = tmpDistance;
-                    } else if (tmpDistance < maxDistance) {
-                        // if it is nearer to the sample than at least on of the current set:
-                        // remove the last one ...
-                        this.docs.remove(this.docs.last());
-                        // add the new one ...
-                        this.docs.add(new SimpleResult(tmpDistance, reader.document(count), count));
-                        // and set our new distance border ...
+                        this.docs.add(simpleResult);
+                        if (simpleResult.getDistance() > maxDistance) maxDistance = simpleResult.getDistance();
+                    } else if (simpleResult.getDistance() < maxDistance) {
+//                        this.docs.remove(this.docs.last());
+                        this.docs.pollLast();
+                        this.docs.add(simpleResult);
                         maxDistance = this.docs.last().getDistance();
-                    }
-                    count++;
+                    } else flag = false;
                 }
             }
         }
         return maxDistance;
     }
 
-    private float getDistance(LireFeature cachedInstance, LireFeature lireFeature, IndexReader reader) {
-        double[] h = lireFeature.getDoubleHistogram().clone(), v = cachedInstance.getDoubleHistogram().clone();
-        if (termFrequency) {
-            for (int i = 0; i < h.length; i++) {
-                if (h[i]>0) h[i] = 1 + Math.log10(h[i]);
-                if (v[i]>0) v[i] = 1 + Math.log10(v[i]);
-            }
+    class Producer implements Runnable {
+
+        private Producer() {
+            queue.clear();
         }
-        if (inverseDocFrequency) {
-            for (int i = 0; i < h.length; i++) {
-                if (idfValues[i] > 0) {
-                    h[i] = Math.log10((double) reader.numDocs() / idfValues[i]) * h[i];
-                    v[i] = Math.log10((double) reader.numDocs() / idfValues[i]) * v[i];
+
+        public void run() {
+            for (Map.Entry<Integer, byte[]> documentEntry : featureCache.entrySet()) {
+                try {
+                    queue.put(documentEntry);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            LinkedHashMap<Integer, byte[]> tmpMap = new LinkedHashMap<Integer, byte[]>(numThreads * 3);
+            for (int i = 1; i < numThreads * 3; i++)  {
+                tmpMap.put(-i, null);
+            }
+            for (Map.Entry<Integer, byte[]> documentEntry : tmpMap.entrySet()) {
+                try {
+                    queue.put(documentEntry);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        if (normalizeHistogram) {
-            h = MetricsUtils.normalizeL2(h);
-            v = MetricsUtils.normalizeL2(v);
+    }
+
+    private class Consumer implements Runnable {
+        private boolean locallyEnded = false;
+        private TreeSet<SimpleResult> localDocs  = new TreeSet<SimpleResult>();
+        private LireFeature localCachedInstance;
+        private LireFeature localLireFeature;
+
+        private Consumer(LireFeature lireFeature) {
+            try {
+                this.localCachedInstance = cachedInstance.getClass().newInstance();
+                this.localLireFeature = lireFeature.getClass().newInstance();
+                this.localLireFeature.setByteArrayRepresentation(lireFeature.getByteArrayRepresentation());
+                computeFeatureCache(this.localLireFeature);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
-        //TODO: change to other metrics if needed.
-        return (float) MetricsUtils.distL2(h, v);
+        public void run() {
+            Map.Entry<Integer, byte[]> tmp;
+            double tmpDistance;
+            double localMaxDistance = -1;
+            while (!locallyEnded) {
+                try {
+                    tmp = queue.take();
+                    if (tmp.getKey() < 0 )  locallyEnded = true;
+                    if (!locallyEnded) {
+                        localCachedInstance.setByteArrayRepresentation(tmp.getValue());
+                        tmpDistance = localLireFeature.getDistance(localCachedInstance);
+                        assert (tmpDistance >= 0);
+                        // if the array is not full yet:
+                        if (localDocs.size() < maxHits) {
+                            localDocs.add(new SimpleResult(tmpDistance, tmp.getKey()));
+                            if (tmpDistance > localMaxDistance) localMaxDistance = tmpDistance;
+                        } else if (tmpDistance < localMaxDistance) {
+                            // if it is nearer to the sample than at least on of the current set:
+                            // remove the last one ...
+//                            localDocs.remove(localDocs.last());
+                            localDocs.pollLast();
+                            // add the new one ...
+                            localDocs.add(new SimpleResult(tmpDistance, tmp.getKey()));
+                            // and set our new distance border ...
+                            localMaxDistance = localDocs.last().getDistance();
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.getMessage();
+                }
+            }
+        }
+
+        public TreeSet<SimpleResult> getResult() {
+            return localDocs;
+        }
     }
 
     public String toString() {
-        return "ImageSearcherUsingWSs using " + descriptorClass.getName() + " and ws: " + ws;
+        return "ImageSearcherUsingWSs using " + extractorItem.getExtractorClass().getName() + " and ws: " + ws;
     }
 
-//    @Override
-//    protected float getDistance(Document document, LireFeature lireFeature) {
-//        if (document.getField(fieldName).binaryValue() != null && document.getField(fieldName).binaryValue().length > 0) {
-//            cachedInstance.setByteArrayRepresentation(document.getField(fieldName).binaryValue().bytes, document.getField(fieldName).binaryValue().offset, document.getField(fieldName).binaryValue().length);
-//            //lireFeature.getDistance(cachedInstance);
-//            double sum = 0d;
-//            double[] h = lireFeature.getDoubleHistogram().clone(), v = cachedInstance.getDoubleHistogram().clone();
-//            for (int i = 0; i < h.length; i++) {
-//                h[i] *= Math.log10((double) reader.numDocs() / idfValues[i]);
-//                v[i] *= Math.log10((double) reader.numDocs() / idfValues[i]);
-//            }
-//            // TODO do normalization here instead of before ..
-//            if (normalizeHistogram) {
-//                h = MetricsUtils.normalizeL2(h);
-//                v = MetricsUtils.normalizeL2(v);
-//            }
-//
-//            // L2 between two documents... TODO: change to other metrics if needed.
-//            for (int i = 0; i < h.length; i++) {
-//                sum += (h[i] - v[i]) * (h[i] - v[i]);
-//            }
-//            return (float) Math.sqrt(sum);
-//        } else {
-//            logger.warning("No feature stored in this document! (" + descriptorClass.getName() + ")");
-//        }
-//        return 0f;
-//    }
 }

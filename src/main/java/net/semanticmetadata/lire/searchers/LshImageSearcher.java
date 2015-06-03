@@ -41,12 +41,9 @@
 
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.AbstractImageSearcher;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageDuplicates;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.indexing.hashing.LocalitySensitiveHashing;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.indexers.hashing.LocalitySensitiveHashing;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
@@ -60,7 +57,7 @@ import java.io.InputStream;
 import java.util.TreeSet;
 
 /**
- * This class allows for searching based on {@link net.semanticmetadata.lire.indexing.hashing.BitSampling}
+ * This class allows for searching based on {@link net.semanticmetadata.lire.indexers.hashing.BitSampling}
  * HashingMode. First a number of candidates is retrieved from the index, then the candidates are re-ranked.
  * The number of candidates can be tuned with the numHashedResults parameter in the constructor. The higher
  * this parameter, the better the results, but the slower the search.
@@ -71,7 +68,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
     private int maxResultsHashBased = 1000;
     private int maximumHits = 100;
     private String featureFieldName = DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM;
-    private LireFeature feature;
+    private GlobalFeature feature;
     private String hashesFieldName = null;
 
     /**
@@ -81,7 +78,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
      * @param hashesFieldName the field hashFunctionsFileName of the hashes.
      * @param feature an instance of the feature.
      */
-    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, GlobalFeature feature) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
@@ -94,7 +91,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
         }
     }
 
-    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, int numHashedResults) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, GlobalFeature feature, int numHashedResults) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
@@ -108,7 +105,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
         }
     }
 
-    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, GlobalFeature feature, InputStream hashes) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
@@ -122,7 +119,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
         }
     }
 
-    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, LireFeature feature, InputStream hashes, int numHashedResults) {
+    public LshImageSearcher(int maximumHits, String featureFieldName, String hashesFieldName, GlobalFeature feature, InputStream hashes, int numHashedResults) {
         this.maximumHits = maximumHits;
         this.featureFieldName = featureFieldName;
         this.hashesFieldName = hashesFieldName;
@@ -139,9 +136,9 @@ public class LshImageSearcher extends AbstractImageSearcher {
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
         try {
-            LireFeature queryFeature = feature.getClass().newInstance();
+            GlobalFeature queryFeature = feature.getClass().newInstance();
             queryFeature.extract(image);
-            int[] ints = LocalitySensitiveHashing.generateHashes(queryFeature.getDoubleHistogram());
+            int[] ints = LocalitySensitiveHashing.generateHashes(queryFeature.getFeatureVector());
             String[] hashes = new String[ints.length];
             for (int i = 0; i < ints.length; i++) {
                 hashes[i] = Integer.toString(ints[i]);
@@ -155,7 +152,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
 
     public ImageSearchHits search(Document doc, IndexReader reader) throws IOException {
         try {
-            LireFeature queryFeature = feature.getClass().newInstance();
+            GlobalFeature queryFeature = feature.getClass().newInstance();
             queryFeature.setByteArrayRepresentation(doc.getBinaryValue(featureFieldName).bytes,
                     doc.getBinaryValue(featureFieldName).offset,
                     doc.getBinaryValue(featureFieldName).length);
@@ -166,7 +163,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
         return null;
     }
 
-    private ImageSearchHits search(String[] hashes, LireFeature queryFeature, IndexReader reader) throws IOException {
+    private ImageSearchHits search(String[] hashes, GlobalFeature queryFeature, IndexReader reader) throws IOException {
         // first search by text:
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(new DefaultSimilarity(){
@@ -208,18 +205,18 @@ public class LshImageSearcher extends AbstractImageSearcher {
         TopDocs docs = searcher.search(query, maxResultsHashBased);
         // then re-rank
         TreeSet<SimpleResult> resultScoreDocs = new TreeSet<SimpleResult>();
-        float maxDistance = 0f;
-        float tmpScore = 0f;
+        double maxDistance = 0d;
+        double tmpScore = 0d;
         for (int i = 0; i < docs.scoreDocs.length; i++) {
             feature.setByteArrayRepresentation(reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).bytes,
                     reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).offset,
                     reader.document(docs.scoreDocs[i].doc).getBinaryValue(featureFieldName).length);
             tmpScore = queryFeature.getDistance(feature);
             if (resultScoreDocs.size() < maximumHits) {
-                resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
+                resultScoreDocs.add(new SimpleResult(tmpScore, docs.scoreDocs[i].doc));
                 maxDistance = Math.max(maxDistance, tmpScore);
             } else if (tmpScore < maxDistance) {
-                resultScoreDocs.add(new SimpleResult(tmpScore, reader.document(docs.scoreDocs[i].doc), docs.scoreDocs[i].doc));
+                resultScoreDocs.add(new SimpleResult(tmpScore, docs.scoreDocs[i].doc));
             }
             while (resultScoreDocs.size() > maximumHits) {
                 resultScoreDocs.remove(resultScoreDocs.last());

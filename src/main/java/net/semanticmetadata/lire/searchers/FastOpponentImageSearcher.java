@@ -40,13 +40,9 @@
  */
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.AbstractImageSearcher;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageDuplicates;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.OpponentHistogram;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.OpponentHistogram;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
@@ -83,29 +79,29 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
 
     public ImageSearchHits search(BufferedImage image, IndexReader reader) throws IOException {
         logger.finer("Starting extraction.");
-        OpponentHistogram lireFeature = null;
+        OpponentHistogram globalFeature = null;
         SimpleImageSearchHits searchHits = null;
-        lireFeature = new OpponentHistogram();
+        globalFeature = new OpponentHistogram();
         // Scaling image is especially with the correlogram features very important!
         BufferedImage bimg = image;
-        if (Math.max(image.getHeight(), image.getWidth()) > GenericDocumentBuilder.MAX_IMAGE_DIMENSION) {
-            bimg = ImageUtils.scaleImage(image, GenericDocumentBuilder.MAX_IMAGE_DIMENSION);
+        if (Math.max(image.getHeight(), image.getWidth()) > DocumentBuilder.MAX_IMAGE_DIMENSION) {
+            bimg = ImageUtils.scaleImage(image, DocumentBuilder.MAX_IMAGE_DIMENSION);
         }
-        lireFeature.extract(bimg);
+        globalFeature.extract(bimg);
         logger.fine("Extraction from image finished");
 
-        double maxDistance = findSimilar(reader, lireFeature);
+        double maxDistance = findSimilar(reader, globalFeature);
         searchHits = new SimpleImageSearchHits(this.docs, (float) maxDistance);
         return searchHits;
     }
 
     /**
      * @param reader
-     * @param lireFeature
+     * @param globalFeature
      * @return the maximum distance found for normalizing.
      * @throws java.io.IOException
      */
-    protected double findSimilar(IndexReader reader, LireFeature lireFeature) throws IOException {
+    protected double findSimilar(IndexReader reader, GlobalFeature globalFeature) throws IOException {
         maxDistance = -1f;
         // clear result set ...
         docs.clear();
@@ -114,7 +110,7 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
         Document d;
         double tmpDistance;
         int docs = reader.numDocs();
-        byte[] histogram = lireFeature.getByteArrayRepresentation();
+        byte[] histogram = globalFeature.getByteArrayRepresentation();
         for (int i = 0; i < docs; i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
@@ -131,14 +127,14 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
             }
             // if the array is not full yet:
             if (this.docs.size() < maxHits) {
-                this.docs.add(new SimpleResult((float) tmpDistance, d, i));
+                this.docs.add(new SimpleResult( tmpDistance, i));
                 if (tmpDistance > maxDistance) maxDistance = tmpDistance;
             } else if (tmpDistance < maxDistance) {
                 // if it is nearer to the sample than at least on of the current set:
                 // remove the last one ...
                 this.docs.remove(this.docs.last());
                 // add the new one ...
-                this.docs.add(new SimpleResult((float) tmpDistance, d, i));
+                this.docs.add(new SimpleResult(tmpDistance, i));
                 // and set our new distance border ...
                 maxDistance = this.docs.last().getDistance();
             }
@@ -162,18 +158,18 @@ public class FastOpponentImageSearcher extends AbstractImageSearcher {
         } else {
             logger.warning("No feature stored in this document!");
         }
-        return 0f;
+        return 0d;
     }
 
     public ImageSearchHits search(Document doc, IndexReader reader) throws IOException {
         SimpleImageSearchHits searchHits = null;
-        OpponentHistogram lireFeature = new OpponentHistogram();
+        OpponentHistogram globalFeature = new OpponentHistogram();
 
         if (doc.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue() != null && doc.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().length > 0)
-            lireFeature.setByteArrayRepresentation(doc.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().bytes,
+            globalFeature.setByteArrayRepresentation(doc.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().bytes,
                     doc.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().offset,
                     doc.getField(DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM).binaryValue().length);
-        double maxDistance = findSimilar(reader, lireFeature);
+        double maxDistance = findSimilar(reader, globalFeature);
 
         searchHits = new SimpleImageSearchHits(this.docs, (float) maxDistance);
         return searchHits;
