@@ -6,4 +6,4 @@ In Tools -> Run/Debug Configuration -> Application -> VM options, enter:
 -Djava.library.path=path/to/dll
 e.g.: -Djava.library.path="lib\opencv"
 
-Current version: openCV 2.4.9 (x64)
+Current version: openCV 2.4.11 (x64)
