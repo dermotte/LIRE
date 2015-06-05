@@ -39,7 +39,7 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.correlogram;
 
-import net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram.Mode;
+import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram.Mode;
 
 import java.util.Arrays;
 
