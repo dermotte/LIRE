@@ -38,7 +38,7 @@
  *
  * Updated: 11.07.13 10:42
  */
-package net.semanticmetadata.lire.imageanalysis.sift;
+package net.semanticmetadata.lire.imageanalysis.features.local.sift;
 
 
 import net.semanticmetadata.lire.DocumentBuilder;

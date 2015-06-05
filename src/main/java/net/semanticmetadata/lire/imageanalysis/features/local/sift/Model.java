@@ -36,7 +36,7 @@
  * (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
  *     http://www.semanticmetadata.net/lire, http://www.lire-project.net
  */
-package net.semanticmetadata.lire.imageanalysis.sift;
+package net.semanticmetadata.lire.imageanalysis.features.local.sift;
 
 import java.awt.geom.AffineTransform;
 import java.util.Collection;

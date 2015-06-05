@@ -38,7 +38,7 @@
  *
  * Updated: 04.05.13 11:18
  */
-package net.semanticmetadata.lire.imageanalysis.sift;
+package net.semanticmetadata.lire.imageanalysis.features.local.sift;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
