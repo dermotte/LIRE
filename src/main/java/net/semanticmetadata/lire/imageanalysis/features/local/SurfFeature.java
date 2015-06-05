@@ -42,92 +42,93 @@
 package net.semanticmetadata.lire.imageanalysis.features.local;
 
 import com.stromberglabs.jopensurf.SURFInterestPoint;
-import net.semanticmetadata.lire.DocumentBuilder;
+import com.stromberglabs.jopensurf.Surf;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
-
-import java.awt.image.BufferedImage;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
 
 /**
  * Mathias Lux, mathias@juggle.at
  * Date: 29.09.2010
  * Time: 15:44:14
  */
-public class SurfFeature implements LireFeature {
-    SURFInterestPoint sip;
-    double[] descriptor;
+public class SurfFeature implements LocalFeature {
+    private double X = -1, Y = -1;
+    private double size = -1;
+    private double[] feature = null;
 
     public SurfFeature(SURFInterestPoint surfInterestPoint) {
-        this.sip = surfInterestPoint;
-        descriptor = SerializationUtils.toDoubleArray(sip.getDescriptor());
+        this.X = surfInterestPoint.getX();
+        this.Y = surfInterestPoint.getY();
+        this.size = surfInterestPoint.getScale(); //TODO: size!!!
+        feature = SerializationUtils.toDoubleArray(surfInterestPoint.getDescriptor());
     }
 
-    public SurfFeature() {
-        sip = null;
+    public SurfFeature() { }
+
+    @Override
+    public double getDistance(LireFeature f) {
+        if (!(f instanceof SurfFeature)) return -1;
+        return MetricsUtils.distL2(feature, ((SurfFeature) f).feature);
     }
 
-    public void extract(BufferedImage bimg) {
-        // does nothing ....
-    }
-
-    public float getDistance(LireFeature feature) {
-        if (!(feature instanceof SurfFeature)) return -1;
-        return (float) MetricsUtils.distL2(descriptor, ((SurfFeature) feature).descriptor);
-    }
-
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    public void setStringRepresentation(String s) {
-        double[] result = null;
-        LinkedList<Float> tmp = new LinkedList<Float>();
-        StringTokenizer st = new StringTokenizer(s);
-        st.nextToken(); // point.x
-        st.nextToken(); // point.y
-        st.nextToken(); // response
-        while (st.hasMoreTokens())
-            tmp.add(Float.parseFloat(st.nextToken()));
-        result = new double[tmp.size()];
-        int i = 0;
-        for (Iterator<Float> iterator = tmp.iterator(); iterator.hasNext(); ) {
-            Float next = iterator.next();
-            result[i] = next;
-            i++;
-        }
-        descriptor = result;
-
-    }
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        double[] result = null;
+//        LinkedList<Float> tmp = new LinkedList<Float>();
+//        StringTokenizer st = new StringTokenizer(s);
+//        st.nextToken(); // point.x
+//        st.nextToken(); // point.y
+//        st.nextToken(); // response
+//        while (st.hasMoreTokens())
+//            tmp.add(Float.parseFloat(st.nextToken()));
+//        result = new double[tmp.size()];
+//        int i = 0;
+//        for (Iterator<Float> iterator = tmp.iterator(); iterator.hasNext(); ) {
+//            Float next = iterator.next();
+//            result[i] = next;
+//            i++;
+//        }
+//        descriptor = result;
+//
+//    }
 
     /**
      * Provides a much faster way of serialization.
      *
      * @return a byte array that can be read with the corresponding method.
-     * @see net.semanticmetadata.lire.imageanalysis.CEDD#setByteArrayRepresentation(byte[])
+     * @see CEDD#setByteArrayRepresentation(byte[])
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
-        return SerializationUtils.toByteArray(descriptor);
+        return SerializationUtils.toByteArray(feature);
     }
 
     /**
      * Reads descriptor from a byte array. Much faster than the String based method.
      *
      * @param in byte array from corresponding method
-     * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
+     * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
-        descriptor = SerializationUtils.toDoubleArray(in);
+        feature = SerializationUtils.toDoubleArray(in);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        descriptor = SerializationUtils.toDoubleArray(in, offset, length);
+        feature = SerializationUtils.toDoubleArray(in, offset, length);
     }
 
-    public double[] getDoubleHistogram() {
-        return descriptor;
+    @Override
+    public double[] getFeatureVector() {
+        return feature;
     }
 
     @Override
@@ -138,5 +139,25 @@ public class SurfFeature implements LireFeature {
     @Override
     public String getFieldName() {
         return DocumentBuilder.FIELD_NAME_SURF;
+    }
+
+    @Override
+    public double getX() {
+        return X;
+    }
+
+    @Override
+    public double getY() {
+        return Y;
+    }
+
+    @Override
+    public double getSize() {
+        return size;
+    }
+
+    @Override
+    public Class<?> getClassOfExtractor() {
+        return Surf.class;
     }
 }

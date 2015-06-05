@@ -41,21 +41,21 @@
 package net.semanticmetadata.lire.imageanalysis.features.local.sift;
 
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 /**
  * SIFT feature container
  */
-public class Feature  implements Comparable<Feature>, Serializable, LireFeature {
+public class Feature  implements Comparable<Feature>, Serializable, LocalFeature {
     /**
      *
      */
@@ -74,10 +74,10 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
     }
 
     public Feature(float s, float o, float[] l, float[] d) {
-        scale = s;
-        orientation = o;
-        location = l;
-        descriptor = SerializationUtils.toDoubleArray(d);
+        this.scale = s;
+        this.orientation = o;
+        this.location = l;
+        this.descriptor = SerializationUtils.toDoubleArray(d);
     }
 
     /**
@@ -85,6 +85,7 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
      * please note, that the comparator returns -1 for
      * this.scale &gt; o.scale, to sort the features in a descending order
      */
+    @Override
     public int compareTo(Feature f) {
         return scale < f.scale ? 1 : scale == f.scale ? 0 : -1;
     }
@@ -118,65 +119,67 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
         return sb.toString();
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         if (feature instanceof Feature) return descriptorDistance((Feature) feature);
-        else return -1f;
+        else return -1d;
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(512);
-        sb.append("sift");
-        sb.append(' ');
-        sb.append(scale);
-        sb.append(' ');
-        sb.append(orientation);
-        sb.append(' ');
-        // we assume that the location is 2D:
-        assert (location.length == 2);
-        sb.append(location[0]);
-        sb.append(' ');
-        sb.append(location[1]);
-        sb.append(' ');
-        // we add the descriptor: (default size == 4*4*8
-        for (int i = 0; i < descriptor.length; i++) {
-            sb.append(descriptor[i]);
-            sb.append(' ');
-        }
-        return sb.toString();
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(512);
+//        sb.append("sift");
+//        sb.append(' ');
+//        sb.append(scale);
+//        sb.append(' ');
+//        sb.append(orientation);
+//        sb.append(' ');
+//        // we assume that the location is 2D:
+//        assert (location.length == 2);
+//        sb.append(location[0]);
+//        sb.append(' ');
+//        sb.append(location[1]);
+//        sb.append(' ');
+//        // we add the descriptor: (default size == 4*4*8
+//        for (int i = 0; i < descriptor.length; i++) {
+//            sb.append(descriptor[i]);
+//            sb.append(' ');
+//        }
+//        return sb.toString();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s, " ");
+//        if (!st.nextToken().equals("sift")) {
+//            logger.warning("This is not a SIFT feature.");
+//            return;
+//        }
+//        scale = Float.parseFloat(st.nextToken());
+//        orientation = Float.parseFloat(st.nextToken());
+//        location = new float[2];
+//        location[0] = Float.parseFloat(st.nextToken());
+//        location[1] = Float.parseFloat(st.nextToken());
+//
+//        // parse descriptor:
+//        LinkedList<Float> descVals = new LinkedList<Float>();
+//        while (st.hasMoreTokens()) descVals.add(Float.parseFloat(st.nextToken()));
+//
+//        // set descriptor:
+//        descriptor = new double[descVals.size()];
+//        for (int i = 0; i < descriptor.length; i++) {
+//            descriptor[i] = descVals.get(i);
+//        }
+//    }
 
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s, " ");
-        if (!st.nextToken().equals("sift")) {
-            logger.warning("This is not a SIFT feature.");
-            return;
-        }
-        scale = Float.parseFloat(st.nextToken());
-        orientation = Float.parseFloat(st.nextToken());
-        location = new float[2];
-        location[0] = Float.parseFloat(st.nextToken());
-        location[1] = Float.parseFloat(st.nextToken());
-
-        // parse descriptor:
-        LinkedList<Float> descVals = new LinkedList<Float>();
-        while (st.hasMoreTokens()) descVals.add(Float.parseFloat(st.nextToken()));
-
-        // set descriptor:
-        descriptor = new double[descVals.size()];
-        for (int i = 0; i < descriptor.length; i++) {
-            descriptor[i] = descVals.get(i);
-        }
-    }
-
-    public void extract(BufferedImage bimg) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    public void extract(BufferedImage bimg) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     /**
      * Writing out to bytes ... just to save some time and space.
      *
      * @return
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[descriptor.length * 4 + 4 * 4];
         byte[] tmp;
@@ -203,8 +206,9 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
      * Reads descriptor from a byte array. Much faster than the String based method.
      *
      * @param in byte array from corresponding method
-     * @see net.semanticmetadata.lire.imageanalysis.CEDD#getByteArrayRepresentation
+     * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         byte[] tmp = new byte[4];
         descriptor = new double[in.length / 4 - 4];
@@ -246,7 +250,8 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         double[] result = new double[descriptor.length];
         for (int i = 0; i < descriptor.length; i++) {
             result[i] = descriptor[i];
@@ -262,6 +267,26 @@ public class Feature  implements Comparable<Feature>, Serializable, LireFeature 
     @Override
     public String getFieldName() {
         return DocumentBuilder.FIELD_NAME_SIFT;
+    }
+
+    @Override
+    public double getX() {
+        return location[0];
+    }
+
+    @Override
+    public double getY() {
+        return location[1];
+    }
+
+    @Override
+    public double getSize() {
+        return scale;           //TODO: size!!
+    }
+
+    @Override
+    public Class<? extends LocalFeatureExtractor> getClassOfExtractor() {
+        return Extractor.class;
     }
 }
 

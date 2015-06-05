@@ -39,6 +39,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.local.sift;
 
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -56,7 +59,7 @@ import java.util.List;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class Extractor {
+public class Extractor implements LocalFeatureExtractor{
     // steps
     int steps = 3;
     // initial sigma
@@ -78,10 +81,12 @@ public class Extractor {
 
     float scale = 1.0f;
 
+    List<Feature> features = null;
+
     public Extractor() {
 
-
     }
+
 
     private void align(BufferedImage img1, BufferedImage img2) {
         try {
@@ -125,6 +130,25 @@ public class Extractor {
     public static void main(String[] args) throws IOException {
         Extractor e = new Extractor();
         e.align(ImageIO.read(new File("c:/temp/image001.png")), ImageIO.read(new File("c:/temp/image002.png")));
+    }
+
+    @Override
+    public void extract(BufferedImage image) {
+        try {
+            features = computeSiftFeatures(image);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public List<? extends LocalFeature> getFeatures() {
+        return features;
+    }
+
+    @Override
+    public Class<? extends LocalFeature> getClassOfFeatures() {
+        return Feature.class;
     }
 
     public List<Feature> computeSiftFeatures(BufferedImage img) throws IOException {
@@ -180,6 +204,7 @@ class Found implements Comparable<Object> {
         this.d = d;
     }
 
+    @Override
     public int compareTo(Object o) {
         return (int) Math.signum(d - ((Found) o).d);
     }

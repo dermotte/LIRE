@@ -655,8 +655,6 @@ public class FloatArray2DSIFT {
 
     /**
      * get a histogram of feature sizes
-     *
-     * @param rs
      */
     public static float[] featureSizeHistogram(
             Vector<Feature> features,
