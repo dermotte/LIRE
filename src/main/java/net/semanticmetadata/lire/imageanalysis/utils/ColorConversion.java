@@ -44,6 +44,7 @@ package net.semanticmetadata.lire.imageanalysis.utils;
  * Time: 11:27:46
  *
  * @author Mathias Lux, mathias@juggle.at
+ * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class ColorConversion {
     /**
@@ -58,10 +59,10 @@ public class ColorConversion {
     public static void rgb2hsv(int r, int g, int b, int hsv[]) {
         int min = Math.min(Math.min(r, g), b);  //Min. value of RGB
         int max = Math.max(Math.max(r, g), b);  //Max. value of RGB
-        float delta = (float) max - min;        //Delta RGB value
+        double delta = (double) max - min;        //Delta RGB value
 
-        float H = 0f, S = 0f;
-        float V = max / 255f;
+        double H = 0d, S = 0d;
+        double V = max / 255d;
 
         if (delta != 0) {
             S = (delta / max);

@@ -39,6 +39,8 @@
 
 package net.semanticmetadata.lire.imageanalysis.visualattention;
 
+import net.semanticmetadata.lire.imageanalysis.utils.ColorConversion;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashSet;
@@ -164,7 +166,7 @@ public class StentifordModel {
             int n = integerIterator.next();
             raster.getPixel(x + possibleNeighbours[n][0], y + possibleNeighbours[n][1], values[k]);
             // convert to HSV:
-            rgb2hsv(values[k][0], values[k][1], values[k][2], values[k]);
+            ColorConversion.rgb2hsv(values[k][0], values[k][1], values[k][2], values[k]);
             k++;
         }
     }
@@ -199,47 +201,6 @@ public class StentifordModel {
             }
         }
         return result;
-    }
-
-    public static void rgb2hsv(int r, int g, int b, int hsv[]) {
-        int min;    //Min. value of RGB
-        int max;    //Max. value of RGB
-        int delMax; //Delta RGB value
-
-        min = Math.min(r, g);
-        min = Math.min(min, b);
-
-        max = Math.max(r, g);
-        max = Math.max(max, b);
-
-        delMax = max - min;
-
-//        System.out.println("hsv = " + hsv[0] + ", " + hsv[1] + ", "  + hsv[2]);
-
-        float H = 0f, S = 0f;
-        float V = max / 255f;
-
-        if (delMax == 0) {
-            H = 0f;
-            S = 0f;
-        } else {
-            S = delMax / 255f;
-            if (r == max) {
-                if (g >= b) {
-                    H = ((g / 255f - b / 255f) / (float) delMax / 255f) * 60;
-                } else {
-                    H = ((g / 255f - b / 255f) / (float) delMax / 255f) * 60 + 360;
-                }
-            } else if (g == max) {
-                H = (2 + (b / 255f - r / 255f) / (float) delMax / 255f) * 60;
-            } else if (b == max) {
-                H = (4 + (r / 255f - g / 255f) / (float) delMax / 255f) * 60;
-            }
-        }
-//        System.out.println("H = " + H);
-        hsv[0] = (int) (H);
-        hsv[1] = (int) (S * 100);
-        hsv[2] = (int) (V * 100);
     }
 
 }
