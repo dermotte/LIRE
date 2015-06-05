@@ -42,7 +42,8 @@
 package net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid;
 
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -54,7 +55,7 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at, 19.05.13
  */
 
-public class SPCEDD implements LireFeature {
+public class SPCEDD implements GlobalFeature {
     int histogramSize = 144 * 5 + 144 * 4 * 4;
     double[] histogram = new double[histogramSize];
 
@@ -66,18 +67,18 @@ public class SPCEDD implements LireFeature {
         // level 0:
         CEDD cedd = new CEDD();
         cedd.extract(bimg);
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 0, 144);
+        System.arraycopy(cedd.getFeatureVector(), 0, histogram, 0, 144);
         // level 1:
         int w = bimg.getWidth() / 2;
         int h = bimg.getHeight() / 2;
         cedd.extract(bimg.getSubimage(0, 0, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 1, 144);
+        System.arraycopy(cedd.getFeatureVector(), 0, histogram, 144 * 1, 144);
         cedd.extract(bimg.getSubimage(w, 0, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 2, 144);
+        System.arraycopy(cedd.getFeatureVector(), 0, histogram, 144 * 2, 144);
         cedd.extract(bimg.getSubimage(0, h, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 3, 144);
+        System.arraycopy(cedd.getFeatureVector(), 0, histogram, 144 * 3, 144);
         cedd.extract(bimg.getSubimage(w, h, w, h));
-        System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * 4, 144);
+        System.arraycopy(cedd.getFeatureVector(), 0, histogram, 144 * 4, 144);
         // level 2:
         int wstep = bimg.getWidth() / 4;
         int hstep = bimg.getHeight() / 4;
@@ -85,7 +86,7 @@ public class SPCEDD implements LireFeature {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 cedd.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));
-                System.arraycopy(cedd.getDoubleHistogram(), 0, histogram, 144 * binPos, 144);
+                System.arraycopy(cedd.getFeatureVector(), 0, histogram, 144 * binPos, 144);
                 binPos++;
             }
         }
@@ -148,25 +149,25 @@ public class SPCEDD implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof SPCEDD)) return -1;
-        return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
+        return MetricsUtils.tanimoto(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {

@@ -41,7 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.joint;
 
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -54,7 +56,7 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at
  * Time: 21.06.13 13:51
  */
-public class LocalBinaryPatternsAndOpponent implements LireFeature {
+public class LocalBinaryPatternsAndOpponent implements GlobalFeature {
     final static double sq2 = Math.sqrt(2d);
     final static double sq6 = Math.sqrt(3d);
     final static double sq3 = Math.sqrt(6d);
@@ -103,6 +105,7 @@ public class LocalBinaryPatternsAndOpponent implements LireFeature {
         binTranslate[255] = 35;
     }
 
+    @Override
     public void extract(BufferedImage image) {
         Arrays.fill(histogram, 0d);
         extractWithRadiusOne(image);
@@ -184,6 +187,7 @@ public class LocalBinaryPatternsAndOpponent implements LireFeature {
         return result;
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] rep = new byte[histogram.length];
         for (int i = 0; i < histogram.length; i++) {
@@ -205,24 +209,24 @@ public class LocalBinaryPatternsAndOpponent implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
-        return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
+    public double getDistance(LireFeature feature) {
+        return MetricsUtils.tanimoto(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {
@@ -231,6 +235,6 @@ public class LocalBinaryPatternsAndOpponent implements LireFeature {
 
     @Override
     public String getFieldName() {
-        return "f_jhlbpopp";
+        return DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS_AND_OPPONENT;
     }
 }

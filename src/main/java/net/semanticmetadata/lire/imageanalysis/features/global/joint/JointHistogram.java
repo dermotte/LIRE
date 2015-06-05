@@ -41,26 +41,26 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.joint;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.StringTokenizer;
 
 /**
  * A simple implementation of a joint histogram combining 64-bin RGB and pixel rank.
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class JointHistogram implements LireFeature {
+public class JointHistogram implements GlobalFeature {
     private int[] tmpIntensity = new int[1];
     double[] descriptor;
 
-
+    @Override
     public void extract(BufferedImage bimg) {
         bimg = ImageUtils.get8BitRGBImage(bimg);
         // extract:
@@ -113,31 +113,31 @@ public class JointHistogram implements LireFeature {
         return tmpIntensity[0];
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
-        sb.append("jhist");
-        sb.append(' ');
-        sb.append(descriptor.length);
-        sb.append(' ');
-        for (double aData : descriptor) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("jhist"))
-            throw new UnsupportedOperationException("This is not a JointHistogram descriptor.");
-        descriptor = new double[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < descriptor.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            descriptor[i] = Integer.parseInt(st.nextToken());
-        }
-
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
+//        sb.append("jhist");
+//        sb.append(' ');
+//        sb.append(descriptor.length);
+//        sb.append(' ');
+//        for (double aData : descriptor) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("jhist"))
+//            throw new UnsupportedOperationException("This is not a JointHistogram descriptor.");
+//        descriptor = new double[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < descriptor.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            descriptor[i] = Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
     /**
      * Provides a much faster way of serialization.
@@ -145,6 +145,7 @@ public class JointHistogram implements LireFeature {
      * @return a byte array that can be read with the corresponding method.
      * @see CEDD#setByteArrayRepresentation(byte[])
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[descriptor.length];
         for (int i = 0; i < result.length; i++) {
@@ -159,6 +160,7 @@ public class JointHistogram implements LireFeature {
      * @param in byte array from corresponding method
      * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         descriptor = new double[in.length];
         for (int i = 0; i < descriptor.length; i++) {
@@ -166,6 +168,7 @@ public class JointHistogram implements LireFeature {
         }
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         descriptor = new double[length];
         for (int i = offset; i < length; i++) {
@@ -173,7 +176,8 @@ public class JointHistogram implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         double[] result = new double[descriptor.length];
         for (int i = 0; i < descriptor.length; i++) {
             result[i] = descriptor[i];
@@ -181,7 +185,8 @@ public class JointHistogram implements LireFeature {
         return result;
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof JointHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
         return MetricsUtils.jsd(((JointHistogram) feature).descriptor, descriptor);

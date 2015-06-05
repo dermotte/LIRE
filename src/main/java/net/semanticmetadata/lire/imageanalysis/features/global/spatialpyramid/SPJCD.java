@@ -41,9 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -55,7 +55,7 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at, 19.05.13
  */
 
-public class SPJCD implements LireFeature {
+public class SPJCD implements GlobalFeature {
     private int histLength = 168;
     int histogramSize = histLength * 5 + histLength * 4 * 4;
     double[] histogram = new double[histogramSize];
@@ -68,18 +68,18 @@ public class SPJCD implements LireFeature {
         // level 0:
         JCD jcd = new JCD();
         jcd.extract(bimg);
-        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, 0, histLength);
+        System.arraycopy(jcd.getFeatureVector(), 0, histogram, 0, histLength);
         // level 1:
         int w = bimg.getWidth() / 2;
         int h = bimg.getHeight() / 2;
         jcd.extract(bimg.getSubimage(0, 0, w, h));
-        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 1, histLength);
+        System.arraycopy(jcd.getFeatureVector(), 0, histogram, histLength * 1, histLength);
         jcd.extract(bimg.getSubimage(w, 0, w, h));
-        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 2, histLength);
+        System.arraycopy(jcd.getFeatureVector(), 0, histogram, histLength * 2, histLength);
         jcd.extract(bimg.getSubimage(0, h, w, h));
-        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 3, histLength);
+        System.arraycopy(jcd.getFeatureVector(), 0, histogram, histLength * 3, histLength);
         jcd.extract(bimg.getSubimage(w, h, w, h));
-        System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * 4, histLength);
+        System.arraycopy(jcd.getFeatureVector(), 0, histogram, histLength * 4, histLength);
         // level 2:
         int wstep = bimg.getWidth() / 4;
         int hstep = bimg.getHeight() / 4;
@@ -87,7 +87,7 @@ public class SPJCD implements LireFeature {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 jcd.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));
-                System.arraycopy(jcd.getDoubleHistogram(), 0, histogram, histLength * binPos, histLength);
+                System.arraycopy(jcd.getFeatureVector(), 0, histogram, histLength * binPos, histLength);
                 binPos++;
             }
         }
@@ -150,25 +150,25 @@ public class SPJCD implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof SPJCD)) return -1;
-        return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
+        return MetricsUtils.tanimoto(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {

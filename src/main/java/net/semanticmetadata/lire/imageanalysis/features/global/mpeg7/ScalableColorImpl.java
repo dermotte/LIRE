@@ -40,12 +40,11 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global.mpeg7;
 
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 /**
@@ -58,7 +57,7 @@ public class ScalableColorImpl {
     double[] descriptor;
 
     protected BufferedImage img;
-    protected int NumberOfCoefficients = 256;
+    protected int NumberOfCoefficients = 64;
     protected int NumberOfBitplanesDiscarded = 0;
     protected int _ySize, _xSize;
     protected int _h_value, _s_value, _v_value;
@@ -213,7 +212,7 @@ public class ScalableColorImpl {
     public ScalableColorImpl(BufferedImage image) {
         this.img = image;
         this.NumberOfBitplanesDiscarded = 0;
-        this.NumberOfCoefficients = 256;
+        this.NumberOfCoefficients = 64;
         _xSize = img.getWidth();
         _ySize = img.getHeight();
         init();
@@ -223,7 +222,7 @@ public class ScalableColorImpl {
     public void extract(BufferedImage image) {
         this.img = image;
         this.NumberOfBitplanesDiscarded = 0;
-        this.NumberOfCoefficients = 256;
+        this.NumberOfCoefficients = 64;
         _xSize = img.getWidth();
         _ySize = img.getHeight();
         init();
@@ -243,7 +242,7 @@ public class ScalableColorImpl {
     public ScalableColorImpl(int[] pixels) {
         this.img = null;
         this.NumberOfBitplanesDiscarded = 0;
-        this.NumberOfCoefficients = 256;
+        this.NumberOfCoefficients = 64;
         _xSize = 1;
         _ySize = pixels.length / 3;
         this.pixels = pixels;
@@ -251,12 +250,12 @@ public class ScalableColorImpl {
         extract();
     }
 
-    public ScalableColorImpl(String descriptor) {
-        _xSize = 0;
-        _ySize = 0;
-        setStringRepresentation(descriptor);
-        init();
-    }
+//    public ScalableColorImpl(String descriptor) {
+//        _xSize = 0;
+//        _ySize = 0;
+//        setStringRepresentation(descriptor);
+//        init();
+//    }
 
     protected void init() {
         _xNumOfBlocks = 1;
@@ -792,41 +791,41 @@ public class ScalableColorImpl {
      * @param descriptor
      * @return the distance from [0,infinite) or -1 if descriptor type does not match
      */
-    public float getDistance(LireFeature descriptor) {
-        if (!(descriptor instanceof ScalableColorImpl)) return -1f;
+    public double getDistance(LireFeature descriptor) {
+        if (!(descriptor instanceof ScalableColorImpl)) return -1d;
         ScalableColorImpl sc = (ScalableColorImpl) descriptor;
-        return (float) sc.getSimilarity(this);
+        return sc.getSimilarity(this);
     }
 
-    public String getStringRepresentation() {
-        StringBuilder builder = new StringBuilder(NumberOfCoefficients * 3 + 32);
-        builder.append("scalablecolor;");
-        builder.append(NumberOfBitplanesDiscarded);
-        builder.append(';');
-        builder.append(NumberOfCoefficients);
-        builder.append(';');
-        for (int i = 0; i < NumberOfCoefficients; i++) {
-            builder.append(haarTransformedHistogram[i]);
-            if ((i + 1) < NumberOfCoefficients) builder.append(' ');
-        }
-        return builder.toString();
-    }
-
-    public void setStringRepresentation(String descriptor) {
-        String[] parts = descriptor.split(";");
-        if (!parts[0].equals("scalablecolor")) {
-            throw new UnsupportedOperationException("This is no valid representation of a ScalableColor descriptor!");
-        }
-        NumberOfBitplanesDiscarded = Integer.parseInt(parts[1]);
-        NumberOfCoefficients = Integer.parseInt(parts[2]);
-        int[] hist = new int[NumberOfCoefficients];
-        StringTokenizer st = new StringTokenizer(parts[3], " ");
-        int count = 0;
-        while (st.hasMoreElements()) {
-            hist[count] = Integer.parseInt(st.nextToken());
-            count++;
-        }
-        haarTransformedHistogram = hist;
-        this.descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder builder = new StringBuilder(NumberOfCoefficients * 3 + 32);
+//        builder.append("scalablecolor;");
+//        builder.append(NumberOfBitplanesDiscarded);
+//        builder.append(';');
+//        builder.append(NumberOfCoefficients);
+//        builder.append(';');
+//        for (int i = 0; i < NumberOfCoefficients; i++) {
+//            builder.append(haarTransformedHistogram[i]);
+//            if ((i + 1) < NumberOfCoefficients) builder.append(' ');
+//        }
+//        return builder.toString();
+//    }
+//
+//    public void setStringRepresentation(String descriptor) {
+//        String[] parts = descriptor.split(";");
+//        if (!parts[0].equals("scalablecolor")) {
+//            throw new UnsupportedOperationException("This is no valid representation of a ScalableColor descriptor!");
+//        }
+//        NumberOfBitplanesDiscarded = Integer.parseInt(parts[1]);
+//        NumberOfCoefficients = Integer.parseInt(parts[2]);
+//        int[] hist = new int[NumberOfCoefficients];
+//        StringTokenizer st = new StringTokenizer(parts[3], " ");
+//        int count = 0;
+//        while (st.hasMoreElements()) {
+//            hist[count] = Integer.parseInt(st.nextToken());
+//            count++;
+//        }
+//        haarTransformedHistogram = hist;
+//        this.descriptor = SerializationUtils.toDoubleArray(haarTransformedHistogram);
+//    }
 }

@@ -145,9 +145,9 @@ public class ColorLayoutImpl {
         init();
     }
 
-    public ColorLayoutImpl(String descriptorValues) {
-        setStringRepresentation(descriptorValues);
-    }
+//    public ColorLayoutImpl(String descriptorValues) {
+//        setStringRepresentation(descriptorValues);
+//    }
 
     /**
      * Create a ColorLayout Object from the given BufferedImage with the desired number of Coefficients
@@ -615,47 +615,47 @@ public class ColorLayoutImpl {
     }
 
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(256);
-        StringBuilder sbtmp = new StringBuilder(256);
-        for (int i = 0; i < numYCoeff; i++) {
-            sb.append(YCoeff[i]);
-            if (i + 1 < numYCoeff) sb.append(' ');
-        }
-        sb.append("z");
-        for (int i = 0; i < numCCoeff; i++) {
-            sb.append(CbCoeff[i]);
-            if (i + 1 < numCCoeff) sb.append(' ');
-            sbtmp.append(CrCoeff[i]);
-            if (i + 1 < numCCoeff) sbtmp.append(' ');
-        }
-        sb.append("z");
-        sb.append(sbtmp);
-        return sb.toString();
-    }
-
-    public void setStringRepresentation(String descriptor) {
-        String[] coeffs = descriptor.split("z");
-        String[] y = coeffs[0].split(" ");
-        String[] cb = coeffs[1].split(" ");
-        String[] cr = coeffs[2].split(" ");
-
-        numYCoeff = y.length;
-        numCCoeff = Math.min(cb.length, cr.length);
-
-        YCoeff = new int[numYCoeff];
-        CbCoeff = new int[numCCoeff];
-        CrCoeff = new int[numCCoeff];
-
-        for (int i = 0; i < numYCoeff; i++) {
-            YCoeff[i] = Integer.parseInt(y[i]);
-        }
-        for (int i = 0; i < numCCoeff; i++) {
-            CbCoeff[i] = Integer.parseInt(cb[i]);
-            CrCoeff[i] = Integer.parseInt(cr[i]);
-
-        }
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(256);
+//        StringBuilder sbtmp = new StringBuilder(256);
+//        for (int i = 0; i < numYCoeff; i++) {
+//            sb.append(YCoeff[i]);
+//            if (i + 1 < numYCoeff) sb.append(' ');
+//        }
+//        sb.append("z");
+//        for (int i = 0; i < numCCoeff; i++) {
+//            sb.append(CbCoeff[i]);
+//            if (i + 1 < numCCoeff) sb.append(' ');
+//            sbtmp.append(CrCoeff[i]);
+//            if (i + 1 < numCCoeff) sbtmp.append(' ');
+//        }
+//        sb.append("z");
+//        sb.append(sbtmp);
+//        return sb.toString();
+//    }
+//
+//    public void setStringRepresentation(String descriptor) {
+//        String[] coeffs = descriptor.split("z");
+//        String[] y = coeffs[0].split(" ");
+//        String[] cb = coeffs[1].split(" ");
+//        String[] cr = coeffs[2].split(" ");
+//
+//        numYCoeff = y.length;
+//        numCCoeff = Math.min(cb.length, cr.length);
+//
+//        YCoeff = new int[numYCoeff];
+//        CbCoeff = new int[numCCoeff];
+//        CrCoeff = new int[numCCoeff];
+//
+//        for (int i = 0; i < numYCoeff; i++) {
+//            YCoeff[i] = Integer.parseInt(y[i]);
+//        }
+//        for (int i = 0; i < numCCoeff; i++) {
+//            CbCoeff[i] = Integer.parseInt(cb[i]);
+//            CrCoeff[i] = Integer.parseInt(cr[i]);
+//
+//        }
+//    }
 
     public int[] getYCoeff() {
         return YCoeff;

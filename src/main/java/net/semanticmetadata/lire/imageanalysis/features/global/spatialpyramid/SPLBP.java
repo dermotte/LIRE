@@ -41,8 +41,8 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.RotationInvariantLocalBinaryPatterns;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -53,7 +53,7 @@ import java.awt.image.BufferedImage;
  * @author Mathias Lux, mathias@juggle.at
  * Date: 21.06.13, 15:38
  */
-public class SPLBP implements LireFeature {
+public class SPLBP implements GlobalFeature {
     int histogramSize = 36 * 5 + 36 * 4 * 4;
     double[] histogram = new double[histogramSize];
 
@@ -65,18 +65,18 @@ public class SPLBP implements LireFeature {
         // level 0:
         RotationInvariantLocalBinaryPatterns feature = new RotationInvariantLocalBinaryPatterns();
         feature.extract(bimg);
-        System.arraycopy(feature.getDoubleHistogram(), 0, histogram, 0, 36);
+        System.arraycopy(feature.getFeatureVector(), 0, histogram, 0, 36);
         // level 1:
         int w = bimg.getWidth() / 2;
         int h = bimg.getHeight() / 2;
         feature.extract(bimg.getSubimage(0, 0, w, h));
-        System.arraycopy(feature.getDoubleHistogram(), 0, histogram, 36 * 1, 36);
+        System.arraycopy(feature.getFeatureVector(), 0, histogram, 36 * 1, 36);
         feature.extract(bimg.getSubimage(w, 0, w, h));
-        System.arraycopy(feature.getDoubleHistogram(), 0, histogram, 36 * 2, 36);
+        System.arraycopy(feature.getFeatureVector(), 0, histogram, 36 * 2, 36);
         feature.extract(bimg.getSubimage(0, h, w, h));
-        System.arraycopy(feature.getDoubleHistogram(), 0, histogram, 36 * 3, 36);
+        System.arraycopy(feature.getFeatureVector(), 0, histogram, 36 * 3, 36);
         feature.extract(bimg.getSubimage(w, h, w, h));
-        System.arraycopy(feature.getDoubleHistogram(), 0, histogram, 36 * 4, 36);
+        System.arraycopy(feature.getFeatureVector(), 0, histogram, 36 * 4, 36);
         // level 2:
         int wstep = bimg.getWidth() / 4;
         int hstep = bimg.getHeight() / 4;
@@ -84,7 +84,7 @@ public class SPLBP implements LireFeature {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 feature.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));
-                System.arraycopy(feature.getDoubleHistogram(), 0, histogram, 36 * binPos, 36);
+                System.arraycopy(feature.getFeatureVector(), 0, histogram, 36 * binPos, 36);
                 binPos++;
             }
         }
@@ -123,25 +123,25 @@ public class SPLBP implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof SPLBP)) return -1;
-        return (float) MetricsUtils.distL1(histogram, feature.getDoubleHistogram());
+        return MetricsUtils.distL1(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {

@@ -42,7 +42,8 @@
 package net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid;
 
 import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -54,9 +55,10 @@ import java.awt.image.BufferedImage;
  * Time: 16:11
  * To change this template use File | Settings | File Templates.
  */
-public class SPACC implements LireFeature {
-    private int histLength = 1024;
-//    int histogramSize = histLength * 4 * 4;
+public class SPACC implements GlobalFeature {
+    //    private int histLength = 1024;
+    private int histLength = 256;
+    //    int histogramSize = histLength * 4 * 4;
     int histogramSize = histLength * 5 + histLength * 4 * 4;
     double[] histogram = new double[histogramSize];
 
@@ -68,18 +70,18 @@ public class SPACC implements LireFeature {
         // level 0:
         AutoColorCorrelogram acc = new AutoColorCorrelogram();
         acc.extract(bimg);
-        System.arraycopy(acc.getDoubleHistogram(), 0, histogram, 0, histLength);
+        System.arraycopy(acc.getFeatureVector(), 0, histogram, 0, histLength);
         // level 1:
         int w = bimg.getWidth() / 2;
         int h = bimg.getHeight() / 2;
         acc.extract(bimg.getSubimage(0, 0, w, h));
-        System.arraycopy(acc.getDoubleHistogram(), 0, histogram, histLength * 1, histLength);
+        System.arraycopy(acc.getFeatureVector(), 0, histogram, histLength * 1, histLength);
         acc.extract(bimg.getSubimage(w, 0, w, h));
-        System.arraycopy(acc.getDoubleHistogram(), 0, histogram, histLength * 2, histLength);
+        System.arraycopy(acc.getFeatureVector(), 0, histogram, histLength * 2, histLength);
         acc.extract(bimg.getSubimage(0, h, w, h));
-        System.arraycopy(acc.getDoubleHistogram(), 0, histogram, histLength * 3, histLength);
+        System.arraycopy(acc.getFeatureVector(), 0, histogram, histLength * 3, histLength);
         acc.extract(bimg.getSubimage(w, h, w, h));
-        System.arraycopy(acc.getDoubleHistogram(), 0, histogram, histLength * 4, histLength);
+        System.arraycopy(acc.getFeatureVector(), 0, histogram, histLength * 4, histLength);
         // level 2:
         int wstep = bimg.getWidth() / 4;
         int hstep = bimg.getHeight() / 4;
@@ -87,7 +89,7 @@ public class SPACC implements LireFeature {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 acc.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));
-                System.arraycopy(acc.getDoubleHistogram(), 0, histogram, histLength * binPos, histLength);
+                System.arraycopy(acc.getFeatureVector(), 0, histogram, histLength * binPos, histLength);
                 binPos++;
             }
         }
@@ -129,25 +131,25 @@ public class SPACC implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof SPACC)) return -1;
-        return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
+        return MetricsUtils.tanimoto(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {

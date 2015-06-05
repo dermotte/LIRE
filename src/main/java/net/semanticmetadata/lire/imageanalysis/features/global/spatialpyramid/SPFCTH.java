@@ -42,7 +42,8 @@
 package net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid;
 
 import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
@@ -54,7 +55,7 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at, 19.05.13
  */
 
-public class SPFCTH implements LireFeature {
+public class SPFCTH implements GlobalFeature {
     private int histLength = 192;
     int histogramSize = histLength * 5 + histLength * 4 * 4;
     double[] histogram = new double[histogramSize];
@@ -67,18 +68,18 @@ public class SPFCTH implements LireFeature {
         // level 0:
         FCTH fcth = new FCTH();
         fcth.extract(bimg);
-        System.arraycopy(fcth.getDoubleHistogram(), 0, histogram, 0, histLength);
+        System.arraycopy(fcth.getFeatureVector(), 0, histogram, 0, histLength);
         // level 1:
         int w = bimg.getWidth() / 2;
         int h = bimg.getHeight() / 2;
         fcth.extract(bimg.getSubimage(0, 0, w, h));
-        System.arraycopy(fcth.getDoubleHistogram(), 0, histogram, histLength * 1, histLength);
+        System.arraycopy(fcth.getFeatureVector(), 0, histogram, histLength * 1, histLength);
         fcth.extract(bimg.getSubimage(w, 0, w, h));
-        System.arraycopy(fcth.getDoubleHistogram(), 0, histogram, histLength * 2, histLength);
+        System.arraycopy(fcth.getFeatureVector(), 0, histogram, histLength * 2, histLength);
         fcth.extract(bimg.getSubimage(0, h, w, h));
-        System.arraycopy(fcth.getDoubleHistogram(), 0, histogram, histLength * 3, histLength);
+        System.arraycopy(fcth.getFeatureVector(), 0, histogram, histLength * 3, histLength);
         fcth.extract(bimg.getSubimage(w, h, w, h));
-        System.arraycopy(fcth.getDoubleHistogram(), 0, histogram, histLength * 4, histLength);
+        System.arraycopy(fcth.getFeatureVector(), 0, histogram, histLength * 4, histLength);
         // level 2:
         int wstep = bimg.getWidth() / 4;
         int hstep = bimg.getHeight() / 4;
@@ -86,7 +87,7 @@ public class SPFCTH implements LireFeature {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 fcth.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));
-                System.arraycopy(fcth.getDoubleHistogram(), 0, histogram, histLength * binPos, histLength);
+                System.arraycopy(fcth.getFeatureVector(), 0, histogram, histLength * binPos, histLength);
                 binPos++;
             }
         }
@@ -149,25 +150,25 @@ public class SPFCTH implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof SPFCTH)) return -1;
-        return (float) MetricsUtils.tanimoto(histogram, feature.getDoubleHistogram());
+        return MetricsUtils.tanimoto(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {

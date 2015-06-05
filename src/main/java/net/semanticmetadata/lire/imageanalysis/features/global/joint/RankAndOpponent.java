@@ -41,20 +41,21 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.joint;
 
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.StringTokenizer;
 
 /**
  * A simple implementation of a joint opponent histogram combining 64-bin RGB and pixel rank.
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class RankAndOpponent implements LireFeature {
+public class RankAndOpponent implements GlobalFeature {
     private int[] tmpIntensity = new int[1];
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
@@ -67,6 +68,7 @@ public class RankAndOpponent implements LireFeature {
         descriptor = new double[64 * 9];
     }
 
+    @Override
     public void extract(BufferedImage bimg) {
         // extract:
         int[][] histogram = new int[64][9];
@@ -125,33 +127,33 @@ public class RankAndOpponent implements LireFeature {
         return tmpIntensity[0];
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
-        sb.append("jophist");
-        sb.append(' ');
-        sb.append(descriptor.length);
-        sb.append(' ');
-        for (double aData : descriptor) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
+//        sb.append("jophist");
+//        sb.append(' ');
+//        sb.append(descriptor.length);
+//        sb.append(' ');
+//        for (double aData : descriptor) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("jophist"))
+//            throw new UnsupportedOperationException("This is not a RankAndOpponent descriptor.");
+//        descriptor = new double[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < descriptor.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            descriptor[i] = Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("jophist"))
-            throw new UnsupportedOperationException("This is not a RankAndOpponent descriptor.");
-        descriptor = new double[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < descriptor.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            descriptor[i] = Integer.parseInt(st.nextToken());
-        }
-
-    }
-
-
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[descriptor.length/2];
         for (int i = 0; i < result.length; i++) {
@@ -162,6 +164,7 @@ public class RankAndOpponent implements LireFeature {
         return result;
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         for (int i = 0; i < in.length; i++) {
             tmp = in[i]+128;
@@ -170,6 +173,7 @@ public class RankAndOpponent implements LireFeature {
         }
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         for (int i = offset; i < length; i++) {
             tmp = in[i]+128;
@@ -178,7 +182,8 @@ public class RankAndOpponent implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         double[] result = new double[descriptor.length];
         for (int i = 0; i < descriptor.length; i++) {
             result[i] = descriptor[i];
@@ -186,7 +191,8 @@ public class RankAndOpponent implements LireFeature {
         return result;
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof RankAndOpponent))
             throw new UnsupportedOperationException("Wrong descriptor.");
         return MetricsUtils.jsd(((RankAndOpponent) feature).descriptor, descriptor);
@@ -199,6 +205,6 @@ public class RankAndOpponent implements LireFeature {
 
     @Override
     public String getFieldName() {
-        return "f_jhropp";
+        return DocumentBuilder.FIELD_NAME_Rank_Opponent;
     }
 }

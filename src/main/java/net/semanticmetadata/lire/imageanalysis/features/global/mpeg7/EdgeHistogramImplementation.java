@@ -41,12 +41,11 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global.mpeg7;
 
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 /**
  * This class implements the EdgeHistogram descriptor from the MPEG-7 standard.
@@ -157,9 +156,9 @@ public class EdgeHistogramImplementation {
         edgeHistogram = setEdgeHistogram();
     }
 
-    public EdgeHistogramImplementation(String descriptor) {
-        setStringRepresentation(descriptor);
-    }
+//    public EdgeHistogramImplementation(String descriptor) {
+//        setStringRepresentation(descriptor);
+//    }
 
     /**
      * Allocates a new <code>EdgeHistogramDescriptor</code>
@@ -183,7 +182,7 @@ public class EdgeHistogramImplementation {
      */
 
     @SuppressWarnings("unused")
-	private void setBinCounts(int[] bins) throws Exception {
+    private void setBinCounts(int[] bins) throws Exception {
         for (int i = 0; i <= EdgeHistogramImplementation.BIN_COUNT - 1; i++) {
             this.bins[i] = bins[i];
         }
@@ -517,10 +516,10 @@ public class EdgeHistogramImplementation {
      * @param edgeHistogramB defines the second point
      * @return the distance from [0, 480]
      */
-    public static float calculateDistance(int[] edgeHistogramA, int[] edgeHistogramB) {
+    public static double calculateDistance(int[] edgeHistogramA, int[] edgeHistogramB) {
 //        if (edgeHistogramA == null) System.err.println("Input edgeHistogram a is null!");
 //        if (edgeHistogramB == null) System.err.println("Input edgeHistogram b is null!");
-        double result = 0f;
+        double result = 0d;
         // Todo: this first for loop should sum up the differences of the non quantized edges. Check if this code is right!
         for (int i = 0; i < edgeHistogramA.length; i++) {
             // first version is the un-quantized version, according to the MPEG-7 docs part 8 this version is quite okay as though its nearly linear quantization
@@ -533,11 +532,11 @@ public class EdgeHistogramImplementation {
         for (int i = 5; i < 80; i++) {
             result += Math.abs(edgeHistogramA[i] - edgeHistogramB[i]);
         }
-        return (float) result;
+        return result;
     }
 
     @SuppressWarnings("unused")
-	private static int[] RGB2YCRCB(int[] pixel, int[] result) {
+    private static int[] RGB2YCRCB(int[] pixel, int[] result) {
         double yy = (0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2]) / 256.0;
         result[0] = (int) (219.0 * yy + 16.5);
         result[1] = (int) (224.0 * 0.564 * (pixel[2] / 256.0 * 1.0 - yy) + 128.5);
@@ -559,45 +558,45 @@ public class EdgeHistogramImplementation {
      * @param descriptor
      * @return the distance from [0,infinite) or -1 if descriptor type does not match
      */
-    public float getDistance(LireFeature descriptor) {
-        if (!(descriptor instanceof EdgeHistogramImplementation)) return -1f;
+    public double getDistance(LireFeature descriptor) {
+        if (!(descriptor instanceof EdgeHistogramImplementation)) return -1d;
         EdgeHistogramImplementation e = (EdgeHistogramImplementation) descriptor;
         return calculateDistance(e.edgeHistogram, edgeHistogram);
     }
 
-    /**
-     * Creates a String representation from the descriptor.
-     *
-     * @return the descriptor as String.
-     */
-    public String getStringRepresentation() {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("edgehistogram;");
-        stringBuilder.append(edgeHistogram[0]);
-        for (int i = 1; i < edgeHistogram.length; i++) {
-            stringBuilder.append(' ');
-            stringBuilder.append(edgeHistogram[i]);
-        }
-        return stringBuilder.toString();
-    }
-
-    /**
-     * Sets the descriptor value from a String.
-     *
-     * @param descriptor the descriptor as String.
-     */
-    public void setStringRepresentation(String descriptor) {
-        String[] parts = descriptor.split(";");
-        if (!parts[0].equals("edgehistogram")) {
-            throw new UnsupportedOperationException("This is no valid representation of a EdgeHistogram descriptor!");
-        }
-        int[] bins = new int[80];
-        StringTokenizer st = new StringTokenizer(parts[1], " ");
-        int count = 0;
-        while (st.hasMoreElements()) {
-            bins[count] = Integer.parseInt(st.nextToken());
-            count++;
-        }
-        edgeHistogram = bins;
-    }
+//    /**
+//     * Creates a String representation from the descriptor.
+//     *
+//     * @return the descriptor as String.
+//     */
+//    public String getStringRepresentation() {
+//        StringBuilder stringBuilder = new StringBuilder();
+//        stringBuilder.append("edgehistogram;");
+//        stringBuilder.append(edgeHistogram[0]);
+//        for (int i = 1; i < edgeHistogram.length; i++) {
+//            stringBuilder.append(' ');
+//            stringBuilder.append(edgeHistogram[i]);
+//        }
+//        return stringBuilder.toString();
+//    }
+//
+//    /**
+//     * Sets the descriptor value from a String.
+//     *
+//     * @param descriptor the descriptor as String.
+//     */
+//    public void setStringRepresentation(String descriptor) {
+//        String[] parts = descriptor.split(";");
+//        if (!parts[0].equals("edgehistogram")) {
+//            throw new UnsupportedOperationException("This is no valid representation of a EdgeHistogram descriptor!");
+//        }
+//        int[] bins = new int[80];
+//        StringTokenizer st = new StringTokenizer(parts[1], " ");
+//        int count = 0;
+//        while (st.hasMoreElements()) {
+//            bins[count] = Integer.parseInt(st.nextToken());
+//            count++;
+//        }
+//        edgeHistogram = bins;
+//    }
 }
