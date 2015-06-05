@@ -41,12 +41,13 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.StringTokenizer;
 
 /**
  * Simple fuzzy 64 bin Opponent Histogram, based on the Opponent color space as described in van de Sande, Gevers & Snoek (2010)
@@ -72,7 +73,7 @@ import java.util.StringTokenizer;
     ISSN={0162-8828},
 }
 */
-public class FuzzyOpponentHistogram implements LireFeature {
+public class FuzzyOpponentHistogram implements GlobalFeature {
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
     final double sq3 = Math.sqrt(6d);
@@ -210,41 +211,42 @@ public class FuzzyOpponentHistogram implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return descriptor;
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof FuzzyOpponentHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
-        return (float) MetricsUtils.jsd(((FuzzyOpponentHistogram) feature).descriptor, descriptor);
+        return MetricsUtils.jsd(((FuzzyOpponentHistogram) feature).descriptor, descriptor);
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
-        sb.append("ophist");
-        sb.append(' ');
-        sb.append(descriptor.length);
-        sb.append(' ');
-        for (double aData : descriptor) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("ophist"))
-            throw new UnsupportedOperationException("This is not a OpponentHistogram descriptor.");
-        descriptor = new double[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < descriptor.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            descriptor[i] = Integer.parseInt(st.nextToken());
-        }
-
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(descriptor.length * 2 + 25);
+//        sb.append("ophist");
+//        sb.append(' ');
+//        sb.append(descriptor.length);
+//        sb.append(' ');
+//        for (double aData : descriptor) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("ophist"))
+//            throw new UnsupportedOperationException("This is not a OpponentHistogram descriptor.");
+//        descriptor = new double[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < descriptor.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            descriptor[i] = Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
     @Override
     public String getFeatureName() {

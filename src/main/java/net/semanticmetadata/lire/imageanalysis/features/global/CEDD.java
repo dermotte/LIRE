@@ -41,14 +41,15 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.cedd.*;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.cedd.*;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 /**
  * The CEDD feature was created, implemented and provided by Savvas A. Chatzichristofis<br/>
@@ -59,7 +60,7 @@ import java.util.StringTokenizer;
  *
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
-public class CEDD implements LireFeature {
+public class CEDD implements GlobalFeature {
     private double T0;
     private double T1;
     private double T2;
@@ -92,6 +93,7 @@ public class CEDD implements LireFeature {
 
     // Apply filter
     // signature changed by mlux
+    @Override
     public void extract(BufferedImage image) {
         image= ImageUtils.get8BitRGBImage(image);
         Fuzzy10Bin Fuzzy10 = new Fuzzy10Bin(false);
@@ -365,7 +367,8 @@ public class CEDD implements LireFeature {
         }
     }
 
-    public float getDistance(LireFeature vd) { // added by mlux
+    @Override
+    public double getDistance(LireFeature vd) { // added by mlux     //TODO: Tanimoto in MetricUtils?
         // Check if instance of the right class ...
         if (!(vd instanceof CEDD))
             throw new UnsupportedOperationException("Wrong descriptor.");
@@ -390,8 +393,8 @@ public class CEDD implements LireFeature {
             Temp2 += histogram[i];
         }
 
-        if (Temp1 == 0 && Temp2 == 0) return 0f;
-        if (Temp1 == 0 || Temp2 == 0) return 100f;
+        if (Temp1 == 0 && Temp2 == 0) return 0d;
+        if (Temp1 == 0 || Temp2 == 0) return 100d;
 
         for (int i = 0; i < tmpFeature.histogram.length; i++) {
             iTmp1 = tmpFeature.histogram[i] / Temp1;
@@ -403,7 +406,7 @@ public class CEDD implements LireFeature {
         }
 
         Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3 - TempCount1)));
-        return (float) Result;
+        return Result;
 
     }
 
@@ -420,30 +423,30 @@ public class CEDD implements LireFeature {
         return histogram;
     }
 
-    public String getStringRepresentation() { // added by mlux
-        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
-        sb.append("cedd");
-        sb.append(' ');
-        sb.append(histogram.length);
-        sb.append(' ');
-        for (byte aData : histogram) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) { // added by mlux
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("cedd"))
-            throw new UnsupportedOperationException("This is not a CEDD descriptor.");
-        for (int i = 0; i < histogram.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            histogram[i] = (byte) Integer.parseInt(st.nextToken());
-        }
-
-    }
+//    public String getStringRepresentation() { // added by mlux
+//        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
+//        sb.append("cedd");
+//        sb.append(' ');
+//        sb.append(histogram.length);
+//        sb.append(' ');
+//        for (byte aData : histogram) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) { // added by mlux
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("cedd"))
+//            throw new UnsupportedOperationException("This is not a CEDD descriptor.");
+//        for (int i = 0; i < histogram.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            histogram[i] = (byte) Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
     /**
      * Provides a much faster way of serialization.
@@ -451,6 +454,7 @@ public class CEDD implements LireFeature {
      * @return a byte array that can be read with the corresponding method.
      * @see CEDD#setByteArrayRepresentation(byte[])
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         // find out the position of the beginning of the trailing zeros.
         int position = -1;
@@ -480,10 +484,12 @@ public class CEDD implements LireFeature {
      * @param in byte array from corresponding method
      * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         if ((length << 1) < histogram.length)
             Arrays.fill(histogram, length << 1, histogram.length, (byte) 0);
@@ -494,7 +500,8 @@ public class CEDD implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return SerializationUtils.castToDoubleArray(histogram);
     }
 

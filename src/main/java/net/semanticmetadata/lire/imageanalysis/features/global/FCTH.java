@@ -40,13 +40,14 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.fcth.*;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.fcth.*;
 import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 /**
  * The FCTH feature was created, implemented and provided by Savvas A. Chatzichristofis<br/>
@@ -58,7 +59,7 @@ import java.util.StringTokenizer;
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
 
-public class FCTH implements LireFeature {
+public class FCTH implements GlobalFeature {
     public boolean Compact = false;
     protected double[] histogram = new double[192];
     int tmp;
@@ -356,6 +357,7 @@ public class FCTH implements LireFeature {
 
     }
 
+    @Override
     public void extract(BufferedImage bimg) {
         bimg = ImageUtils.get8BitRGBImage(bimg);
         histogram = Apply(bimg);
@@ -367,6 +369,7 @@ public class FCTH implements LireFeature {
      *
      * @return
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         // find out the position of the beginning of the trailing zeros.
         int position = -1;
@@ -396,10 +399,12 @@ public class FCTH implements LireFeature {
      * @param in byte array from corresponding method
      * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         if (length << 1 < histogram.length) Arrays.fill(histogram, length << 1, histogram.length, 0);
         for (int i = offset; i < offset + length; i++) {
@@ -409,11 +414,13 @@ public class FCTH implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return histogram;
     }
 
-    public float getDistance(LireFeature vd) { // added by mlux
+    @Override
+    public double getDistance(LireFeature vd) { // added by mlux //TODO Tanimoto MetricUtils
         // Check if instance of the right class ...
         if (!(vd instanceof FCTH))
             throw new UnsupportedOperationException("Wrong descriptor.");
@@ -439,8 +446,8 @@ public class FCTH implements LireFeature {
             distTmp2 += histogram[i];
         }
 
-        if (distTmp1 == 0 && distTmp2 == 0) return 0f;
-        if (distTmp1 == 0 || distTmp2 == 0) return 100f;
+        if (distTmp1 == 0 && distTmp2 == 0) return 0d;
+        if (distTmp1 == 0 || distTmp2 == 0) return 100d;
 
         for (int i = 0; i < ch.histogram.length; i++) {
             distTmpCnt1 += (ch.histogram[i] / distTmp1) * (histogram[i] / distTmp2);
@@ -450,35 +457,35 @@ public class FCTH implements LireFeature {
         }
 
         distResult = (100 - 100 * (distTmpCnt1 / (distTmpCnt2 + distTmpCnt3 - distTmpCnt1)));
-        return (float) distResult;
+        return distResult;
 
     }
 
-    public String getStringRepresentation() {
-        // FCTH is quantized to 3bits / bin ... therefore ints are enough.
-        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
-        sb.append("fcth");
-        sb.append(' ');
-        sb.append(histogram.length);
-        sb.append(' ');
-        for (double aData : histogram) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("fcth"))
-            throw new UnsupportedOperationException("This is not a FCTH descriptor.");
-        histogram = new double[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < histogram.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            histogram[i] = Integer.parseInt(st.nextToken());
-        }
-    }
+//    public String getStringRepresentation() {
+//        // FCTH is quantized to 3bits / bin ... therefore ints are enough.
+//        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
+//        sb.append("fcth");
+//        sb.append(' ');
+//        sb.append(histogram.length);
+//        sb.append(' ');
+//        for (double aData : histogram) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("fcth"))
+//            throw new UnsupportedOperationException("This is not a FCTH descriptor.");
+//        histogram = new double[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < histogram.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            histogram[i] = Integer.parseInt(st.nextToken());
+//        }
+//    }
 
     @Override
     public String getFeatureName() {

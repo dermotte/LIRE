@@ -41,7 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.*;
@@ -56,13 +58,14 @@ import java.awt.image.ColorConvertOp;
  *
  * @author Mathias Lux, mathias@juggle.at, 06.04.13
  */
-public class LuminanceLayout implements LireFeature {
+public class LuminanceLayout implements GlobalFeature {
     double[] histogram;
     int tmp;
     static ColorConvertOp grayscale = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY),
             new RenderingHints(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR));
     private int sideLength = 8;
 
+    @Override
     public void extract(BufferedImage bimg) {
         BufferedImage gray = grayscale.filter(bimg, null);
         // contrast enhancement didn't go to well with the wang 1000 data set.
@@ -88,7 +91,7 @@ public class LuminanceLayout implements LireFeature {
     }
 
     @SuppressWarnings("unused")
-	private void enhanceContrast(BufferedImage gray) {
+    private void enhanceContrast(BufferedImage gray) {
         int[] tmp = {0};
         double val;
         int min = 255, max = 0;
@@ -112,6 +115,7 @@ public class LuminanceLayout implements LireFeature {
         }
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[histogram.length];
         for (int i = 0; i < result.length; i++) {
@@ -121,6 +125,7 @@ public class LuminanceLayout implements LireFeature {
         return result;
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         histogram = new double[in.length];
         for (int i = 0; i < in.length; i++) {
@@ -128,6 +133,7 @@ public class LuminanceLayout implements LireFeature {
         }
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         histogram = new double[length];
         for (int i = 0; i < length; i++) {
@@ -135,25 +141,27 @@ public class LuminanceLayout implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return histogram;
     }
 
 
-    public float getDistance(LireFeature feature) {
-        return (float) MetricsUtils.distL1(histogram, ((LuminanceLayout) feature).histogram);
+    @Override
+    public double getDistance(LireFeature feature) {
+        return MetricsUtils.distL1(histogram, ((LuminanceLayout) feature).histogram);
     }
 
-    public String getStringRepresentation() {
-        return null;
-    }
-
-    public void setStringRepresentation(String s) {
-    }
+//    public String getStringRepresentation() {
+//        return null;
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//    }
 
     // just a 8x8 jpeg dct ...
     @SuppressWarnings("unused")
-	private double[] jpgDct(double[] histogram) {
+    private double[] jpgDct(double[] histogram) {
         int[] zickzack = new int[]    { 0,  1,  8, 16,  9,  2,  3, 10, 17, 24, 32, 25, 18, 11,  4,  5, 12, 19, 26, 33, 40, 48, 41, 34, 27, 20, 13,  6,  7, 14, 21, 28, 35, 42, 49, 56};
         double[] quant = new double[] {16, 5, 6, 7, 6, 5, 8, 7, 7, 7, 9, 8, 8, 9, 12, 20, 13, 12, 11, 11, 12, 25, 18, 18, 15, 20, 28, 25, 30, 30, 28, 25, 28, 27, 32, 36};
 //        double[] quant = new double[] {16, 11, 12, 14, 12, 10, 16, 14, 13, 14, 18, 17, 16, 19, 24, 40, 26, 24, 22, 22, 24, 49, 35, 37, 29, 40, 58, 51, 61, 60, 57, 51, 56, 55, 64, 72};
@@ -185,7 +193,7 @@ public class LuminanceLayout implements LireFeature {
     }
 
     @SuppressWarnings("unused")
-	private double[] dct(double[] histogram) {
+    private double[] dct(double[] histogram) {
         double[] coeffs = new double[histogram.length / 8];
         double N = histogram.length;
         double min = 0, max = 0;

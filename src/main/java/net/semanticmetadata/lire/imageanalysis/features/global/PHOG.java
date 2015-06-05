@@ -41,7 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -55,7 +57,7 @@ import java.awt.image.ColorConvertOp;
  *
  * @author Mathias Lux, mathias@juggle.at, 05.04.13
  */
-public class PHOG implements LireFeature {
+public class PHOG implements GlobalFeature {
     static ColorConvertOp grayscale = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
     int[] tmp255 = {255};
     int[] tmp128 = {128};
@@ -69,12 +71,12 @@ public class PHOG implements LireFeature {
     public static int bins = 30;
     double[] tmpHistogram;
     byte[] histogram = new byte[bins + 4*bins + 4*4*bins];
-//    double[] histogram = new double[5 * bins + 4*4*bins + 4*4*4*bins];
+    //    double[] histogram = new double[5 * bins + 4*4*bins + 4*4*4*bins];
     // used to quantize bins to [0, quantizationFactor]
     // Note that a quantization factor of 127d has better precision, but is not supported by the current serialization method.
     private double quantizationFactor = 15d;
 
-
+    @Override
     public void extract(BufferedImage bimg) {
         // All for Canny Edge ...
         BufferedImage gray;
@@ -331,6 +333,7 @@ public class PHOG implements LireFeature {
         }
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[histogram.length / 2];
         for (int i = 0; i < result.length; i++) {
@@ -342,10 +345,12 @@ public class PHOG implements LireFeature {
         return result;
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         for (int i = 0; i < length; i++) {
             tmp = in[i+offset] + 128;
@@ -354,11 +359,13 @@ public class PHOG implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return SerializationUtils.castToDoubleArray(histogram);
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         // chi^2 distance ... as mentioned in the paper.
 //        double distance = 0;
 //        double lower;
@@ -368,18 +375,18 @@ public class PHOG implements LireFeature {
 //                distance += (histogram[i] - ((PHOG) feature).histogram[i]) * (histogram[i] - ((PHOG) feature).histogram[i]) / lower;
 //        }
 //        return (float) distance;
-        return (float) MetricsUtils.distL1(histogram, ((PHOG) feature).histogram);
+        return MetricsUtils.distL1(histogram, ((PHOG) feature).histogram);
     }
 
-    @Override
-    public String getStringRepresentation() {
-        return null;
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        return null;
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//
+//    }
 
     @Override
     public String getFeatureName() {

@@ -40,7 +40,9 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -50,7 +52,7 @@ import java.util.Arrays;
  *
  * @author: Savvas A. Chatzichristofis, savvash@gmail.com
  */
-public class JCD implements LireFeature {
+public class JCD implements GlobalFeature {
     protected double[] data = new double[168];
     int tmp;
     double result = 0;
@@ -65,7 +67,7 @@ public class JCD implements LireFeature {
     public JCD() {
     }
 
-    public static double getDistance(double[] histogram1, double[] histogram2) {
+    public static double getDistance(double[] histogram1, double[] histogram2) { //TODO Tanimoto MetricUtils
         double temp1 = 0;
         double temp2 = 0;
 
@@ -78,8 +80,8 @@ public class JCD implements LireFeature {
             temp2 += histogram2[i];
         }
 
-        if (temp1 == 0 && temp2 == 0) return 0f;
-        if (temp1 == 0 || temp2 == 0) return 100f;
+        if (temp1 == 0 && temp2 == 0) return 0d;
+        if (temp1 == 0 || temp2 == 0) return 100d;
 
         for (int i = 0; i < histogram1.length; i++) {
             TempCount1 += (histogram2[i] / temp2) * (histogram1[i] / temp1);
@@ -102,6 +104,7 @@ public class JCD implements LireFeature {
 //        data = SerializationUtils.toDoubleArray(in, offset, length);
 //    }
 
+    @Override
     public void extract(BufferedImage bimg) {
         CEDD c = new CEDD();
         c.extract(bimg);
@@ -136,6 +139,7 @@ public class JCD implements LireFeature {
      *
      * @return
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         // find out the position of the beginning of the trailing zeros.
         int len = 0;
@@ -168,10 +172,12 @@ public class JCD implements LireFeature {
      * @param in byte array from corresponding method
      * @see JCD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         tmp = 0;
         Arrays.fill(data, 0d);
@@ -199,15 +205,17 @@ public class JCD implements LireFeature {
         }
 
     */
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return data;
     }
 
     public void init(CEDD c, FCTH f) {
-        data = joinHistograms(c.getDoubleHistogram(), f.histogram);
+        data = joinHistograms(c.getFeatureVector(), f.histogram);
     }
 
-    public float getDistance(LireFeature vd) {
+    @Override
+    public double getDistance(LireFeature vd) {
         // Check if instance of the right class ...
         if (!(vd instanceof JCD))
             throw new UnsupportedOperationException("Wrong descriptor.");
@@ -242,16 +250,16 @@ public class JCD implements LireFeature {
 //
 //        result = (100d - 100d * (TempCount1 / (TempCount2 + TempCount3 - TempCount1)));
 //        return (float) result;
-        return (float) getDistance(data, ((JCD) vd).data);
+        return getDistance(data, ((JCD) vd).data);
     }
 
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("This is not meant to be used!");
-    }
-
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("This is not meant to be used!");
-    }
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("This is not meant to be used!");
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("This is not meant to be used!");
+//    }
 
     private double[] joinHistograms(double[] CEDD, double[] FCTH) {
 

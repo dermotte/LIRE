@@ -47,7 +47,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.color.ColorSpace;
@@ -55,9 +57,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.StringTokenizer;
 
-public class JpegCoefficientHistogram implements LireFeature {
+public class JpegCoefficientHistogram implements GlobalFeature {
 
     protected int[] descriptorValues;
     protected final int BLOCK_SIZE = 8;
@@ -76,7 +77,7 @@ public class JpegCoefficientHistogram implements LireFeature {
                     {{10.114830426421, 14.4286223409782, 14.081749212272}, {11.6031746911885, 16.1683668751011, 15.6551122883117}, {12.0837641414121, 16.7824928835092, 16.2757903018179}, {12.7704455546218, 17.5347046049121, 17.0202232421845}, {13.5794854546779, 18.3596755686211, 17.7964343726763}, {14.9521289593159, 19.7235148101556, 19.1020295141703}, {17.3688525982791, 21.8409326336491, 21.1185396395873}, {20.69640161027, 24.8034535963609, 23.8084412646294}}
             };
 
-
+    @Override
     public void extract(BufferedImage bimg) {
         if (bimg.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB)  {
             BufferedImage img = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -96,19 +97,23 @@ public class JpegCoefficientHistogram implements LireFeature {
         getComponentHistogram(yuvImage, newWidth, newHeight, 2, descriptorValues);
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         return SerializationUtils.toByteArray(descriptorValues);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         descriptorValues = SerializationUtils.toIntArray(in);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         descriptorValues = SerializationUtils.toIntArray(in, offset, length);
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         double[] result = new double[descriptorValues.length];
         for (int i = 0; i < descriptorValues.length; i++) {
             result[i] = (double) descriptorValues[i];
@@ -213,8 +218,8 @@ public class JpegCoefficientHistogram implements LireFeature {
         }
     }
 
-
-    public float getDistance(LireFeature vd) {
+    @Override
+    public double getDistance(LireFeature vd) {
         if (!(vd instanceof JpegCoefficientHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
         JpegCoefficientHistogram target = (JpegCoefficientHistogram) vd;
@@ -229,36 +234,36 @@ public class JpegCoefficientHistogram implements LireFeature {
         for (int i = 0; i < size2; i++)
             distance += ((descriptorValues[i] - target.descriptorValues[i]) * (descriptorValues[i] - target.descriptorValues[i]));
 
-        return (float) Math.sqrt(distance / size2);
+        return Math.sqrt(distance / size2);
     }
 
-    public String getStringRepresentation() { // added by mlux
-        StringBuilder sb = new StringBuilder(descriptorValues.length * 2 + 25);
-        sb.append("jpegcoeffhist");
-        sb.append(' ');
-        sb.append(descriptorValues.length);
-        sb.append(' ');
-        for (double aData : descriptorValues) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
+//    public String getStringRepresentation() { // added by mlux
+//        StringBuilder sb = new StringBuilder(descriptorValues.length * 2 + 25);
+//        sb.append("jpegcoeffhist");
+//        sb.append(' ');
+//        sb.append(descriptorValues.length);
+//        sb.append(' ');
+//        for (double aData : descriptorValues) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) { // added by mlux
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("jpegcoeffhist"))
+//            throw new UnsupportedOperationException("This is not a jpegcoeffhist descriptor.");
+//        descriptorValues = new int[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < descriptorValues.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            descriptorValues[i] = (int) Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
-    public void setStringRepresentation(String s) { // added by mlux
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("jpegcoeffhist"))
-            throw new UnsupportedOperationException("This is not a jpegcoeffhist descriptor.");
-        descriptorValues = new int[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < descriptorValues.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            descriptorValues[i] = (int) Integer.parseInt(st.nextToken());
-        }
-
-    }
-
-    protected int[][][] getYUVImage(WritableRaster raster, int newWidth, int newHeight, int shift) {
+    protected int[][][] getYUVImage(WritableRaster raster, int newWidth, int newHeight, int shift) {    //TODO: rgb2yuv Conversion
         int[][][] yuvImage = new int[newWidth][newHeight][3];
         int[] rgbPixel = new int[3];
         for (int j = 0; j < newHeight; j++) {

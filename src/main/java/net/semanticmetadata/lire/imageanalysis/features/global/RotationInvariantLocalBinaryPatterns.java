@@ -41,7 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
@@ -54,7 +56,7 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at
  * Time: 21.06.13 13:51
  */
-public class RotationInvariantLocalBinaryPatterns implements LireFeature {
+public class RotationInvariantLocalBinaryPatterns implements GlobalFeature {
     double[] histogram = new double[36];
     // used to find the right bin for the class of rotated LBP features.
     static int[] binTranslate = new int[256];
@@ -99,6 +101,7 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
         binTranslate[255] = 35;
     }
 
+    @Override
     public void extract(BufferedImage image) {
         Arrays.fill(histogram, 0d);
         extractWithRadiusOne(image);
@@ -165,6 +168,7 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
         return result;
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] rep = new byte[histogram.length];
         for (int i = 0; i < histogram.length; i++) {
@@ -186,24 +190,24 @@ public class RotationInvariantLocalBinaryPatterns implements LireFeature {
     }
 
     @Override
-    public double[] getDoubleHistogram() {
+    public double[] getFeatureVector() {
         return histogram;
     }
 
     @Override
-    public float getDistance(LireFeature feature) {
-        return (float) MetricsUtils.distL1(histogram, feature.getDoubleHistogram());
+    public double getDistance(LireFeature feature) {
+        return  MetricsUtils.distL1(histogram, feature.getFeatureVector());
     }
 
-    @Override
-    public String getStringRepresentation() {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-        throw new UnsupportedOperationException("Not implemented!");
-    }
+//    @Override
+//    public String getStringRepresentation() {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
+//
+//    @Override
+//    public void setStringRepresentation(String s) {
+//        throw new UnsupportedOperationException("Not implemented!");
+//    }
 
     @Override
     public String getFeatureName() {

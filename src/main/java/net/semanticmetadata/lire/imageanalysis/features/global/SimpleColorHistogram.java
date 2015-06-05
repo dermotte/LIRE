@@ -40,7 +40,10 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.utils.ColorConversion;
 import net.semanticmetadata.lire.utils.ConversionUtils;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
@@ -49,7 +52,6 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.Arrays;
-import java.util.StringTokenizer;
 
 /**
  * This class provides a simple color histogram for content based image retrieval.
@@ -61,7 +63,7 @@ import java.util.StringTokenizer;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class SimpleColorHistogram implements LireFeature {
+public class SimpleColorHistogram implements GlobalFeature {
     public static int DEFAULT_NUMBER_OF_BINS = 64;
     public static HistogramType DEFAULT_HISTOGRAM_TYPE = HistogramType.RGB;
     public static DistanceFunction DEFAULT_DISTANCE_FUNCTION = DistanceFunction.JSD;
@@ -191,6 +193,7 @@ public class SimpleColorHistogram implements LireFeature {
      *
      * @param image
      */
+    @Override
     public void extract(BufferedImage image) {
         image = ImageUtils.get8BitRGBImage(image);
         Arrays.fill(histogram, 0);
@@ -199,7 +202,7 @@ public class SimpleColorHistogram implements LireFeature {
             for (int y = 0; y < image.getHeight(); y++) {
                 raster.getPixel(x, y, pixel);
                 if (histogramType == HistogramType.HSV) {
-                    rgb2hsv(pixel[0], pixel[1], pixel[2], pixel);
+                    ColorConversion.rgb2hsv(pixel[0], pixel[1], pixel[2], pixel);
                     histogram[quant(pixel)]++;
                 } else if (histogramType == HistogramType.Luminance) {
                     rgb2yuv(pixel[0], pixel[1], pixel[2], pixel);
@@ -212,19 +215,23 @@ public class SimpleColorHistogram implements LireFeature {
         normalize(histogram, image.getWidth() * image.getHeight());
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         return SerializationUtils.toByteArray(histogram);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         histogram = SerializationUtils.toIntArray(in);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         histogram = SerializationUtils.toIntArray(in, offset, length);
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return ConversionUtils.toDouble(histogram);
     }
 
@@ -272,7 +279,8 @@ public class SimpleColorHistogram implements LireFeature {
         }
     }
 
-    public float getDistance(LireFeature vd) {
+    @Override
+    public double getDistance(LireFeature vd) {
         // Check if instance of the right class ...
         if (!(vd instanceof SimpleColorHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
@@ -287,38 +295,38 @@ public class SimpleColorHistogram implements LireFeature {
         // do the comparison ...
         double sum = 0;
         if (distFunc == DistanceFunction.JSD)
-            return (float) MetricsUtils.jsd(histogram, ch.histogram);
+            return MetricsUtils.jsd(histogram, ch.histogram);
         else if (distFunc == DistanceFunction.TANIMOTO)
-            return (float) MetricsUtils.tanimoto(histogram, ch.histogram);
+            return MetricsUtils.tanimoto(histogram, ch.histogram);
         else if (distFunc == DistanceFunction.L1)
-            return (float) MetricsUtils.distL1(histogram, ch.histogram);
+            return MetricsUtils.distL1(histogram, ch.histogram);
         else
-            return (float) MetricsUtils.distL2(histogram, ch.histogram);
+            return MetricsUtils.distL2(histogram, ch.histogram);
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(histogram.length * 4);
-        sb.append(histogramType.name());
-        sb.append(' ');
-        sb.append(histogram.length);
-        sb.append(' ');
-        for (int i = 0; i < histogram.length; i++) {
-            sb.append(histogram[i]);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        histogramType = HistogramType.valueOf(st.nextToken());
-        histogram = new int[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < histogram.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation!");
-            histogram[i] = Integer.parseInt(st.nextToken());
-        }
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(histogram.length * 4);
+//        sb.append(histogramType.name());
+//        sb.append(' ');
+//        sb.append(histogram.length);
+//        sb.append(' ');
+//        for (int i = 0; i < histogram.length; i++) {
+//            sb.append(histogram[i]);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        histogramType = HistogramType.valueOf(st.nextToken());
+//        histogram = new int[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < histogram.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation!");
+//            histogram[i] = Integer.parseInt(st.nextToken());
+//        }
+//    }
 
     /* **************************************************************
    * Color Conversion routines ...
@@ -333,7 +341,7 @@ public class SimpleColorHistogram implements LireFeature {
      * @param b
      * @param yuv
      */
-    public void rgb2yuv(int r, int g, int b, int[] yuv) {
+    public void rgb2yuv(int r, int g, int b, int[] yuv) { //TODO: rgb2yuv Conversion
         int y = (int) (0.299 * r + 0.587 * g + 0.114 * b);
         int u = (int) ((b - y) * 0.492f);
         int v = (int) ((r - y) * 0.877f);
@@ -343,61 +351,11 @@ public class SimpleColorHistogram implements LireFeature {
         yuv[2] = v;
     }
 
-    /**
-     * Adapted from ImageJ documentation:
-     * http://www.f4.fhtw-berlin.de/~barthel/ImageJ/ColorInspector//HTMLHelp/farbraumJava.htm
-     *
-     * @param r
-     * @param g
-     * @param b
-     * @param hsv
-     */
-    public void rgb2hsv(int r, int g, int b, int hsv[]) {
-
-        int min;    //Min. value of RGB
-        int max;    //Max. value of RGB
-        int delMax; //Delta RGB value
-
-        min = Math.min(r, g);
-        min = Math.min(min, b);
-
-        max = Math.max(r, g);
-        max = Math.max(max, b);
-
-        delMax = max - min;
-
-//        System.out.println("hsv = " + hsv[0] + ", " + hsv[1] + ", "  + hsv[2]);
-
-        float H = 0f, S = 0f;
-        float V = max / 255f;
-
-        if (delMax == 0) {
-            H = 0f;
-            S = 0f;
-        } else {
-            S = delMax / 255f;
-            if (r == max) {
-                if (g >= b) {
-                    H = ((g / 255f - b / 255f) / (float) delMax / 255f) * 60;
-                } else {
-                    H = ((g / 255f - b / 255f) / (float) delMax / 255f) * 60 + 360;
-                }
-            } else if (g == max) {
-                H = (2 + (b / 255f - r / 255f) / (float) delMax / 255f) * 60;
-            } else if (b == max) {
-                H = (4 + (r / 255f - g / 255f) / (float) delMax / 255f) * 60;
-            }
-        }
-//        System.out.println("H = " + H);
-        hsv[0] = (int) (H);
-        hsv[1] = (int) (S * 100);
-        hsv[2] = (int) (V * 100);
-    }
 
     /**
      * Adapted under GPL from VizIR: author was adis@ims.tuwien.ac.at
      */
-    private int[] rgb2hmmd(int ir, int ig, int ib) {
+    private int[] rgb2hmmd(int ir, int ig, int ib) {    //TODO: rgb2hmmd Conversion
         int hmmd[] = new int[5];
 
         float max = (float) Math.max(Math.max(ir, ig), Math.max(ig, ib));

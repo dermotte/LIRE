@@ -41,8 +41,9 @@
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.mpeg7.EdgeHistogramImplementation;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.mpeg7.EdgeHistogramImplementation;
 import net.semanticmetadata.lire.utils.ConversionUtils;
 
 /**
@@ -52,7 +53,7 @@ import net.semanticmetadata.lire.utils.ConversionUtils;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class EdgeHistogram extends EdgeHistogramImplementation implements LireFeature {
+public class EdgeHistogram extends EdgeHistogramImplementation implements GlobalFeature {
     private int tmp;
 
 
@@ -61,6 +62,7 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
      * Stuffs 2 numbers into one byte.
      * @return
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[edgeHistogram.length/2];
         for (int i = 0; i < result.length; i++) {
@@ -77,10 +79,12 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
      * @param in byte array from corresponding method
      * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         for (int i = 0; i < length; i++) {
             tmp = in[offset+i] + 128;
@@ -103,8 +107,9 @@ public class EdgeHistogram extends EdgeHistogramImplementation implements LireFe
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         edgeHistogram = SerializationUtils.toIntArray(in, offset, length);
     }
- */
-    public double[] getDoubleHistogram() {
+    */
+    @Override
+    public double[] getFeatureVector() {
         return ConversionUtils.toDouble(edgeHistogram);
     }
 

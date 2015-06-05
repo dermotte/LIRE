@@ -41,7 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 
 import java.awt.color.ColorSpace;
@@ -56,7 +58,7 @@ import java.util.Arrays;
  * @author Mathias Lux, mathias@juggle.at, 06.07.13
  */
 
-public class BinaryPatternsPyramid implements LireFeature {
+public class BinaryPatternsPyramid implements GlobalFeature {
     static ColorConvertOp grayscale = new ColorConvertOp(ColorSpace.getInstance(ColorSpace.CS_GRAY), null);
     int[] tmp255 = {255};
     int[] tmp128 = {128};
@@ -110,6 +112,7 @@ public class BinaryPatternsPyramid implements LireFeature {
         binTranslate[255] = 35;
     }
 
+    @Override
     public void extract(BufferedImage bimg) {
         // All for Canny Edge ...
         BufferedImage imgEdges, imgGray;
@@ -238,6 +241,7 @@ public class BinaryPatternsPyramid implements LireFeature {
 
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[histogram.length/2];
         int tmp;
@@ -250,10 +254,12 @@ public class BinaryPatternsPyramid implements LireFeature {
         return result;
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         setByteArrayRepresentation(in, 0, in.length);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         int tmp;
         for (int i = offset; i < length; i++) {
@@ -263,11 +269,13 @@ public class BinaryPatternsPyramid implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return histogram;
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         // chi^2 distance ... as mentioned in the paper.
 //        double distance = 0;
 //        double lower;
@@ -277,17 +285,7 @@ public class BinaryPatternsPyramid implements LireFeature {
 //                distance += (histogram[i] - ((BinaryPatternsPyramid) feature).histogram[i]) * (histogram[i] - ((BinaryPatternsPyramid) feature).histogram[i]) / lower;
 //        }
 //        return (float) distance;
-        return (float) MetricsUtils.distL1(histogram, ((BinaryPatternsPyramid) feature).histogram);
-    }
-
-    @Override
-    public String getStringRepresentation() {
-        return null;
-    }
-
-    @Override
-    public void setStringRepresentation(String s) {
-
+        return MetricsUtils.distL1(histogram, ((BinaryPatternsPyramid) feature).histogram);
     }
 
     private int getBin(int[] pattern) {

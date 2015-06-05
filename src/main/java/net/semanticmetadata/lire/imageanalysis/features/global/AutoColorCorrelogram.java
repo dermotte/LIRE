@@ -40,16 +40,17 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.correlogram.DynamicProgrammingAutoCorrelogramExtraction;
-import net.semanticmetadata.lire.imageanalysis.correlogram.IAutoCorrelogramFeatureExtractor;
-import net.semanticmetadata.lire.imageanalysis.correlogram.MLuxAutoCorrelogramExtraction;
-import net.semanticmetadata.lire.imageanalysis.correlogram.NaiveAutoCorrelogramExtraction;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.correlogram.DynamicProgrammingAutoCorrelogramExtraction;
+import net.semanticmetadata.lire.imageanalysis.features.global.correlogram.IAutoCorrelogramFeatureExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.global.correlogram.MLuxAutoCorrelogramExtraction;
+import net.semanticmetadata.lire.imageanalysis.features.global.correlogram.NaiveAutoCorrelogramExtraction;
 import net.semanticmetadata.lire.utils.ConversionUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.util.StringTokenizer;
 
 /**
  * <p>Feature for the AutoCorrelogram based on color as described in
@@ -59,8 +60,8 @@ import java.util.StringTokenizer;
  * <p/>
  * Todo: Change the 2-dim array to a one dim array, as this is much faster in Java.
  */
-public class AutoColorCorrelogram implements LireFeature {
-    private static final int DEFAULT_NUMBER_COLORS = 256;
+public class AutoColorCorrelogram implements GlobalFeature {
+    private static final int DEFAULT_NUMBER_COLORS = 64;
 
     private float quantH;
     private float quantV;
@@ -235,12 +236,14 @@ public class AutoColorCorrelogram implements LireFeature {
 
     }
 
+    @Override
     public void extract(BufferedImage bi) {
         final Raster r = bi.getRaster();
         int[][][] hsvImage = hsvImage(r);
         extract(hsvImage);
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[correlogram.length * correlogram[0].length / 2];
         int position = 0;
@@ -264,6 +267,7 @@ public class AutoColorCorrelogram implements LireFeature {
         return result;
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         /*
         byte[] numBinsBytes = new byte[4];
@@ -317,7 +321,8 @@ public class AutoColorCorrelogram implements LireFeature {
         */
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return ConversionUtils.toDouble(getFloatHistogram());
     }
 
@@ -328,7 +333,6 @@ public class AutoColorCorrelogram implements LireFeature {
         }
         return result;
     }
-
 
     public void extract(int[][][] img) {
         final int W = img.length;
@@ -359,7 +363,7 @@ public class AutoColorCorrelogram implements LireFeature {
      * @param rgb RGB Values
      * @param hsv HSV values to set.
      */
-    private static void convertRgbToHsv(int[] rgb, int[] hsv) {
+    private static void convertRgbToHsv(int[] rgb, int[] hsv) {     //TODO: Conversion
         if (hsv.length < 3) {
             throw new IndexOutOfBoundsException("HSV array too small, a minim of three elements is required.");
         }
@@ -406,13 +410,14 @@ public class AutoColorCorrelogram implements LireFeature {
         hsv[2] = max;
     }
 
-    public float getDistance(LireFeature vd) {
+    @Override
+    public double getDistance(LireFeature vd) {
         if (!(vd instanceof AutoColorCorrelogram)) return -1;
         return jsd(((AutoColorCorrelogram) vd).correlogram);
     }
 
     @SuppressWarnings("unused")
-	private float l1(float[][] vdCorrelogram) {
+    private float l1(float[][] vdCorrelogram) {
         float result = 0;
         for (int i = 0; i < correlogram.length; i++) {
             float[] ints = correlogram[i];
@@ -423,7 +428,7 @@ public class AutoColorCorrelogram implements LireFeature {
         return result;
     }
 
-    private float jsd(float[][] vdCorrelogram) {
+    private float jsd(float[][] vdCorrelogram) { //TODO: Replace with metric Utils?
         float result = 0;
         for (int i = 0; i < correlogram.length; i++) {
             float[] ints = correlogram[i];
@@ -435,31 +440,31 @@ public class AutoColorCorrelogram implements LireFeature {
         return result;
     }
 
-    public String getStringRepresentation() {
-        int maxDistance = this.distanceSet.length;
-        StringBuilder sb = new StringBuilder(numBins * maxDistance);
-        sb.append(maxDistance);
-        sb.append(' ');
-        for (int i = 0; i < correlogram.length; i++) {
-            for (int j = 0; j < correlogram[i].length; j++) {
-                sb.append(correlogram[i][j]);
-                sb.append(' ');
-            }
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String string) {
-        StringTokenizer st = new StringTokenizer(string);
-        correlogram = new float[numBins][Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < correlogram.length; i++) {
-            for (int j = 0; j < correlogram[i].length; j++) {
-                if (!st.hasMoreTokens())
-                    throw new IndexOutOfBoundsException("Too few numbers in string representation!");
-                correlogram[i][j] = Float.parseFloat(st.nextToken());
-            }
-        }
-    }
+//    public String getStringRepresentation() {
+//        int maxDistance = this.distanceSet.length;
+//        StringBuilder sb = new StringBuilder(numBins * maxDistance);
+//        sb.append(maxDistance);
+//        sb.append(' ');
+//        for (int i = 0; i < correlogram.length; i++) {
+//            for (int j = 0; j < correlogram[i].length; j++) {
+//                sb.append(correlogram[i][j]);
+//                sb.append(' ');
+//            }
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String string) {
+//        StringTokenizer st = new StringTokenizer(string);
+//        correlogram = new float[numBins][Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < correlogram.length; i++) {
+//            for (int j = 0; j < correlogram[i].length; j++) {
+//                if (!st.hasMoreTokens())
+//                    throw new IndexOutOfBoundsException("Too few numbers in string representation!");
+//                correlogram[i][j] = Float.parseFloat(st.nextToken());
+//            }
+//        }
+//    }
 
     @Override
     public String getFeatureName() {

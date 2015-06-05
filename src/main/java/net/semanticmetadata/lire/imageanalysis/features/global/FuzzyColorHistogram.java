@@ -53,15 +53,15 @@
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.StringTokenizer;
 
-public class FuzzyColorHistogram implements LireFeature {
+public class FuzzyColorHistogram implements GlobalFeature {
 
     protected Color[] binColors;
     protected final int SIZE = 5;
@@ -70,6 +70,7 @@ public class FuzzyColorHistogram implements LireFeature {
     protected int[] descriptorValues;
 
 
+    @Override
     public void extract(BufferedImage bimg) {
         binColors = new Color[SIZE3];
 
@@ -120,10 +121,12 @@ public class FuzzyColorHistogram implements LireFeature {
             descriptorValues[k] = (int) (histogramA[k] / maxA * 255);
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         return SerializationUtils.toByteArray(descriptorValues);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         descriptorValues = SerializationUtils.toIntArray(in);
     }
@@ -137,12 +140,13 @@ public class FuzzyColorHistogram implements LireFeature {
      * by patch contributed by Franz Graf, franz.graf@gmail.com
      * @return the feature vector as double[]
      */
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return SerializationUtils.toDoubleArray(descriptorValues);
     }
 
-
-    public float getDistance(LireFeature vd) {
+    @Override
+    public double getDistance(LireFeature vd) {
         if (!(vd instanceof FuzzyColorHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
         FuzzyColorHistogram target = (FuzzyColorHistogram) vd;
@@ -150,34 +154,34 @@ public class FuzzyColorHistogram implements LireFeature {
         for (int i = 0; i < SIZE3; i++)
             distance += ((descriptorValues[i] - target.descriptorValues[i]) * (descriptorValues[i] - target.descriptorValues[i]));
 
-        return (float) Math.sqrt(distance / SIZE3);
+        return Math.sqrt(distance / SIZE3);
     }
 
-    public String getStringRepresentation() { // added by mlux
-        StringBuilder sb = new StringBuilder(descriptorValues.length * 2 + 25);
-        sb.append("fuzzycolorhist");
-        sb.append(' ');
-        sb.append(descriptorValues.length);
-        sb.append(' ');
-        for (double aData : descriptorValues) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) { // added by mlux
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("fuzzycolorhist"))
-            throw new UnsupportedOperationException("This is not a fuzzycolorhist descriptor.");
-        descriptorValues = new int[Integer.parseInt(st.nextToken())];
-        for (int i = 0; i < descriptorValues.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            descriptorValues[i] = (int) Integer.parseInt(st.nextToken());
-        }
-
-    }
+//    public String getStringRepresentation() { // added by mlux
+//        StringBuilder sb = new StringBuilder(descriptorValues.length * 2 + 25);
+//        sb.append("fuzzycolorhist");
+//        sb.append(' ');
+//        sb.append(descriptorValues.length);
+//        sb.append(' ');
+//        for (double aData : descriptorValues) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) { // added by mlux
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("fuzzycolorhist"))
+//            throw new UnsupportedOperationException("This is not a fuzzycolorhist descriptor.");
+//        descriptorValues = new int[Integer.parseInt(st.nextToken())];
+//        for (int i = 0; i < descriptorValues.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            descriptorValues[i] = (int) Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
 
     protected Color getColorForBin(int rBin, int gBin, int bBin) {

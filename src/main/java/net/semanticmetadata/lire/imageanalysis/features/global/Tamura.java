@@ -41,7 +41,9 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -50,7 +52,6 @@ import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.Raster;
-import java.util.StringTokenizer;
 
 /**
  * Implementation of (three) Tamura features done by  Marko Keuschnig & Christian Penz<br>
@@ -65,7 +66,7 @@ import java.util.StringTokenizer;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class Tamura implements LireFeature {
+public class Tamura implements GlobalFeature {
     private static final int MAX_IMG_HEIGHT = 64;
     private int[][] grayScales;
     private int imgWidth, imgHeight;
@@ -273,6 +274,7 @@ public class Tamura implements LireFeature {
         return result;
     }
 
+    @Override
     public void extract(BufferedImage image) {
         histogram = new double[18];
         double[] directionality;
@@ -300,64 +302,69 @@ public class Tamura implements LireFeature {
         }
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         return SerializationUtils.toByteArray(histogram);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         histogram = SerializationUtils.toDoubleArray(in);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         histogram = SerializationUtils.toDoubleArray(in, offset, length);
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return histogram;
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         // Check if instance of the right class ...
         if (!(feature instanceof Tamura))
             throw new UnsupportedOperationException("Wrong descriptor.");
 
         // casting ...
         Tamura tamura = (Tamura) feature;
-        return (float) getDistance(tamura.histogram, histogram);
+        return getDistance(tamura.histogram, histogram);
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(histogram.length * 16);
-        sb.append(TAMURA_NAME);
-        sb.append(' ');
-        sb.append(histogram.length);
-        sb.append(' ');
-        for (int i = 0; i < histogram.length; i++) {
-            sb.append(histogram[i]);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        String name = st.nextToken();
-        if (!name.equals(TAMURA_NAME)) {
-            throw new UnsupportedOperationException("This is not a Tamura feature string.");
-        }
-
-        /*
-        * changes made by Ankit Jain here otherwise the histogram length would be assigned to histogram[i]
-        * jankit87@gmail.com
-        * */
-        histogram = new double[Integer.parseInt(st.nextToken())];
-
-        for (int i = 0; i < histogram.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            histogram[i] = Double.parseDouble(st.nextToken());
-        }
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(histogram.length * 16);
+//        sb.append(TAMURA_NAME);
+//        sb.append(' ');
+//        sb.append(histogram.length);
+//        sb.append(' ');
+//        for (int i = 0; i < histogram.length; i++) {
+//            sb.append(histogram[i]);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        String name = st.nextToken();
+//        if (!name.equals(TAMURA_NAME)) {
+//            throw new UnsupportedOperationException("This is not a Tamura feature string.");
+//        }
+//
+//        /*
+//        * changes made by Ankit Jain here otherwise the histogram length would be assigned to histogram[i]
+//        * jankit87@gmail.com
+//        * */
+//        histogram = new double[Integer.parseInt(st.nextToken())];
+//
+//        for (int i = 0; i < histogram.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            histogram[i] = Double.parseDouble(st.nextToken());
+//        }
+//    }
 
     @Override
     public String getFeatureName() {

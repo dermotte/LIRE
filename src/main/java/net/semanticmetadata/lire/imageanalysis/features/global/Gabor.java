@@ -40,7 +40,9 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -49,14 +51,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.Raster;
-import java.util.StringTokenizer;
 
 /**
  * Implementation of a Gabor texture features done by  Marko Keuschnig & Christian Penz<br>
  * Fixed 2011-05-10 based on the comments of Arthur Lin.
  */
 
-public class Gabor implements LireFeature {
+public class Gabor implements GlobalFeature {
 
     private static final double U_H = .4;
     private static final double U_L = .05;
@@ -282,14 +283,17 @@ public class Gabor implements LireFeature {
                 Math.pow(A, -m) * motherWavelet[1]};
     }
 
+    @Override
     public void extract(BufferedImage bimg) {  // added by mlux
         histogram = getNormalizedFeature(bimg);
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         return SerializationUtils.toByteArray(histogram);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         histogram = SerializationUtils.toDoubleArray(in);
     }
@@ -299,11 +303,13 @@ public class Gabor implements LireFeature {
         histogram = SerializationUtils.toDoubleArray(in, offset, length);
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return histogram;
     }
 
-    public float getDistance(LireFeature vd) {   // added by mlux
+    @Override
+    public double getDistance(LireFeature vd) {   // added by mlux
         // Check if instance of the right class ...
         if (!(vd instanceof Gabor))
             throw new UnsupportedOperationException("Wrong descriptor.");
@@ -315,41 +321,41 @@ public class Gabor implements LireFeature {
         if ((ch.histogram.length != histogram.length))
             throw new UnsupportedOperationException("Histogram lengths or color spaces do not match");
 
-        return (float) getDistance(histogram, ch.histogram);
+        return getDistance(histogram, ch.histogram);
     }
 
-    public String getStringRepresentation() {  // added by mlux
-        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
-        sb.append("gabor");
-        sb.append(' ');
-        sb.append(histogram.length);
-        sb.append(' ');
-        for (double v : histogram) {
-            sb.append(v);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {  // added by mlux
-        StringTokenizer st = new StringTokenizer(s);
-        String name = st.nextToken();
-        if (!name.equals("gabor")) {
-            throw new UnsupportedOperationException("This is not a Gabor feature string.");
-        }
-
-        /*
-        * changes made by Ankit Jain here otherwise the histogram length would be assigned to histogram[i]
-        * jankit87@gmail.com
-        * */
-        histogram = new double[Integer.parseInt(st.nextToken())];
-
-        for (int i = 0; i < histogram.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            histogram[i] = Double.parseDouble(st.nextToken());
-        }
-    }
+//    public String getStringRepresentation() {  // added by mlux
+//        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
+//        sb.append("gabor");
+//        sb.append(' ');
+//        sb.append(histogram.length);
+//        sb.append(' ');
+//        for (double v : histogram) {
+//            sb.append(v);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {  // added by mlux
+//        StringTokenizer st = new StringTokenizer(s);
+//        String name = st.nextToken();
+//        if (!name.equals("gabor")) {
+//            throw new UnsupportedOperationException("This is not a Gabor feature string.");
+//        }
+//
+//        /*
+//        * changes made by Ankit Jain here otherwise the histogram length would be assigned to histogram[i]
+//        * jankit87@gmail.com
+//        * */
+//        histogram = new double[Integer.parseInt(st.nextToken())];
+//
+//        for (int i = 0; i < histogram.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            histogram[i] = Double.parseDouble(st.nextToken());
+//        }
+//    }
 
     @Override
     public String getFeatureName() {

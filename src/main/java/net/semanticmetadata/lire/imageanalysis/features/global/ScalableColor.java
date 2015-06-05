@@ -41,8 +41,9 @@
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.mpeg7.ScalableColorImpl;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.mpeg7.ScalableColorImpl;
 import net.semanticmetadata.lire.utils.ConversionUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
@@ -53,8 +54,9 @@ import net.semanticmetadata.lire.utils.SerializationUtils;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class ScalableColor extends ScalableColorImpl implements LireFeature {
+public class ScalableColor extends ScalableColorImpl implements GlobalFeature {
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         /*
         builder.append("scalablecolor;");
@@ -77,6 +79,7 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
         return SerializationUtils.toByteArray(result);
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         int[] result = SerializationUtils.toIntArray(in);
         NumberOfBitplanesDiscarded = result[0];
@@ -87,6 +90,7 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
         }
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         int[] result = SerializationUtils.toIntArray(in, offset, length);
         NumberOfBitplanesDiscarded = result[0];
@@ -97,7 +101,8 @@ public class ScalableColor extends ScalableColorImpl implements LireFeature {
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         int[] result = new int[NumberOfCoefficients];
         for (int i = 2; i < result.length; i++) {
             result[i] = haarTransformedHistogram[i];

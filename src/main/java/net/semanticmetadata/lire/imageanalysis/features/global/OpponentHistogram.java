@@ -41,14 +41,15 @@
 
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
-import java.util.StringTokenizer;
 
 /**
  * Simple 64 bin Opponent Histogram, based on the Opponent color space as described in van de Sande, Gevers & Snoek (2010)
@@ -74,7 +75,7 @@ import java.util.StringTokenizer;
     ISSN={0162-8828},
 }
 */
-public class OpponentHistogram implements LireFeature {
+public class OpponentHistogram implements GlobalFeature {
     final double sq2 = Math.sqrt(2d);
     final double sq6 = Math.sqrt(3d);
     final double sq3 = Math.sqrt(6d);
@@ -123,6 +124,7 @@ public class OpponentHistogram implements LireFeature {
         }
     }
 
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[histogram.length];
         for (int i = 0; i < result.length; i++) {
@@ -131,26 +133,30 @@ public class OpponentHistogram implements LireFeature {
         return result;
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         for (int i = 0; i < histogram.length; i++) {
             histogram[i] = in[i];
         }
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         for (int i = 0; i < length; i++) {
             histogram[i] = in[i+offset];
         }
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         return SerializationUtils.castToDoubleArray(histogram);
     }
 
-    public float getDistance(LireFeature feature) {
+    @Override
+    public double getDistance(LireFeature feature) {
         if (!(feature instanceof OpponentHistogram))
             throw new UnsupportedOperationException("Wrong descriptor.");
-        return (float) MetricsUtils.jsd(((OpponentHistogram) feature).histogram, histogram);
+        return MetricsUtils.jsd(((OpponentHistogram) feature).histogram, histogram);
     }
 
     public double getDistance(byte[] h1, byte[] h2) {
@@ -185,30 +191,30 @@ public class OpponentHistogram implements LireFeature {
         return tmpSum;
     }
 
-    public String getStringRepresentation() {
-        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
-        sb.append("ophist");
-        sb.append(' ');
-        sb.append(histogram.length);
-        sb.append(' ');
-        for (double aData : histogram) {
-            sb.append((int) aData);
-            sb.append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-    public void setStringRepresentation(String s) {
-        StringTokenizer st = new StringTokenizer(s);
-        if (!st.nextToken().equals("ophist"))
-            throw new UnsupportedOperationException("This is not a OpponentHistogram descriptor.");
-        for (int i = 0; i < histogram.length; i++) {
-            if (!st.hasMoreTokens())
-                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
-            histogram[i] = (byte) Integer.parseInt(st.nextToken());
-        }
-
-    }
+//    public String getStringRepresentation() {
+//        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
+//        sb.append("ophist");
+//        sb.append(' ');
+//        sb.append(histogram.length);
+//        sb.append(' ');
+//        for (double aData : histogram) {
+//            sb.append((int) aData);
+//            sb.append(' ');
+//        }
+//        return sb.toString().trim();
+//    }
+//
+//    public void setStringRepresentation(String s) {
+//        StringTokenizer st = new StringTokenizer(s);
+//        if (!st.nextToken().equals("ophist"))
+//            throw new UnsupportedOperationException("This is not a OpponentHistogram descriptor.");
+//        for (int i = 0; i < histogram.length; i++) {
+//            if (!st.hasMoreTokens())
+//                throw new IndexOutOfBoundsException("Too few numbers in string representation.");
+//            histogram[i] = (byte) Integer.parseInt(st.nextToken());
+//        }
+//
+//    }
 
     @Override
     public String getFeatureName() {

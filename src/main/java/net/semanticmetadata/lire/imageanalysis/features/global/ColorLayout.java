@@ -40,8 +40,10 @@
  */
 package net.semanticmetadata.lire.imageanalysis.features.global;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.imageanalysis.mpeg7.ColorLayoutImpl;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.mpeg7.ColorLayoutImpl;
 
 /**
  * Just a wrapper for the use of LireFeature.
@@ -50,13 +52,14 @@ import net.semanticmetadata.lire.imageanalysis.mpeg7.ColorLayoutImpl;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class ColorLayout extends ColorLayoutImpl implements LireFeature {
+public class ColorLayout extends ColorLayoutImpl implements GlobalFeature {
     /**
      * Provides a much faster way of serialization.
      *
      * @return a byte array that can be read with the corresponding method.
      * @see CEDD#setByteArrayRepresentation(byte[])
      */
+    @Override
     public byte[] getByteArrayRepresentation() {
         byte[] result = new byte[2 + numYCoeff + 2 * numCCoeff];
         result[0] = (byte) numYCoeff;
@@ -77,6 +80,7 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
      * @param in byte array from corresponding method
      * @see CEDD#getByteArrayRepresentation
      */
+    @Override
     public void setByteArrayRepresentation(byte[] in) {
         numYCoeff = in[0];
         numCCoeff = in[1];
@@ -89,6 +93,7 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
         }
     }
 
+    @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
         numYCoeff = in[0 + offset];
         numCCoeff = in[1 + offset];
@@ -102,7 +107,8 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
 
     }
 
-    public double[] getDoubleHistogram() {
+    @Override
+    public double[] getFeatureVector() {
         double[] result = new double[numYCoeff + numCCoeff * 2];
         for (int i = 0; i < numYCoeff; i++) {
             result[i] = YCoeff[i];
@@ -121,10 +127,11 @@ public class ColorLayout extends ColorLayoutImpl implements LireFeature {
      * @return the distance from [0,infinite) or -1 if descriptor type does not match
      */
 
-    public float getDistance(LireFeature descriptor) {
-        if (!(descriptor instanceof ColorLayoutImpl)) return -1f;
+    @Override
+    public double getDistance(LireFeature descriptor) {
+        if (!(descriptor instanceof ColorLayoutImpl)) return -1d;
         ColorLayoutImpl cl = (ColorLayoutImpl) descriptor;
-        return (float) getSimilarity(YCoeff, CbCoeff, CrCoeff, cl.YCoeff, cl.CbCoeff, cl.CrCoeff);
+        return getSimilarity(YCoeff, CbCoeff, CrCoeff, cl.YCoeff, cl.CbCoeff, cl.CrCoeff);
     }
 
     @Override
