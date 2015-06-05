@@ -37,7 +37,7 @@ package net.semanticmetadata.lire.builders;
 import net.semanticmetadata.lire.aggregators.*;
 import net.semanticmetadata.lire.classifiers.Cluster;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
-import net.semanticmetadata.lire.imageanalysis.features.local.SIMPLE.SimpleExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.indexers.parallel.ExtractorItem;
 
 import java.util.*;

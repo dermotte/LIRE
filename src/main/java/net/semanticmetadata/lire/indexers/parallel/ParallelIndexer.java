@@ -38,11 +38,11 @@ import net.semanticmetadata.lire.aggregators.*;
 import net.semanticmetadata.lire.builders.*;
 import net.semanticmetadata.lire.classifiers.*;
 import net.semanticmetadata.lire.classifiers.Cluster;
-import net.semanticmetadata.lire.imageanalysis.features.global.ACCID;
+//import net.semanticmetadata.lire.imageanalysis.features.global.ACCID;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
 import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
-import net.semanticmetadata.lire.imageanalysis.features.local.SIMPLE.SimpleExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.Extractor;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
@@ -158,7 +158,7 @@ public class ParallelIndexer {
         } else {
             p = new ParallelIndexer(numThreads, indexPath, imageDirectory);
         }
-        p.addExtractor(ACCID.class);
+//        p.addExtractor(ACCID.class);
         p.addExtractor(CEDD.class);
         p.addExtractor(FCTH.class);
         p.addExtractor(JCD.class);

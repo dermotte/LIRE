@@ -35,7 +35,7 @@
 package net.semanticmetadata.lire.indexers.parallel;
 
 import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.features.local.SIMPLE.SimpleExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.Extractor;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
