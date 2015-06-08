@@ -67,6 +67,7 @@ import java.util.LinkedList;
  * Created by Nektarios on 28/5/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * (c) 2015 by Nektarios Anagnostopoulos
  */
 public class TestSearching extends TestCase {
     Class<? extends GlobalFeature> globalFeatureClass = CEDD.class;

@@ -44,6 +44,7 @@ import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
  * Created by Nektarios on 6/5/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * (c) 2015 by Nektarios Anagnostopoulos
  */
 public class ExtractorItem {
     private Class<? extends Extractor> extractorClass;

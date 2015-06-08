@@ -60,6 +60,7 @@ import java.util.Arrays;
  * Created by Nektarios on 28/5/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * (c) 2015 by Nektarios Anagnostopoulos
  */
 public class TestExtraction extends TestCase{
     Class<? extends GlobalFeature> globalFeatureClass = CEDD.class;

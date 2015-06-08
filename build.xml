@@ -233,7 +233,7 @@
 
     <target name="index" depends="compile">
         <!-- Note: This needs to be forked, otherwise multi threading won't work and the heap space will be exceeded soon. -->
-        <java classpathref="classpath.path" classname="net.semanticmetadata.lire.indexing.parallel.ParallelIndexer" fork="true" maxmemory="2048M" error="indexer_error.log" output="indexer_output.log">
+        <java classpathref="classpath.path" classname="net.semanticmetadata.lire.indexers.parallel.ParallelIndexer" fork="true" maxmemory="2048M" error="indexer_error.log" output="indexer_output.log">
             <jvmarg line="-Xmx2048M -server"/>
             <!-- adapt this argument to use your pictures -->
             <arg line="-d ./testdata/ferrari -i ./idx-test -n 16"/>

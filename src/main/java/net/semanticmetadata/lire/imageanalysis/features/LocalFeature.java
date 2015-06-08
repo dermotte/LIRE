@@ -38,6 +38,7 @@ package net.semanticmetadata.lire.imageanalysis.features;
  * Created by Nektarios on 20/3/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * (c) 2015 by Nektarios Anagnostopoulos
  */
 public interface LocalFeature extends LireFeature {
 

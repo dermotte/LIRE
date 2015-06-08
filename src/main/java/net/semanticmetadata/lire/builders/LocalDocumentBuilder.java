@@ -45,6 +45,7 @@ import java.util.*;
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * (c) 2015 by Nektarios Anagnostopoulos
  */
 public class LocalDocumentBuilder extends AbstractLocalDocumentBuilder {
 
