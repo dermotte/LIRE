@@ -49,16 +49,16 @@ package liredemo;
 import edu.uniklu.itec.mosaix.ImageFunctions;
 import edu.uniklu.itec.mosaix.engine.Engine;
 import liredemo.flickr.FlickrIndexingThread;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.ImageSearcherFactory;
-import net.semanticmetadata.lire.filter.LsaFilter;
-import net.semanticmetadata.lire.filter.RerankFilter;
-import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
-import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
-import net.semanticmetadata.lire.impl.VisualWordsImageSearcher;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.imageanalysis.features.local.SurfFeature;
+import net.semanticmetadata.lire.searchers.ImageSearcher;
+import net.semanticmetadata.lire.deprecatedclasses.ImageSearcherFactory;
+import net.semanticmetadata.lire.filters.LsaFilter;
+import net.semanticmetadata.lire.filters.RerankFilter;
+import net.semanticmetadata.lire.deprecatedclasses.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
+import net.semanticmetadata.lire.searchers.VisualWordsImageSearcher;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -1431,7 +1431,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         try {
             Document d = browseReader.document(docID);
             BufferedImage img = null;
-            String file = d.getField(net.semanticmetadata.lire.DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+            String file = d.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
             if (!file.startsWith("http:")) {
                 img = ImageIO.read(new java.io.FileInputStream(file));
             } else {
@@ -1640,17 +1640,17 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void helpMenuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuAboutActionPerformed
         JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for Lucene Image Retrieval (LIRE) library.</b><br>"
-                + "<br>Visit http://www.semanticmetadata.net/lire for more information.<br>"
-                + "<br>&copy; 2007-2015 by Mathias Lux<br>"
-                + "mathias@juggle.at<br></center></html>",
+                        + "<br>Visit http://www.semanticmetadata.net/lire for more information.<br>"
+                        + "<br>&copy; 2007-2015 by Mathias Lux<br>"
+                        + "mathias@juggle.at<br></center></html>",
                 "About LIRe demo", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_helpMenuAboutActionPerformed
 
     private void showAbout() {
         JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for<br>Lucene Image Retrieval (LIRe) library.</b><br>"
-                + "<br>Visit http://www.semanticmetadata.net/lire<br>for more information.<br>"
-                + "<br>&copy; 2007-2015 by Mathias Lux<br>"
-                + "mathias@juggle.at<br></center></html>",
+                        + "<br>Visit http://www.semanticmetadata.net/lire<br>for more information.<br>"
+                        + "<br>&copy; 2007-2015 by Mathias Lux<br>"
+                        + "mathias@juggle.at<br></center></html>",
                 "About LIRe demo", JOptionPane.PLAIN_MESSAGE);
     }
 

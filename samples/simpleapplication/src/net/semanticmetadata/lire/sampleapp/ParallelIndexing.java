@@ -41,12 +41,10 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.imageanalysis.AutoColorCorrelogram;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.FCTH;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.impl.GenericDocumentBuilder;
-import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
+import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
+import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,14 +70,11 @@ public class ParallelIndexing {
         }
 
         // use ParallelIndexer to index all photos from args[0] into "index" ... use 6 threads (actually 7 with the I/O thread).
-        ParallelIndexer indexer = new ParallelIndexer(6, "index", args[0]) {
-            // use this to add you preferred builders. For now we go for CEDD, FCTH and AutoColorCorrelogram
-            public void addBuilders(ChainedDocumentBuilder builder) {
-                builder.addBuilder(new GenericDocumentBuilder(CEDD.class));
-                builder.addBuilder(new GenericDocumentBuilder(FCTH.class));
-                builder.addBuilder(new GenericDocumentBuilder(AutoColorCorrelogram.class));
-            }
-        };
+        ParallelIndexer indexer = new ParallelIndexer(6, "index", args[0]);
+        // use this to add you preferred builders. For now we go for CEDD, FCTH and AutoColorCorrelogram
+        indexer.addExtractor(CEDD.class);
+        indexer.addExtractor(FCTH.class);
+        indexer.addExtractor(AutoColorCorrelogram.class);
         indexer.run();
         System.out.println("Finished indexing.");
     }

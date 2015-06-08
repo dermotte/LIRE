@@ -39,8 +39,8 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.utils.FileUtils;
 
 import javax.imageio.ImageIO;
@@ -73,14 +73,14 @@ public class CreateARFFFile {
         ArrayList<String> images = FileUtils.getAllImages(new File(args[0]), true);
 
         // Create the instance of the LireFeature you want to use:
-        LireFeature feature = new CEDD();
+        GlobalFeature feature = new CEDD();
 
         if (images.size()>0) {
             // getting the number of dimensions:
             feature.extract(ImageIO.read(new FileInputStream(images.get(0))));
             System.out.println("@RELATION images\n");
             System.out.println("@ATTRIBUTE filename string\n");
-            for (int i=0;i<feature.getDoubleHistogram().length;i++) {
+            for (int i=0;i<feature.getFeatureVector().length;i++) {
                 System.out.println("@ATTRIBUTE f"+i+" NUMERIC\n");
             }
             System.out.println("\n@DATA\n");
@@ -91,8 +91,8 @@ public class CreateARFFFile {
                     BufferedImage img = ImageIO.read(new FileInputStream(imageFilePath));
                     System.out.print(imageFilePath);
                     feature.extract(img);
-                    for (int i = 0; i < feature.getDoubleHistogram().length; i++) {
-                        double v = feature.getDoubleHistogram()[i];
+                    for (int i = 0; i < feature.getFeatureVector().length; i++) {
+                        double v = feature.getFeatureVector()[i];
                         System.out.print("," + (Double.toString(v)).replace(',', '.'));
                     }
                     System.out.println();

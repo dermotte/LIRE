@@ -32,7 +32,7 @@ package liredemo.flickr;
 
 import liredemo.LireDemoFrame;
 import liredemo.indexing.MetadataBuilder;
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;

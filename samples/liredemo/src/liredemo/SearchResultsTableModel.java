@@ -42,8 +42,8 @@ package liredemo;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.ExifReader;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.utils.ImageUtils;
 
 import javax.imageio.ImageIO;

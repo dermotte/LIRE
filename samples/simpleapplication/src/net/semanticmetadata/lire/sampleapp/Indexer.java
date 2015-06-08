@@ -41,8 +41,8 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.DocumentBuilderFactory;
+import net.semanticmetadata.lire.builders.GlobalDocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -82,7 +82,7 @@ public class Indexer {
         ArrayList<String> images = FileUtils.getAllImages(new File(args[0]), true);
 
         // Creating a CEDD document builder and indexing all files.
-        DocumentBuilder builder = DocumentBuilderFactory.getCEDDDocumentBuilder();
+        GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(CEDD.class);
         // Creating an Lucene IndexWriter
         IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION,
                 new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
@@ -93,7 +93,7 @@ public class Indexer {
             System.out.println("Indexing " + imageFilePath);
             try {
                 BufferedImage img = ImageIO.read(new FileInputStream(imageFilePath));
-                Document document = builder.createDocument(img, imageFilePath);
+                Document document = globalDocumentBuilder.createDocument(img, imageFilePath);
                 iw.addDocument(document);
             } catch (Exception e) {
                 System.err.println("Error reading image or indexing it.");

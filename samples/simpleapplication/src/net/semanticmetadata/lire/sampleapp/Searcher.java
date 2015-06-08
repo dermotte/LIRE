@@ -39,11 +39,11 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.searchers.ImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
@@ -89,7 +89,7 @@ public class Searcher {
         // searching with a Lucene document instance ...
 //        ImageSearchHits hits = searcher.search(ir.document(0), ir);
         for (int i = 0; i < hits.length(); i++) {
-            String fileName = hits.doc(i).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            String fileName = ir.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             System.out.println(hits.score(i) + ": \t" + fileName);
         }
     }

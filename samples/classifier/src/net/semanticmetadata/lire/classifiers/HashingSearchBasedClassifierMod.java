@@ -41,14 +41,14 @@
 
 package net.semanticmetadata.lire.classifiers;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.ColorLayout;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
-import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
-import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.indexing.tools.Extractor;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.searchers.ImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
+import net.semanticmetadata.lire.deprecatedclasses.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.indexers.tools.Extractor;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -66,7 +66,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
-    /**
+/**
  * Created with IntelliJ IDEA.
  * User: Michael
  * Date: 8/27/13
@@ -90,7 +90,7 @@ public class HashingSearchBasedClassifierMod {
     //Starts the classification process
     public static void main(String[] args) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
 
-      //  String[] pathes = {"D:\\Datasets\\Fashion10000RunFashion\\", "D:\\Datasets\\Fashion10000RunFashionImproved\\", "D:\\Datasets\\Fashion10000RunItem\\", "D:\\Datasets\\Fashion10000RunItemImproved\\"};
+        //  String[] pathes = {"D:\\Datasets\\Fashion10000RunFashion\\", "D:\\Datasets\\Fashion10000RunFashionImproved\\", "D:\\Datasets\\Fashion10000RunItem\\", "D:\\Datasets\\Fashion10000RunItemImproved\\"};
         String[] pathes = {"D:\\Datasets\\Fashion10000RunItemImproved\\"};
         for (int r = 0; r < pathes.length; r++) {
             //config
@@ -106,7 +106,7 @@ public class HashingSearchBasedClassifierMod {
             String locationOfIndex = pathName + "idx\\index";  //location of the lire index
             String testIndexLocation =  "D:\\Datasets\\FashionTestItemDataSet\\" + "idx\\index";
             String testImageLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
-           // String locationOfImages = pathName;    //location of the images
+            // String locationOfImages = pathName;    //location of the images
             String locationOfImages = pathName;    //location of the images
             String locationOfTrainSet = pathName + "train.txt"; //location of the trainingsset
             String locationExtracorFile = pathName + "indexall.data";    //location of the extractor file
@@ -117,8 +117,8 @@ public class HashingSearchBasedClassifierMod {
             //   String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura"};
             //   String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura"};
 
-         //   String[] fieldsArray = {"CEDD", "EdgeHistogram","ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "ScalableColor"};
-         //   String[] classArray = {"CEDD", "EdgeHistogram","ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "ScalableColor"};
+            //   String[] fieldsArray = {"CEDD", "EdgeHistogram","ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "ScalableColor"};
+            //   String[] classArray = {"CEDD", "EdgeHistogram","ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "ScalableColor"};
 
             String[] fieldsArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoeffs", "Tamura", "Luminance_Layout", "Opponent_Histogram", "ScalableColor"};
             String[] classArray = {"CEDD", "EdgeHistogram", "FCTH", "ColorLayout", "PHOG", "JCD", "Gabor", "JpegCoefficientHistogram", "Tamura", "LuminanceLayout", "OpponentHistogram", "ScalableColor"};
@@ -139,16 +139,16 @@ public class HashingSearchBasedClassifierMod {
                 while (inf.read(tempIntf, 0, 1) > 0) {
                     if (tempIntf[0] == -1) break;
                     tmpFeaturef = tempIntf[0];
-                    LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
+                    GlobalFeature f = (GlobalFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
                     // byte[] length ...
                     inf.read(tempIntf, 0, 4);
                     tmpf = SerializationUtils.toInt(tempIntf);
                     inf.read(tempf, 0, tmpf);
                     f.setByteArrayRepresentation(tempf, 0, tmpf);
-                    //System.out.println(f.getDoubleHistogram().length+f.getClass().getSimpleName());
+                    //System.out.println(f.getFeatureVector().length+f.getClass().getSimpleName());
                     for (int z = 0; z < classArray.length; z++) {
                         if (f.getClass().getSimpleName().equals(classArray[z]))
-                            featureSpace[z] = f.getDoubleHistogram().length;
+                            featureSpace[z] = f.getFeatureVector().length;
 
                     }
 
@@ -274,7 +274,7 @@ public class HashingSearchBasedClassifierMod {
             // System.out.println(i);
 
             ArrayList<String> featureNameList = new ArrayList<String>();
-ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
+            ArrayList<GlobalFeature> lireFeatureList = new ArrayList<GlobalFeature>();
             ArrayList indexLocationList = new ArrayList();
             ArrayList testIndexLocationList = new ArrayList();
 
@@ -290,7 +290,7 @@ ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
             for (int j = 0; j < combs; j++) {
                 //   System.out.print(combinations.get(i + j).toString() + " ");
                 featureNameList.add((String) DocumentBuilder.class.getField("FIELD_NAME_" + fields1List.get(i + j).toUpperCase()).get(null));
-                lireFeatureList.add((LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + class1List.get(i + j)).newInstance());
+                lireFeatureList.add((GlobalFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + class1List.get(i + j)).newInstance());
                 indexLocationList.add(indexLocation + class1List.get(i + j));
                 testIndexLocationList.add(testIndexLocation + class1List.get(i + j));
             }
@@ -324,13 +324,13 @@ ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
             for (int j = 0; j < combs; j++) {
                 //   System.out.print(combinations.get(i + j).toString() + " ");
                 indexReaderList.add(DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(j)))));
-             //   indexReaderTestList.add(DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(j) + "TestSet"))));
+                //   indexReaderTestList.add(DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(j) + "TestSet"))));
                 indexReaderTestList.add(DirectoryReader.open(MMapDirectory.open(new File((String) testIndexLocationList.get(j) + "TestSet"))));
             }
 
             //Create the bsisearcher
             for (int j = 0; j < combs; j++) {
-                bisSearcherList.add(new BitSamplingImageSearcher(k, (String) featureNameList.get(j), (String) featureNameList.get(j) + "_hash", (LireFeature) lireFeatureList.get(j), 1000));
+                bisSearcherList.add(new BitSamplingImageSearcher(k, (String) featureNameList.get(j), (String) featureNameList.get(j) + "_hash", (GlobalFeature) lireFeatureList.get(j), 1000));
             }
 
 
@@ -551,7 +551,7 @@ ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
         //String indexLocation = "D:\\Datasets\\FashionTestItemDataSet\\idx\\index";
         String photosLocation = "D:\\Datasets\\FashionTestItemDataSet\\";
         String fieldName = DocumentBuilder.FIELD_NAME_COLORLAYOUT;
-        LireFeature feature = new ColorLayout();
+        GlobalFeature feature = new ColorLayout();
         String indexPath = "E:\\acmgc-cl-idx";
         System.out.println("Tests for feature " + fieldName + " with k=" + k + " - weighting by rank sum: " + weightByRank);
         System.out.println("========================================");
@@ -716,13 +716,13 @@ ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            LireFeature lf1 = null;
-            LireFeature lf2 = null;
-            LireFeature lf3 = null;
+            GlobalFeature lf1 = null;
+            GlobalFeature lf2 = null;
+            GlobalFeature lf3 = null;
             try {
-                lf1 = (LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS1).newInstance();
-                lf2 = (LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS2).newInstance();
-                lf3 = (LireFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS3).newInstance();
+                lf1 = (GlobalFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS1).newInstance();
+                lf2 = (GlobalFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS2).newInstance();
+                lf3 = (GlobalFeature) Class.forName("net.semanticmetadata.lire.imageanalysis." + fS3).newInstance();
             } catch (InstantiationException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (IllegalAccessException e) {
@@ -1137,13 +1137,13 @@ ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
             while (inf.read(tempIntf, 0, 1) > 0) {
                 if (tempIntf[0] == -1) break;
                 tmpFeaturef = tempIntf[0];
-                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
+                GlobalFeature f = (GlobalFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
                 // byte[] length ...
                 inf.read(tempIntf, 0, 4);
                 tmpf = SerializationUtils.toInt(tempIntf);
                 inf.read(tempf, 0, tmpf);
                 f.setByteArrayRepresentation(tempf, 0, tmpf);
-                //System.out.println(f.getDoubleHistogram().length+f.getClass().getSimpleName());
+                //System.out.println(f.getFeatureVector().length+f.getClass().getSimpleName());
                 featureOrder.add(f.getClass().getSimpleName());
             }
             break;
@@ -1185,15 +1185,15 @@ ArrayList<LireFeature> lireFeatureList = new ArrayList<LireFeature>();
             while (in.read(tempInt, 0, 1) > 0) {
                 if (tempInt[0] == -1) break;
                 tmpFeature = tempInt[0];
-                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
+                GlobalFeature f = (GlobalFeature) Class.forName(Extractor.features[tmpFeature]).newInstance();
                 // byte[] length ...
                 in.read(tempInt, 0, 4);
                 tmp = SerializationUtils.toInt(tempInt);
                 in.read(temp, 0, tmp);
                 f.setByteArrayRepresentation(temp, 0, tmp);
-                //System.out.println(filename + Arrays.toString(f.getDoubleHistogram()));
-                //System.out.println(f.getDoubleHistogram().length+f.getFieldName());
-                double[] tempDouble = f.getDoubleHistogram();
+                //System.out.println(filename + Arrays.toString(f.getFeatureVector()));
+                //System.out.println(f.getFeatureVector().length+f.getFieldName());
+                double[] tempDouble = f.getFeatureVector();
                 double tempMean = 0.0;
                 for (int j = 0; j < tempDouble.length; j++) {
                     //      tempMean = tempMean + tempDouble[j];

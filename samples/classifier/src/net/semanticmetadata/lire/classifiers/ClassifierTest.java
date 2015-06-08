@@ -79,13 +79,12 @@ package net.semanticmetadata.lire.classifiers;/*
  */
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
-import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.*;
-import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
-import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.indexing.tools.Extractor;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.searchers.ImageSearcher;
+import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
+import net.semanticmetadata.lire.deprecatedclasses.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.indexers.tools.Extractor;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -156,10 +155,10 @@ public class ClassifierTest extends TestCase {
                 tmpf = SerializationUtils.toInt(tempIntf);
                 inf.read(tempf, 0, tmpf);
                 f.setByteArrayRepresentation(tempf, 0, tmpf);
-                //System.out.println(f.getDoubleHistogram().length+f.getClass().getSimpleName());
+                //System.out.println(f.getFeatureVector().length+f.getClass().getSimpleName());
                 for (int z=0;z<classArray.length;z++){
                     if(f.getClass().getSimpleName().equals(classArray[z]))
-                    featureSpace[z] = f.getDoubleHistogram().length;
+                        featureSpace[z] = f.getFeatureVector().length;
 
                 }
 
@@ -197,7 +196,7 @@ public class ClassifierTest extends TestCase {
                 reducedClassArray.add(classArray[i]);
             }
         }*/
-            for (int i = 0; i < classArray.length; i++) {
+        for (int i = 0; i < classArray.length; i++) {
             if (featureInformationGainHashMap.get(classArray[i]) >= informationGainThreshold) {
                 reducedFieldsArray.add(fieldsArray[i]);
                 reducedClassArray.add(classArray[i]);
@@ -214,9 +213,9 @@ public class ClassifierTest extends TestCase {
         //Starts the classification
         try {
             if (useIndexSearch)
-            testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray, numberOfCombinations, class1, class2, informationGainThreshold,"TestSet");
+                testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray, numberOfCombinations, class1, class2, informationGainThreshold,"TestSet");
             else
-            testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray, numberOfCombinations, class1, class2, informationGainThreshold);
+                testClassifyNCombinedFeaturesMulti(0, 220, locationSaveResultsFile, numberOfNeighbours, locationOfIndex, locationOfImages, locationOfTestset, 0, reducedFieldsArray, reducedClassArray, numberOfCombinations, class1, class2, informationGainThreshold);
 
         } catch (NoSuchFieldException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -730,8 +729,8 @@ public class ClassifierTest extends TestCase {
             for (int d = 0; d < classes.length; d++)
                 class2id.put(classes[d], d);
 
-         //   BufferedReader br = new BufferedReader(new FileReader(testSetFile));
-         //   String line;
+            //   BufferedReader br = new BufferedReader(new FileReader(testSetFile));
+            //   String line;
 
             IndexReader irt1 = null;
             IndexReader irt2 = null;
@@ -796,7 +795,7 @@ public class ClassifierTest extends TestCase {
 
             IndexReader ir1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0))));
             irt1 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(0)+"TestSet")));
-          //  ImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
+            //  ImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
             GenericFastImageSearcher bis1 = new GenericFastImageSearcher(k, (Class<?>) lireFeatureList.get(0).getClass(), (String) featureNameList.get(0), true, ir1);
             if (combs > 1) {
                 ir2 = DirectoryReader.open(MMapDirectory.open(new File((String) indexLocationList.get(1))));
@@ -872,7 +871,7 @@ public class ClassifierTest extends TestCase {
             long ms = System.currentTimeMillis();
             for (int x = 0; x <  irt1.numDocs();x++){
 
-          //  while ((line = br.readLine()) != null) {
+                //  while ((line = br.readLine()) != null) {
 
                 // System.out.println(x);
 
@@ -980,15 +979,15 @@ public class ClassifierTest extends TestCase {
                         if (combs > 11)
                             tag2weight.put(getTag(hits12.doc(l), photosLocation), (double) l);
                     }
-                 //  System.out.println(System.currentTimeMillis()-ms);
-                 //  ms=System.currentTimeMillis();
+                    //  System.out.println(System.currentTimeMillis()-ms);
+                    //  ms=System.currentTimeMillis();
                 }
                 // find class, iterate over the tags (classes):
                 int maxCount = 0, maxima = 0;
                 String classifiedAs = null;
                 for (Iterator<String> tagIterator = tag2count.keySet().iterator(); tagIterator.hasNext(); ) {
                     String tag = tagIterator.next();
-                  //  System.out.println(tag+tag2count.get(tag));
+                    //  System.out.println(tag+tag2count.get(tag));
                     if (tag2count.get(tag) > maxCount) {
                         maxCount = tag2count.get(tag);
                         maxima = 1;
@@ -1087,8 +1086,8 @@ public class ClassifierTest extends TestCase {
 
                     if (classesHTML.get(d).equals("no"))
                         colorF = "rgb(255, 0, 0)";
-                       // String s = ir1.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
-                   // String s = filesHTML.get(d);
+                    // String s = ir1.document(topDocs.scoreDocs[i].doc).get("descriptorImageIdentifier");
+                    // String s = filesHTML.get(d);
                     //  System.out.println(reader.document(topDocs.scoreDocs[i].doc).get("featLumLay"));
                     //  s = new File(s).getAbsolutePath();
                     // System.out.println(s);
@@ -3055,22 +3054,22 @@ public class ClassifierTest extends TestCase {
             while (inf.read(tempIntf, 0, 1) > 0) {
                 if (tempIntf[0] == -1) break;
                 tmpFeaturef = tempIntf[0];
-                LireFeature f = (LireFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
+                GlobalFeature f = (GlobalFeature) Class.forName(Extractor.features[tmpFeaturef]).newInstance();
                 // byte[] length ...
                 inf.read(tempIntf, 0, 4);
                 tmpf = SerializationUtils.toInt(tempIntf);
                 inf.read(tempf, 0, tmpf);
                 f.setByteArrayRepresentation(tempf, 0, tmpf);
-                //System.out.println(f.getDoubleHistogram().length+f.getClass().getSimpleName());
+                //System.out.println(f.getFeatureVector().length+f.getClass().getSimpleName());
                 featureOrder.add(f.getClass().getSimpleName());
             }
             break;
         }
 
 
-     //   for (int i = 0; i < classArray.length; i++) {
+        //   for (int i = 0; i < classArray.length; i++) {
         for (int i = 0; i < featureOrder.size(); i++) {
-           // for (int j = 0; j < featureSpace[i]; j++) {
+            // for (int j = 0; j < featureSpace[i]; j++) {
             for (int j = 0; j < featureSpaceHashMap.get(featureOrder.get(i)); j++) {
                 print_line.print("@attribute " + i + "_" + featureOrder.get(i) + "_" + j + " " + "numeric" + "\n" + "\n");
             }
@@ -3109,9 +3108,9 @@ public class ClassifierTest extends TestCase {
                 tmp = SerializationUtils.toInt(tempInt);
                 in.read(temp, 0, tmp);
                 f.setByteArrayRepresentation(temp, 0, tmp);
-                //System.out.println(filename + Arrays.toString(f.getDoubleHistogram()));
-                //System.out.println(f.getDoubleHistogram().length+f.getFieldName());
-                double[] tempDouble = f.getDoubleHistogram();
+                //System.out.println(filename + Arrays.toString(f.getFeatureVector()));
+                //System.out.println(f.getFeatureVector().length+f.getFieldName());
+                double[] tempDouble = f.getFeatureVector();
                 double tempMean = 0.0;
                 for (int j = 0; j < tempDouble.length; j++) {
                     //      tempMean = tempMean + tempDouble[j];
@@ -3178,19 +3177,19 @@ public class ClassifierTest extends TestCase {
             // System.out.print(data.attribute((int) rankedAttribuesArray[i][0]).name() + "/" + rankedAttribuesArray[i][0] + "/");
             //     System.out.println(rankedAttribuesArray[i][1]);
             // data.attribute((int) rankedAttribuesArray[i][0]).name().substring(0,data.attribute((int) rankedAttribuesArray[i][0]).name().indexOf("_"));
-           // featureInformationGain[currentFeature] = featureInformationGain[currentFeature] + rankedAttribuesArray[i][1];
+            // featureInformationGain[currentFeature] = featureInformationGain[currentFeature] + rankedAttribuesArray[i][1];
             featureInformationGainHashMap.put(featureOrder.get(currentFeature),featureInformationGainHashMap.get(featureOrder.get(currentFeature))+rankedAttribuesArray[i][1]);
         }
 
         //Caalculate the mean of the information gain (better comparable)
-       // for (int i = 0; i < featureInformationGain.length; i++) {
-       //     featureInformationGain[i] = (featureInformationGain[i] / featureSpace[i]) * 100;
-       // }
+        // for (int i = 0; i < featureInformationGain.length; i++) {
+        //     featureInformationGain[i] = (featureInformationGain[i] / featureSpace[i]) * 100;
+        // }
 
         //Calculate the mean of the information gain (better comparable)
-         for (int i = 0; i < featureOrder.size(); i++) {
+        for (int i = 0; i < featureOrder.size(); i++) {
             featureInformationGainHashMap.put(featureOrder.get(i),(featureInformationGainHashMap.get(featureOrder.get(i))/featureSpaceHashMap.get(featureOrder.get(i)))*100);
-         }
+        }
 
         // for(int i=0;i<0;i++){
         //     System.out.println(data.attribute(indices[i]).toString());
@@ -3198,10 +3197,10 @@ public class ClassifierTest extends TestCase {
         System.out.println("Scoring finished, starting with classification! Scores: ");
         for (int i = 0; i < featureOrder.size(); i++) {
             System.out.println(featureOrder.get(i)+" "+ featureInformationGainHashMap.get(featureOrder.get(i)));
-           // featureInformationGainHashMap.put(featureOrder.get(i),(featureInformationGainHashMap.get(featureOrder.get(i))/featureSpaceHashMap.get(featureOrder.get(i)))*100);
+            // featureInformationGainHashMap.put(featureOrder.get(i),(featureInformationGainHashMap.get(featureOrder.get(i))/featureSpaceHashMap.get(featureOrder.get(i)))*100);
         }
-       // return featureInformationGain;
-       return featureInformationGainHashMap;
+        // return featureInformationGain;
+        return featureInformationGainHashMap;
     }
 
     //SOME TEST CLASSES

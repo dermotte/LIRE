@@ -41,8 +41,8 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.imageanalysis.CEDD;
-import net.semanticmetadata.lire.imageanalysis.LireFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -58,7 +58,7 @@ import java.util.Arrays;
 public class ExtractSingleFeature {
     public static void main(String[] args) {
         BufferedImage img = null;
-        LireFeature f = null;
+        GlobalFeature f = null;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.startsWith("-i")) {
@@ -72,7 +72,7 @@ public class ExtractSingleFeature {
             } else if (arg.startsWith("-f")) {
                 // feature selection.
                 try {
-                    f = (LireFeature) Class.forName(args[i + 1]).newInstance();
+                    f = (GlobalFeature) Class.forName(args[i + 1]).newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
                     printHelp();
@@ -85,7 +85,7 @@ public class ExtractSingleFeature {
         }
         System.out.println("Extracting " + f.getClass().getName() + ".");
         f.extract(img);
-        System.out.printf(Arrays.toString(f.getDoubleHistogram()));
+        System.out.printf(Arrays.toString(f.getFeatureVector()));
     }
 
     private static void printHelp() {

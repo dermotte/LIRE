@@ -47,7 +47,8 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.ExifReader;
 import liredemo.indexing.MetadataBuilder;
-import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.deprecatedclasses.impl.ChainedDocumentBuilder;
+import net.semanticmetadata.lire.deprecatedclasses.indexers.parallel.ParallelIndexer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -106,8 +107,8 @@ public class IndexingThread extends Thread {
             long time = System.currentTimeMillis();
 //            Document doc;
 //            ParallelIndexer indexer = new ParallelIndexer(images, builder);
-            net.semanticmetadata.lire.indexing.parallel.ParallelIndexer pin =
-                    new net.semanticmetadata.lire.indexing.parallel.ParallelIndexer(8, parent.textfieldIndexName.getText(), parent.textfieldIndexDir.getText(), create){
+            ParallelIndexer pin =
+                    new ParallelIndexer(8, parent.textfieldIndexName.getText(), parent.textfieldIndexDir.getText(), create){
                         @Override
                         public void addBuilders(ChainedDocumentBuilder builder) {
                             builder.addBuilder(new MetadataBuilder());
