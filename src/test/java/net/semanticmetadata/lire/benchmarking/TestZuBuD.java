@@ -86,10 +86,8 @@ public class TestZuBuD extends TestCase {
     private String db = "ZuBuD";
     private String indexPath = "zubud-index";
     private String indexPathQueries = "zubud-queries";
-    //    private String testExtensive = "testdata/png-ZuBuD";
-    private String testExtensive = "E:\\###Databases\\png-ZuBuD";
-    //    private String testExtensiveQueries = "testdata/qimage";
-    private String testExtensiveQueries = "E:\\###Databases\\qimage";
+    private String testExtensive = "testdata/png-ZuBuD";
+    private String testExtensiveQueries = "testdata/qimage";
     private final String groundTruth = "testdata/queries/ZuBuDQueries.txt";
 
 

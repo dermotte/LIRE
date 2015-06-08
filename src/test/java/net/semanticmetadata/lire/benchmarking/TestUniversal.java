@@ -85,43 +85,26 @@ public class TestUniversal extends TestCase {
     //UCID
     private String db = "UCID";
     private String indexPath = "ucid-index";
-    //    private String indexPath = "C:\\Users\\Nektarios\\Desktop\\ALLUCID\\#INDEX\\ucid-index-74975528";
-//    private final String indexPath = "MirFlickIndexes\\MirFlickr-UCID";
-    private String testExtensive = "E:\\###Databases\\UCID_png";
-    //    private String testExtensive = "D:\\Desktop\\UCID_png";
+    private String testExtensive = "testdata/UCID_png";
     private final String groundTruth = "testdata/queries/ucid.v2.groundtruth.txt";
 
     //UKBench
 //    private String db = "UKB";
 //    private String indexPath = "ukbench-index";
-//    private String testExtensive = "E:\\###Databases\\UKBench";
+//    private String testExtensive = "testdata/ukbench";
 //    private final String groundTruth = "testdata/queries/NisterQueries.txt";
 
     //Wang
 //    private String db = "Wang";
 //    private String indexPath = "wang-index";
-//    private String indexPath = "MirFlickIndexes\\MirFlickr-Wang";
-//    private String indexPath = "C:\\Users\\Nektarios\\Desktop\\MirFlickrIndexesAndEvals\\MirFlickIndexes\\MirFlickr-Wang";
-//    private String testExtensive = "E:\\###Databases\\wang";
+//    private String testExtensive = "testdata/wang";
 //    private final String groundTruth = "testdata/queries/WangQueries.txt";
 
     //Holidays
 //    private String db = "Hol";
 //    private String indexPath = "holidays-index";
-//    private String testExtensive = "E:\\###Databases\\Holidays.small";
+//    private String testExtensive = "testdata/holidays";
 //    private final String groundTruth = "testdata/queries/HolidaysQueries.txt";
-
-
-    //ETHZShapes
-//    private String db = "ZSH";
-//    private String indexPath = "ethzshapes-index";
-//    private String testExtensive = "C:\\Users\\Nektarios\\Desktop\\ETHZShapes";
-//    private final String groundTruth = "testdata/queries/ETHShapesQueries.txt";
-
-    //MirFlickr
-//    private String db = "MirFlickr";
-//    private String indexPath = "MirFlickr-index";
-//    private String testExtensive = "E:\\###Databases\\MirFlickr";
 
 
     private int numOfDocsForVocabulary = 500;

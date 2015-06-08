@@ -71,7 +71,7 @@ public class TestIndexing extends TestCase {
 
     private final String indexPath = "test-index";
     private final String indexPathSeparate = "test-separate";
-    private final String testExtensive = "E:\\###Databases\\UCID_png";
+    private final String testExtensive = "testdata/UCID_png";
     //    private final String testExtensive = "testdata/ferrari";
     private final String testExtensiveBlack = "testdata/ferrari/black";
     private final String testExtensiveRed = "testdata/ferrari/red";
