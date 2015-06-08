@@ -1,5 +1,5 @@
 /*
- * This file is part of the LIRE project: http://www.semanticmetadata.net/lire
+ * This file is part of the LIRE project: http://lire-project.net
  * LIRE is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -1640,7 +1640,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void helpMenuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuAboutActionPerformed
         JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for Lucene Image Retrieval (LIRE) library.</b><br>"
-                        + "<br>Visit http://www.semanticmetadata.net/lire for more information.<br>"
+                        + "<br>Visit http://lire-project.net for more information.<br>"
                         + "<br>&copy; 2007-2015 by Mathias Lux<br>"
                         + "mathias@juggle.at<br></center></html>",
                 "About LIRe demo", JOptionPane.PLAIN_MESSAGE);
@@ -1648,7 +1648,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void showAbout() {
         JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for<br>Lucene Image Retrieval (LIRe) library.</b><br>"
-                        + "<br>Visit http://www.semanticmetadata.net/lire<br>for more information.<br>"
+                        + "<br>Visit http://lire-project.net<br>for more information.<br>"
                         + "<br>&copy; 2007-2015 by Mathias Lux<br>"
                         + "mathias@juggle.at<br></center></html>",
                 "About LIRe demo", JOptionPane.PLAIN_MESSAGE);
@@ -1781,7 +1781,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void helpMenuHomepageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuHomepageActionPerformed
         try {
-            Desktop.getDesktop().browse(new URI("http://www.semanticmetadata.net/lire"));
+            Desktop.getDesktop().browse(new URI("http://lire-project.net"));
         } catch (Exception ex) {
             Logger.getLogger(LireDemoFrame.class.getName()).log(Level.INFO, null, ex);
         }
