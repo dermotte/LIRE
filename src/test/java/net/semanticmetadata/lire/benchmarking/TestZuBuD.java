@@ -45,6 +45,7 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.aggregators.AbstractAggregator;
 import net.semanticmetadata.lire.aggregators.Aggregator;
 import net.semanticmetadata.lire.aggregators.BOVW;
+import net.semanticmetadata.lire.aggregators.VLAD;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
@@ -53,9 +54,11 @@ import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistog
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.LocalBinaryPatternsAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.RankAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.*;
+import net.semanticmetadata.lire.imageanalysis.features.local.sift.SiftExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSiftExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.surf.SurfExtractor;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
@@ -96,7 +99,7 @@ public class TestZuBuD extends TestCase {
     private int[] numOfClusters = new int[] {32, 128, 512, 2048};
 
 //    private Class<? extends AbstractAggregator> aggregator = VLAD.class;
-//    private int[] numOfClusters = new int[] {16, 32};
+//    private int[] numOfClusters = new int[] {16, 64};
 
     private HashMap<String, List<String>> queries;
     private HashMap<String, Integer> query2id;
@@ -170,8 +173,8 @@ public class TestZuBuD extends TestCase {
 //        parallelIndexer.addExtractor(SPFCTH.class);
 //        parallelIndexer.addExtractor(SPACC.class);
 //        parallelIndexer.addExtractor(SPLBP.class);
-//
-//        //SIMPLE
+
+        //SIMPLE
 //        parallelIndexer.addExtractor(CEDD.class, SimpleExtractor.KeypointDetector.CVSURF);
 //        parallelIndexer.addExtractor(FCTH.class, SimpleExtractor.KeypointDetector.CVSURF);
         parallelIndexer.addExtractor(JCD.class, SimpleExtractor.KeypointDetector.CVSURF);
@@ -183,10 +186,10 @@ public class TestZuBuD extends TestCase {
 
 
         //LOCAL
-//        parallelIndexer.addExtractor(CvSurfExtractor.class);
+        parallelIndexer.addExtractor(CvSurfExtractor.class);
 //        parallelIndexer.addExtractor(CvSiftExtractor.class);
-//        parallelIndexer.addExtractor(Extractor.class);
-//        parallelIndexer.addExtractor(Surf.class);
+//        parallelIndexer.addExtractor(SurfExtractor.class);
+//        parallelIndexer.addExtractor(SiftExtractor.class);
 //        parallelIndexer.addExtractor(SelfSimilaritiesExtractor.class);
 
         parallelIndexer.run();
@@ -241,7 +244,7 @@ public class TestZuBuD extends TestCase {
         for (int i = 0; i < numOfClusters.length; i++) {
 //            computeMAP(new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW CEDD CVSURF", readerIndex, numOfClusters[i], readerQueries);
 //            computeMAP(new GenericFastImageSearcher(1000, FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW FCTH CVSURF", readerIndex, numOfClusters[i], readerQueries);
-//            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW JCD CVSURF", readerIndex, numOfClusters[i], readerQueries);
+            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW JCD CVSURF", readerIndex, numOfClusters[i], readerQueries);
 //            computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW AutoColorCorrelogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
 //            computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW OpponentHistogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
 //            computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple BOVW ColorLayout CVSURF", readerIndex, numOfClusters[i], readerQueries);
@@ -259,30 +262,36 @@ public class TestZuBuD extends TestCase {
 //            performWSs(ScalableColor.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "Simple BOVW ScalableColor CVSURF", readerQueries);
 
 
-//            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSURF BOVW", readerIndex, numOfClusters[i], readerQueries);
+            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSURF BOVW", readerIndex, numOfClusters[i], readerQueries);
 //            computeMAP(new GenericFastImageSearcher(1000, CvSiftExtractor.class, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSIFT BOVW", readerIndex, numOfClusters[i], readerQueries);
-//////            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SelfSimilarities BOVW", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, SurfExtractor.class, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SURF BOVW", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, SiftExtractor.class, new BOVW(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SIFT BOVW", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SelfSimilarities BOVW", reader, numOfClusters[i], readerQueries);
 
-//            performWSs(CvSurfExtractor.class, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "CVSURF BOVW", readerQueries);
+            performWSs(CvSurfExtractor.class, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "CVSURF BOVW", readerQueries);
 //            performWSs(CvSiftExtractor.class, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "CVSIFT BOVW", readerQueries);
-////            performWSs(SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "SelfSimilarities BOVW", readerQueries);
+//            performWSs(SurfExtractor.class, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "SURF BOVW", readerQueries);
+//            performWSs(SiftExtractor.class, new BOVW(), numOfClusters[i], readerIndex, indexPath + ".config", "SIFT BOVW", readerQueries);
+//            performWSs(SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SelfSimilarities BOVW", readerQueries);
         }
 
 
         //VLAD
 //        for (int i = 0; i < numOfClusters.length; i++) {
-////            computeMAP(new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD CEDD CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD FCTH CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD JCD CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD AutoColorCorrelogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD OpponentHistogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD ColorLayout CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD EdgeHistogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD ScalableColor CVSURF", readerIndex, numOfClusters[i], readerQueries);
-//
-////            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSURF VLAD", readerIndex, numOfClusters[i], readerQueries);
-////            computeMAP(new GenericFastImageSearcher(1000, CvSiftExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSIFT VLAD", readerIndex, numOfClusters[i], readerQueries);
-//////            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SelfSimilarities VLAD", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD CEDD CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD FCTH CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD JCD CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD AutoColorCorrelogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD OpponentHistogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD ColorLayout CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, EdgeHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD EdgeHistogram CVSURF", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, ScalableColor.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "Simple VLAD ScalableColor CVSURF", readerIndex, numOfClusters[i], readerQueries);
+////
+//            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSURF VLAD", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, CvSiftExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "CVSIFT VLAD", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, SurfExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SURF VLAD", readerIndex, numOfClusters[i], readerQueries);
+//            computeMAP(new GenericFastImageSearcher(1000, SiftExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SIFT VLAD", readerIndex, numOfClusters[i], readerQueries);
+////            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new VLAD(), numOfClusters[i], true, readerIndex, indexPath + ".config"), "SelfSimilarities VLAD", readerIndex, numOfClusters[i], readerQueries);
 //        }
 
         double h = (System.currentTimeMillis() - start) / 3600000.0;

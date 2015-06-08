@@ -376,7 +376,7 @@ public class FloatArray2DSIFT {
     void processCandidate(
             float[] c,
             int o,
-            Vector<Feature> features) {
+            Vector<SiftFeature> features) {
         final int ORIENTATION_BINS = 36;
         final float ORIENTATION_BIN_SIZE = 2.0f * (float) Math.PI / (float) ORIENTATION_BINS;
         float[] histogram_bins = new float[ORIENTATION_BINS];
@@ -451,7 +451,7 @@ public class FloatArray2DSIFT {
 
         // assign descriptor and add the Feature instance to the collection
         features.addElement(
-                new Feature(
+                new SiftFeature(
                         octave_sigma * scale,
                         orientation,
                         new float[]{c[0] * scale, c[1] * scale},
@@ -486,7 +486,7 @@ public class FloatArray2DSIFT {
                     orientation = ((float) i + 0.5f + offset) * ORIENTATION_BIN_SIZE - (float) Math.PI;
 
                     features.addElement(
-                            new Feature(
+                            new SiftFeature(
                                     octave_sigma * scale,
                                     orientation,
                                     new float[]{c[0] * scale, c[1] * scale},
@@ -509,8 +509,8 @@ public class FloatArray2DSIFT {
      * @param o octave index
      * @return detected features
      */
-    public Vector<Feature> runOctave(int o) {
-        Vector<Feature> features = new Vector<Feature>();
+    public Vector<SiftFeature> runOctave(int o) {
+        Vector<SiftFeature> features = new Vector<SiftFeature>();
         FloatArray2DScaleOctave octave = octaves[o];
         octave.build();
         dog.run(octave);
@@ -528,11 +528,11 @@ public class FloatArray2DSIFT {
      *
      * @return detected features
      */
-    public Vector<Feature> run() {
-        Vector<Feature> features = new Vector<Feature>();
+    public Vector<SiftFeature> run() {
+        Vector<SiftFeature> features = new Vector<SiftFeature>();
         for (int o = 0; o < octaves.length; ++o) {
             if (octaves[o].state == FloatArray2DScaleOctave.State.EMPTY) continue;
-            Vector<Feature> more = runOctave(o);
+            Vector<SiftFeature> more = runOctave(o);
             features.addAll(more);
         }
         return features;
@@ -543,11 +543,11 @@ public class FloatArray2DSIFT {
      *
      * @return detected features
      */
-    public Vector<Feature> run(int max_size) {
-        Vector<Feature> features = new Vector<Feature>();
+    public Vector<SiftFeature> run(int max_size) {
+        Vector<SiftFeature> features = new Vector<SiftFeature>();
         for (int o = 0; o < octaves.length; ++o) {
             if (octaves[o].width <= max_size && octaves[o].height <= max_size) {
-                Vector<Feature> more = runOctave(o);
+                Vector<SiftFeature> more = runOctave(o);
                 features.addAll(more);
             }
         }
@@ -570,8 +570,8 @@ public class FloatArray2DSIFT {
      *         TODO implement the spatial constraints
      */
     public static Vector<PointMatch> createMatches(
-            List<Feature> fs1,
-            List<Feature> fs2,
+            List<SiftFeature> fs1,
+            List<SiftFeature> fs2,
             float max_sd,
             Model model,
             float max_id) {
@@ -581,8 +581,8 @@ public class FloatArray2DSIFT {
         int size = fs2.size();
         int size_1 = size - 1;
 
-        for (Feature f1 : fs1) {
-            Feature best = null;
+        for (SiftFeature f1 : fs1) {
+            SiftFeature best = null;
             float best_d = Float.MAX_VALUE;
             float second_best_d = Float.MAX_VALUE;
 
@@ -591,7 +591,7 @@ public class FloatArray2DSIFT {
             int s = size / 2 + size % 2;
             if (max_sd < Float.MAX_VALUE) {
                 while (s > 1) {
-                    Feature f2 = fs2.get(last);
+                    SiftFeature f2 = fs2.get(last);
                     if (f2.scale / f1.scale < min_sd) last = Math.max(0, last - s);
                     else last = Math.min(size_1, last + s);
                     f2 = fs2.get(first);
@@ -605,7 +605,7 @@ public class FloatArray2DSIFT {
             //for ( Feature f2 : fs2 )
 
             for (int i = first; i <= last; ++i) {
-                Feature f2 = fs2.get(i);
+                SiftFeature f2 = fs2.get(i);
                 float d = f1.descriptorDistance(f2);
                 if (d < best_d) {
                     second_best_d = best_d;
@@ -657,7 +657,7 @@ public class FloatArray2DSIFT {
      * get a histogram of feature sizes
      */
     public static float[] featureSizeHistogram(
-            Vector<Feature> features,
+            Vector<SiftFeature> features,
             float min,
             float max,
             int bins) {
@@ -666,7 +666,7 @@ public class FloatArray2DSIFT {
         float h[] = new float[bins];
         int hb[] = new int[bins];
 
-        for (Feature f : features) {
+        for (SiftFeature f : features) {
             int bin = (int) Math.max(0, Math.min(bins - 1, (int) (Math.log(f.scale) / Math.log(2.0) * 28.0f)));
             ++hb[bin];
         }

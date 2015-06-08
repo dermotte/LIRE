@@ -51,7 +51,7 @@ import edu.uniklu.itec.mosaix.engine.Engine;
 import liredemo.flickr.FlickrIndexingThread;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.features.local.SurfFeature;
+import net.semanticmetadata.lire.imageanalysis.features.local.surf.SurfFeature;
 import net.semanticmetadata.lire.searchers.ImageSearcher;
 import net.semanticmetadata.lire.deprecatedclasses.ImageSearcherFactory;
 import net.semanticmetadata.lire.filters.LsaFilter;

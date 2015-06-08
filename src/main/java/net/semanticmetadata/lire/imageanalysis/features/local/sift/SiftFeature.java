@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 /**
  * SIFT feature container
  */
-public class Feature  implements Comparable<Feature>, Serializable, LocalFeature {
+public class SiftFeature implements Comparable<SiftFeature>, Serializable, LocalFeature {
     /**
      *
      */
@@ -70,10 +70,10 @@ public class Feature  implements Comparable<Feature>, Serializable, LocalFeature
     /**
      * Dummy constructor for Serialization to work properly.
      */
-    public Feature() {
+    public SiftFeature() {
     }
 
-    public Feature(float s, float o, float[] l, float[] d) {
+    public SiftFeature(float s, float o, float[] l, float[] d) {
         this.scale = s;
         this.orientation = o;
         this.location = l;
@@ -86,7 +86,7 @@ public class Feature  implements Comparable<Feature>, Serializable, LocalFeature
      * this.scale &gt; o.scale, to sort the features in a descending order
      */
     @Override
-    public int compareTo(Feature f) {
+    public int compareTo(SiftFeature f) {
         return scale < f.scale ? 1 : scale == f.scale ? 0 : -1;
     }
 
@@ -105,9 +105,9 @@ public class Feature  implements Comparable<Feature>, Serializable, LocalFeature
         }
     }
 
-    public float descriptorDistance(Feature f) {
-        if (!(f instanceof Feature)) return -1;
-        return (float) MetricsUtils.distL2(descriptor, ((Feature) f).descriptor);
+    public float descriptorDistance(SiftFeature f) {
+        if (!(f instanceof SiftFeature)) return -1;
+        return (float) MetricsUtils.distL2(descriptor, ((SiftFeature) f).descriptor);
     }
 
     public String toString() {
@@ -121,7 +121,7 @@ public class Feature  implements Comparable<Feature>, Serializable, LocalFeature
 
     @Override
     public double getDistance(LireFeature feature) {
-        if (feature instanceof Feature) return descriptorDistance((Feature) feature);
+        if (feature instanceof SiftFeature) return descriptorDistance((SiftFeature) feature);
         else return -1d;
     }
 
@@ -286,7 +286,7 @@ public class Feature  implements Comparable<Feature>, Serializable, LocalFeature
 
     @Override
     public Class<? extends LocalFeatureExtractor> getClassOfExtractor() {
-        return Extractor.class;
+        return SiftExtractor.class;
     }
 }
 

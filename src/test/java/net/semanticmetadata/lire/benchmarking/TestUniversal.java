@@ -55,9 +55,11 @@ import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistog
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.LocalBinaryPatternsAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.RankAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.*;
-import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSiftExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.surf.SurfExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.local.sift.SiftExtractor;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.searchers.*;
 import net.semanticmetadata.lire.utils.FileUtils;
@@ -186,8 +188,8 @@ public class TestUniversal extends TestCase {
 //        parallelIndexer.addExtractor(SPFCTH.class);
 //        parallelIndexer.addExtractor(SPACC.class);
 //        parallelIndexer.addExtractor(SPLBP.class);
-//
-//        //SIMPLE
+
+        //SIMPLE
 //        parallelIndexer.addExtractor(CEDD.class, SimpleExtractor.KeypointDetector.CVSURF);
 //        parallelIndexer.addExtractor(FCTH.class, SimpleExtractor.KeypointDetector.CVSURF);
         parallelIndexer.addExtractor(JCD.class, SimpleExtractor.KeypointDetector.CVSURF);
@@ -201,8 +203,8 @@ public class TestUniversal extends TestCase {
         //LOCAL
         parallelIndexer.addExtractor(CvSurfExtractor.class);
 //        parallelIndexer.addExtractor(CvSiftExtractor.class);
-//        parallelIndexer.addExtractor(Extractor.class);
-//        parallelIndexer.addExtractor(Surf.class);
+//        parallelIndexer.addExtractor(SurfExtractor.class);
+//        parallelIndexer.addExtractor(SiftExtractor.class);
 //        parallelIndexer.addExtractor(SelfSimilaritiesExtractor.class);
 
         parallelIndexer.run();
@@ -251,7 +253,7 @@ public class TestUniversal extends TestCase {
         for (int i = 0; i < numOfClusters.length; i++) {
 //            computeMAP(new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW CEDD CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW FCTH CVSURF", reader, numOfClusters[i]);
-//            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW JCD CVSURF", reader, numOfClusters[i]);
+            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW JCD CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW AutoColorCorrelogram CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW OpponentHistogram CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW ColorLayout CVSURF", reader, numOfClusters[i]);
@@ -269,17 +271,21 @@ public class TestUniversal extends TestCase {
 //            performWSs(ScalableColor.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW ScalableColor CVSURF");
 
 
-//            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSURF BOVW", reader, numOfClusters[i]);
+            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSURF BOVW", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, CvSiftExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSIFT BOVW", reader, numOfClusters[i]);
-//////            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SelfSimilarities BOVW", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, SurfExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SURF BOVW", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, SiftExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SIFT BOVW", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SelfSimilarities BOVW", reader, numOfClusters[i]);
 
             performWSs(CvSurfExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "CVSURF BOVW");
 //            performWSs(CvSiftExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "CVSIFT BOVW");
-////            performWSs(SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SelfSimilarities BOVW");
+//            performWSs(SurfExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SURF BOVW");
+//            performWSs(SiftExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SIFT BOVW");
+//            performWSs(SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SelfSimilarities BOVW");
         }
 
 
-////        //VLAD
+        //VLAD
 //        for (int i = 0; i < numOfClusters.length; i++) {
 //            computeMAP(new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple VLAD CEDD CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple VLAD FCTH CVSURF", reader, numOfClusters[i]);
@@ -292,7 +298,9 @@ public class TestUniversal extends TestCase {
 ////
 //            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSURF VLAD", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, CvSiftExtractor.class, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSIFT VLAD", reader, numOfClusters[i]);
-//////            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "SelfSimilarities VLAD", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, SurfExtractor.class, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "SURF VLAD", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, SiftExtractor.class, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "SIFT VLAD", reader, numOfClusters[i]);
+////            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new VLAD(), numOfClusters[i], true, reader, indexPath + ".config"), "SelfSimilarities VLAD", reader, numOfClusters[i]);
 //        }
 
         double h = (System.currentTimeMillis() - start) / 3600000.0;

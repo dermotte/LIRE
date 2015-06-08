@@ -59,7 +59,7 @@ import java.util.List;
  *
  * @author Mathias Lux, mathias@juggle.at
  */
-public class Extractor implements LocalFeatureExtractor{
+public class SiftExtractor implements LocalFeatureExtractor{
     // steps
     int steps = 3;
     // initial sigma
@@ -81,24 +81,24 @@ public class Extractor implements LocalFeatureExtractor{
 
     float scale = 1.0f;
 
-    List<Feature> features = null;
+    List<SiftFeature> features = null;
 
-    public Extractor() {
+    public SiftExtractor() {
 
     }
 
 
     private void align(BufferedImage img1, BufferedImage img2) {
         try {
-            List<Feature> fs1 = computeSiftFeatures(img1);
-            List<Feature> fs2 = computeSiftFeatures(img2);
+            List<SiftFeature> fs1 = computeSiftFeatures(img1);
+            List<SiftFeature> fs2 = computeSiftFeatures(img2);
 
             // find the best matching features:
             LinkedList<Found> res = new LinkedList<Found>();
             for (int i = 0; i < fs1.size(); i++) {
-                Feature f1 = fs1.get(i);
+                SiftFeature f1 = fs1.get(i);
                 for (int j = i + 1; j < fs2.size(); j++) {
-                    Feature f2 = fs2.get(j);
+                    SiftFeature f2 = fs2.get(j);
                     // determine similarity:
                     float d = f2.descriptorDistance(f1);
                     res.add(new Found(f1, f2, d));
@@ -128,7 +128,7 @@ public class Extractor implements LocalFeatureExtractor{
     }
 
     public static void main(String[] args) throws IOException {
-        Extractor e = new Extractor();
+        SiftExtractor e = new SiftExtractor();
         e.align(ImageIO.read(new File("c:/temp/image001.png")), ImageIO.read(new File("c:/temp/image002.png")));
     }
 
@@ -148,11 +148,11 @@ public class Extractor implements LocalFeatureExtractor{
 
     @Override
     public Class<? extends LocalFeature> getClassOfFeatures() {
-        return Feature.class;
+        return SiftFeature.class;
     }
 
-    public List<Feature> computeSiftFeatures(BufferedImage img) throws IOException {
-        LinkedList<Feature> fs2 = new LinkedList<Feature>();
+    public List<SiftFeature> computeSiftFeatures(BufferedImage img) throws IOException {
+        LinkedList<SiftFeature> fs2 = new LinkedList<SiftFeature>();
         FloatArray2DSIFT sift = new FloatArray2DSIFT(fdsize, fdbins);
 
         FloatArray2D fa = ImageArrayConverter.ImageToFloatArray2D(img);
@@ -195,10 +195,10 @@ public class Extractor implements LocalFeatureExtractor{
 }
 
 class Found implements Comparable<Object> {
-    Feature f1, f2;
+    SiftFeature f1, f2;
     float d;
 
-    Found(Feature f1, Feature f2, float d) {
+    Found(SiftFeature f1, SiftFeature f2, float d) {
         this.f1 = f1;
         this.f2 = f2;
         this.d = d;

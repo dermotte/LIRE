@@ -39,7 +39,7 @@
  * Updated: 11.07.13 10:42
  */
 
-package net.semanticmetadata.lire.imageanalysis.features.local;
+package net.semanticmetadata.lire.imageanalysis.features.local.surf;
 
 import com.stromberglabs.jopensurf.SURFInterestPoint;
 import com.stromberglabs.jopensurf.Surf;
@@ -158,6 +158,6 @@ public class SurfFeature implements LocalFeature {
 
     @Override
     public Class<?> getClassOfExtractor() {
-        return Surf.class;
+        return SurfExtractor.class;
     }
 }
