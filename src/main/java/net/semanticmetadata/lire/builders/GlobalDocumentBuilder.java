@@ -47,6 +47,8 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 /**
+ * This class creates Lucene Documents from images using one or multiple Global Features.
+ * Can also be used only for extraction.
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

@@ -35,6 +35,7 @@
 package net.semanticmetadata.lire.imageanalysis.features;
 
 /**
+ * This is the basic interface for all local features.
  * Created by Nektarios on 20/3/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

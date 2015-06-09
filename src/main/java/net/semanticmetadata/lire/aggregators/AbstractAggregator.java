@@ -37,6 +37,7 @@ package net.semanticmetadata.lire.aggregators;
 import net.semanticmetadata.lire.classifiers.Cluster;
 
 /**
+ * This class implements the clusterForFeature method for both BOVW and VLAD
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

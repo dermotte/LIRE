@@ -42,6 +42,7 @@
 package net.semanticmetadata.lire.imageanalysis.features;
 
 /**
+ * This is the basic interface for all global features.
  * Created by Nektarios on 27/3/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

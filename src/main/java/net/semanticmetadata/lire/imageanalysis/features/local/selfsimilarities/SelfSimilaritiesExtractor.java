@@ -42,6 +42,9 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 
 /**
+ * Implementation based on the paper:
+ * Efficient Retrieval of Deformable Shape Classes using Local Self-Similarities
+ *
  * Created by Nektarios on 12/1/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

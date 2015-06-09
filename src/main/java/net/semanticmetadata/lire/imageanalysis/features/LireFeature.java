@@ -35,6 +35,7 @@
 package net.semanticmetadata.lire.imageanalysis.features;
 
 /**
+ * This is the basic interface for all content based features.
  * Created by mlux on 28/05/2008.
  *
  * @author Mathias Lux, mathias@juggle.at

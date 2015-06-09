@@ -37,6 +37,7 @@ package net.semanticmetadata.lire.imageanalysis.features;
 import java.awt.image.BufferedImage;
 
 /**
+ * This is the basic interface for all global and local extractors.
  * Created by Nektarios on 27/3/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

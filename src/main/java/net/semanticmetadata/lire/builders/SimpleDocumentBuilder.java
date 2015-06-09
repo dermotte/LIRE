@@ -43,6 +43,8 @@ import net.semanticmetadata.lire.indexers.parallel.ExtractorItem;
 import java.util.*;
 
 /**
+ * This class can be used as the LocalDocumentBuilder class, in order to create Lucene Documents
+ * according to the SIMPLE model (see features.local.simple package)
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
@@ -124,24 +126,28 @@ public class SimpleDocumentBuilder extends AbstractLocalDocumentBuilder {
     }
 
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector keypointDetector, Cluster[] codebook) {
+        if ((!(codebook.length>0))||(codebook == null)) throw new UnsupportedOperationException("Codebook cannot be empty or null!!");
         LinkedList<Cluster[]> listOfCodebooks = new LinkedList<Cluster[]>();
         listOfCodebooks.add(codebook);
         addExtractor(new ExtractorItem(globalFeatureClass, keypointDetector), listOfCodebooks);
     }
 
     public void addExtractor(ExtractorItem extractorItem, Cluster[] codebook) {
+        if ((!(codebook.length>0))||(codebook == null)) throw new UnsupportedOperationException("Codebook cannot be empty or null!!");
         LinkedList<Cluster[]> listOfCodebooks = new LinkedList<Cluster[]>();
         listOfCodebooks.add(codebook);
         addExtractor(extractorItem, listOfCodebooks);
     }
 
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector keypointDetector, LinkedList<Cluster[]> listOfCodebooks) {
+        if ((!(listOfCodebooks.size()>0))||(listOfCodebooks == null)) throw new UnsupportedOperationException("List of codebooks cannot be empty or null!!");
         addExtractor(new ExtractorItem(globalFeatureClass, keypointDetector), listOfCodebooks);
     }
 
     public void addExtractor(ExtractorItem extractorItem, LinkedList<Cluster[]> listOfCodebooks) {
         if (docsCreated) throw new UnsupportedOperationException("Cannot modify builder after documents have been created!");
         if (!extractorItem.isSimple()) throw new UnsupportedOperationException("ExtractorItem must be SIMPLE");
+        if ((!(listOfCodebooks.size()>0))||(listOfCodebooks == null)) throw new UnsupportedOperationException("List of codebooks cannot be empty or null!!");
 
         HashMap<Integer, String[]> mapOfFieldNames = new HashMap<Integer, String[]>(listOfCodebooks.size());
         String fieldName = extractorItem.getFieldName() + aggregator.getFieldName();

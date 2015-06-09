@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * General class creating histograms based on BOVW model, given the list of local features and the codebook.
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

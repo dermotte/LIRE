@@ -38,6 +38,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
+ * This is the basic interface for all local extractors.
  * Created by Nektarios on 20/3/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

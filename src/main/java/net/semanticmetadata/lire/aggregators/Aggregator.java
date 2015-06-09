@@ -39,6 +39,8 @@ import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
 import java.util.List;
 
 /**
+ * This class provides the interface for Aggregators, classes that produce
+ * vector representations for local features.
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com

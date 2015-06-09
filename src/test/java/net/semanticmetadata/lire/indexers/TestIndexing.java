@@ -82,10 +82,11 @@ public class TestIndexing extends TestCase {
     String codebookPath = "./src/test/resources/codebooks/";
 
     private int numOfDocsForVocabulary = 500;
-    private int numOfClusters = 512;
+//    private int numOfClusters = 512;
     private int[] numsOfClusters = new int[] {32, 128};
 
 
+    //Create new index
     public void testCreateNewIndex() throws IOException {
 //        ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive);
 //        ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive, numOfClusters, numOfDocsForVocabulary);
@@ -104,30 +105,36 @@ public class TestIndexing extends TestCase {
 
         ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive, numsOfClusters, numOfDocsForVocabulary, aggregatorClass);
         parallelIndexer.addExtractor(globalFeatureClass);
-        parallelIndexer.addExtractor(localFeatureClass, codebook32);
+        parallelIndexer.addExtractor(localFeatureClass);
+//        parallelIndexer.addExtractor(localFeatureClass, codebook32);
         parallelIndexer.addExtractor(globalFeatureClass, keypointDetector, myList);
         parallelIndexer.run();
     }
 
+    //APPEND
     public void testAppendExistingIndex() throws IOException {
+        //Create an index
         ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive, numsOfClusters, numOfDocsForVocabulary, aggregatorClass);
         parallelIndexer.addExtractor(globalFeatureClass);
         parallelIndexer.addExtractor(localFeatureClass);
         parallelIndexer.addExtractor(globalFeatureClass, keypointDetector);
         parallelIndexer.run();
 
+        //Append new images in that index
         ParallelIndexer parallelIndexerAppend = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensiveYellow, false);
         parallelIndexerAppend.run();
-
     }
 
+    //USE EXISTING SETUP
     public void testIndexUsingExistingSetup(){
+        //Create an index
         ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive, numsOfClusters, numOfDocsForVocabulary, aggregatorClass);
         parallelIndexer.addExtractor(globalFeatureClass);
         parallelIndexer.addExtractor(localFeatureClass);
         parallelIndexer.addExtractor(globalFeatureClass, keypointDetector);
         parallelIndexer.run();
 
+        //Create index using another indexe's setup
         ParallelIndexer parallelIndexerSeparate = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPathSeparate, testExtensiveRed, indexPath);
         parallelIndexerSeparate.run();
     }

@@ -68,6 +68,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 /**
+ * This class allows for creating indexes in a parallel manner. The class
+ * at hand reads files from the disk and acts as producer, while several consumer
+ * threads extract the features from the given files.
+ *
+ * Use the methods {@link ParallelIndexer#addExtractor} to add your own features.
+ * Check the source of this class -- the main method -- to get an idea.
+ *
  * Created by mlux on 15/04/2013.
  *
  * @author Mathias Lux, mathias@juggle.at
@@ -304,7 +311,6 @@ public class ParallelIndexer {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
-        this.overWrite = true;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int numOfClusters, int numOfDocsForCodebooks) {
@@ -313,7 +319,6 @@ public class ParallelIndexer {
         this.imageList = imageList;
         this.numOfClusters = new int[] {numOfClusters};
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
-        this.overWrite = true;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int numOfClusters, int numOfDocsForCodebooks, Class<? extends AbstractAggregator> aggregator) {
@@ -323,7 +328,6 @@ public class ParallelIndexer {
         this.numOfClusters = new int[] {numOfClusters};
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
         this.aggregator = aggregator;
-        this.overWrite = true;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int[] numOfClusters, int numOfDocsForCodebooks) {
@@ -332,7 +336,6 @@ public class ParallelIndexer {
         this.imageList = imageList;
         this.numOfClusters = numOfClusters;
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
-        this.overWrite = true;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int[] numOfClusters, int numOfDocsForCodebooks, Class<? extends AbstractAggregator> aggregator) {
@@ -342,19 +345,18 @@ public class ParallelIndexer {
         this.numOfClusters = numOfClusters;
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
         this.aggregator = aggregator;
-        this.overWrite = true;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, boolean overWrite) {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
-
         this.overWrite = overWrite;
-        if (!overWrite) {
+        if ((!overWrite)&&((new File(indexPath)).exists())) {
+            this.appending = true;
             loadPropertiesFile(indexPath + ".config/");
             this.lockLists = true;
-        }
+        } else throw new UnsupportedOperationException("Error in trying to append index...");
     }
 
 //    public ParallelIndexer(int numOfThreads, String indexPath, File imageList, boolean overWrite, int numOfClusters, int numOfDocsForCodebooks) {
@@ -415,9 +417,11 @@ public class ParallelIndexer {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
-        this.overWrite = true;
-        loadPropertiesFile(fromIndexPath + ".config/");
-        this.lockLists = true;
+        if ((new File(fromIndexPath)).exists()) {
+            (new File(indexPath + ".config/")).mkdirs();
+            loadPropertiesFile(fromIndexPath + ".config/");
+            this.lockLists = true;
+        } else throw new UnsupportedOperationException("Error in trying to find index...");
     }
 
 

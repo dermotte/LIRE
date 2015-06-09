@@ -42,6 +42,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Implementation based on the paper:
+ * Matching Local Self-Similarities across Images and Videos
+ *
  * Created by Nektarios on 12/1/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
