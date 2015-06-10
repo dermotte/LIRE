@@ -1,0 +1,39 @@
+LIRE_1.0_beta
+
+Major and main changes:
+Package aggregators:
+Contains classes needed to create vector representations for local features according to the BOVW and VLAD models.
+Those classes replace all classes from the net.semanticmetadata.lire.imageanalysis.bovw package, like BOVWBuilder and VLADBuilder, which is moved to legacy.
+
+Package builders:
+Contains classes needed to create lucene documents for global and local features, as well as features created according to the SIMPLE model.
+
+Package imageanalysis:
+New interfaces are introduced:
+FeatureVector is the old Histogram interface.
+LireFeature is the basic interface for all content based features and extends the FeatureVector interface.
+Extractor is the basic interface for all global and local extractors (contains the Extract method which is removed from LireFeature)
+GlobalFeature extends the LireFeature and the Extractor interfaces. This is the basic interface for all global features.
+LocalFeature extends the LireFeature. This is the basic interface for all local features.
+LocalFeatureExtractor extends Extractor. This is the basic interface for all local extractors.
+In other words:
+For global features, the feature and the extractor are in the same class, as the extractor produces a feature vector.
+For local features, the LocalFeatureExtractor has the extract method, which produces a list of features (LocalFeature) and those features need to be aggregated, in order to create the vector representation.
+Also, local features were moved in the new imageanalysis.features.local package and global features were moved in the imageanalysis.features.global package.
+
+Package indexers:
+Major changes in ParallelIndexer:
+Methods addExtractor can be used to add Extractor classes.
+(For local features the user can also add a precomputed codebook, or a list of codebooks)
+Ways to create an index:
+Create new index: the user can pick extractors. (If the index exists it will be overwritten.)
+Append an index: can be used to add new images in existing index. (The user cannot pick extractors. The ones that were used to create the index will be selected.)
+Create new index using another index's setup. (The user cannot pick extractors. The ones that were used to create the other index will be selected.)
+
+Package Searchers:
+SimpleResult contains only the distance and the document's index number in the lucene index.
+e.g. the way to get the first document will be: reader.document(imageSearchHits.readerID(0)).
+
+Kindly refer to the new Test Classes for more information.
+The documentation will be updated as soon as possible.
+Classes that are no longer supported were moved to the legacy folder and soon will be removed.
