@@ -77,14 +77,14 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
         this.similarity = similarity;
         this.numMaxHits = numMaxHits;
         this.fieldName = fieldName;
-        qp = new QueryParser(LuceneUtils.LUCENE_VERSION, fieldName, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+        qp = new QueryParser(fieldName, new WhitespaceAnalyzer());
         BooleanQuery.setMaxClauseCount(10000);
     }
 
     public VisualWordsImageSearcher(int numMaxHits, String fieldName) {
         this.numMaxHits = numMaxHits;
         this.fieldName = fieldName;
-        qp = new QueryParser(LuceneUtils.LUCENE_VERSION, fieldName, new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
+        qp = new QueryParser(fieldName, new WhitespaceAnalyzer());
         BooleanQuery.setMaxClauseCount(10000);
     }
 

@@ -17,7 +17,7 @@
  * We kindly ask you to refer the any or one of the following publications in
  * any publication mentioning or employing Lire:
  *
- * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval ï¿½
  * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
  * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
  * URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -76,6 +76,7 @@ import org.apache.lucene.util.Bits;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -199,10 +200,10 @@ public class TestZuBuD extends TestCase {
 
 
         // SEARCHING
-        IndexReader readerIndex = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        IndexReader readerIndex = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
         System.out.println("Documents in the reader: " + readerIndex.maxDoc());
 
-        IndexReader readerQueries = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPathQueries)), IOContext.READONCE));
+        IndexReader readerQueries = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPathQueries)), IOContext.READONCE));
         System.out.println("Documents in the reader: " + readerQueries.maxDoc());
 
 

@@ -80,7 +80,7 @@ import java.util.logging.Logger;
  * @author Mathias Lux, mathias@juggle.at
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
-public class ParallelIndexer {
+public class ParallelIndexer implements Runnable {
     private Logger log = Logger.getLogger(this.getClass().getName());
     private ProgressMonitor pm = null;
     private DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
@@ -817,6 +817,11 @@ public class ParallelIndexer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Object getPercentageDone() {
+        // TODO!
+        return null;
     }
 
 

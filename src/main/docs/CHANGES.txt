@@ -1,6 +1,14 @@
 CHANGES for LIRE
 ================
 
+2015-06-16
+==========
+  - updated to Lucene 5.2.1, fixed simpleapplication to go with Lucene 5.2.1
+
+2015-06-10
+==========
+  - Lire 1.0 beta, extreme changelist, by Nektarios.
+
 2015-02-13
 ==========
   - Bug fix in LireDemo build file

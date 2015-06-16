@@ -17,7 +17,7 @@
  * We kindly ask you to refer the any or one of the following publications in
  * any publication mentioning or employing Lire:
  *
- * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval ï¿½
  * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
  * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
  * URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -60,6 +60,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -102,7 +103,7 @@ public class TestSearching extends TestCase {
 
         BufferedImage image = ImageIO.read(new FileInputStream(imageToSearch));
 
-        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
         System.out.println("Documents in the reader: " + reader.maxDoc());
 
         GenericFastImageSearcher ceddSearcher = new GenericFastImageSearcher(10, globalFeatureClass, true, reader);
@@ -146,7 +147,7 @@ public class TestSearching extends TestCase {
 
         ArrayList<String> images = FileUtils.readFileLines(new File(testExtensive), true);
 
-        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
         System.out.println("Documents in the reader: " + reader.maxDoc());
 
         GenericFastImageSearcher ceddSearcher = new GenericFastImageSearcher(1, globalFeatureClass, true, reader);
@@ -205,10 +206,10 @@ public class TestSearching extends TestCase {
         ParallelIndexer parallelIndexerSeparate = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPathSeparate, testExtensiveBlack, indexPath);
         parallelIndexerSeparate.run();
 
-        IndexReader readerIndex = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        IndexReader readerIndex = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
         System.out.println("Documents in the reader: " + readerIndex.maxDoc());
 
-        IndexReader readerQueries = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPathSeparate)), IOContext.READONCE));
+        IndexReader readerQueries = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPathSeparate)), IOContext.READONCE));
         System.out.println("Documents in the reader: " + readerQueries.maxDoc());
 
         GenericFastImageSearcher ceddSearcher = new GenericFastImageSearcher(5, globalFeatureClass, true, readerIndex);

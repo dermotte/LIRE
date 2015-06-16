@@ -50,15 +50,12 @@ import edu.uniklu.itec.mosaix.ImageFunctions;
 import edu.uniklu.itec.mosaix.engine.Engine;
 import liredemo.flickr.FlickrIndexingThread;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
-import net.semanticmetadata.lire.searchers.ImageSearchHits;
-import net.semanticmetadata.lire.imageanalysis.features.local.surf.SurfFeature;
-import net.semanticmetadata.lire.searchers.ImageSearcher;
-import net.semanticmetadata.lire.deprecatedclasses.ImageSearcherFactory;
 import net.semanticmetadata.lire.filters.LsaFilter;
 import net.semanticmetadata.lire.filters.RerankFilter;
-import net.semanticmetadata.lire.deprecatedclasses.imageanalysis.bovw.BOVWBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
-import net.semanticmetadata.lire.searchers.VisualWordsImageSearcher;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.searchers.ImageSearcher;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -77,6 +74,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -179,7 +177,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         buttonSwitchAbout = new javax.swing.JButton();
         cardPanel = new javax.swing.JPanel();
         indexPanel = new javax.swing.JPanel();
-        textfieldIndexDir = new javax.swing.JTextField();
+        textfieldImageDirectoryToIndex = new javax.swing.JTextField();
         buttonOpenDir = new javax.swing.JButton();
         buttonStartIndexing = new javax.swing.JButton();
         progressBarIndexing = new javax.swing.JProgressBar();
@@ -473,8 +471,8 @@ public class LireDemoFrame extends javax.swing.JFrame {
         cardPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         cardPanel.setLayout(new java.awt.CardLayout());
 
-        textfieldIndexDir.setEditable(false);
-        textfieldIndexDir.addActionListener(new java.awt.event.ActionListener() {
+        textfieldImageDirectoryToIndex.setEditable(false);
+        textfieldImageDirectoryToIndex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 textfieldIndexDirActionPerformed(evt);
             }
@@ -520,7 +518,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
                                         .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
                                         .addComponent(progressBarIndexing, javax.swing.GroupLayout.DEFAULT_SIZE, 742, Short.MAX_VALUE)
                                         .addGroup(indexPanelLayout.createSequentialGroup()
-                                                .addComponent(textfieldIndexDir, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                                                .addComponent(textfieldImageDirectoryToIndex, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(buttonOpenDir, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, indexPanelLayout.createSequentialGroup()
@@ -536,7 +534,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(indexPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(buttonOpenDir)
-                                        .addComponent(textfieldIndexDir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(textfieldImageDirectoryToIndex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(progressBarIndexing, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1304,7 +1302,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
     private void buttonStartMosaicingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartMosaicingActionPerformed
         try {
-            if (!DirectoryReader.indexExists(open(new File(textfieldIndexName.getText())))) {
+            if (!DirectoryReader.indexExists(open(Paths.get(textfieldIndexName.getText())))) {
                 JOptionPane.showMessageDialog(this, "Did not find existing index!\n"
                         + "Use the \"Index\" function to create a new one.", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (textfieldMosaicImage.getText().length() > 4) {
@@ -1398,10 +1396,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private void initReader() {
         try {
             if (browseReader == null) {
-                browseReader = org.apache.lucene.index.IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
+                browseReader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
             } else {
                 browseReader.close();
-                browseReader = org.apache.lucene.index.IndexReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
+                browseReader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
             }
             labelDocCount.setText("(out of " + browseReader.maxDoc() + "):");
             int docID = ((Integer) spinnerCurrentDocNum.getValue()).intValue() - 1;
@@ -1469,25 +1467,35 @@ public class LireDemoFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonMouseOver
 
     private void resultsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resultsTableMouseClicked
-        if (evt.getButton() == MouseEvent.BUTTON3) {
-            int imageID = resultsTable.rowAtPoint(evt.getPoint()) * 3 + resultsTable.columnAtPoint(evt.getPoint());
-            if (imageID >= 0 && imageID < tableModel.getHits().length()) {
-                String file = tableModel.getHits().doc(imageID).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+        try {
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
+            if (evt.getButton() == MouseEvent.BUTTON3) {
+                int imageID = resultsTable.rowAtPoint(evt.getPoint()) * 3 + resultsTable.columnAtPoint(evt.getPoint());
+                if (imageID >= 0 && imageID < tableModel.getHits().length()) {
+                    String file = reader.document(tableModel.getHits().readerID(imageID)).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
 
-                try {
-                    Desktop.getDesktop().open(new File(file));
-                } catch (IOException ex) {
-                    Logger.getLogger(LireDemoFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    try {
+                        Desktop.getDesktop().open(new File(file));
+                    } catch (IOException ex) {
+                        Logger.getLogger(LireDemoFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
-        }
-        if (evt.getClickCount() == 2) {
-            searchForDocument(resultsTable.getSelectedRow() * 3 + resultsTable.getSelectedColumn());
+            if (evt.getClickCount() == 2) {
+                searchForDocument(resultsTable.getSelectedRow() * 3 + resultsTable.getSelectedColumn());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_resultsTableMouseClicked
 
     private void searchForDocument(int tableRow) {
-        searchForDocument(tableModel.getHits().doc(tableRow));
+        try {
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
+            searchForDocument(reader.document(tableModel.getHits().readerID(tableRow)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void mosaicImage() {
@@ -1555,7 +1563,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
             public void run() {
                 try {
                     progressSearch.setValue(0);
-                    IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
+                    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
                     ImageSearcher searcher = getSearcher();
                     // System.out.println(searcher.getClass().getName() + " " + searcher.toString());
                     progressSearch.setString("Searching for matching images: " + searcher.getClass().getName());
@@ -1605,7 +1613,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonStartSearchActionPerformed
 
     private void buttonStartIndexingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartIndexingActionPerformed
-        if (textfieldIndexDir.getText().length() > 1) {
+        if (textfieldImageDirectoryToIndex.getText().length() > 1) {
             IndexingThread t = new IndexingThread(this);
             buttonStartIndexing.setEnabled(false);
             t.start();
@@ -1631,7 +1639,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         jfc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if (jfc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             try {
-                textfieldIndexDir.setText(jfc.getSelectedFile().getCanonicalPath());
+                textfieldImageDirectoryToIndex.setText(jfc.getSelectedFile().getCanonicalPath());
             } catch (IOException ex) {
                 Logger.getLogger("global").log(Level.SEVERE, null, ex);
             }
@@ -1849,34 +1857,34 @@ public class LireDemoFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_rerankLsaActionPerformed
 
     private void indexAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexAllActionPerformed
-        try {
-            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
-            int samples = Math.max(1000, reader.numDocs() / 2);
-            final BOVWBuilder builder = new BOVWBuilder(reader, new SurfFeature(), samples, 500);
-            builder.setProgressMonitor(new javax.swing.ProgressMonitor(this, "Progress of BoVW indexing (~)", "", 0, 100));
-            Thread t = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        builder.index();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            t.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
+//            int samples = Math.max(1000, reader.numDocs() / 2);
+//            final BOVWBuilder builder = new BOVWBuilder(reader, new SurfFeature(), samples, 500);
+//            builder.setProgressMonitor(new javax.swing.ProgressMonitor(this, "Progress of BoVW indexing (~)", "", 0, 100));
+//            Thread t = new Thread(new Runnable() {
+//                public void run() {
+//                    try {
+//                        builder.index();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//            t.start();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }//GEN-LAST:event_indexAllActionPerformed
 
     private void indexMissingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexMissingActionPerformed
-        try {
-            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
-            BOVWBuilder builder = new BOVWBuilder(reader, new SurfFeature(), reader.maxDoc() / 10, 2000);
-            builder.indexMissing();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
+//            BOVWBuilder builder = new BOVWBuilder(reader, new SurfFeature(), reader.maxDoc() / 10, 2000);
+//            builder.indexMissing();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }//GEN-LAST:event_indexMissingActionPerformed
 
     private void textfieldSearchImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textfieldSearchImageActionPerformed
@@ -1973,7 +1981,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 10) {
             searcher = ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(numResults);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 11) {
-            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
+//            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 12) {
             searcher = ImageSearcherFactory.createJointHistogramImageSearcher(numResults);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 13) {
@@ -2102,7 +2110,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private javax.swing.JSpinner spinnerCurrentDocNum;
     private javax.swing.JPanel switchButtonsPanel;
     private javax.swing.JTextField textFieldFlickrDownloadMax;
-    public javax.swing.JTextField textfieldIndexDir;
+    public javax.swing.JTextField textfieldImageDirectoryToIndex;
     public javax.swing.JTextField textfieldIndexName;
     private javax.swing.JTextField textfieldMosaicImage;
     private javax.swing.JTextField textfieldNumSearchResults;

@@ -61,6 +61,8 @@ import org.apache.lucene.util.Version;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * This class provides some common functions for Lucene. As there are many changes to
@@ -77,7 +79,7 @@ public class LuceneUtils {
     /**
      * Currently employed version of Lucene
      */
-    public static final Version LUCENE_VERSION = Version.LUCENE_4_10_2;
+    public static final Version LUCENE_VERSION = Version.LUCENE_5_2_1;
 
     /**
      * Different types of analyzers
@@ -108,7 +110,7 @@ public class LuceneUtils {
      * @throws IOException
      */
     public static IndexWriter createIndexWriter(String indexPath, boolean create, AnalyzerType analyzer) throws IOException {
-        return createIndexWriter(FSDirectory.open(new File(indexPath)), create, analyzer);
+        return createIndexWriter(FSDirectory.open(Paths.get(indexPath)), create, analyzer);
     }
 
     /**
@@ -133,7 +135,7 @@ public class LuceneUtils {
             tmpAnalyzer = new StandardAnalyzer();
 
         // The config
-        IndexWriterConfig config = new IndexWriterConfig(LUCENE_VERSION, tmpAnalyzer);
+        IndexWriterConfig config = new IndexWriterConfig(tmpAnalyzer);
         if (create)
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // overwrite if it exists.
         else
@@ -150,7 +152,7 @@ public class LuceneUtils {
         else if (analyzer == AnalyzerType.WhitespaceAnalyzer) tmpAnalyzer = new WhitespaceAnalyzer();
 
         // The config
-        IndexWriterConfig config = new IndexWriterConfig(LUCENE_VERSION, tmpAnalyzer);
+        IndexWriterConfig config = new IndexWriterConfig(tmpAnalyzer);
         if (create)
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // overwrite if it exists.
         else
@@ -181,18 +183,18 @@ public class LuceneUtils {
 
 
     public static IndexReader openIndexReader(String indexPath) throws IOException {
-        return openIndexReader(FSDirectory.open(new File(indexPath)), false);
+        return openIndexReader(FSDirectory.open(Paths.get(indexPath)), false);
     }
 
     public static IndexReader openIndexReader(String indexPath, boolean RAMDirectory) throws IOException {
-        return openIndexReader(FSDirectory.open(new File(indexPath)), RAMDirectory);
+        return openIndexReader(FSDirectory.open(Paths.get(indexPath)), RAMDirectory);
     }
 
-    public static IndexReader openIndexReader(Directory directory) throws IOException {
+    public static IndexReader openIndexReader(FSDirectory directory) throws IOException {
         return openIndexReader(directory, false);
     }
 
-    public static IndexReader openIndexReader(Directory directory, boolean RAMDirectory) throws IOException {
+    public static IndexReader openIndexReader(FSDirectory directory, boolean RAMDirectory) throws IOException {
         if (RAMDirectory)
             return DirectoryReader.open(new RAMDirectory(directory, IOContext.READONCE));
         else

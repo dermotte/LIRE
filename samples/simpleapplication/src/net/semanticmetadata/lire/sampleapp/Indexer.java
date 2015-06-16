@@ -56,6 +56,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -84,9 +85,8 @@ public class Indexer {
         // Creating a CEDD document builder and indexing all files.
         GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(CEDD.class);
         // Creating an Lucene IndexWriter
-        IndexWriterConfig conf = new IndexWriterConfig(LuceneUtils.LUCENE_VERSION,
-                new WhitespaceAnalyzer(LuceneUtils.LUCENE_VERSION));
-        IndexWriter iw = new IndexWriter(FSDirectory.open(new File("index")), conf);
+        IndexWriterConfig conf = new IndexWriterConfig(new WhitespaceAnalyzer());
+        IndexWriter iw = new IndexWriter(FSDirectory.open(Paths.get("index")), conf);
         // Iterating through images building the low level features
         for (Iterator<String> it = images.iterator(); it.hasNext(); ) {
             String imageFilePath = it.next();

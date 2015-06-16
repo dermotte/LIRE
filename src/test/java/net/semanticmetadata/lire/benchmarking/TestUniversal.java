@@ -17,7 +17,7 @@
  * We kindly ask you to refer the any or one of the following publications in
  * any publication mentioning or employing Lire:
  *
- * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval ï¿½
  * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
  * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
  * URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -74,6 +74,7 @@ import org.apache.lucene.util.Bits;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -211,7 +212,7 @@ public class TestUniversal extends TestCase {
 
 
         // SEARCHING
-        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
 //        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
         System.out.println("Documents in the reader: " + reader.maxDoc());
 //
@@ -478,7 +479,7 @@ public class TestUniversal extends TestCase {
         ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive, true);
         parallelIndexer.addExtractor(featureClass);
         parallelIndexer.run();
-        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(new File(indexPath)), IOContext.READONCE));
+        IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
         Bits liveDocs = MultiFields.getLiveDocs(reader);
         double queryCount = 0d;
         ImageSearcher searcher = new GenericFastImageSearcher(100, featureClass);

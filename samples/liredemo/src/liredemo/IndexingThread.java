@@ -47,8 +47,7 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.ExifReader;
 import liredemo.indexing.MetadataBuilder;
-import net.semanticmetadata.lire.deprecatedclasses.impl.ChainedDocumentBuilder;
-import net.semanticmetadata.lire.deprecatedclasses.indexers.parallel.ParallelIndexer;
+import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -89,9 +88,9 @@ public class IndexingThread extends Thread {
             parent.progressBarIndexing.setValue(0);
             java.util.ArrayList<java.lang.String> images =
                     getAllImages(
-                            new java.io.File(parent.textfieldIndexDir.getText()), true);
+                            new java.io.File(parent.textfieldImageDirectoryToIndex.getText()), true);
             if (images == null) {
-                JOptionPane.showMessageDialog(parent, "Could not find any files in " + parent.textfieldIndexDir.getText(), "No files found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(parent, "Could not find any files in " + parent.textfieldImageDirectoryToIndex.getText(), "No files found", JOptionPane.WARNING_MESSAGE);
                 return;
             }
             boolean create = !parent.checkBoxAddToExisintgIndex.isSelected();
@@ -107,14 +106,15 @@ public class IndexingThread extends Thread {
             long time = System.currentTimeMillis();
 //            Document doc;
 //            ParallelIndexer indexer = new ParallelIndexer(images, builder);
-            ParallelIndexer pin =
-                    new ParallelIndexer(8, parent.textfieldIndexName.getText(), parent.textfieldIndexDir.getText(), create){
-                        @Override
-                        public void addBuilders(ChainedDocumentBuilder builder) {
-                            builder.addBuilder(new MetadataBuilder());
-                        }
-                    };
-//            new Thread(indexer).start();
+            ParallelIndexer pin = new ParallelIndexer(8, parent.textfieldIndexName.getText(), parent.textfieldImageDirectoryToIndex.getText());
+//            ParallelIndexer pin =
+//                    new ParallelIndexer(8, parent.textfieldIndexName.getText(), parent.textfieldImageDirectoryToIndex.getText(), create){
+//                        @Override
+//                        public void addBuilders(ChainedDocumentBuilder builder) {
+//                            builder.addBuilder(new MetadataBuilder());
+//                        }
+//                    };
+////            new Thread(indexer).start();
             Thread t = new Thread(pin);
             t.start();
             while (!pin.hasEnded()) {

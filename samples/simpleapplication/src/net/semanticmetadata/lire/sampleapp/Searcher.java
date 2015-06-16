@@ -52,6 +52,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * User: Mathias Lux, mathias@juggle.at
@@ -80,7 +81,7 @@ public class Searcher {
             System.exit(1);
         }
 
-        IndexReader ir = DirectoryReader.open(FSDirectory.open(new File("index")));
+        IndexReader ir = DirectoryReader.open(FSDirectory.open(Paths.get("index")));
         ImageSearcher searcher = new GenericFastImageSearcher(30, CEDD.class);
 //        ImageSearcher searcher = new GenericFastImageSearcher(30, AutoColorCorrelogram.class);
 
