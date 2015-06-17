@@ -47,62 +47,52 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifReader;
 import com.drew.metadata.iptc.IptcReader;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.builders.GlobalDocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
 import net.semanticmetadata.lire.utils.ImageUtils;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * Created by: Mathias Lux, mathias@juggle.at
  * Date: 18.02.2010
  * Time: 15:20:59
  */
-public class MetadataBuilder extends GlobalDocumentBuilder {
+public class MetadataBuilder implements DocumentBuilder {
+
     public MetadataBuilder() {
-        super();
-        addExtractor(ColorLayout.class);
-        addExtractor(CEDD.class);
-        addExtractor(FCTH.class);
-        addExtractor(JCD.class);
-        addExtractor(ScalableColor.class);
-        addExtractor(EdgeHistogram.class);
-        addExtractor(AutoColorCorrelogram.class);
-        addExtractor(Tamura.class);
-        addExtractor(Gabor.class);
-        addExtractor(SimpleColorHistogram.class);
-        addExtractor(OpponentHistogram.class);
-        addExtractor(JointHistogram.class);
-        addExtractor(LuminanceLayout.class);
-        addExtractor(PHOG.class);
     }
 
-    @Override
-    public Document createDocument(BufferedImage bufferedImage, String s) {
-        Document d = super.createDocument(ImageUtils.createWorkingCopy(ImageUtils.scaleImage(bufferedImage, 1024)), s);
+    private Field[] getDescriptorFields(String s) {
+        LinkedList<Field> resultList = new LinkedList<Field>();
         // extract available metadata:
         Metadata metadata = new Metadata();
         try {
             new ExifReader(new FileInputStream(s)).extract(metadata);
             new IptcReader(new FileInputStream(s)).extract(metadata);
             // add metadata to document:
-            Iterator i = metadata.getDirectoryIterator();
+            Iterator ti, i = metadata.getDirectoryIterator();
+            Directory dir;
+            String prefix;
+            Tag tag;
             while (i.hasNext()) {
-                Directory dir = (Directory) i.next();
-                String prefix = dir.getName();
-                Iterator ti = dir.getTagIterator();
+                dir = (Directory) i.next();
+                prefix = dir.getName();
+                ti = dir.getTagIterator();
                 while (ti.hasNext()) {
-                    Tag tag = (Tag) ti.next();
+                    tag = (Tag) ti.next();
                     // System.out.println(prefix+"-"+tag.getTagName()+" -> " + dir.getString(tag.getTagType()));
                     // add to document:
-                    d.add(new TextField(prefix + "-" + tag.getTagName(), dir.getString(tag.getTagType()), Field.Store.YES));
+                    resultList.add(new TextField(prefix + "-" + tag.getTagName(), dir.getString(tag.getTagType()), Field.Store.YES));
                 }
             }
         } catch (JpegProcessingException e) {
@@ -111,12 +101,27 @@ public class MetadataBuilder extends GlobalDocumentBuilder {
             e.printStackTrace();
         }
 
-        return d;
+        return resultList.toArray(new Field[resultList.size()]);
     }
 
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
-        image = ImageUtils.scaleImage(image, 1024);
-        return super.createDescriptorFields(image);
+        throw new UnsupportedOperationException("Unsupported Operation");
+    }
+
+    @Override
+    public Document createDocument(BufferedImage image, String identifier) {
+        Document doc = new Document();
+
+        if (identifier != null) {
+            doc.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, identifier, Field.Store.YES));
+        }
+
+        Field[] fields = getDescriptorFields(identifier);
+        for (Field field : fields) {
+            doc.add(field);
+        }
+
+        return doc;
     }
 }

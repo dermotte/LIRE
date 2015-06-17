@@ -45,21 +45,14 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.aggregators.AbstractAggregator;
 import net.semanticmetadata.lire.aggregators.Aggregator;
 import net.semanticmetadata.lire.aggregators.BOVW;
-import net.semanticmetadata.lire.aggregators.VLAD;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.Extractor;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
-import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
-import net.semanticmetadata.lire.imageanalysis.features.global.joint.LocalBinaryPatternsAndOpponent;
-import net.semanticmetadata.lire.imageanalysis.features.global.joint.RankAndOpponent;
 import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.*;
-import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSiftExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
-import net.semanticmetadata.lire.imageanalysis.features.local.surf.SurfExtractor;
-import net.semanticmetadata.lire.imageanalysis.features.local.sift.SiftExtractor;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.searchers.*;
 import net.semanticmetadata.lire.utils.FileUtils;
@@ -381,7 +374,7 @@ public class TestUniversal extends TestCase {
                 Locale.setDefault(Locale.US);
                 for (int y = 0; y < hits.length(); y++) {
 //                    String hitFile = getIDfromFileName(hits.doc(y).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
-                    String hitFile = getIDfromFileName(reader.document(hits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+                    String hitFile = getIDfromFileName(reader.document(hits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
 //                    String hitFile = getIDfromFileName(hits.path(y));
                     // TODO: Sort by query ID!
                     tmpEval += String.format(Locale.US, "%d 1 %s %d %.2f test\n", query2id.get(fileName), hitFile.substring(0, hitFile.lastIndexOf('.')), (int) rank + 1, hits.score(y));

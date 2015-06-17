@@ -35,8 +35,9 @@ import edu.uniklu.itec.mosaix.engine.LeastUsedWeightingStrategy;
 import edu.uniklu.itec.mosaix.engine.ProportionWeightingStrategy;
 import liredemo.ProgressMonitor;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
-import net.semanticmetadata.lire.deprecatedclasses.DocumentBuilderFactory;
-import net.semanticmetadata.lire.deprecatedclasses.ImageSearcherFactory;
+import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.ImageSearcher;
 import net.semanticmetadata.lire.utils.LuceneUtils;
@@ -52,6 +53,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -155,15 +157,15 @@ public class ImageFunctions {
         ImageSearchHits hits = null;
         try {
             if (reader == null) {
-                reader = IndexReader.open(FSDirectory.open(new File(path)));
+                reader = DirectoryReader.open(FSDirectory.open(Paths.get(path)));
             }
             if (searcher == null) {
                 if (colorHist > 0f) {
 //              et  System.out.println("Using AutoColorCorrelogram Searcher ...");
 //                    searcher = ImageSearcherFactory.createDefaultCorrelogramImageSearcher(50);
-                    searcher = ImageSearcherFactory.createCEDDImageSearcher(50);
+                    searcher = new GenericFastImageSearcher(50, CEDD.class);
                 } else if (texture > 0f) {
-                    searcher = ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(50);
+                    searcher = new GenericFastImageSearcher(50, AutoColorCorrelogram.class);
                 } else if (colorDist > 0f) {
 //                System.out.println("Using Default Weighted Searcher ...");
 //                    searcher = ImageSearcherFactory.createWeightedSearcher(50, colorHist, colorDist, texture); //.createSimpleSearcher(10);
@@ -183,13 +185,13 @@ public class ImageFunctions {
      * @param path the path to the bufferedImages which will be indexed
      * @return the number of indexed images
      */
-    public int imageIndexing(String path, boolean force) {
+    /*public int imageIndexing(String path, boolean force) {
         int count = 0;
         IndexReader ir;
         boolean hasIndex = false;
 
         try {
-            hasIndex = DirectoryReader.indexExists(FSDirectory.open(new File(path)));
+            hasIndex = DirectoryReader.indexExists(FSDirectory.open(Paths.get(path)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -214,7 +216,7 @@ public class ImageFunctions {
             }
         }
         return count;
-    }
+    }*/
 
     /**
      * this method returns all images from a directory in an arrayList
@@ -280,7 +282,7 @@ public class ImageFunctions {
             for (int j = 0; j < splitted[0].length; j++) {
                 ImageSearchHits hits = this.getLireResults(splitted[i][j], indexPath, colh, cold, tex);
                 try {
-                    result = eng.findBestMatch(splitted[i][j], hits, perc);
+                    result = eng.findBestMatch(splitted[i][j], hits, perc, DirectoryReader.open(FSDirectory.open(Paths.get(indexPath))));
 //					scaled = this.scale(result, perc);
                     finalImg = this.assemble(finalImg, result, j, i, raster, true);
                     progress.setProgress((int) (100 * ((float) (i * splitted.length + j + 1)) / steps));

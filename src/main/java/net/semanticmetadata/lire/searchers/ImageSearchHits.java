@@ -77,8 +77,12 @@ public interface ImageSearchHits {
 //     */
 //    public Document doc(int position);
 
-    //TODO: description
-    public int readerID(int position);
+    /**
+     * This returns the actual document number within the IndexReader. You can get the document from indexReader.document(hits.documentID(pos))
+     * @param position
+     * @return
+     */
+    public int documentID(int position);
 
 //    public String path(int position);
 }

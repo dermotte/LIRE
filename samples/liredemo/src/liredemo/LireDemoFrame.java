@@ -54,6 +54,7 @@ import net.semanticmetadata.lire.filters.LsaFilter;
 import net.semanticmetadata.lire.filters.RerankFilter;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
+import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.ImageSearcher;
 import net.semanticmetadata.lire.utils.ImageUtils;
@@ -1472,7 +1473,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
             if (evt.getButton() == MouseEvent.BUTTON3) {
                 int imageID = resultsTable.rowAtPoint(evt.getPoint()) * 3 + resultsTable.columnAtPoint(evt.getPoint());
                 if (imageID >= 0 && imageID < tableModel.getHits().length()) {
-                    String file = reader.document(tableModel.getHits().readerID(imageID)).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+                    String file = reader.document(tableModel.getHits().documentID(imageID)).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
 
                     try {
                         Desktop.getDesktop().open(new File(file));
@@ -1492,7 +1493,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private void searchForDocument(int tableRow) {
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
-            searchForDocument(reader.document(tableModel.getHits().readerID(tableRow)));
+            searchForDocument(reader.document(tableModel.getHits().documentID(tableRow)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -1568,7 +1569,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
                     // System.out.println(searcher.getClass().getName() + " " + searcher.toString());
                     progressSearch.setString("Searching for matching images: " + searcher.getClass().getName());
                     ImageSearchHits hits = searcher.search(myDoc, reader);
-                    tableModel.setHits(hits, progressSearch);
+                    tableModel.setHits(hits, progressSearch, reader);
                     reader.close();
                     // scroll to first row:
                     Rectangle bounds = resultsTable.getCellRect(0, 0, true);
@@ -1784,7 +1785,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
         } else if (selectboxRerankFeature.getSelectedIndex() >= 14) {  // PHOG
             filter = new RerankFilter(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
         }
-        tableModel.setHits(filter.filter(tableModel.hits, tableModel.hits.doc(0)), null);
+        try {
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
+            tableModel.setHits(filter.filter(tableModel.hits, reader, reader.document(tableModel.hits.documentID(0))), null, reader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_rerankFeatureActionPerformed
 
     private void helpMenuHomepageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuHomepageActionPerformed
@@ -1852,8 +1858,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
         } else if (selectboxDocumentBuilder.getSelectedIndex() >= 15) {  // PHOG
             filter = new LsaFilter(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
         }
-
-        tableModel.setHits(filter.filter(tableModel.hits, tableModel.hits.doc(0)), null);
+        try {
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
+            tableModel.setHits(filter.filter(tableModel.hits, reader, reader.document(tableModel.hits.documentID(0))), null, reader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_rerankLsaActionPerformed
 
     private void indexAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_indexAllActionPerformed
@@ -1926,12 +1936,12 @@ public class LireDemoFrame extends javax.swing.JFrame {
         Thread t = new Thread() {
             public void run() {
                 try {
-                    IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(textfieldIndexName.getText())));
+                    IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
                     int numDocs = reader.numDocs();
                     System.out.println("numDocs = " + numDocs);
                     ImageSearcher searcher = getSearcher();
                     ImageSearchHits hits = searcher.search(ImageIO.read(new FileInputStream(path)), reader);
-                    tableModel.setHits(hits, progressSearch);
+                    tableModel.setHits(hits, progressSearch, reader);
                     reader.close();
                     Rectangle bounds = resultsTable.getCellRect(0, 0, true);
                     resultsPane.getViewport().setViewPosition(bounds.getLocation());
@@ -1959,37 +1969,37 @@ public class LireDemoFrame extends javax.swing.JFrame {
         } catch (Exception e) {
             // nothing to do ...
         }
-        ImageSearcher searcher = ImageSearcherFactory.createColorLayoutImageSearcher(numResults);
+        ImageSearcher searcher = new GenericFastImageSearcher(numResults, ColorLayout.class);
         if (selectboxDocumentBuilder.getSelectedIndex() == 1) {
-            searcher = ImageSearcherFactory.createScalableColorImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, ScalableColor.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 2) {
-            searcher = ImageSearcherFactory.createEdgeHistogramImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, EdgeHistogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 3) {
-            searcher = ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, AutoColorCorrelogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 4) { // CEDD
-            searcher = ImageSearcherFactory.createCEDDImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, CEDD.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 5) { // FCTH
-            searcher = ImageSearcherFactory.createFCTHImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, FCTH.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 6) { // JCD
-            searcher = ImageSearcherFactory.createJCDImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, JCD.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 7) { // SimpleColorHistogram
-            searcher = ImageSearcherFactory.createColorHistogramImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, SimpleColorHistogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 8) {
-            searcher = ImageSearcherFactory.createTamuraImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, Tamura.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 9) {
-            searcher = ImageSearcherFactory.createGaborImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, Gabor.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 10) {
-            searcher = ImageSearcherFactory.createJpegCoefficientHistogramImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, JpegCoefficientHistogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 11) {
 //            searcher = new VisualWordsImageSearcher(numResults, DocumentBuilder.FIELD_NAME_SURF + DocumentBuilder.FIELD_NAME_BOVW);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 12) {
-            searcher = ImageSearcherFactory.createJointHistogramImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, JointHistogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 13) {
-            searcher = ImageSearcherFactory.createOpponentHistogramSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, OpponentHistogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 14) {
-            searcher = ImageSearcherFactory.createLuminanceLayoutImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, LuminanceLayout.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() >= 15) {
-            searcher = ImageSearcherFactory.createPHOGImageSearcher(numResults);
+            searcher = new GenericFastImageSearcher(numResults, PHOG.class);
         }
         return searcher;
     }

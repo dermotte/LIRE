@@ -90,7 +90,7 @@ public class Searcher {
         // searching with a Lucene document instance ...
 //        ImageSearchHits hits = searcher.search(ir.document(0), ir);
         for (int i = 0; i < hits.length(); i++) {
-            String fileName = ir.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            String fileName = ir.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             System.out.println(hits.score(i) + ": \t" + fileName);
         }
     }

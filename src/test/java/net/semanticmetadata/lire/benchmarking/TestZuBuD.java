@@ -45,26 +45,17 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.aggregators.AbstractAggregator;
 import net.semanticmetadata.lire.aggregators.Aggregator;
 import net.semanticmetadata.lire.aggregators.BOVW;
-import net.semanticmetadata.lire.aggregators.VLAD;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
-import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
-import net.semanticmetadata.lire.imageanalysis.features.global.joint.LocalBinaryPatternsAndOpponent;
-import net.semanticmetadata.lire.imageanalysis.features.global.joint.RankAndOpponent;
-import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.*;
-import net.semanticmetadata.lire.imageanalysis.features.local.sift.SiftExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
-import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSiftExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
-import net.semanticmetadata.lire.imageanalysis.features.local.surf.SurfExtractor;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.ImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearcherUsingWSs;
-import net.semanticmetadata.lire.utils.FileUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -74,7 +65,6 @@ import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Bits;
 
-import javax.imageio.ImageIO;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
@@ -368,7 +358,7 @@ public class TestZuBuD extends TestCase {
                 double tmpP10 = 0;
                 Locale.setDefault(Locale.US);
                 for (int y = 0; y < hits.length(); y++) {
-                    String hitFile = getIDfromFileName(reader.document(hits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
+                    String hitFile = getIDfromFileName(reader.document(hits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
                     // TODO: Sort by query ID!
                     tmpEval += String.format(Locale.US, "%d 1 %s %d %.2f test\n", query2id.get(fileName), hitFile.substring(0, hitFile.lastIndexOf('.')), (int) rank + 1, hits.score(y));
                     // if (!hitFile.equals(fileName)) {

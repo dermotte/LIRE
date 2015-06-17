@@ -1,8 +1,9 @@
 package edu.uniklu.itec.mosaix.engine;
 
-import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.ImageSearchHits;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -130,7 +131,7 @@ public final class Engine {
      * @throws IOException if the image could not be loaded.
      * @see edu.uniklu.itec.mosaix.engine.WeightingStrategy
      */
-    public BufferedImage findBestMatch(final BufferedImage original, final ImageSearchHits hits, double scalePercentage) throws IOException {
+    public BufferedImage findBestMatch(final BufferedImage original, final ImageSearchHits hits, double scalePercentage, IndexReader reader) throws IOException {
         assert original != null;
         assert hits != null;
 
@@ -139,11 +140,11 @@ public final class Engine {
         float bestRating = Float.NEGATIVE_INFINITY;
 
         for (int i = 0; i < hits.length(); i++) {
-            Document doc = hits.doc(i);
+            Document doc = reader.document(hits.documentID(i));
             String file = doc.getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
 //			BufferedImage repl = ImageIO.read(new File(file));
             WeightingData data = weightingDataFactory_.newInstance(doc);
-            data.setRelevancy(hits.score(i));
+            data.setRelevancy((float) hits.score(i));
             data.setSlice(original);
             data.setId(file);
             data.setScalePercentage(scalePercentage);

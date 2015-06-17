@@ -97,7 +97,7 @@ public class LsaFilter implements SearchHitsFilter {
         for (int i = 0; i < results.length(); i++) {
             Document d = null;
             try {
-                d = reader.document(results.readerID(i));
+                d = reader.document(results.documentID(i));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -150,7 +150,7 @@ public class LsaFilter implements SearchHitsFilter {
         for (int i = 1; i < data.length; i++) {
             double[] doubles = data[i];
             double distance = MetricsUtils.distL1(doubles, queryData);
-            result.add(new SimpleResult((float) distance, results.readerID(i - 1)));
+            result.add(new SimpleResult((float) distance, results.documentID(i - 1)));
             maxDistance = Math.max(maxDistance, distance);
         }
         ImageSearchHits hits;

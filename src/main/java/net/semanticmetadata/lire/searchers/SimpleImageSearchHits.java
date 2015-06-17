@@ -123,7 +123,7 @@ public class SimpleImageSearchHits implements ImageSearchHits {
      * @param position position in the result list
      * @return the id in the IndexReader.
      */
-    public int readerID(int position) {
+    public int documentID(int position) {
         return results.get(position).getIndexNumber();
     }
 

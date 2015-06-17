@@ -47,6 +47,8 @@ import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifDirectory;
 import com.drew.metadata.exif.ExifReader;
 import liredemo.indexing.MetadataBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.global.*;
+import net.semanticmetadata.lire.imageanalysis.features.global.joint.JointHistogram;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 
 import javax.imageio.ImageIO;
@@ -115,6 +117,21 @@ public class IndexingThread extends Thread {
 //                        }
 //                    };
 ////            new Thread(indexer).start();
+            pin.addExtractor(ColorLayout.class);
+            pin.addExtractor(CEDD.class);
+            pin.addExtractor(FCTH.class);
+            pin.addExtractor(JCD.class);
+            pin.addExtractor(ScalableColor.class);
+            pin.addExtractor(EdgeHistogram.class);
+            pin.addExtractor(AutoColorCorrelogram.class);
+            pin.addExtractor(Tamura.class);
+            pin.addExtractor(Gabor.class);
+            pin.addExtractor(SimpleColorHistogram.class);
+            pin.addExtractor(OpponentHistogram.class);
+            pin.addExtractor(JointHistogram.class);
+            pin.addExtractor(LuminanceLayout.class);
+            pin.addExtractor(PHOG.class);
+            pin.setCustomDocumentBuilder(MetadataBuilder.class);
             Thread t = new Thread(pin);
             t.start();
             while (!pin.hasEnded()) {

@@ -98,7 +98,7 @@ public class RerankFilter implements SearchHitsFilter {
         for (int x = 0; x < results.length(); x++) {
             Document d = null;
             try {
-                d = reader.document(results.readerID(x));
+                d = reader.document(results.documentID(x));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -108,7 +108,7 @@ public class RerankFilter implements SearchHitsFilter {
                         d.getField(fieldName).binaryValue().length);
                 distance = queryFeature.getDistance(tempFeature);
                 maxDistance = Math.max(maxDistance, distance);
-                resultSet.add(new SimpleResult(distance, results.readerID(x)));
+                resultSet.add(new SimpleResult(distance, results.documentID(x)));
             } else {
                 logger.info("Could not instantiate class " + featureClass.getName() + " from the given result set.");
             }

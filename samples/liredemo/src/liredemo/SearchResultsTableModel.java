@@ -45,6 +45,7 @@ import com.drew.metadata.exif.ExifReader;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.utils.ImageUtils;
+import org.apache.lucene.index.IndexReader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -124,8 +125,9 @@ public class SearchResultsTableModel extends DefaultTableModel {
     /**
      * @param hits
      * @param progress
+     * @param reader
      */
-    public void setHits(ImageSearchHits hits, JProgressBar progress) {
+    public void setHits(ImageSearchHits hits, JProgressBar progress, IndexReader reader) {
         this.hits = hits;
         icons = new ArrayList<ImageIcon>(hits.length());
         if (progress != null) progress.setString("Searching finished. Loading images for result list.");
@@ -133,7 +135,7 @@ public class SearchResultsTableModel extends DefaultTableModel {
             ImageIcon icon = null;
             try {
                 BufferedImage img = null;
-                String fileIdentifier = hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
+                String fileIdentifier = reader.document(hits.documentID(i)).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue();
                 if (!fileIdentifier.startsWith("http:")) {
                     // check isf it is a jpg file ...
                     if (fileIdentifier.toLowerCase().endsWith(".jpg")) {

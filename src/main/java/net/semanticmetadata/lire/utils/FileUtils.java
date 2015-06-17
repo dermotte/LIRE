@@ -49,7 +49,6 @@ import org.apache.lucene.search.TopDocs;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.List;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.io.File;
@@ -196,7 +195,7 @@ public class FileUtils {
         bw.write("<a href=\"file://" + queryImage + "\"><img src=\"file://" + queryImage + "\"></a><p>\n");
         bw.write("<h3>results</h3>\n");
         for (int i = 0; i < hits.length(); i++) {
-            bw.write(hits.score(i) + " - <a href=\"file://" + reader.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + "\"><img src=\"file://" + reader.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + "\"></a><p>\n");
+            bw.write(hits.score(i) + " - <a href=\"file://" + reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + "\"><img src=\"file://" + reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0] + "\"></a><p>\n");
         }
         bw.write("</body>\n" +
                 "</html>");
@@ -265,7 +264,7 @@ public class FileUtils {
         for (int i = 0; i < hits.length(); i++) {
             // hits.score(i)
             // hits.doc(i).get("descriptorImageIdentifier")
-            BufferedImage tmp = ImageIO.read(new FileInputStream(reader.document(hits.readerID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]));
+            BufferedImage tmp = ImageIO.read(new FileInputStream(reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]));
 //            if (tmp.getHeight() > 200) {
             double factor = 200d / ((double) tmp.getHeight());
             tmp = ImageUtils.scaleImage(tmp, (int) (tmp.getWidth() * factor), 200);

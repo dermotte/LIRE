@@ -1,6 +1,6 @@
 package edu.uniklu.itec.mosaix.engine;
 
-import net.semanticmetadata.lire.DocumentBuilder;
+import net.semanticmetadata.lire.builders.DocumentBuilder;
 import org.apache.lucene.document.Document;
 /*
  * This file is part of the Caliph and Emir project: http://www.SemanticMetadata.net.

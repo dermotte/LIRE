@@ -62,7 +62,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /**
  * Created by Nektarios on 28/5/2015.
@@ -110,7 +109,7 @@ public class TestSearching extends TestCase {
         ImageSearchHits ceddhits = ceddSearcher.search(image, reader);
         String hitFile;
         for (int y = 0; y < ceddhits.length(); y++) {
-            hitFile = reader.document(ceddhits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            hitFile = reader.document(ceddhits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
             System.out.println(y + ". " + hitFile + " " + ceddhits.score(y));
         }
@@ -119,7 +118,7 @@ public class TestSearching extends TestCase {
         GenericFastImageSearcher cvsurfsearcher = new GenericFastImageSearcher(10, localFeatureClass, aggregatorClass.newInstance(), 512, true, reader, indexPath + ".config");
         ImageSearchHits cvsurfhits = cvsurfsearcher.search(image, reader);
         for (int y = 0; y < cvsurfhits.length(); y++) {
-            hitFile = reader.document(cvsurfhits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            hitFile = reader.document(cvsurfhits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
             System.out.println(y + ". " + hitFile + " " + cvsurfhits.score(y));
         }
@@ -128,7 +127,7 @@ public class TestSearching extends TestCase {
         GenericFastImageSearcher simpleceddcvsurfsearcher = new GenericFastImageSearcher(10, globalFeatureClass, keypointDetector, aggregatorClass.newInstance(), 512, true, reader, indexPath + ".config");
         ImageSearchHits simpleceddcvsurfhits = simpleceddcvsurfsearcher.search(image, reader);
         for (int y = 0; y < simpleceddcvsurfhits.length(); y++) {
-            hitFile = reader.document(simpleceddcvsurfhits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            hitFile = reader.document(simpleceddcvsurfhits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
             System.out.println(y + ". " + hitFile + " " + simpleceddcvsurfhits.score(y));
         }
@@ -165,7 +164,7 @@ public class TestSearching extends TestCase {
             System.out.println(counter + " ~ " + next);
 
             ceddhits = ceddSearcher.search(image, reader);
-            hitFile = reader.document(ceddhits.readerID(0)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            hitFile = reader.document(ceddhits.documentID(0)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
             if (next.equals(hitFile))
                 System.out.println(0 + ". " + hitFile + " " + ceddhits.score(0));
@@ -173,7 +172,7 @@ public class TestSearching extends TestCase {
                 System.err.println("ERROR " + hitFile + " " + ceddhits.score(0) + " ERROR");
 
             cvsurfhits = cvsurfsearcher.search(image, reader);
-            hitFile = reader.document(cvsurfhits.readerID(0)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            hitFile = reader.document(cvsurfhits.documentID(0)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
             if (next.equals(hitFile))
                 System.out.println(0 + ". " + hitFile + " " + cvsurfhits.score(0));
@@ -181,7 +180,7 @@ public class TestSearching extends TestCase {
                 System.err.println("ERROR " + hitFile + " " + cvsurfhits.score(0)+ " ERROR");
 
             simpleceddcvsurfhits = simpleceddcvsurfsearcher.search(image, reader);
-            hitFile = reader.document(simpleceddcvsurfhits.readerID(0)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+            hitFile = reader.document(simpleceddcvsurfhits.documentID(0)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
             if (next.equals(hitFile))
                 System.out.println(0 + ". " + hitFile + " " + simpleceddcvsurfhits.score(0));
@@ -235,21 +234,21 @@ public class TestSearching extends TestCase {
 
             System.out.println("Global:");
             for (int y = 0; y < ceddhits.length(); y++) {
-                hitFile = readerIndex.document(ceddhits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+                hitFile = readerIndex.document(ceddhits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
                 hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
                 System.out.println(y + ". " + hitFile + " " + ceddhits.score(y));
             }
 
             System.out.println("Local:");
             for (int y = 0; y < cvsurfhits.length(); y++) {
-                hitFile = readerIndex.document(cvsurfhits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+                hitFile = readerIndex.document(cvsurfhits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
                 hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
                 System.out.println(y + ". " + hitFile + " " + cvsurfhits.score(y));
             }
 
             System.out.println("Simple:");
             for (int y = 0; y < simpleceddcvsurfhits.length(); y++) {
-                hitFile = readerIndex.document(simpleceddcvsurfhits.readerID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
+                hitFile = readerIndex.document(simpleceddcvsurfhits.documentID(y)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
                 hitFile = hitFile.substring(hitFile.lastIndexOf('\\') + 1);
                 System.out.println(y + ". " + hitFile + " " + simpleceddcvsurfhits.score(y));
             }
