@@ -42,7 +42,9 @@
 package net.semanticmetadata.lire.sampleapp;
 
 import net.semanticmetadata.lire.builders.GlobalDocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
@@ -61,9 +63,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * User: Mathias Lux, mathias@juggle.at
- * Date: 25.05.12
- * Time: 12:04
+ * Simple class showing the process of indexing
+ * @author Mathias Lux, mathias@juggle.at and Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class Indexer {
     public static void main(String[] args) throws IOException {
@@ -84,6 +85,9 @@ public class Indexer {
 
         // Creating a CEDD document builder and indexing all files.
         GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(CEDD.class);
+        // and here we add those features we want to extract in a single run:
+        globalDocumentBuilder.addExtractor(FCTH.class);
+        globalDocumentBuilder.addExtractor(AutoColorCorrelogram.class);
         // Creating an Lucene IndexWriter
         IndexWriterConfig conf = new IndexWriterConfig(new WhitespaceAnalyzer());
         IndexWriter iw = new IndexWriter(FSDirectory.open(Paths.get("index")), conf);

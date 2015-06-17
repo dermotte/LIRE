@@ -1,9 +1,15 @@
 # Searching with Lire
-Use the ``FastGenericImageSearcher`` for creating an ``ImageSearcher``, which will retrieve the images from the index. This can be done by calling ``new GenericFastImageSearcher(30, CEDD.class)`` for ie. CEDD. The ``ImageSearcher`` will query for an image, given by an ``InputStream`` or a ``BufferedImage``, or a Lucene ``Document`` describing an image, for instance with the method ``search(BufferedImage, IndexReader)`` or ``search(Document, IndexReader)``.
+Use the ``FastGenericImageSearcher`` for creating an ``ImageSearcher``, which will retrieve the images from the index.
+This can be done by calling ``new GenericFastImageSearcher(30, CEDD.class)`` for ie. CEDD. The ``ImageSearcher`` will
+query for an image, given by an ``InputStream`` or a ``BufferedImage``, or a Lucene ``Document`` describing an image,
+for instance with the method ``search(BufferedImage, IndexReader)`` or ``search(Document, IndexReader)``.
 
-Please note that the ``ImageSearcher`` uses a Lucene ``IndexReader`` and does the retrieval with a linear search in the index. The results are returned as ``ImageSearchHits`` object, which aims to simulate a Lucene ``Hits`` object.
+Please note that the ``ImageSearcher`` uses a Lucene ``IndexReader`` and does the retrieval with a linear search in the
+index. The results are returned as ``ImageSearchHits`` object, which aims to simulate a Lucene ``Hits`` object.
 
-Note also that the ``IndexSearcher`` only uses image features, which are available in the specific ``Document`` in the index. If documents only have been indexed with the fast ``DocumentBuilder`` there is no ColorHistogram or EdgeHistogram feature available in the indexed documents, only the ColorLayout feature.
+Note also that the ``IndexSearcher`` only uses image features, which are available in the specific ``Document`` in the
+index. If documents only have been indexed with the fast ``DocumentBuilder`` there is no ColorHistogram or EdgeHistogram
+feature available in the indexed documents, only the ColorLayout feature.
 
 ## Sample Code for a Simple Search Implementation
 

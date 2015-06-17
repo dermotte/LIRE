@@ -7,6 +7,7 @@ image retrieval (CBIR). There is no complete list of features, but these are som
   * CEDD and FCTH (contributed by [Savvas Chatzichristofis](http://savvash.blogspot.com/))
   * Color histograms (HSV and RGB), Tamura & Gabor, auto color correlogram, JPEG coefficient histogram (common global descriptors)
   * Visual words based on [SIFT](http://en.wikipedia.org/wiki/Scale-invariant_feature_transform) and [SURF](http://en.wikipedia.org/wiki/SURF)
+  * Visual words based on [SIMPLE](simple.md)
   * Approximate fast search based on hashing and metric indexing.
 
 Furthermore, methods for searching the index based on [[http://lucene.apache.org|Lucene]] are provided.
@@ -14,25 +15,32 @@ Furthermore, methods for searching the index based on [[http://lucene.apache.org
 The LIRE library started out as part of the Caliph & Emir project and aimed to provide the CBIR features of Caliph & Emir 
 to other Java projects in an easy and light weight way. In the meantime it has turned out as big and interesting project itself.
 
-With Lire you can easily [create an index](createindex.md) and [search through the index](searchindex.md).
+With Lire you can easily [create an index](createindex.md) and [search through the index](searchindex.md). LIRE 1.0 also supports local features based on [Bag of Visual Words](bovw.md).
 
   * How to [create an index](createindex.md) with Lire?
   * How to [search through the index](searchindex.md) with Lire?
+  * How to use local features with [Bag of Visual Words](bovw.md) in Lire?
   * [Frequently Asked Questions](lirefaq.md)
   
-I recommend to start with taking a look at the [SimpleApplication](https://code.google.com/p/lire/source/browse/#svn%2Ftrunk%2Fsamples%2Fsimpleapplication%253Fstate%253Dclosed) 
+I recommend to start with taking a look at the [SimpleApplication](https://github.com/dermotte/LIRE/tree/master/samples/simpleapplication)
 package of LIRE, which covers the most needed stuff including indexing, search and extraction of image features for use 
 in other applications. It's also a good idea to work on the current SVN version of LIRE:
 [How to check out and set up LIRE in the IDEA IDE](https://www.youtube.com/watch?v=vG_yvB_UfAU&list=PLkb7TymgoWW4zfjepAmYNz03ABDQWGHfl).
 
+Note at this point that LIRE comes with Apache Ant build files, named build.xml. You can use the tasks to create the jar
+from the source code as soon as you have Ant installed, or you are using an IDE prepared for that, like IDEA, Eclipse or NetBeans.
+Apache Ant can be found at the [Apache Ant Project Page](https://ant.apache.org/)
+
 If you are searching for the Solr plugin of LIRE ... it's still under construction. Some global features are working fine 
-and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr)
+and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr). It has been reported
+working on distributed installations.
 
 ## How does Lire actually work?
 
 Lire employs *global image features* for *content based image retrieval*. For more information on the underlying methods 
 and techniques you should consult the basic literature on [content based images retrieval](http://en.wikipedia.org/wiki/CBIR):
 
+  * [Visual Information Retrieval using Java and LIRE](http://www.amazon.com/Information-Retrieval-Synthesis-Lectures-Concepts/dp/1608459187/ref=sr_1_1?ie=UTF8&qid=1434544298&sr=8-1&keywords=lire+lux&pebp=1434544293512&perid=165GFHRF19TFTK35C3PC) (Lux & Marques, 2013)
   * [Image Retrieval: Ideas, Influences, and Trends of the New Age](http://infolab.stanford.edu/~wangz/project/imsearch/review/JOUR/datta.pdf) (Datta et al., 2008)
   * [Content-Based Image Retrieval at the End of the Early Years](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.92.889&rep=rep1&type=pdf) (Smeulders et al., 2000)
 

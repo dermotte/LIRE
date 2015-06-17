@@ -3,11 +3,17 @@ CHANGES for LIRE
 
 2015-06-16
 ==========
+  - Added custom DocumentBuilder for handling metadata to ParallelIndexer.
+  - Fixed LIRE demo.
+  - Worked on the developer docs.
+
+2015-06-16
+==========
   - updated to Lucene 5.2.1, fixed simpleapplication to go with Lucene 5.2.1
 
 2015-06-10
 ==========
-  - Lire 1.0 beta, extreme changelist, by Nektarios.
+  - Lire 1.0 beta, extreme changelist, massive API changes, by Nektarios.
 
 2015-02-13
 ==========
