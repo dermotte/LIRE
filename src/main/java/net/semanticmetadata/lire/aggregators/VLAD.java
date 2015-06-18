@@ -54,7 +54,7 @@ public class VLAD extends AbstractAggregator {
     public VLAD() { }
 
     @Override
-    public void createVisualWords(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray) {
+    public void createVectorRepresentation(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray) {
         vector = new double[clustersArray.length * (clustersArray[0].getMean()).length];
         Arrays.fill(vector, 0d);
         int clusterIndex;

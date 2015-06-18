@@ -85,7 +85,7 @@ public class SPACC implements GlobalFeature {
         // level 2:
         int wstep = bimg.getWidth() / 4;
         int hstep = bimg.getHeight() / 4;
-        int binPos = 0; // the next free section in the histogram
+        int binPos = 5; // the next free section in the histogram
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 acc.extract(bimg.getSubimage(i * wstep, j * hstep, wstep, hstep));

@@ -50,7 +50,12 @@ public interface Aggregator {
     String FIELD_NAME_BOVW = "BOVW";
     String FIELD_NAME_VLAD = "VLAD";
 
-    void createVisualWords(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray);
+    /**
+     * This method is used to create the vector representation of an image using the list of Features and a codebook
+     * @param listOfLocalFeatures
+     * @param clustersArray
+     */
+    void createVectorRepresentation(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray);
 
     byte[] getByteVectorRepresentation();
 

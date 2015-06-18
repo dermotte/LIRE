@@ -217,7 +217,7 @@ public class TestBuilders extends TestCase {
 
             localDocumentBuilder.extractLocalFeatures(image, localFeatureExtractor);
             listOfLocalFeatures = localFeatureExtractor.getFeatures();
-            aggregator.createVisualWords(listOfLocalFeatures, codebook32);
+            aggregator.createVectorRepresentation(listOfLocalFeatures, codebook32);
             featureVector = aggregator.getVectorRepresentation();
 
             document1 = localDocumentBuilder1.createDocument(image, imagePath);
@@ -320,7 +320,7 @@ public class TestBuilders extends TestCase {
 
             simpleDocumentBuilder.extractLocalFeatures(image, simpleExtractor);
             listOfLocalFeatures = simpleExtractor.getFeatures();
-            aggregator.createVisualWords(listOfLocalFeatures, codebook32);
+            aggregator.createVectorRepresentation(listOfLocalFeatures, codebook32);
             featureVector = aggregator.getVectorRepresentation();
 
             document1 = simpleDocumentBuilder1.createDocument(image, imagePath);

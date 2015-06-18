@@ -35,7 +35,6 @@
 package net.semanticmetadata.lire.builders;
 
 import net.semanticmetadata.lire.aggregators.AbstractAggregator;
-import net.semanticmetadata.lire.aggregators.Aggregator;
 import net.semanticmetadata.lire.aggregators.BOVW;
 import net.semanticmetadata.lire.classifiers.Cluster;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
@@ -88,7 +87,7 @@ public abstract class AbstractLocalDocumentBuilder implements DocumentBuilder {
         Field[] result = new Field[listOfCodebooks.size() * 2];
         int count = 0;
         for (Cluster[] codebook : listOfCodebooks) {
-            aggregator.createVisualWords(listOfLocalFeatures, codebook);
+            aggregator.createVectorRepresentation(listOfLocalFeatures, codebook);
             result[count] = new StoredField(fieldNamesDictionary.get(extractorItem).get(codebook.length)[0], aggregator.getByteVectorRepresentation());
             result[count + 1] = new TextField(fieldNamesDictionary.get(extractorItem).get(codebook.length)[1], aggregator.getStringVectorRepresentation(), Field.Store.YES);
             count += 2;

@@ -125,7 +125,7 @@ public class TestExtraction extends TestCase{
             image = ImageIO.read(new FileInputStream(path));
             ms = System.currentTimeMillis();
             localDocumentBuilder.extractLocalFeatures(image, localFeatureExtractor);
-            aggregator.createVisualWords(localFeatureExtractor.getFeatures(), codebook32);
+            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), codebook32);
             ms = System.currentTimeMillis() - ms;
             totalTime += ms;
             featureVector = aggregator.getVectorRepresentation();
@@ -156,7 +156,7 @@ public class TestExtraction extends TestCase{
             image = ImageIO.read(new FileInputStream(path));
             ms = System.currentTimeMillis();
             simpleDocumentBuilder.extractLocalFeatures(image, simpleExtractor);
-            aggregator.createVisualWords(simpleExtractor.getFeatures(), codebook32);
+            aggregator.createVectorRepresentation(simpleExtractor.getFeatures(), codebook32);
             ms = System.currentTimeMillis() - ms;
             totalTime += ms;
             featureVector = aggregator.getVectorRepresentation();

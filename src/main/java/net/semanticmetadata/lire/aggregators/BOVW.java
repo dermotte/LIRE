@@ -54,7 +54,7 @@ public class BOVW extends AbstractAggregator {
     public BOVW() { }
 
     @Override
-    public void createVisualWords(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray) {
+    public void createVectorRepresentation(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray) {
         histogram = new double[clustersArray.length];
         Arrays.fill(histogram, 0d);
         // find the appropriate cluster for each feature:

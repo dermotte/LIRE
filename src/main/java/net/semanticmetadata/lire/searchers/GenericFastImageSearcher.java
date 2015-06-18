@@ -494,7 +494,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         } else if (extractorItem.isLocal()){
             LocalDocumentBuilder localDocumentBuilder = new LocalDocumentBuilder();
             LocalFeatureExtractor localFeatureExtractor = localDocumentBuilder.extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
-            aggregator.createVisualWords(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
+            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
             extractorItem.getFeatureInstance().setByteArrayRepresentation(aggregator.getByteVectorRepresentation());
 
             double maxDistance = findSimilar(reader, extractorItem.getFeatureInstance());
@@ -506,7 +506,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         } else if (extractorItem.isSimple()){
             SimpleDocumentBuilder simpleDocumentBuilder = new SimpleDocumentBuilder();
             LocalFeatureExtractor localFeatureExtractor = simpleDocumentBuilder.extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
-            aggregator.createVisualWords(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
+            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
             extractorItem.getFeatureInstance().setByteArrayRepresentation(aggregator.getByteVectorRepresentation());
             double maxDistance = findSimilar(reader, extractorItem.getFeatureInstance());
             if (!useSimilarityScore) {

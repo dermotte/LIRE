@@ -20,6 +20,7 @@ import java.awt.image.WritableRaster;
  * @see SimpleCentrist for the base descriptor of the paper.
  */
 public class SpatialPyramidCentrist implements GlobalFeature {
+    private boolean applyMaxNorm = true;
     private int histLength = 256;
     int histogramSize = histLength * 6 + histLength * 4 * 4 + histLength * 9;
     double[] histogram = new double[histogramSize];
@@ -62,6 +63,21 @@ public class SpatialPyramidCentrist implements GlobalFeature {
                 binPos++;
             }
         }
+        if (applyMaxNorm) normalize(histogram);
+    }
+
+    /**
+     * Applies max norm to the histogram.
+     * @param in
+     */
+    private void normalize(double[] in) {
+        double max = 0d;
+        for (double d : in) {
+            max = Math.max(max, d);
+        }
+        for (int i = 0; i < in.length; i++) {
+            in[i] = in[i] / max;
+        }
     }
 
     @Override
@@ -91,7 +107,7 @@ public class SpatialPyramidCentrist implements GlobalFeature {
 
     @Override
     public double getDistance(LireFeature feature) {
-        if (feature instanceof SimpleCentrist)
+        if (feature instanceof SpatialPyramidCentrist)
             return MetricsUtils.distL1(histogram, feature.getFeatureVector());
         else
             return -1d;
