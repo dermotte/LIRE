@@ -22,7 +22,7 @@ If you are searching for the Solr plugin of LIRE ... it's still under constructi
 
 ## Citation ##
 
-We kindly ask you to refer to either one or both of the following papers in any publication mentioning or employing Lire:
+We kindly ask you to refer to either of the following papers in publications mentioning or employing Lire:
 
 Mathias Lux, Savvas A. Chatzichristofis. _LIRE: Lucene Image Retrieval – An Extensible Java CBIR Library_. In proceedings of the 16th ACM International Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008 - Download paper and BibTeX [here](http://dl.acm.org/citation.cfm?id=1459577)
 
