@@ -1,10 +1,14 @@
 # Searching for Color with Lire
+Since Lire already supports Color histograms (with the MPEG-7 ScalableColor descriptor), functions for searching for colors have been added in Lire 0.5.1:
+  * With ``new GlobalDocumentBuilder(ScalableColor.class)`` you will get an appropriate DocumentBuilder for indexing the images with Scalable Color only. You can also use the following
 
-Since Lire already supports Color histograms (with the MPEG-7 ScalableColor descriptor), 
-functions for searching for colors have been added in Lire 0.5.1:
+           GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder();
+           globalDocumentBuilder.addExtractor(ColorLayout.class)
+           globalDocumentBuilder.addExtractor(EdgeHistogram.class)
+           globalDocumentBuilder.addExtractor(ScalableColor.class)
 
-  * With ``DocumentBuilderFactory.getColorOnlyDocumentBuilder()`` you will get an appropriate DocumentBuilder for indexing the images with Scalable Color only. You can also use the ``DocumentBuilderFactory.getExtensiveDocumentBuilder()``, then all information for texture and color distribution search is included.
-  * With ``DocumentFactory.createColorOnlyDocument(java.awt.Color)`` a simple document for searching based on one color can be created in a fast and efficient way.
+   to create a `DocumentBuilder` where all information for texture and color distribution search is included.
+  <-- * With ``DocumentFactory.createColorOnlyDocument(java.awt.Color)`` a simple document for searching based on one color can be created in a fast and efficient way. -->
   * Note that the whole images are indexed. A far better way would be to distinguish between background and foreground. However this topic is currently not addressed in Lire.
 
 Contributions for background foreground separation are welcome :-)
@@ -19,18 +23,18 @@ This is a code sample showing how the indexing should be done:
                 "img06.JPG", "img07.JPG", "img08.JPG", "img08a.JPG"};
         private String testFilesPath = "./src/test/resources/images/";
         private String indexPath = "test-index";
-    
+
         public void testCreateIndex() throws IOException {
-            DocumentBuilder builder = DocumentBuilderFactory.getColorOnlyDocumentBuilder();
+            DocumentBuilder builder = new GlobalDocumentBuilder(ScalableColor.class);
             // The alternative way is using the extensive DocumentBuilder:
             // DocumentBuilder builder = DocumentBuilderFactory.getExtensiveDocumentBuilder();
-            IndexWriter iw = new IndexWriter(FSDirectory.open(new File(indexPath + "-small")), new SimpleAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED);
+            IndexWriter iw = LuceneUtils.createIndexWriter(indexPath, true, LuceneUtils.AnalyzerType.SimpleAnalyzer);
             for (String identifier : testFiles) {
-                Document doc = builder.createDocument(new FileInputStream(testFilesPath + identifier), identifier);
+                Document doc = builder.createDocument(ImageIO.read(new FileInputStream(testFilesPath + identifier)), identifier);
                 iw.addDocument(doc);
             }
-            iw.optimize();
-            iw.close();
+            LuceneUtils.optimizeWriter(iw);
+            LuceneUtils.closeWriter(iw);
         }
     }
 
@@ -49,19 +53,19 @@ This is a code sample showing how the search can be done:
          */
         public void testColorSearch() throws Exception {
             // open index with Lucene v3.0+
-            IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+            IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
             int numDocs = reader.numDocs();
             System.out.println("numDocs = " + numDocs);
             // PLEASE NOTE: The index has to be built with a DocumentBuilder
             // obtained by DocumentBuilderFactory.getExtensiveDocumentBuilder() or
             // DocumentBuilderFactory.getColorOnlyDocumentBuilder(). Otherwise no color
             // histogram will be included.
-            ImageSearcher searcher = ImageSearcherFactory.createColorOnlySearcher(5);
+            ImageSearcher searcher = new GenericFastImageSearcher(5, ScalableColor.class);
             Document document = DocumentFactory.createColorOnlyDocument(Color.red);
             ImageSearchHits hits = searcher.search(document, reader);
             for (int i = 0; i < hits.length(); i++) {
                 System.out.println(hits.score(i) + ": " +
-                    hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+                        reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
             }
         }
     }

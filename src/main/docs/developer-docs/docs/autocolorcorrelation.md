@@ -10,32 +10,35 @@ For basic LIRE usage see [search](searchindex.md]] and [index creation](createin
 
 To use the descriptor try the 
 
-  * ``DocumentBuilderFactory.getAutoColorCorrelogramDocumentBuilder()`` factory method. 
+  * ``new GlobalDocumentBuilder(AutoColorCorrelogram.class)`` factory method.
 
 To create an appropriate searcher use 
 
-  * ``ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(int maximumHits)``
+  * ``new GenericFastImageSearcher(maximumHits, AutoColorCorrelogram.class)``
 
 **Very important:** 
 
-  * Ensure that you use the same options for the ImageSearcher as you used for the DocumentBuilder if you are creating the ImageSearcher manually not using the Factories.
+  <!-- * Ensure that you use the same options for the ImageSearcher as you used for the DocumentBuilder if you are creating the ImageSearcher manually not using the Factories. -->
   * Ensure that the analyzed image is big enough for the descriptor, otherwise the descriptor cannot be extracted.
   
-## Sample code 
-
+## Sample code
     public void testCorrelationSearch() throws IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexPath)));
+        String[] testFiles = new String[]{"img01.JPG", "img02.JPG", "img03.JPG", "img04.JPG", "img05.JPG",
+                "img06.JPG", "img07.JPG", "img08.JPG", "img08a.JPG"};
+        String testFilesPath = "./src/test/resources/images/";
+        String indexPath = "test-index";
+
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
         int numDocs = reader.numDocs();
         System.out.println("numDocs = " + numDocs);
         // create the appropriate correlogram searcher:
-        ImageSearcher searcher = ImageSearcherFactory.createAutoColorCorrelogramImageSearcher(10);
+        ImageSearcher searcher = new GenericFastImageSearcher(10, AutoColorCorrelogram.class, true, reader);
         FileInputStream imageStream = new FileInputStream(testFilesPath + testFiles[0]);
         BufferedImage bimg = ImageIO.read(imageStream);
         ImageSearchHits hits = null;
         // search for the image in the index
         hits = searcher.search(bimg, reader);
         for (int i = 0; i < hits.length(); i++) {
-            System.out.println(hits.score(i) + ": " + hits.doc(i).getField(DocumentBuilder.FIELD_NAME_IDENTIFIER).stringValue());
+            System.out.println(hits.score(i) + ": " + reader.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]);
         }
-
     }

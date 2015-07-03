@@ -1,5 +1,4 @@
 # Lire - Lucene Image REtrieval
-
 The LIRE (Lucene Image REtrieval) library a simple way to create a Lucene index of image features for content based 
 image retrieval (CBIR). There is no complete list of features, but these are some of them:
 
@@ -36,7 +35,6 @@ and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.o
 working on distributed installations.
 
 ## How does Lire actually work?
-
 Lire employs *global image features* for *content based image retrieval*. For more information on the underlying methods 
 and techniques you should consult the basic literature on [content based images retrieval](http://en.wikipedia.org/wiki/CBIR):
 
@@ -52,7 +50,6 @@ Further it uses the Java search engine Lucene to provide
 
 
 ## Performance
-
 Parallel indexing with the [ParallelIndexer](createindex.md) running with 8 threads on a AMD A10 with 4 cores and 4.4 GHz, 
 Windows 7 64 bits extracting 7 features at once including hashing is down to ~180 ms per image. On a Intel Core i7, ie. 
 the 4770K, it runs a lot faster, using an SSD then speeds up the process even more. Extracting single features with the 
