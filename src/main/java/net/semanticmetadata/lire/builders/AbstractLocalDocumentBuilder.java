@@ -65,6 +65,13 @@ public abstract class AbstractLocalDocumentBuilder implements DocumentBuilder {
     protected boolean docsCreated = false;
 
 
+    /**
+     * Images are resized so as not to exceed the {@link DocumentBuilder#MAX_IMAGE_DIMENSION}, after that
+     * features are extracted using the given localFeatureExtractor.
+     * @param image is the image
+     * @param localFeatureExtractor selected local feature extractor
+     * @return the input localFeatureExtractor
+     */
     public LocalFeatureExtractor extractLocalFeatures(BufferedImage image, LocalFeatureExtractor localFeatureExtractor) {
         assert (image != null);
         // Scaling image is especially with the correlogram features very important!
@@ -77,12 +84,26 @@ public abstract class AbstractLocalDocumentBuilder implements DocumentBuilder {
         return localFeatureExtractor;
     }
 
+    /**
+     * Extracts the features and returns the Lucene Fields with the vector representation of the selected image.
+     * @param image is the selected image.
+     * @param extractorItem is the selected extractor.
+     * @param listOfCodebooks is the list which can contain one or more codebooks to be used for the aggregation of the local features.
+     * @return Lucene Fields with the vector representation of the selected image.
+     */
     private Field[] getLocalDescriptorFields(BufferedImage image, ExtractorItem extractorItem, LinkedList<Cluster[]> listOfCodebooks) {
         LocalFeatureExtractor localFeatureExtractor = extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
 
         return createLocalDescriptorFields(localFeatureExtractor.getFeatures(), extractorItem, listOfCodebooks);
     }
 
+    /**
+     * Creates the Lucene Fiels with the vector representation of list of local features.
+     * @param listOfLocalFeatures is the list of local features.
+     * @param extractorItem is the extractor that was used to extract the features.
+     * @param listOfCodebooks is the list which can contain one or more codebooks to be used for the aggregation of the local features.
+     * @return Lucene Fields with the vector representation of the list of local features.
+     */
     public Field[] createLocalDescriptorFields(List<? extends LocalFeature> listOfLocalFeatures, ExtractorItem extractorItem, LinkedList<Cluster[]> listOfCodebooks){
         Field[] result = new Field[listOfCodebooks.size() * 2];
         int count = 0;
@@ -96,6 +117,10 @@ public abstract class AbstractLocalDocumentBuilder implements DocumentBuilder {
         return result;
     }
 
+    /**
+     * @param image the image to analyze.
+     * @return Lucene Fields with the vector representation of the selected image.
+     */
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
         docsCreated = true;
@@ -112,6 +137,11 @@ public abstract class AbstractLocalDocumentBuilder implements DocumentBuilder {
         return resultList.toArray(new Field[resultList.size()]);
     }
 
+    /**
+     * @param image the image to index. Cannot be NULL.
+     * @param identifier an id for the image, for instance the filename or a URL. Can be NULL.
+     * @return a Lucene Document.
+     */
     @Override
     public Document createDocument(BufferedImage image, String identifier) {
         Document doc = new Document();

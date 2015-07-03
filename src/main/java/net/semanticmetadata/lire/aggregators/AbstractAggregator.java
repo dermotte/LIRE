@@ -45,6 +45,12 @@ import net.semanticmetadata.lire.classifiers.Cluster;
  */
 public abstract class AbstractAggregator implements Aggregator {
 
+    /**
+     * Returns the index of the cluster with the min distance between a feature and a codebook.
+     * @param f is the feature.
+     * @param clustersArray is the codebook.
+     * @return index of the cluster.
+     */
     protected int clusterForFeature(double[] f, Cluster[] clustersArray) {
         double distance, min = clustersArray[0].getDistance(f);
         int result = 0;

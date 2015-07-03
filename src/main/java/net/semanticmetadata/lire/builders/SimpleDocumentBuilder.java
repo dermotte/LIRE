@@ -125,6 +125,12 @@ public class SimpleDocumentBuilder extends AbstractLocalDocumentBuilder {
         addExtractor(extractorItem, listOfCodebooks);
     }
 
+    /**
+     * Can be used to add a global extractor with a {@link SimpleExtractor.KeypointDetector}.
+     * @param globalFeatureClass
+     * @param keypointDetector
+     * @param codebook
+     */
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector keypointDetector, Cluster[] codebook) {
         if ((!(codebook.length>0))||(codebook == null)) throw new UnsupportedOperationException("Codebook cannot be empty or null!!");
         LinkedList<Cluster[]> listOfCodebooks = new LinkedList<Cluster[]>();
@@ -132,6 +138,11 @@ public class SimpleDocumentBuilder extends AbstractLocalDocumentBuilder {
         addExtractor(new ExtractorItem(globalFeatureClass, keypointDetector), listOfCodebooks);
     }
 
+    /**
+     * Can be used to add a global extractor with a {@link SimpleExtractor.KeypointDetector}.
+     * @param extractorItem
+     * @param codebook
+     */
     public void addExtractor(ExtractorItem extractorItem, Cluster[] codebook) {
         if ((!(codebook.length>0))||(codebook == null)) throw new UnsupportedOperationException("Codebook cannot be empty or null!!");
         LinkedList<Cluster[]> listOfCodebooks = new LinkedList<Cluster[]>();
@@ -139,11 +150,22 @@ public class SimpleDocumentBuilder extends AbstractLocalDocumentBuilder {
         addExtractor(extractorItem, listOfCodebooks);
     }
 
+    /**
+     * Can be used to add a global extractor with a {@link SimpleExtractor.KeypointDetector}.
+     * @param globalFeatureClass
+     * @param keypointDetector
+     * @param listOfCodebooks
+     */
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector keypointDetector, LinkedList<Cluster[]> listOfCodebooks) {
         if ((!(listOfCodebooks.size()>0))||(listOfCodebooks == null)) throw new UnsupportedOperationException("List of codebooks cannot be empty or null!!");
         addExtractor(new ExtractorItem(globalFeatureClass, keypointDetector), listOfCodebooks);
     }
 
+    /**
+     * Can be used to add a global extractor with a {@link SimpleExtractor.KeypointDetector}.
+     * @param extractorItem
+     * @param listOfCodebooks
+     */
     public void addExtractor(ExtractorItem extractorItem, LinkedList<Cluster[]> listOfCodebooks) {
         if (docsCreated) throw new UnsupportedOperationException("Cannot modify builder after documents have been created!");
         if (!extractorItem.isSimple()) throw new UnsupportedOperationException("ExtractorItem must be SIMPLE");

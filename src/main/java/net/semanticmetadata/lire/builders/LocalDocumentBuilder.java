@@ -125,6 +125,11 @@ public class LocalDocumentBuilder extends AbstractLocalDocumentBuilder {
         addExtractor(extractorItem, listOfCodebooks);
     }
 
+    /**
+     * Can be used to add local extractors.
+     * @param localFeatureExtractorClass
+     * @param codebook
+     */
     public void addExtractor(Class<? extends LocalFeatureExtractor> localFeatureExtractorClass, Cluster[] codebook) {
         if ((!(codebook.length>0))||(codebook == null)) throw new UnsupportedOperationException("Codebook cannot be empty or null!!");
         LinkedList<Cluster[]> listOfCodebooks = new LinkedList<Cluster[]>();
@@ -132,6 +137,11 @@ public class LocalDocumentBuilder extends AbstractLocalDocumentBuilder {
         addExtractor(new ExtractorItem(localFeatureExtractorClass), listOfCodebooks);
     }
 
+    /**
+     * Can be used to add local extractors.
+     * @param extractorItem
+     * @param codebook
+     */
     public void addExtractor(ExtractorItem extractorItem, Cluster[] codebook) {
         if ((!(codebook.length>0))||(codebook == null)) throw new UnsupportedOperationException("Codebook cannot be empty or null!!");
         LinkedList<Cluster[]> listOfCodebooks = new LinkedList<Cluster[]>();
@@ -139,11 +149,21 @@ public class LocalDocumentBuilder extends AbstractLocalDocumentBuilder {
         addExtractor(extractorItem, listOfCodebooks);
     }
 
+    /**
+     * Can be used to add local extractors.
+     * @param localFeatureExtractorClass
+     * @param listOfCodebooks
+     */
     public void addExtractor(Class<? extends LocalFeatureExtractor> localFeatureExtractorClass, LinkedList<Cluster[]> listOfCodebooks) {
         if ((!(listOfCodebooks.size()>0))||(listOfCodebooks == null)) throw new UnsupportedOperationException("List of codebooks cannot be empty or null!!");
         addExtractor(new ExtractorItem(localFeatureExtractorClass), listOfCodebooks);
     }
 
+    /**
+     * Can be used to add local extractors.
+     * @param extractorItem
+     * @param listOfCodebooks
+     */
     public void addExtractor(ExtractorItem extractorItem, LinkedList<Cluster[]> listOfCodebooks) {
         if (docsCreated) throw new UnsupportedOperationException("Cannot modify builder after documents have been created!");
         if (!extractorItem.isLocal()) throw new UnsupportedOperationException("ExtractorItem must contain LocalFeatureExtractor");

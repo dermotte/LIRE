@@ -84,10 +84,18 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
     }
 
 
+    /**
+     * Can be used to add global extractors.
+     * @param globalFeatureClass
+     */
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass) {
         addExtractor(new ExtractorItem(globalFeatureClass));
     }
 
+    /**
+     * Can be used to add global extractors.
+     * @param extractorItem
+     */
     public void addExtractor(ExtractorItem extractorItem) {
         if (docsCreated) throw new UnsupportedOperationException("Cannot modify builder after documents have been created!");
         if (!extractorItem.isGlobal()) throw new UnsupportedOperationException("ExtractorItem must contain GlobalFeature");
@@ -107,6 +115,13 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         }
     }
 
+    /**
+     * Images are resized so as not to exceed the {@link DocumentBuilder#MAX_IMAGE_DIMENSION}, after that
+     * the feature is extracted using the given globalFeature.
+     * @param image is the image
+     * @param globalFeature selected global feature
+     * @return the input globalFeature
+     */
     public GlobalFeature extractGlobalFeature(BufferedImage image, GlobalFeature globalFeature) {
         assert (image != null);
         // Scaling image is especially with the correlogram features very important!
@@ -119,6 +134,12 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         return globalFeature;
     }
 
+    /**
+     * Extracts the global feature and returns the Lucene Fields for the selected image.
+     * @param image is the selected image.
+     * @param extractorItem is the extractor to be used to extract the features.
+     * @return Lucene Fields.
+     */
     private Field[] getGlobalDescriptorFields(BufferedImage image, ExtractorItem extractorItem) {
         Field[] result;
         if (hashingEnabled) result = new Field[2];
@@ -147,7 +168,10 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
     }
 
 
-
+    /**
+     * @param image the image to analyze.
+     * @return Lucene Fields.
+     */
     @Override
     public Field[] createDescriptorFields(BufferedImage image) {
         docsCreated = true;
@@ -164,6 +188,11 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         return resultList.toArray(new Field[resultList.size()]);
     }
 
+    /**
+     * @param image the image to index. Cannot be NULL.
+     * @param identifier an id for the image, for instance the filename or a URL. Can be NULL.
+     * @return a Lucene Document.
+     */
     @Override
     public Document createDocument(BufferedImage image, String identifier) {
         Document doc = new Document();

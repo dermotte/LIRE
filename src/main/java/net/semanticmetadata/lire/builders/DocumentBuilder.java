@@ -121,7 +121,7 @@ public interface DocumentBuilder {
     String FIELD_NAME_CVOPPSIFT = "CvOppSIFT";
     String FIELD_NAME_CVSURF = "CvSURF";
     //    public static final String FIELD_NAME_CVORB = "CvORB";
-//    public static final String FIELD_NAME_CVBRISK = "CvBRISK";
+    //    public static final String FIELD_NAME_CVBRISK = "CvBRISK";
     String FIELD_NAME_SELF_SIMILARITIES = "SelfSimilarities";
     String FIELD_NAME_SELF_SIMILARITIES_ORIG = "SelfSimilaritiesOrig";
 
@@ -141,8 +141,8 @@ public interface DocumentBuilder {
      * Creates a new Lucene document from a BufferedImage. The identifier can be used like an id
      * (e.g. the file hashFunctionsFileName or the url of the image)
      *
-     * @param image      the image to index. Cannot be NULL.
-     * @param identifier an id for the image, for instance the filename or an URL. Can be NULL.
+     * @param image the image to index. Cannot be NULL.
+     * @param identifier an id for the image, for instance the filename or a URL. Can be NULL.
      * @return a Lucene Document containing the indexed image.
      */
     Document createDocument(BufferedImage image, String identifier) throws FileNotFoundException;

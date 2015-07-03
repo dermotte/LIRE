@@ -53,6 +53,12 @@ public class BOVW extends AbstractAggregator {
 
     public BOVW() { }
 
+    /**
+     * Given a list of features and a codebook, {@link BOVW#createVectorRepresentation(List, Cluster[])} aggregates
+     * the features to create the vector representation according to the BOVW model.
+     * @param listOfLocalFeatures is the list of features.
+     * @param clustersArray is the codebook.
+     */
     @Override
     public void createVectorRepresentation(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray) {
         histogram = new double[clustersArray.length];
@@ -64,21 +70,41 @@ public class BOVW extends AbstractAggregator {
 //        quantize(histogram);
     }
 
+    /**
+     * Returns the vector representation in byte[] format.
+     * @return the vector representation as a byte array.
+     */
     @Override
     public byte[] getByteVectorRepresentation() {
         return SerializationUtils.toByteArray(histogram);
     }
 
+    /**
+     * Returns the vector representation in string format, according to the {@link BOVW#arrayToVisualWordString(double[])} method.
+     * @return the vector representation as string.
+     */
     @Override
     public String getStringVectorRepresentation() { return arrayToVisualWordString(histogram); }
 
+    /**
+     * Returns the vector representation in double[] format.
+     * @return the vector representation as a double array.
+     */
     @Override
     public double[] getVectorRepresentation() { return histogram; }
+
 
     @Override
     public String getFieldName() {
         return Aggregator.FIELD_NAME_BOVW;
     }
+
+
+    /**
+     * Returns the vector representation in string format.
+     * @return the vector representation as string.
+     */
+    public String toString() { return SerializationUtils.toString(histogram);}
 
     private void quantize(double[] data) {
         double max = 0;

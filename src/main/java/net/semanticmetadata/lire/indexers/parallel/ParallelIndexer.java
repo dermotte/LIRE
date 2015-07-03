@@ -579,6 +579,13 @@ public class ParallelIndexer implements Runnable {
         }
     }
 
+    /**
+     * WARNING!! This can be used in order to use a different DocumentBuilder than the {@link GlobalDocumentBuilder}, {@link LocalDocumentBuilder} or the {@link SimpleDocumentBuilder}.
+     * Every time only one custom DocumentBuilder can be used. At the same time, using the addExtractor methods one can add other builders to be used at the same time. BUT when using
+     * a custom DocumentBuilder, sampling can be used for Local Features. This means that, if you want to use a {@link LocalDocumentBuilder} or {@link SimpleDocumentBuilder}, you can use
+     * them, only combined with pre-computed codebooks!!
+     * @param customDocumentBuilder
+     */
     public void setCustomDocumentBuilder(Class<? extends DocumentBuilder> customDocumentBuilder){
         this.customDocumentBuilder = customDocumentBuilder;
         this.customDocBuilderFlag = true;

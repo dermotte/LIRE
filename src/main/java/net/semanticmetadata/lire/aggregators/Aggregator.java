@@ -52,16 +52,32 @@ public interface Aggregator {
 
     /**
      * This method is used to create the vector representation of an image using the list of Features and a codebook
-     * @param listOfLocalFeatures
-     * @param clustersArray
+     * @param listOfLocalFeatures is the list of features.
+     * @param clustersArray is the codebook.
      */
     void createVectorRepresentation(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray);
 
+    /**
+     * Returns the vector representation in byte[] format.
+     * @return the vector representation as a byte array.
+     */
     byte[] getByteVectorRepresentation();
 
+    /**
+     * Returns the vector representation in string format.
+     * @return the vector representation as string.
+     */
     String getStringVectorRepresentation();
 
+    /**
+     * Returns the vector representation in double[] format.
+     * @return the vector representation as a double array.
+     */
     double[] getVectorRepresentation();
 
+    /**
+     * Returns the FieldName according to the selected aggregator.
+     * @return FieldName.
+     */
     String getFieldName();
 }

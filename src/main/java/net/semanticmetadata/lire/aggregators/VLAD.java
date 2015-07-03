@@ -53,6 +53,12 @@ public class VLAD extends AbstractAggregator {
 
     public VLAD() { }
 
+    /**
+     * Given a list of features and a codebook, {@link VLAD#createVectorRepresentation(List, Cluster[])} aggregates
+     * the features to create the vector representation according to the VLAD model.
+     * @param listOfLocalFeatures is the list of features.
+     * @param clustersArray is the codebook.
+     */
     @Override
     public void createVectorRepresentation(List<? extends LocalFeature> listOfLocalFeatures, Cluster[] clustersArray) {
         vector = new double[clustersArray.length * (clustersArray[0].getMean()).length];
@@ -70,12 +76,24 @@ public class VLAD extends AbstractAggregator {
         normalize(vector);
     }
 
+    /**
+     * Returns the vector representation in byte[] format.
+     * @return the vector representation as a byte array.
+     */
     @Override
     public byte[] getByteVectorRepresentation() { return SerializationUtils.toByteArray(vector); }
 
+    /**
+     * Returns the vector representation in string format.
+     * @return the vector representation as string.
+     */
     @Override
     public String getStringVectorRepresentation() { return SerializationUtils.toString(vector); }
 
+    /**
+     * Returns the vector representation in double[] format.
+     * @return the vector representation as a double array.
+     */
     @Override
     public double[] getVectorRepresentation() { return vector; }
 
@@ -83,6 +101,13 @@ public class VLAD extends AbstractAggregator {
     public String getFieldName() {
         return Aggregator.FIELD_NAME_VLAD;
     }
+
+
+    /**
+     * Returns the vector representation in string format.
+     * @return the vector representation as string.
+     */
+    public String toString() { return getStringVectorRepresentation();}
 
     private void normalize(double[] histogram) {
         // L2
