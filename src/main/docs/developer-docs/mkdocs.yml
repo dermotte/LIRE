@@ -1,16 +1,19 @@
 site_name: LIRE Documentation
 site_url: http://www.semanticmetadata.net
-copyright: Copyright &copy; 2015, Mathias Lux.
+copyright: Copyright &copy; 2015, Mathias Lux and Nektarios Anagnostopoulos.
 google_analytics: ['UA-576792-1', 'auto']
 pages:
 - [index.md, Home]
 - [lirefaq.md, FAQ]
 - [createindex.md, Basics, Create Index]
 - [searchindex.md, Basics, Search]
-- [bovw.md, Advanced, Bag of Visual Words]
 - [simple.md, Advanced, SIMPLE Local Features]
 - [autocolorcorrelation.md, Advanced, AutoColorCorrelogram]
 - [applyfilters.md, Advanced, Applying Filters]
+- [builders.md, Advanced, Builders]
+- [aggregators.md, Advanced, Aggregators]
+- [features.md, Advanced, Features]
 - [lireinternals.md, Other, LIRE Internals]
 - [imageread.md, Other, Image Handling]
+
 

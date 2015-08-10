@@ -9,16 +9,15 @@ image retrieval (CBIR). There is no complete list of features, but these are som
   * Visual words based on [SIMPLE](simple.md)
   * Approximate fast search based on hashing and metric indexing.
 
-Furthermore, methods for searching the index based on [[http://lucene.apache.org|Lucene]] are provided.
+Furthermore, methods for searching the index based on [Lucene](http://lucene.apache.org) are provided.
 
 The LIRE library started out as part of the Caliph & Emir project and aimed to provide the CBIR features of Caliph & Emir 
 to other Java projects in an easy and light weight way. In the meantime it has turned out as big and interesting project itself.
 
-With Lire you can easily [create an index](createindex.md) and [search through the index](searchindex.md). LIRE 1.0 also supports local features based on [Bag of Visual Words](bovw.md).
+With Lire you can easily [create an index](createindex.md) and [search through the index](searchindex.md). LIRE 1.0 also supports local features based on bag of visual words and the SIMPLE approach, see [Builders](builders.md).
 
   * How to [create an index](createindex.md) with Lire?
   * How to [search through the index](searchindex.md) with Lire?
-  * How to use local features with [Bag of Visual Words](bovw.md) in Lire?
   * [Frequently Asked Questions](lirefaq.md)
   
 I recommend to start with taking a look at the [SimpleApplication](https://github.com/dermotte/LIRE/tree/master/samples/simpleapplication)

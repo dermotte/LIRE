@@ -30,7 +30,8 @@ Caliph and Emir are available at http://sourceforge.net/projects/caliph-emir/. F
 information on Caliph & Emir visit http://www.SemanticMetadata.net.
 
 ## How many images can Lire manage to index & retrieve?
-Normally I'd say up to 10^6 images are no problem for LIRE. However the size of the index is not the only criterion for 
+Up to a million images LIRE works fast and reliable, considering that you count in the size of the feature and the time
+for extraction. Rule of thumb is: the smaller the index the faster your search. However, the size of the index is not the only criterion for
 good performance: If there are many concurrent users, they will lock each other out from the index, and the average 
 performance will be rather bad. Also there are -- in addition to linear search -- implementations for hashing, bag of 
 visual words and metric spaces inverted indexing included in Lire. These are advanced methods requiring some more 
@@ -49,7 +50,6 @@ The classes from ``at.lux.imageanalysis`` are in the ``caliph-emir-cbir.jar`` th
 distribution. They are part of the Caliph & Emir project and separated from the rest as they are built on top of 
 other people's code. The source is available from Caliph & Emir. With newer Lire distributions these classes have been 
 moved to the Lire development trunk and the external libary is no longer needed.
-
 
 ## Which one is the right ImageSearcher? 
 This is a horribly complicated question. It heavily depends on (i) the domain of your images and (ii) the features 
