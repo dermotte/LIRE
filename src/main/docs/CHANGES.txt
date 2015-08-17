@@ -3,6 +3,12 @@ CHANGES for LIRE
 
 2015-06-16
 ==========
+  - Added a speed fix for Extraction of FCTH and CEDD based on a diff from from
+    Michael Riegler (https://www.simula.no/people/michael) &
+    Konstantin Pogorelov (https://www.simula.no/people/konstantinvpogorelov)
+
+2015-06-16
+==========
   - Added custom DocumentBuilder for handling metadata to ParallelIndexer.
   - Fixed LIRE demo.
   - Worked on the developer docs.

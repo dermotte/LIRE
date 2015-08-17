@@ -47,6 +47,7 @@ import net.semanticmetadata.lire.imageanalysis.features.global.fcth.*;
 import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
 /**
@@ -70,11 +71,8 @@ public class FCTH implements GlobalFeature {
     double distTmpCnt2 = 0;
     double distTmpCnt3 = 0;
 
-
     // Constructor
     public FCTH() {
-
-
     }
 
     // Apply filter
@@ -110,18 +108,25 @@ public class FCTH implements GlobalFeature {
         int[][] ImageGridGreen = new int[width][height];
         int[][] ImageGridBlue = new int[width][height];
 
+        int pixel, r,g,b;
+        // extraction is based on a speedup fix from Michael Riegler & Konstantin Pogorelov
+        BufferedImage image_rgb = new BufferedImage(width, height, BufferedImage.TYPE_INT_BGR);
+        image_rgb.getGraphics().drawImage(image, 0, 0, null);
+        int[] pixels = ((DataBufferInt) image_rgb.getRaster().getDataBuffer()).getData();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                int pixel = image.getRGB(x, y);
-                ImageGridRed[x][y] = (pixel >> 16) & 0xff;
-                ImageGridGreen[x][y] = (pixel >> 8) & 0xff;
-                ImageGridBlue[x][y] = (pixel) & 0xff;
+                pixel = pixels[y * width + x];
+                b = (pixel >> 16) & 0xFF;
+                g = (pixel >> 8) & 0xFF;
+                r = (pixel) & 0xFF;
+                ImageGridRed[x][y] = r;
+                ImageGridGreen[x][y] = g;
+                ImageGridBlue[x][y] = b;
 
-                int mean = (int) (0.114 * ImageGridBlue[x][y] + 0.587 * ImageGridGreen[x][y] + 0.299 * ImageGridRed[x][y]);
+                int mean = (int) (0.114 * b + 0.587 * g + 0.299 * r);
                 ImageGrid[x][y] = mean;
             }
         }
-
 
         int NumberOfBlocks = 1600;
         int Step_X = (int) Math.floor(width / Math.sqrt(NumberOfBlocks));
@@ -486,6 +491,17 @@ public class FCTH implements GlobalFeature {
 //            histogram[i] = Integer.parseInt(st.nextToken());
 //        }
 //    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(histogram.length * 2 + 25);
+        for (double aData : histogram) {
+            sb.append((int) aData);
+            sb.append(' ');
+        }
+        return "FCTH{" + sb.toString().trim() + "}";
+    }
 
     @Override
     public String getFeatureName() {
