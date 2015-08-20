@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2015-06-17
+==========
+  - Speeded up extraction of PHOG by ~ 40%.
+
 2015-06-16
 ==========
   - Added a speed fix for Extraction of FCTH and CEDD based on a diff from from
