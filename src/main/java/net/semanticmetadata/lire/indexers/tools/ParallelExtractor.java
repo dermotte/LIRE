@@ -51,6 +51,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The Extractor is a configurable class that extracts multiple features from multiple images
@@ -69,7 +71,7 @@ import java.util.*;
  * The file is sent through an GZIPOutputStream, so it's compressed in addition.
  * <p/>
  * Note that the outfile has to be in a folder parent to all images!
- *
+ * <p/>
  * // TODO: Change to LinkedBlockingQueue and Files.readAllBytes.
  *
  * @author Mathias Lux, mathias@juggle.at, 08.03.13
@@ -120,7 +122,7 @@ public class ParallelExtractor implements Runnable {
 
     private static boolean force = false;
     private static int numberOfThreads = DocumentBuilder.NUM_OF_THREADS;
-    Stack<WorkItem> images = new Stack<WorkItem>();
+    LinkedBlockingQueue<WorkItem> images = new LinkedBlockingQueue<WorkItem>(200);
     boolean ended = false;
     int overallCount = 0;
     OutputStream dos = null;
@@ -154,12 +156,18 @@ public class ParallelExtractor implements Runnable {
                 // infile ...
                 if ((i + 1) < args.length)
                     e.setFileList(new File(args[i + 1]));
-                else printHelp();
+                else {
+                    System.err.println("Please give a input file after the -i option.");
+                    printHelp();
+                }
             } else if (arg.startsWith("-o")) {
                 // out file
                 if ((i + 1) < args.length)
                     e.setOutFile(new File(args[i + 1]));
-                else printHelp();
+                else {
+                    System.err.println("Please name an outfile after the -o option.");
+                    printHelp();
+                }
             } else if (arg.startsWith("-m")) {
                 // out file
                 if ((i + 1) < args.length) {
@@ -206,6 +214,7 @@ public class ParallelExtractor implements Runnable {
         }
         // check if there is an infile, an outfile and some features to extract.
         if (!e.isConfigured()) {
+            System.err.println("There is an error in the configuration.");
             printHelp();
         } else {
             e.run();
@@ -271,7 +280,10 @@ public class ParallelExtractor implements Runnable {
 
     private boolean isConfigured() {
         boolean configured = true;
-        if (fileList == null || !fileList.exists()) configured = false;
+        if (fileList == null || !fileList.exists()) {
+            System.err.println("Input file is either not given or does not exist.");
+            configured = false;
+        }
         else if (outFile == null) {
             // create an outfile ...
             try {
@@ -376,25 +388,20 @@ public class ParallelExtractor implements Runnable {
                         FileInputStream fis = new FileInputStream(next);
                         fis.read(buffer);
                         String path = next.getCanonicalPath();
-                        synchronized (images) {
-                            images.add(new WorkItem(path, buffer));
-                            tmpSize = images.size();
-                            // if the cache is too crowded, then wait.
-                            if (tmpSize > 500) images.wait(500);
-                            // if the cache is too small, dont' notify.
-                            images.notify();
-                        }
+                        images.put(new WorkItem(path, buffer));
                     } catch (Exception e) {
                         System.err.println("Could not read image " + file + ": " + e.getMessage());
                     }
+                }
+                for (int i = 0; i < numberOfThreads * 2; i++) {
+                    String tmpString = null;
+                    byte[] tmpBuffer = null;
                     try {
-                        if (tmpSize > 500) Thread.sleep(1000);
-//                        else Thread.sleep(2);
+                        images.put(new WorkItem(tmpString, tmpBuffer));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -420,31 +427,23 @@ public class ParallelExtractor implements Runnable {
             int bufferCount = 0;
 
             while (!locallyEnded) {
-                synchronized (images) {
+                try {
                     // we wait for the stack to be either filled or empty & not being filled any more.
-                    while (images.empty() && !ended) {
-                        try {
-                            images.wait(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                    if (!locallyEnded) {
+                        tmp = images.take();
+                        if (tmp.getBuffer() == null)
+                            locallyEnded = true;
+                        else {
+                            count++;
+                            overallCount++;
                         }
                     }
-                    // make sure the thread locally knows that the end has come (outer loop)
-                    if (images.empty() && ended)
-                        locallyEnded = true;
-                    // well the last thing we want is an exception in the very last round.
-                    if (!images.empty() && !locallyEnded) {
-                        tmp = images.pop();
-                        count++;
-                        overallCount++;
-                    }
-                }
-                try {
                     bufferCount = 0;
                     if (!locallyEnded) {
                         ByteArrayInputStream b = new ByteArrayInputStream(tmp.getBuffer());
                         BufferedImage img = ImageIO.read(b);
-                        if (maxSideLength > 50) img = ImageUtils.scaleImage(img, maxSideLength);
+                        if (maxSideLength > 50)
+                            img = ImageUtils.scaleImage(img, maxSideLength);
                         byte[] tmpBytes = tmp.getFileName().getBytes();
                         // everything is written to a buffer and only if no exception is thrown, the image goes to index.
                         System.arraycopy(SerializationUtils.toBytes(tmpBytes.length), 0, myBuffer, 0, 4);
@@ -455,7 +454,7 @@ public class ParallelExtractor implements Runnable {
                         // dos.write(tmpBytes);
                         for (GlobalFeature feature : features) {
                             feature.extract(img);
-                            myBuffer[bufferCount] = (byte) feature2index.get(feature.getClass().getName()).intValue();
+                            myBuffer[bufferCount] = (byte) feature2index.get(feature.getClass().getSimpleName()).intValue();
                             bufferCount++;
                             // dos.write(feature2index.get(feature.getClass().getName()));
                             tmpBytes = feature.getByteArrayRepresentation();
@@ -472,6 +471,7 @@ public class ParallelExtractor implements Runnable {
                             dos.write(-1); // that's the separator
                             dos.flush();
                         }
+
                     }
                 } catch (Exception e) {
                     System.err.println("Error processing file " + tmp.getFileName());

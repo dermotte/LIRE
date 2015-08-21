@@ -1,17 +1,21 @@
 CHANGES for LIRE
 ================
 
-2015-06-17
+2015-08-20
+==========
+  - Converted ParallelExtractor to using LinkedBlockingQueue
+
+2015-08-20
 ==========
   - Speeded up extraction of PHOG by ~ 40%.
 
-2015-06-16
+2015-08-17
 ==========
   - Added a speed fix for Extraction of FCTH and CEDD based on a diff from from
     Michael Riegler (https://www.simula.no/people/michael) &
     Konstantin Pogorelov (https://www.simula.no/people/konstantinvpogorelov)
 
-2015-06-16
+2015-06-17
 ==========
   - Added custom DocumentBuilder for handling metadata to ParallelIndexer.
   - Fixed LIRE demo.
