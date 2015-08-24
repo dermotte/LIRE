@@ -449,6 +449,19 @@ public class SerializationUtils {
     }
 
     /**
+     * Create a hex string from an array of bytes.
+     * @param data
+     * @return
+     */
+    public static String toHex(byte[] data) {
+        StringBuilder sb = new StringBuilder(data.length << 2);
+        for (int i = 0; i < data.length; i++) {
+           sb.append(String.format("%02X ", data[i]));
+        }
+        return sb.toString().trim();
+    }
+
+    /**
      * Reads a double array per line from a text file for the use of code books for local features.
      * @param in the inputstream the code book is read from.
      * @return
