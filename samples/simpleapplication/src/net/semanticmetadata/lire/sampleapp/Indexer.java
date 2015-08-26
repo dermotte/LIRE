@@ -46,7 +46,6 @@ import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelog
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
 import net.semanticmetadata.lire.utils.FileUtils;
-import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;

@@ -2,13 +2,10 @@ package net.semanticmetadata.lire.imageanalysis.features.global.centrist;
 
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
-import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram;
-import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 
 /**
  * <p>CENTRIST (CENsus TRansform hISTogram) descriptor based on the implementation described in Jianxin Wu; Rehg, J.M., "CENTRIST: A Visual Descriptor

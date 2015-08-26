@@ -42,26 +42,20 @@
 package net.semanticmetadata.lire;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.GenericDoubleLireFeature;
 import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
-import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureBOVWBuilder;
 import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.CvSurfDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.impl.SimpleBuilder;
 import net.semanticmetadata.lire.impl.custom.SingleNddCeddImageSearcher;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;
-import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 

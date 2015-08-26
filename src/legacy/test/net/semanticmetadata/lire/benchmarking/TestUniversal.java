@@ -43,13 +43,9 @@ package net.semanticmetadata.lire.benchmarking;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.*;
-import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSiftFeature;
-import net.semanticmetadata.lire.imageanalysis.opencvfeatures.CvSurfFeature;
 import net.semanticmetadata.lire.imageanalysis.spatialpyramid.*;
 import net.semanticmetadata.lire.impl.*;
 import net.semanticmetadata.lire.indexing.parallel.ParallelIndexer;

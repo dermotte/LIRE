@@ -40,9 +40,9 @@
  */
 package net.semanticmetadata.lire.searchers.custom;
 
-import net.semanticmetadata.lire.searchers.*;
-import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.searchers.*;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;

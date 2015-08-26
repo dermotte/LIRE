@@ -80,11 +80,11 @@ package net.semanticmetadata.lire.classifiers;/*
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
-import net.semanticmetadata.lire.searchers.ImageSearchHits;
-import net.semanticmetadata.lire.searchers.ImageSearcher;
-import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.deprecatedclasses.impl.GenericFastImageSearcher;
 import net.semanticmetadata.lire.indexers.tools.Extractor;
+import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.searchers.ImageSearcher;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -97,7 +97,10 @@ import weka.core.Instances;
 
 import javax.imageio.ImageIO;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created with IntelliJ IDEA.

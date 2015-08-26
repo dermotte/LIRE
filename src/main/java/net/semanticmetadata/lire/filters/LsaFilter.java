@@ -40,9 +40,9 @@
 package net.semanticmetadata.lire.filters;
 
 
+import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.SearchHitsFilter;
-import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.searchers.SimpleImageSearchHits;
 import net.semanticmetadata.lire.searchers.SimpleResult;
 import net.semanticmetadata.lire.utils.MetricsUtils;

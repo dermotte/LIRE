@@ -52,7 +52,9 @@ import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvS
 import net.semanticmetadata.lire.utils.ImageUtils;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Implementation based on the paper "Searching Images with MPEG-7 (& MPEG-7-like) Powered Localized

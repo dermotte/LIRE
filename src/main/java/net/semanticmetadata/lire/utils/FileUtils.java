@@ -42,8 +42,8 @@
 package net.semanticmetadata.lire.utils;
 
 import net.semanticmetadata.lire.builders.DocumentBuilder;
-import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.TopDocs;
 
@@ -51,10 +51,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.io.File;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 

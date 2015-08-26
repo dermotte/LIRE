@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2015-08-26
+==========
+  - Indexing based on Metric Spaces mostly finished, with some tests still to be done.
+    see MetricSpacesTest for samples.
+  - Change in file handling in ParallelIndexer, now using MappedByteBuffer / NIO.
+  - Added support for hash method selection to GlobalDocumentBuilder and ParallelIndexer
+
 2015-08-20
 ==========
   - Converted ParallelExtractor to using LinkedBlockingQueue

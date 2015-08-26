@@ -40,7 +40,9 @@ package net.semanticmetadata.lire.classifiers;
 
 import net.semanticmetadata.lire.utils.StatsUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Mathias on 23/09/2008.

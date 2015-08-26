@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.imageanalysis.features.global.centrist.SimpleCentrist;
 import net.semanticmetadata.lire.imageanalysis.features.global.centrist.SpatialPyramidCentrist;
 import net.semanticmetadata.lire.utils.FileUtils;
-import net.semanticmetadata.lire.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.io.File;

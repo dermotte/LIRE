@@ -2,7 +2,6 @@ package net.semanticmetadata.lire.indexing;
 
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
-import net.semanticmetadata.lire.DocumentBuilderFactory;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.GenericByteLireFeature;
 import net.semanticmetadata.lire.imageanalysis.bovw.VLADBuilder;

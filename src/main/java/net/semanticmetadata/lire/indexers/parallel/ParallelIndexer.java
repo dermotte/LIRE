@@ -34,19 +34,20 @@
 
 package net.semanticmetadata.lire.indexers.parallel;
 
-import net.semanticmetadata.lire.aggregators.*;
+import net.semanticmetadata.lire.aggregators.AbstractAggregator;
+import net.semanticmetadata.lire.aggregators.BOVW;
 import net.semanticmetadata.lire.builders.*;
-import net.semanticmetadata.lire.classifiers.*;
 import net.semanticmetadata.lire.classifiers.Cluster;
-//import net.semanticmetadata.lire.imageanalysis.features.global.ACCID;
-import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
-import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
-import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
+import net.semanticmetadata.lire.classifiers.KMeans;
+import net.semanticmetadata.lire.classifiers.ParallelKMeans;
 import net.semanticmetadata.lire.imageanalysis.features.Extractor;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
+import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
+import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
+import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
@@ -58,6 +59,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
@@ -66,6 +69,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
+
+//import net.semanticmetadata.lire.imageanalysis.features.global.ACCID;
 
 /**
  * This class allows for creating indexes in a parallel manner. The class
@@ -94,6 +99,7 @@ public class ParallelIndexer implements Runnable {
     private boolean sampling = false;
     private boolean appending = false;
     private boolean globalHashing = false;
+    private GlobalDocumentBuilder.HashingMode globalHashingMode = GlobalDocumentBuilder.HashingMode.BitSampling;
 
     private IndexWriter writer;
     private String imageDirectory, indexPath;
@@ -117,7 +123,8 @@ public class ParallelIndexer implements Runnable {
 
     private HashMap<String, Document> allDocuments;
 
-    private LinkedBlockingQueue<WorkItem> queue = new LinkedBlockingQueue<WorkItem>(100);
+    // Note that you can edit the queue size here. 100 is a good value, but I'd raise it to 200.
+    private LinkedBlockingQueue<WorkItem> queue = new LinkedBlockingQueue<>(200);
 
 
     public static void main(String[] args) {
@@ -315,6 +322,14 @@ public class ParallelIndexer implements Runnable {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
+    }
+
+    public ParallelIndexer(int numOfThreads, String indexPath, File imageList, GlobalDocumentBuilder.HashingMode hashingMode) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageList = imageList;
+        this.globalHashing = true;
+        this.globalHashingMode = hashingMode;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int numOfClusters, int numOfDocsForCodebooks) {
@@ -700,16 +715,16 @@ public class ParallelIndexer implements Runnable {
         long start = System.currentTimeMillis();
         try{
             Thread p, c, m;
-            p = new Thread(new Producer(allImages));
+            p = new Thread(new Producer(allImages), "Producer");
             p.start();
             LinkedList<Thread> threads = new LinkedList<Thread>();
             for (int i = 0; i < numOfThreads; i++) {
-                c = new Thread(new Consumer());
+                c = new Thread(new Consumer(), String.format("Consumer-%02d", i+1));
                 c.start();
                 threads.add(c);
             }
             Monitoring monitoring = new Monitoring();
-            m = new Thread(monitoring);
+            m = new Thread(monitoring, "IndexingMonitor");
             m.start();
             for (Thread thread : threads) {
                 thread.join();
@@ -868,19 +883,36 @@ public class ParallelIndexer implements Runnable {
 
         public void run() {
             File next;
-            byte[] buffer;
             for (String path : localList) {
                 next = new File(path);
                 try {
-                    buffer = Files.readAllBytes(Paths.get(path)); // JDK 7 only!
-                    path = next.getCanonicalPath();
+                    // option 1 --------------------
+//                    byte[] buffer = Files.readAllBytes(Paths.get(path)); // JDK 7 only!
+                    // option 2 --------------------
+//                    path = next.getCanonicalPath();
+//                    int fileSize = (int) next.length();
+//                    byte[] buffer = new byte[fileSize];
+//                    FileInputStream fis = new FileInputStream(next);
+//                    int tmp = fis.read(buffer);
+//                    assert(tmp == fileSize);
+//                    fis.close();
+                    // option 3 --------------------
+                    int fileSize = (int) next.length();
+                    byte[] buffer = new byte[fileSize];
+                    FileInputStream fis = new FileInputStream(next);
+                    FileChannel channel = fis.getChannel();
+                    MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_ONLY, 0, fileSize);
+                    map.load();
+                    map.get(buffer);
                     queue.put(new WorkItem(path, buffer));
+                    channel.close();
+                    fis.close();
                 } catch (Exception e) {
                     System.err.println("Could not open " + path + ". " + e.getMessage());
                 }
             }
             String path = null;
-            buffer = null;
+            byte[] buffer = null;
             for (int i = 0; i < numOfThreads * 3; i++)  {
                 try {
                     queue.put(new WorkItem(path, buffer));
@@ -996,7 +1028,7 @@ public class ParallelIndexer implements Runnable {
         private boolean locallyEnded;
 
         public ConsumerForGlobalSample() {
-            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing);
+            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing, globalHashingMode);
             for (ExtractorItem globalExtractor : GlobalExtractors) {
                 this.globalDocumentBuilder.addExtractor(globalExtractor.clone());
             }
@@ -1035,7 +1067,7 @@ public class ParallelIndexer implements Runnable {
         public Consumer()  {
             this.localDocumentBuilder = new LocalDocumentBuilder(aggregator);
             this.simpleDocumentBuilder = new SimpleDocumentBuilder(aggregator);
-            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing);
+            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing, globalHashingMode);
 
             for (Map.Entry<ExtractorItem, LinkedList<Cluster[]>> listEntry : LocalExtractorsAndCodebooks.entrySet()) {
                 this.localDocumentBuilder.addExtractor(listEntry.getKey().clone(), listEntry.getValue());

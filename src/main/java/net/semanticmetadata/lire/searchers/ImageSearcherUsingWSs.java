@@ -1,7 +1,6 @@
 package net.semanticmetadata.lire.searchers;
 
 import net.semanticmetadata.lire.aggregators.Aggregator;
-import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
@@ -12,7 +11,10 @@ import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.util.Bits;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * Created by Nektarios on 9/10/2014.

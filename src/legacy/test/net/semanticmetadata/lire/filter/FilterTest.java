@@ -40,7 +40,6 @@
 package net.semanticmetadata.lire.filter;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.ColorLayout;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;

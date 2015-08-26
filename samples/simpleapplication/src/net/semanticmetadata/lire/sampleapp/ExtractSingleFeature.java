@@ -41,8 +41,8 @@
 
 package net.semanticmetadata.lire.sampleapp;
 
-import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -40,7 +40,6 @@
 package net.semanticmetadata.lire.indexing;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.CEDD;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;

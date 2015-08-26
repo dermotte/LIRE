@@ -43,7 +43,6 @@ package net.semanticmetadata.lire.benchmarking;
 //import Jama.SingularValueDecomposition;
 
 import junit.framework.TestCase;
-import net.semanticmetadata.lire.*;
 import net.semanticmetadata.lire.imageanalysis.LireFeature;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.SimpleImageSearchHits;

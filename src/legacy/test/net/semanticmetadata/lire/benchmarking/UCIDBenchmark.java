@@ -45,7 +45,6 @@ import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.ImageSearchHits;
 import net.semanticmetadata.lire.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.bovw.BOVWBuilder;
 import net.semanticmetadata.lire.imageanalysis.bovw.SimpleFeatureBOVWBuilder;
 import net.semanticmetadata.lire.imageanalysis.sift.Feature;

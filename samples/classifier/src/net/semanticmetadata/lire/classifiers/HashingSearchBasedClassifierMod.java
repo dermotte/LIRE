@@ -42,13 +42,13 @@
 package net.semanticmetadata.lire.classifiers;
 
 import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.deprecatedclasses.impl.GenericFastImageSearcher;
+import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
+import net.semanticmetadata.lire.indexers.tools.Extractor;
+import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.ImageSearcher;
-import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
-import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
-import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
-import net.semanticmetadata.lire.deprecatedclasses.impl.GenericFastImageSearcher;
-import net.semanticmetadata.lire.indexers.tools.Extractor;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;

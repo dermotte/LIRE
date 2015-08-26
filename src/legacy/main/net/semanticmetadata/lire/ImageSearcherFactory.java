@@ -41,7 +41,6 @@
 
 package net.semanticmetadata.lire;
 
-import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.imageanalysis.joint.JointHistogram;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.GenericFastImageSearcher;

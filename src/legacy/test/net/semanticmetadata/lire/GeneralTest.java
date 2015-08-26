@@ -44,7 +44,6 @@ package net.semanticmetadata.lire;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.filter.LsaFilter;
 import net.semanticmetadata.lire.filter.RerankFilter;
-import net.semanticmetadata.lire.imageanalysis.*;
 import net.semanticmetadata.lire.impl.BitSamplingImageSearcher;
 import net.semanticmetadata.lire.impl.ChainedDocumentBuilder;
 import net.semanticmetadata.lire.impl.GenericDocumentBuilder;

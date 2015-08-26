@@ -39,8 +39,8 @@
 package net.semanticmetadata.lire.searchers.custom;
 
 import net.semanticmetadata.lire.builders.DocumentBuilder;
-import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.SimpleImageSearchHits;
 import net.semanticmetadata.lire.searchers.SimpleResult;
 import net.semanticmetadata.lire.utils.ImageUtils;

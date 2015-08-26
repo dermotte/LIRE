@@ -39,7 +39,6 @@
 
 package net.semanticmetadata.lire.searchers;
 
-import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.FieldInvertState;

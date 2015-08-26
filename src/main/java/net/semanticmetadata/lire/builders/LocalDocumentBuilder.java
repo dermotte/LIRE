@@ -17,7 +17,7 @@
  * We kindly ask you to refer the any or one of the following publications in
  * any publication mentioning or employing Lire:
  *
- * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval ï¿½
  * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
  * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
  * URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -34,12 +34,13 @@
 
 package net.semanticmetadata.lire.builders;
 
+import net.semanticmetadata.lire.aggregators.AbstractAggregator;
 import net.semanticmetadata.lire.classifiers.Cluster;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
-import net.semanticmetadata.lire.aggregators.*;
 import net.semanticmetadata.lire.indexers.parallel.ExtractorItem;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * This class creates Lucene Documents from images using one or multiple Local Features.

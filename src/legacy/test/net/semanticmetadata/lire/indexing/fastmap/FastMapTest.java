@@ -41,7 +41,6 @@ package net.semanticmetadata.lire.indexing.fastmap;
 import junit.framework.TestCase;
 import net.semanticmetadata.lire.DocumentBuilder;
 import net.semanticmetadata.lire.DocumentBuilderFactory;
-import net.semanticmetadata.lire.imageanalysis.*;
 import org.apache.lucene.document.Document;
 
 import java.io.FileInputStream;

@@ -17,7 +17,7 @@
  * We kindly ask you to refer the any or one of the following publications in
  * any publication mentioning or employing Lire:
  *
- * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval –
+ * Lux Mathias, Savvas A. Chatzichristofis. Lire: Lucene Image Retrieval ï¿½
  * An Extensible Java CBIR Library. In proceedings of the 16th ACM International
  * Conference on Multimedia, pp. 1085-1088, Vancouver, Canada, 2008
  * URL: http://doi.acm.org/10.1145/1459359.1459577
@@ -37,6 +37,7 @@ package net.semanticmetadata.lire.builders;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.indexers.hashing.BitSampling;
 import net.semanticmetadata.lire.indexers.hashing.LocalitySensitiveHashing;
+import net.semanticmetadata.lire.indexers.hashing.MetricSpaces;
 import net.semanticmetadata.lire.indexers.parallel.ExtractorItem;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
@@ -44,7 +45,10 @@ import org.apache.lucene.document.*;
 import org.apache.lucene.util.BytesRef;
 
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * This class creates Lucene Documents from images using one or multiple Global Features.
@@ -52,10 +56,11 @@ import java.util.*;
  * Created by Nektarios on 03/06/2015.
  *
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
- * (c) 2015 by Nektarios Anagnostopoulos
+ *         (c) 2015 by Nektarios Anagnostopoulos
  */
 public class GlobalDocumentBuilder implements DocumentBuilder {
-    public enum HashingMode {BitSampling, LSH}
+    public enum HashingMode {BitSampling, LSH, MetricSpaces}
+
     private HashingMode hashingMode = HashingMode.BitSampling;
     private boolean hashingEnabled = false;
 
@@ -70,9 +75,23 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         if (hashingEnabled) testHashes();
     }
 
+    /**
+     * Creates a GlobalDocumentBuilder with the specific hashing mode. Please note that you have to take care of the
+     * initilization of the hashing subsystem yourself.
+     *
+     * @param hashing     true if you want hashing to be applied.
+     * @param hashingMode the actual mode, eg. BitSampling or MetricSpaces.
+     */
+    public GlobalDocumentBuilder(boolean hashing, HashingMode hashingMode) {
+        this.hashingEnabled = hashing;
+        this.hashingMode = hashingMode;
+        if (hashingEnabled) testHashes();
+    }
+
     public GlobalDocumentBuilder(Class<? extends GlobalFeature> globalFeatureClass) {
         addExtractor(globalFeatureClass);
     }
+
     public GlobalDocumentBuilder(Class<? extends GlobalFeature> globalFeatureClass, boolean hashing) {
         addExtractor(globalFeatureClass);
         this.hashingEnabled = hashing;
@@ -86,6 +105,7 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
 
     /**
      * Can be used to add global extractors.
+     *
      * @param globalFeatureClass
      */
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass) {
@@ -94,17 +114,20 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
 
     /**
      * Can be used to add global extractors.
+     *
      * @param extractorItem
      */
     public void addExtractor(ExtractorItem extractorItem) {
-        if (docsCreated) throw new UnsupportedOperationException("Cannot modify builder after documents have been created!");
-        if (!extractorItem.isGlobal()) throw new UnsupportedOperationException("ExtractorItem must contain GlobalFeature");
+        if (docsCreated)
+            throw new UnsupportedOperationException("Cannot modify builder after documents have been created!");
+        if (!extractorItem.isGlobal())
+            throw new UnsupportedOperationException("ExtractorItem must contain GlobalFeature");
 
         String fieldName = extractorItem.getFieldName();
         extractorItems.put(extractorItem, new String[]{fieldName, fieldName + DocumentBuilder.HASH_FIELD_SUFFIX});
     }
 
-    private static void testHashes(){
+    private static void testHashes() {
 //        Let's try to read the hash functions right here and we don't have to care about it right now.
         try {
             BitSampling.readHashFunctions();
@@ -118,7 +141,8 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
     /**
      * Images are resized so as not to exceed the {@link DocumentBuilder#MAX_IMAGE_DIMENSION}, after that
      * the feature is extracted using the given globalFeature.
-     * @param image is the image
+     *
+     * @param image         is the image
      * @param globalFeature selected global feature
      * @return the input globalFeature
      */
@@ -136,19 +160,22 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
 
     /**
      * Extracts the global feature and returns the Lucene Fields for the selected image.
-     * @param image is the selected image.
+     *
+     * @param image         is the selected image.
      * @param extractorItem is the extractor to be used to extract the features.
      * @return Lucene Fields.
      */
     private Field[] getGlobalDescriptorFields(BufferedImage image, ExtractorItem extractorItem) {
         Field[] result;
-        if (hashingEnabled) result = new Field[2];
-        else result = new Field[1];
+//        if (hashingEnabled) result = new Field[2];
+//        else result = new Field[1];
+        Field hash = null;
+        Field vector = null;
 
         GlobalFeature globalFeature = extractGlobalFeature(image, (GlobalFeature) extractorItem.getExtractorInstance());
 
         // TODO: Stored field is compressed and upon search decompression takes a lot of time (> 50% with a small index with 50k images). Find something else ...
-        result[0] = new StoredField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
+        vector = new StoredField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
 
         // if BitSampling is an issue we add a field with the given hashFunctionsFileName and the suffix "hash":
         if (hashingEnabled) {
@@ -157,13 +184,19 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
                 int[] hashes;
                 if (hashingMode == HashingMode.BitSampling) {
                     hashes = BitSampling.generateHashes(globalFeature.getFeatureVector());
-                } else {
+                    hash = new TextField(extractorItems.get(extractorItem)[1], SerializationUtils.arrayToString(hashes), Field.Store.YES);
+                } else if (hashingMode == HashingMode.LSH) {
                     hashes = LocalitySensitiveHashing.generateHashes(globalFeature.getFeatureVector());
+                    hash = new TextField(extractorItems.get(extractorItem)[1], SerializationUtils.arrayToString(hashes), Field.Store.YES);
+                } else if (hashingMode == HashingMode.MetricSpaces) {
+                    if (MetricSpaces.supportsFeature(globalFeature))
+                        hash = new TextField(extractorItems.get(extractorItem)[1], MetricSpaces.generateHashString(globalFeature), Field.Store.YES);
                 }
-                result[1] = new TextField(extractorItems.get(extractorItem)[1], SerializationUtils.arrayToString(hashes), Field.Store.YES);
             } else
                 System.err.println("Could not create hashes, feature vector too long: " + globalFeature.getFeatureVector().length + " (" + globalFeature.getClass().getName() + ")");
         }
+        if (hash != null) result = new Field[]{vector, hash};
+        else result = new Field[]{vector};
         return result;
     }
 
@@ -189,7 +222,7 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
     }
 
     /**
-     * @param image the image to index. Cannot be NULL.
+     * @param image      the image to index. Cannot be NULL.
      * @param identifier an id for the image, for instance the filename or a URL. Can be NULL.
      * @return a Lucene Document.
      */

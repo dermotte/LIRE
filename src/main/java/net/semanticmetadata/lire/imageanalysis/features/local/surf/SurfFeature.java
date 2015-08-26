@@ -42,7 +42,6 @@
 package net.semanticmetadata.lire.imageanalysis.features.local.surf;
 
 import com.stromberglabs.jopensurf.SURFInterestPoint;
-import com.stromberglabs.jopensurf.Surf;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.LireFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
