@@ -177,6 +177,9 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         // TODO: Stored field is compressed and upon search decompression takes a lot of time (> 50% with a small index with 50k images). Find something else ...
         vector = new StoredField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
 
+        // Alternative: The DocValues field. It's extremely fast to read, but it's all in RAM most likely.
+//        vector = new BinaryDocValuesField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
+
         // if BitSampling is an issue we add a field with the given hashFunctionsFileName and the suffix "hash":
         if (hashingEnabled) {
             // TODO: check eventually if there is a more compressed string version of the integers. i.e. the hex string

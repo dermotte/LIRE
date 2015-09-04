@@ -455,6 +455,25 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         return 0d;
     }
 
+    /*
+    // This is an approach based on DocValues. It's extremely fast, even without caching, but I don't know if it's in
+    // RAM or not, ie. if I can fill up RAM with all documents at once.
+    public ImageSearchHits search(int doc, IndexReader reader) throws IOException {
+        SimpleImageSearchHits searchHits = null;
+        LireFeature lireFeature = extractorItem.getFeatureInstance();
+        BinaryDocValues binaryValues = MultiDocValues.getBinaryValues(reader, lireFeature.getFieldName());
+        lireFeature.setByteArrayRepresentation(binaryValues.get(doc).bytes, binaryValues.get(doc).offset, binaryValues.get(doc).length);
+        double maxDistance = findSimilar(reader, lireFeature);
+
+        if (!useSimilarityScore) {
+            searchHits = new SimpleImageSearchHits(this.docs, maxDistance);
+        } else {
+            searchHits = new SimpleImageSearchHits(this.docs, maxDistance, useSimilarityScore);
+        }
+        return searchHits;
+    }
+    */
+
     public ImageSearchHits search(Document doc, IndexReader reader) throws IOException {
         SimpleImageSearchHits searchHits = null;
 //        try {

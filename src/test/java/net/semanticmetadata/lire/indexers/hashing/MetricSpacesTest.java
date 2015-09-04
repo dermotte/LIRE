@@ -27,7 +27,8 @@ import java.util.Timer;
  * @author Mathias Lux, mathias@juggle.at, 26.08.2015.
  */
 public class MetricSpacesTest extends TestCase {
-    String infile = "D:\\DataSets\\MirFlickr\\images01.lst";
+    String infile = "testdata/images.lst";
+//    String infile = "D:\\DataSets\\MirFlickr\\images01.lst";
 
     public void testHashIndexing() throws IllegalAccessException, IOException, InstantiationException {
         MetricSpaces.index(CEDD.class, 1000, 50, new File(infile), new File("dir.cedd.dat"));
@@ -61,7 +62,7 @@ public class MetricSpacesTest extends TestCase {
 //        MetricSpaces.loadReferencePoints(new File("dir.fcth.dat"));
 //        MetricSpaces.loadReferencePoints(new File("dir.phog.dat"));
 
-        ParallelIndexer p = new ParallelIndexer(6, "ms-index-300k", new File(infile), GlobalDocumentBuilder.HashingMode.MetricSpaces);
+        ParallelIndexer p = new ParallelIndexer(6, "ms-index-docval", new File(infile), GlobalDocumentBuilder.HashingMode.MetricSpaces);
         p.addExtractor(CEDD.class);
 //        p.addExtractor(FCTH.class);
 //        p.addExtractor(PHOG.class);
@@ -71,12 +72,13 @@ public class MetricSpacesTest extends TestCase {
     public void testSearch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index")));
         MetricSpacesImageSearcher is = new MetricSpacesImageSearcher(10, new File("dir.cedd.dat"), 100);
+//        GenericFastImageSearcher is = new GenericFastImageSearcher(10, CEDD.class, false, reader);
         for (int i = 0; i < 10; i++) {
             ImageSearchHits hits = is.search(reader.document(i), reader);
             for (int j =0; j< hits.length(); j++) {
                 System.out.printf("%02d: %06d %02.3f\n", j + 1, hits.documentID(j), hits.score(j));
             }
-            System.out.println("------<*>-------");
+            System.out.println("------< * >-------");
         }
     }
 
@@ -85,7 +87,7 @@ public class MetricSpacesTest extends TestCase {
         int maxResults = 20;
         int intersectSum = 0;
         MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cedd.dat"), 500);
-        mis.setNumHashesUsedForQuery(10);
+        mis.setNumHashesUsedForQuery(20);
         GenericFastImageSearcher fis = new GenericFastImageSearcher(maxResults, CEDD.class, true, reader);
         StopWatch sm = new StopWatch();
         StopWatch sf = new StopWatch();
