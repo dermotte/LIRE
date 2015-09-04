@@ -29,6 +29,9 @@ bin-test/*
 docs/*
 .flexLibProperties
 
+# Jetbrains dir
+.idea
+
 # Maven noise
 target/*
 
