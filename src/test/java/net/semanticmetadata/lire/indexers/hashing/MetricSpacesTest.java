@@ -8,6 +8,7 @@ import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
 import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
 import net.semanticmetadata.lire.searchers.MetricSpacesImageSearcher;
+import net.semanticmetadata.lire.utils.StopWatch;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -80,25 +81,23 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testSearchAccuracy() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index")));
-        int maxResults = 10;
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-300k")));
+        int maxResults = 20;
         int intersectSum = 0;
-        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cedd.dat"), 1000);
+        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cedd.dat"), 500);
         mis.setNumHashesUsedForQuery(10);
         GenericFastImageSearcher fis = new GenericFastImageSearcher(maxResults, CEDD.class, true, reader);
-//        StopWatch sm = new StopWatch();
-//        StopWatch sf = new StopWatch();
-        int numRuns = 10;
+        StopWatch sm = new StopWatch();
+        StopWatch sf = new StopWatch();
+        int numRuns = 20;
         for (int i = 0; i < numRuns; i++) {
             Document document = reader.document(i);
-//            if (!sm.isStarted()) sm.start();
-//            else sm.resume();
+            sm.start();
             ImageSearchHits hitsM = mis.search(document, reader);
-//            sm.suspend();
-//            if (!sf.isStarted()) sf.start();
-//            else sf.resume();
+            sm.stop();
+            sf.start();
             ImageSearchHits hitsF = fis.search(document, reader);
-//            sf.suspend();
+            sf.stop();
             HashSet<Integer> setM = new HashSet<>(maxResults);
             HashSet<Integer> setF = new HashSet<>(maxResults);
             for (int j =0; j< hitsM.length(); j++) {
@@ -110,7 +109,7 @@ public class MetricSpacesTest extends TestCase {
             System.out.println("intersect = " + intersect);
             intersectSum += intersect;
         }
-//        System.out.printf("Time for MetricSpaces vs. linear: %02.3f vs. %02.3f seconds for %d runs at %02.2f recall\n", sm.getTime()/ 1000d, sf.getTime()/1000d, numRuns, ((double) intersectSum / (double) numRuns)/((double) maxResults));
+        System.out.printf("Time for MetricSpaces vs. linear: %02.3f vs. %02.3f seconds for %d runs at %02.2f recall\n", sm.getTime()/ 1000d, sf.getTime()/1000d, numRuns, ((double) intersectSum / (double) numRuns)/((double) maxResults));
     }
 }
 
