@@ -627,7 +627,7 @@ public class ParallelIndexer implements Runnable {
         lockLists = true;
         try {
             long start = System.currentTimeMillis();
-            writer = LuceneUtils.createIndexWriter(indexPath, overWrite, LuceneUtils.AnalyzerType.StandardAnalyzer);
+            writer = LuceneUtils.createIndexWriter(indexPath, overWrite, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
             if (imageList == null) {
 //                allImages = FileUtils.getAllImages(new File(imageDirectory), true); //TODO: change to readFileLines
                 allImages = FileUtils.readFileLines(new File(imageDirectory), true);

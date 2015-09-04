@@ -3,7 +3,7 @@ With `DocumentBuilders`, Lucene documents can be created from images, using the 
 
 
 ## GlobalDocumentBuilder
-Use the `GlobalDocumentBuilder` to create a `DocumentBuilder` for global features. This builder can take any `GlobalFeatue` implementation and create a builder class from it.
+Use the `GlobalDocumentBuilder` to create a `DocumentBuilder` for global features. This builder can take any `GlobalFeature` implementation and create a builder class from it.
 
     GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(CEDD.class);
 

@@ -5,22 +5,33 @@ import net.semanticmetadata.lire.builders.GlobalDocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
+import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
+import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import net.semanticmetadata.lire.searchers.MetricSpacesImageSearcher;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.store.FSDirectory;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Timer;
 
 /**
  * @author Mathias Lux, mathias@juggle.at, 26.08.2015.
  */
 public class MetricSpacesTest extends TestCase {
-    String infile = "train.lst";
+    String infile = "D:\\DataSets\\MirFlickr\\images01.lst";
 
     public void testHashIndexing() throws IllegalAccessException, IOException, InstantiationException {
-        MetricSpaces.index(CEDD.class, 2000, 50, new File(infile), new File("dir1.cedd.dat"));
-        MetricSpaces.index(FCTH.class, 2000, 50, new File(infile), new File("dir1.fcth.dat"));
-        MetricSpaces.index(PHOG.class, 2000, 50, new File(infile), new File("dir1.phog.dat"));
+        MetricSpaces.index(CEDD.class, 1000, 50, new File(infile), new File("dir.cedd.dat"));
+//        MetricSpaces.index(FCTH.class, 50, 8, new File(infile), new File("dir.fcth.dat"));
+//        MetricSpaces.index(PHOG.class, 50, 8, new File(infile), new File("dir.phog.dat"));
     }
 
     public void testLoadingIndex() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
@@ -46,13 +57,62 @@ public class MetricSpacesTest extends TestCase {
 
     public void testImageIndexing() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         MetricSpaces.loadReferencePoints(new File("dir.cedd.dat"));
-        MetricSpaces.loadReferencePoints(new File("dir.fcth.dat"));
-        MetricSpaces.loadReferencePoints(new File("dir.phog.dat"));
+//        MetricSpaces.loadReferencePoints(new File("dir.fcth.dat"));
+//        MetricSpaces.loadReferencePoints(new File("dir.phog.dat"));
 
-        ParallelIndexer p = new ParallelIndexer(10, "ms-index-yahoo-gc-1.5M", new File(infile));//, GlobalDocumentBuilder.HashingMode.MetricSpaces);
+        ParallelIndexer p = new ParallelIndexer(6, "ms-index-300k", new File(infile), GlobalDocumentBuilder.HashingMode.MetricSpaces);
         p.addExtractor(CEDD.class);
-        p.addExtractor(FCTH.class);
-        p.addExtractor(PHOG.class);
+//        p.addExtractor(FCTH.class);
+//        p.addExtractor(PHOG.class);
         p.run();
     }
+
+    public void testSearch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index")));
+        MetricSpacesImageSearcher is = new MetricSpacesImageSearcher(10, new File("dir.cedd.dat"), 100);
+        for (int i = 0; i < 10; i++) {
+            ImageSearchHits hits = is.search(reader.document(i), reader);
+            for (int j =0; j< hits.length(); j++) {
+                System.out.printf("%02d: %06d %02.3f\n", j + 1, hits.documentID(j), hits.score(j));
+            }
+            System.out.println("------<*>-------");
+        }
+    }
+
+    public void testSearchAccuracy() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index")));
+        int maxResults = 10;
+        int intersectSum = 0;
+        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cedd.dat"), 1000);
+        mis.setNumHashesUsedForQuery(10);
+        GenericFastImageSearcher fis = new GenericFastImageSearcher(maxResults, CEDD.class, true, reader);
+//        StopWatch sm = new StopWatch();
+//        StopWatch sf = new StopWatch();
+        int numRuns = 10;
+        for (int i = 0; i < numRuns; i++) {
+            Document document = reader.document(i);
+//            if (!sm.isStarted()) sm.start();
+//            else sm.resume();
+            ImageSearchHits hitsM = mis.search(document, reader);
+//            sm.suspend();
+//            if (!sf.isStarted()) sf.start();
+//            else sf.resume();
+            ImageSearchHits hitsF = fis.search(document, reader);
+//            sf.suspend();
+            HashSet<Integer> setM = new HashSet<>(maxResults);
+            HashSet<Integer> setF = new HashSet<>(maxResults);
+            for (int j =0; j< hitsM.length(); j++) {
+                setM.add(hitsM.documentID(j));
+                setF.add(hitsF.documentID(j));
+            }
+            setF.removeAll(setM);
+            int intersect = (maxResults - setF.size());
+            System.out.println("intersect = " + intersect);
+            intersectSum += intersect;
+        }
+//        System.out.printf("Time for MetricSpaces vs. linear: %02.3f vs. %02.3f seconds for %d runs at %02.2f recall\n", sm.getTime()/ 1000d, sf.getTime()/1000d, numRuns, ((double) intersectSum / (double) numRuns)/((double) maxResults));
+    }
 }
+
+
+

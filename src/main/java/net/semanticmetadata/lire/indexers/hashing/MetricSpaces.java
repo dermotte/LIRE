@@ -157,7 +157,7 @@ public class MetricSpaces {
      * @param referencePoints is the outFile from the method {@link MetricSpaces#index(Class, int, int, File, File)}
      * @throws IOException
      */
-    public static void loadReferencePoints(File referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static Parameters loadReferencePoints(File referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new FileReader(referencePoints));
         String feature = br.readLine().trim();
         Class<?> featureClass = Class.forName(feature);
@@ -165,6 +165,7 @@ public class MetricSpaces {
         Parameters p = new MetricSpaces.Parameters();
         p.numberOfReferencePoints = Integer.parseInt(params[0]);
         p.lenghtOfPostingList = Integer.parseInt(params[1]);
+        p.featureClass = featureClass;
         parameters.put(feature, p);
         ArrayList<GlobalFeature> ro = new ArrayList<>(p.numberOfReferencePoints);
         String line = null;
@@ -179,17 +180,36 @@ public class MetricSpaces {
         }
         MetricSpaces.referencePoints.put(feature, ro);
         br.close();
+        return p;
     }
 
     public static boolean supportsFeature(GlobalFeature feature) {
         return referencePoints.get(feature.getClass().getName())!=null;
     }
 
+    /**
+     * Convenience method for {@link #generateHashString(GlobalFeature, int)}.
+     * @param feature feature the feature instance the string is generated for.
+     * @return the text for the Lucene index.
+     */
     public static String generateHashString(GlobalFeature feature) {
+        return generateHashString(feature, parameters.get(feature.getClass().getName()).lenghtOfPostingList);
+    }
+
+    /**
+     * Creates a text String to be used for indexing and search based on the reference points.
+     * @param feature the feature instance the string is generated for.
+     * @param queryLength the length of the posting list. If 0, then it's set to the preset.
+     * @return the text for the Lucene index.
+     */
+    public static String generateHashString(GlobalFeature feature, int queryLength) {
         ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
         // break up if the feature is not indexed ...
         if (l == null) return null;
-        int lenghtOfPostingList = parameters.get(feature.getClass().getName()).lenghtOfPostingList;
+        int lenghtOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lenghtOfPostingList);
+        if (lenghtOfPostingList<1) {
+            lenghtOfPostingList = parameters.get(feature.getClass().getName()).lenghtOfPostingList;
+        }
         TreeSet<Result> results = new TreeSet<>();
         double maxDistance = Double.MAX_VALUE;
         double distance;
@@ -253,6 +273,7 @@ public class MetricSpaces {
     public static class Parameters {
         public int numberOfReferencePoints;
         public int lenghtOfPostingList;
+        public Class featureClass;
     }
 
     public static class Result implements Comparable<Result> {

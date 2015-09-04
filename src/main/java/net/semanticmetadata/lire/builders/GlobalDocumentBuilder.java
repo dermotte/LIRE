@@ -133,7 +133,7 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
             BitSampling.readHashFunctions();
 //            LocalitySensitiveHashing.readHashFunctions();
         } catch (Exception e) {
-            System.err.println("Could not read hashes from file when first creating a GenericDocumentBuilder instance.");
+            System.err.println("Could not read BitSampling hashes from file when first creating a GlobalDocumentBuilder instance.");
             e.printStackTrace();
         }
     }
@@ -189,8 +189,10 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
                     hashes = LocalitySensitiveHashing.generateHashes(globalFeature.getFeatureVector());
                     hash = new TextField(extractorItems.get(extractorItem)[1], SerializationUtils.arrayToString(hashes), Field.Store.YES);
                 } else if (hashingMode == HashingMode.MetricSpaces) {
-                    if (MetricSpaces.supportsFeature(globalFeature))
+                    if (MetricSpaces.supportsFeature(globalFeature)) {
+                        // the name of the field is set at "addExtractor" time.
                         hash = new TextField(extractorItems.get(extractorItem)[1], MetricSpaces.generateHashString(globalFeature), Field.Store.YES);
+                    }
                 }
             } else
                 System.err.println("Could not create hashes, feature vector too long: " + globalFeature.getFeatureVector().length + " (" + globalFeature.getClass().getName() + ")");

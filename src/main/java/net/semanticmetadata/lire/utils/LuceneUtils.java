@@ -95,7 +95,7 @@ public class LuceneUtils {
      * @throws IOException
      */
     public static IndexWriter createIndexWriter(String indexPath, boolean create) throws IOException {
-        return createIndexWriter(indexPath, create, AnalyzerType.SimpleAnalyzer);                       //TODO: Simple or Standar ??
+        return createIndexWriter(indexPath, create, AnalyzerType.SimpleAnalyzer);                       //TODO: Simple or Standard ??
     }
 
     /**
