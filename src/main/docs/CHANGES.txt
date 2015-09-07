@@ -3,6 +3,10 @@ CHANGES for LIRE
 
 2015-09-04
 ==========
+  - pom.xml patch by Lukas Knoch
+
+2015-09-04
+==========
   - Documentation, error message updates.
   - implemented and tested net.semanticmetadata.lire.searchers.MetricSpacesImageSearcher, on 100k images it
     had similar performance to in-memory search w/o the startup delay.

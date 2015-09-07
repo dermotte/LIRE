@@ -103,7 +103,7 @@
 			<artifactId>jopensurf</artifactId>
 			<version>1.0.0</version>
 			<scope>system</scope>
-			<systemPath>${basedir}/lib/JOpenSurf.jar</systemPath>
+			<systemPath>${basedir}/lib/jopensurf.jar</systemPath>
 		</dependency>
 	</dependencies>
 
