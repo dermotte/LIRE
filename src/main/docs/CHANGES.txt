@@ -1,7 +1,12 @@
 CHANGES for LIRE
 ================
 
-2015-09-04
+2015-09-09
+==========
+  - DocValues implementation and tests for indexing and search.
+  - documentation on metric spaces and docvalues.
+
+2015-09-07
 ==========
   - pom.xml patch by Lukas Knoch
 

@@ -41,3 +41,22 @@ Indexing then is done with the `ParallelIndexer` with the use of `MetricSpaces`.
         // index your data.
         p.run();
     }
+
+Search can be configured at runtime to be either faster or more accurate. There are two parameters. One defines the number
+of results that are retrieved from the index with metric indexing for re-ranking. This is done with the constructor. The
+second one defines the length of the query. The default value is that the 25 nearest reference points are used. This is
+done with a setter.
+
+Search is as easy as:
+
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index")));
+        // set up the searcher, here 120 candidate results are pulled from the index, and then re-ranked.
+        MetricSpacesImageSearcher is = new MetricSpacesImageSearcher(10, new File("dir.cedd.dat"), 100);
+        // set up the query length, default is 25, more than 45 will result in a crash.
+        is.setNumHashesUsedForQuery(20); // this is optional
+        // search
+        ImageSearchHits hits = is.search(reader.document(i), reader);
+        // print results
+        for (int j =0; j< hits.length(); j++) {
+            System.out.printf("%02d: %06d %02.3f\n", j + 1, hits.documentID(j), hits.score(j));
+        }

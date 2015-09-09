@@ -76,16 +76,17 @@ import java.util.logging.Logger;
  * This class allows for creating indexes in a parallel manner. The class
  * at hand reads files from the disk and acts as producer, while several consumer
  * threads extract the features from the given files.
- *
+ * <p/>
  * Use the methods {@link ParallelIndexer#addExtractor} to add your own features.
  * Check the source of this class -- the main method -- to get an idea.
- *
+ * <p/>
  * Created by mlux on 15/04/2013.
  *
  * @author Mathias Lux, mathias@juggle.at
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class ParallelIndexer implements Runnable {
+    private boolean useDocValues = false;
     private Logger log = Logger.getLogger(this.getClass().getName());
     private ProgressMonitor pm = null;
     private DecimalFormat df = (DecimalFormat) NumberFormat.getNumberInstance();
@@ -107,7 +108,7 @@ public class ParallelIndexer implements Runnable {
     private List<String> allImages, sampleImages;
 
     private int numOfDocsForCodebooks = 300;
-    private int[] numOfClusters = new int[] {512};
+    private int[] numOfClusters = new int[]{512};
     private TreeSet<Integer> numOfClustersSet = new TreeSet<Integer>();
 
     private HashSet<ExtractorItem> GlobalExtractors = new HashSet<ExtractorItem>(10); // default size (16)
@@ -208,7 +209,7 @@ public class ParallelIndexer implements Runnable {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageDirectory = imageDirectory;
-        this.numOfClusters = new int[] {numOfClusters};
+        this.numOfClusters = new int[]{numOfClusters};
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
     }
 
@@ -216,7 +217,7 @@ public class ParallelIndexer implements Runnable {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageDirectory = imageDirectory;
-        this.numOfClusters = new int[] {numOfClusters};
+        this.numOfClusters = new int[]{numOfClusters};
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
         this.aggregator = aggregator;
     }
@@ -243,7 +244,7 @@ public class ParallelIndexer implements Runnable {
         this.indexPath = indexPath;
         this.imageDirectory = imageDirectory;
         this.overWrite = overWrite;
-        if ((!overWrite)&&((new File(indexPath)).exists())) {
+        if ((!overWrite) && ((new File(indexPath)).exists())) {
             this.appending = true;
             loadPropertiesFile(indexPath + ".config/");
             this.lockLists = true;
@@ -316,7 +317,6 @@ public class ParallelIndexer implements Runnable {
     }
 
 
-
     //imageList
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList) {
         this.numOfThreads = numOfThreads;
@@ -324,19 +324,51 @@ public class ParallelIndexer implements Runnable {
         this.imageList = imageList;
     }
 
+    /**
+     * Constructor for use with hashing.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageList    the list of images, one path per line.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     */
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, GlobalDocumentBuilder.HashingMode hashingMode) {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
-        this.globalHashing = true;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else this.globalHashing = false;
         this.globalHashingMode = hashingMode;
+    }
+
+    /**
+     * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageList    the list of images, one path per line.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     * @param useDocValues set to true if you want to use DocValues instead of Fields.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, File imageList, GlobalDocumentBuilder.HashingMode hashingMode, boolean useDocValues) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageList = imageList;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else {
+            this.globalHashing = false;
+        }
+        this.globalHashingMode = hashingMode;
+        this.useDocValues = useDocValues;
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int numOfClusters, int numOfDocsForCodebooks) {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
-        this.numOfClusters = new int[] {numOfClusters};
+        this.numOfClusters = new int[]{numOfClusters};
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
     }
 
@@ -344,7 +376,7 @@ public class ParallelIndexer implements Runnable {
         this.numOfThreads = numOfThreads;
         this.indexPath = indexPath;
         this.imageList = imageList;
-        this.numOfClusters = new int[] {numOfClusters};
+        this.numOfClusters = new int[]{numOfClusters};
         this.numOfDocsForCodebooks = numOfDocsForCodebooks;
         this.aggregator = aggregator;
     }
@@ -371,7 +403,7 @@ public class ParallelIndexer implements Runnable {
         this.indexPath = indexPath;
         this.imageList = imageList;
         this.overWrite = overWrite;
-        if ((!overWrite)&&((new File(indexPath)).exists())) {
+        if ((!overWrite) && ((new File(indexPath)).exists())) {
             this.appending = true;
             loadPropertiesFile(indexPath + ".config/");
             this.lockLists = true;
@@ -448,7 +480,7 @@ public class ParallelIndexer implements Runnable {
         if (lockLists) throw new UnsupportedOperationException("Cannot add extractors!");
         ExtractorItem extractorItem = new ExtractorItem(extractorClass);
         boolean flag = true;
-        if (extractorItem.isGlobal()){
+        if (extractorItem.isGlobal()) {
             for (ExtractorItem next : GlobalExtractors) {
                 if (next.getExtractorClass().equals(extractorClass)) {
                     flag = false;
@@ -459,8 +491,7 @@ public class ParallelIndexer implements Runnable {
             } else {
                 throw new UnsupportedOperationException(extractorClass.getSimpleName() + " already exists!!");
             }
-        }
-        else if (extractorItem.isLocal()) {
+        } else if (extractorItem.isLocal()) {
             for (Map.Entry<ExtractorItem, LinkedList<Cluster[]>> next : LocalExtractorsAndCodebooks.entrySet()) {
                 if (next.getKey().getExtractorClass().equals(extractorClass)) {
                     flag = false;
@@ -474,6 +505,7 @@ public class ParallelIndexer implements Runnable {
             }
         } else throw new UnsupportedOperationException("Error");
     }
+
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector) {
         if (lockLists) throw new UnsupportedOperationException("Cannot add extractors!");
         boolean flag = true;
@@ -495,6 +527,7 @@ public class ParallelIndexer implements Runnable {
         tmpList.add(codebook);
         addExtractor(localFeatureExtractorClass, tmpList);
     }
+
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector, Cluster[] codebook) {
         LinkedList<Cluster[]> tmpList = new LinkedList<Cluster[]>();
         tmpList.add(codebook);
@@ -518,7 +551,7 @@ public class ParallelIndexer implements Runnable {
                 for (int next : numOfClusters) {
                     if (codebook.length == next) flagForSize = true;
                 }
-                if (!flagForSize){
+                if (!flagForSize) {
                     System.err.println("Codebook of " + codebook.length + " clusters will be removed as such number of clusters is not selected!!");
                     codebooks.remove(codebook);
                 }
@@ -547,6 +580,7 @@ public class ParallelIndexer implements Runnable {
             throw new UnsupportedOperationException(localFeatureExtractorClass.getSimpleName() + " already exists!!");
         }
     }
+
     public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector, LinkedList<Cluster[]> codebooks) {
         if (lockLists) throw new UnsupportedOperationException("Cannot add extractors!");
         (new File(indexPath + ".config/")).mkdirs();
@@ -564,7 +598,7 @@ public class ParallelIndexer implements Runnable {
                 for (int next : numOfClusters) {
                     if (codebook.length == next) flagForSize = true;
                 }
-                if (!flagForSize){
+                if (!flagForSize) {
                     System.err.println("Codebook of " + codebook.length + " clusters will be removed as such number of clusters is not selected!!");
                     codebooks.remove(codebook);
                 }
@@ -599,9 +633,10 @@ public class ParallelIndexer implements Runnable {
      * Every time only one custom DocumentBuilder can be used. At the same time, using the addExtractor methods one can add other builders to be used at the same time. BUT when using
      * a custom DocumentBuilder, sampling can be used for Local Features. This means that, if you want to use a {@link LocalDocumentBuilder} or {@link SimpleDocumentBuilder}, you can use
      * them, only combined with pre-computed codebooks!!
+     *
      * @param customDocumentBuilder
      */
-    public void setCustomDocumentBuilder(Class<? extends DocumentBuilder> customDocumentBuilder){
+    public void setCustomDocumentBuilder(Class<? extends DocumentBuilder> customDocumentBuilder) {
         this.customDocumentBuilder = customDocumentBuilder;
         this.customDocBuilderFlag = true;
 //        this.listForCustomDocumentBuilder = new HashSet<>(listOfGlobalExtractors.size());
@@ -620,7 +655,6 @@ public class ParallelIndexer implements Runnable {
 //        }
 //        if (!(listForCustomDocumentBuilder.size() > 0)) throw new UnsupportedOperationException("Something is wrong");
     }
-
 
 
     public void run() {
@@ -646,7 +680,7 @@ public class ParallelIndexer implements Runnable {
                 numOfClustersSet.add(numOfCluster);
             }
 
-            if (((LocalExtractorsAndCodebooks.size() > 0)||(SimpleExtractorsAndCodebooks.size() > 0))&&(!(numOfClustersSet.size() > 0))){
+            if (((LocalExtractorsAndCodebooks.size() > 0) || (SimpleExtractorsAndCodebooks.size() > 0)) && (!(numOfClustersSet.size() > 0))) {
                 throw new UnsupportedOperationException("Need to set number of clusters for Local Extractors!!");
             }
 
@@ -654,8 +688,9 @@ public class ParallelIndexer implements Runnable {
 
             (new File(indexPath + ".config/")).mkdirs();
 
-            if (sampling){
-                if (customDocBuilderFlag) throw new UnsupportedOperationException("Cannot use sampling and set custom document builder at the same time!!");
+            if (sampling) {
+                if (customDocBuilderFlag)
+                    throw new UnsupportedOperationException("Cannot use sampling and set custom document builder at the same time!!");
                 System.out.println("Sampling and Creating Codebooks....");
                 numImages = allImages.size();
                 int capacity = Math.min(numOfDocsForCodebooks, numImages);
@@ -709,17 +744,16 @@ public class ParallelIndexer implements Runnable {
         System.out.printf("Time of flushing: %s.\n", convertTime(System.currentTimeMillis() - start));
     }
 
-    private void index()
-    {
+    private void index() {
         System.out.printf("Indexing %d images\n", numImages);
         long start = System.currentTimeMillis();
-        try{
+        try {
             Thread p, c, m;
             p = new Thread(new Producer(allImages), "Producer");
             p.start();
             LinkedList<Thread> threads = new LinkedList<Thread>();
             for (int i = 0; i < numOfThreads; i++) {
-                c = new Thread(new Consumer(), String.format("Consumer-%02d", i+1));
+                c = new Thread(new Consumer(), String.format("Consumer-%02d", i + 1));
                 c.start();
                 threads.add(c);
             }
@@ -765,8 +799,7 @@ public class ParallelIndexer implements Runnable {
         }
     }
 
-    private void sample(HashMap<ExtractorItem, LinkedList<Cluster[]>> mapWithClassesAndCodebooks)
-    {
+    private void sample(HashMap<ExtractorItem, LinkedList<Cluster[]>> mapWithClassesAndCodebooks) {
         long start, end;
         LinkedList<Thread> threads = new LinkedList<Thread>();
         Thread p, c, m;
@@ -788,7 +821,7 @@ public class ParallelIndexer implements Runnable {
                     toPrint = ((SimpleExtractor) myExtractor).getFeatureName() + " and " + aggregator.getSimpleName();
                 } else if (extractorItem.isLocal()) {
                     codebookTitle = (extractorItem.getFeatureInstance()).getFieldName();
-                    toPrint = (extractorItem.getFeatureInstance()).getFeatureName() + " and " +  aggregator.getSimpleName();
+                    toPrint = (extractorItem.getFeatureInstance()).getFeatureName() + " and " + aggregator.getSimpleName();
                 } else throw new UnsupportedOperationException("Something is wrong!! (ParallelLocalIndexer.sampling)");
 
                 System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -913,7 +946,7 @@ public class ParallelIndexer implements Runnable {
             }
             String path = null;
             byte[] buffer = null;
-            for (int i = 0; i < numOfThreads * 3; i++)  {
+            for (int i = 0; i < numOfThreads * 3; i++) {
                 try {
                     queue.put(new WorkItem(path, buffer));
                 } catch (InterruptedException e) {
@@ -942,7 +975,7 @@ public class ParallelIndexer implements Runnable {
             }
             String path = null;
             List<? extends LocalFeature> listOfFeatures = null;
-            for (int i = 0; i < numOfThreads * 3; i++)  {
+            for (int i = 0; i < numOfThreads * 3; i++) {
                 try {
                     queue.put(new WorkItem(path, listOfFeatures));
                 } catch (InterruptedException e) {
@@ -971,7 +1004,8 @@ public class ParallelIndexer implements Runnable {
             while (!locallyEnded) {
                 try {
                     tmp = queue.take();
-                    if (tmp.getFileName() == null) locallyEnded = true; else overallCount++;
+                    if (tmp.getFileName() == null) locallyEnded = true;
+                    else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
                         b = new ByteArrayInputStream(tmp.getBuffer());
                         conSampleMap.put(tmp.getFileName(), (documentBuilder.extractLocalFeatures(ImageIO.read(b), ((LocalFeatureExtractor) extractorItem.getExtractorInstance())).getFeatures()));
@@ -992,8 +1026,10 @@ public class ParallelIndexer implements Runnable {
 
         public ConsumerForLocalSample(ExtractorItem extractorItem, LinkedList<Cluster[]> clusters) {
             ExtractorItem tmpExtractorItem = extractorItem.clone();
-            if (extractorItem.isLocal()) documentBuilder = new LocalDocumentBuilder(tmpExtractorItem, clusters, aggregator);
-            else if (extractorItem.isSimple()) documentBuilder = new SimpleDocumentBuilder(tmpExtractorItem, clusters, aggregator);
+            if (extractorItem.isLocal())
+                documentBuilder = new LocalDocumentBuilder(tmpExtractorItem, clusters, aggregator);
+            else if (extractorItem.isSimple())
+                documentBuilder = new SimpleDocumentBuilder(tmpExtractorItem, clusters, aggregator);
             else throw new UnsupportedOperationException("Something is wrong!! (ConsumerForLocalSample)");
 
             this.localExtractorItem = tmpExtractorItem;
@@ -1008,7 +1044,8 @@ public class ParallelIndexer implements Runnable {
             while (!locallyEnded) {
                 try {
                     tmp = queue.take();
-                    if (tmp.getFileName() == null)  locallyEnded = true; else overallCount++;
+                    if (tmp.getFileName() == null) locallyEnded = true;
+                    else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
                         fields = documentBuilder.createLocalDescriptorFields(tmp.getListOfFeatures(), localExtractorItem, clusters);
                         doc = allDocuments.get(tmp.getFileName());
@@ -1028,7 +1065,7 @@ public class ParallelIndexer implements Runnable {
         private boolean locallyEnded;
 
         public ConsumerForGlobalSample() {
-            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing, globalHashingMode);
+            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing, globalHashingMode, useDocValues);
             for (ExtractorItem globalExtractor : GlobalExtractors) {
                 this.globalDocumentBuilder.addExtractor(globalExtractor.clone());
             }
@@ -1042,7 +1079,8 @@ public class ParallelIndexer implements Runnable {
             while (!locallyEnded) {
                 try {
                     tmp = queue.take();
-                    if (tmp.getFileName() == null) locallyEnded = true; else overallCount++;
+                    if (tmp.getFileName() == null) locallyEnded = true;
+                    else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
                         fields = globalDocumentBuilder.createDescriptorFields(ImageIO.read(new ByteArrayInputStream(tmp.getBuffer())));
                         doc = allDocuments.get(tmp.getFileName());
@@ -1064,10 +1102,10 @@ public class ParallelIndexer implements Runnable {
         private DocumentBuilder localCustomDocumentBuilder;
         private boolean locallyEnded;
 
-        public Consumer()  {
+        public Consumer() {
             this.localDocumentBuilder = new LocalDocumentBuilder(aggregator);
             this.simpleDocumentBuilder = new SimpleDocumentBuilder(aggregator);
-            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing, globalHashingMode);
+            this.globalDocumentBuilder = new GlobalDocumentBuilder(globalHashing, globalHashingMode, useDocValues);
 
             for (Map.Entry<ExtractorItem, LinkedList<Cluster[]>> listEntry : LocalExtractorsAndCodebooks.entrySet()) {
                 this.localDocumentBuilder.addExtractor(listEntry.getKey().clone(), listEntry.getValue());
@@ -1080,7 +1118,8 @@ public class ParallelIndexer implements Runnable {
             }
 
             try {
-                if (customDocumentBuilder != null) { this.localCustomDocumentBuilder = customDocumentBuilder.newInstance();
+                if (customDocumentBuilder != null) {
+                    this.localCustomDocumentBuilder = customDocumentBuilder.newInstance();
                 } else this.localCustomDocumentBuilder = new GlobalDocumentBuilder(false);
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -1097,7 +1136,8 @@ public class ParallelIndexer implements Runnable {
             while (!locallyEnded) {
                 try {
                     tmp = queue.take();
-                    if (tmp.getFileName() == null) locallyEnded = true; else overallCount++;
+                    if (tmp.getFileName() == null) locallyEnded = true;
+                    else overallCount++;
                     if (!locallyEnded) {    //&& tmp != null
                         image = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
                         doc = localCustomDocumentBuilder.createDocument(image, tmp.getFileName());
@@ -1125,7 +1165,7 @@ public class ParallelIndexer implements Runnable {
     class Monitoring implements Runnable {
         private boolean killMonitor;
 
-        public Monitoring()  {
+        public Monitoring() {
             this.killMonitor = false;
         }
 
@@ -1149,7 +1189,7 @@ public class ParallelIndexer implements Runnable {
             }
         }
 
-        public void killMonitoring(){
+        public void killMonitoring() {
             this.killMonitor = true;
         }
     }
@@ -1251,11 +1291,11 @@ public class ParallelIndexer implements Runnable {
         double s = (m - Math.floor(m)) * 60;
 
 //        return String.format("%02d:%02d:%02d", hour, minutes, seconds);
-        return String.format("%s%02d:%02d", (((int)h > 0)? String.format("%02d:", (int) h) : ""), (int)m, (int)s);
+        return String.format("%s%02d:%02d", (((int) h > 0) ? String.format("%02d:", (int) h) : ""), (int) m, (int) s);
     }
 
-    private void writePropertiesFile(){
-        try{
+    private void writePropertiesFile() {
+        try {
             Properties props = new Properties();
 
             props.setProperty("0", "info");
@@ -1299,8 +1339,8 @@ public class ParallelIndexer implements Runnable {
         }
     }
 
-    private void loadPropertiesFile(String path){
-        try{
+    private void loadPropertiesFile(String path) {
+        try {
             Properties prop = new Properties();
             FileInputStream fis = new FileInputStream(path + "/properties.xml");
             prop.loadFromXML(fis);
@@ -1311,37 +1351,38 @@ public class ParallelIndexer implements Runnable {
             SimpleExtractor.KeypointDetector detector;
             LinkedList<Cluster[]> tmpListOfCodebooks;
             String extractorType;
-            while(prop.getProperty(String.valueOf(overAllcounter)) != null){
+            while (prop.getProperty(String.valueOf(overAllcounter)) != null) {
                 extractorType = prop.getProperty(String.valueOf(overAllcounter));
-                if (extractorType.equals("global")){
-                    tmpGlobalClass = (Class<? extends GlobalFeature>)Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".extractor"));
+                if (extractorType.equals("global")) {
+                    tmpGlobalClass = (Class<? extends GlobalFeature>) Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".extractor"));
                     addExtractor(tmpGlobalClass);
-                } else if (extractorType.equals("local")){
+                } else if (extractorType.equals("local")) {
                     counter = 1;
                     tmpListOfCodebooks = new LinkedList<Cluster[]>();
-                    while(prop.getProperty(String.valueOf(overAllcounter) + ".codebook." + String.valueOf(counter)) != null){
+                    while (prop.getProperty(String.valueOf(overAllcounter) + ".codebook." + String.valueOf(counter)) != null) {
                         tmpListOfCodebooks.add(Cluster.readClusters(path + prop.getProperty(String.valueOf(overAllcounter) + ".codebook." + String.valueOf(counter))));
                         counter++;
                     }
-                    tmpLocalClass = (Class<? extends LocalFeatureExtractor>)Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".extractor"));
+                    tmpLocalClass = (Class<? extends LocalFeatureExtractor>) Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".extractor"));
                     addExtractor(tmpLocalClass, tmpListOfCodebooks);
-                } else if (extractorType.equals("simple")){
+                } else if (extractorType.equals("simple")) {
                     counter = 1;
                     tmpListOfCodebooks = new LinkedList<Cluster[]>();
-                    while(prop.getProperty(String.valueOf(overAllcounter) + ".codebook." + String.valueOf(counter)) != null){
+                    while (prop.getProperty(String.valueOf(overAllcounter) + ".codebook." + String.valueOf(counter)) != null) {
                         tmpListOfCodebooks.add(Cluster.readClusters(path + prop.getProperty(String.valueOf(overAllcounter) + ".codebook." + String.valueOf(counter))));
                         counter++;
                     }
-                    tmpGlobalClass = (Class<? extends GlobalFeature>)Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".extractor"));
+                    tmpGlobalClass = (Class<? extends GlobalFeature>) Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".extractor"));
                     detector = SimpleExtractor.getDetector(prop.getProperty(String.valueOf(overAllcounter) + ".detector"));
                     addExtractor(tmpGlobalClass, detector, tmpListOfCodebooks);
-                } else if (extractorType.equals("info")){
+                } else if (extractorType.equals("info")) {
                     String tmpCustomBuilder = prop.getProperty(String.valueOf(overAllcounter) + ".info.0");
-                    if (!(tmpCustomBuilder.equals("null"))) customDocumentBuilder = (Class<? extends DocumentBuilder>)Class.forName(tmpCustomBuilder);
-                    this.aggregator = (Class<? extends AbstractAggregator>)Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".info.1"));
+                    if (!(tmpCustomBuilder.equals("null")))
+                        customDocumentBuilder = (Class<? extends DocumentBuilder>) Class.forName(tmpCustomBuilder);
+                    this.aggregator = (Class<? extends AbstractAggregator>) Class.forName(prop.getProperty(String.valueOf(overAllcounter) + ".info.1"));
                     counter = 2;
                     LinkedList<Integer> tmpListOfNumOfClusters = new LinkedList<Integer>();
-                    while(prop.getProperty(String.valueOf(overAllcounter) + ".info." + String.valueOf(counter)) != null){
+                    while (prop.getProperty(String.valueOf(overAllcounter) + ".info." + String.valueOf(counter)) != null) {
                         tmpListOfNumOfClusters.add(Integer.valueOf(prop.getProperty(String.valueOf(overAllcounter) + ".info." + String.valueOf(counter))));
                         counter++;
                     }
@@ -1359,10 +1400,10 @@ public class ParallelIndexer implements Runnable {
         }
     }
 
-    private void printSetUp(){
+    private void printSetUp() {
         System.out.println("===================================================================================");
         System.out.println("SetUp:");
-        if (((LocalExtractorsAndCodebooks.size() > 0)||(SimpleExtractorsAndCodebooks.size() > 0))&&(numOfClustersSet.size() > 0)){
+        if (((LocalExtractorsAndCodebooks.size() > 0) || (SimpleExtractorsAndCodebooks.size() > 0)) && (numOfClustersSet.size() > 0)) {
             System.out.println("Aggregator: " + aggregator.getSimpleName());
             System.out.println("numOfDocsForCodebooks: " + numOfDocsForCodebooks);
             System.out.print("Set of codebooks: ");

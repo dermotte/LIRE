@@ -53,13 +53,15 @@ import java.util.Map;
 /**
  * This class creates Lucene Documents from images using one or multiple Global Features.
  * Can also be used only for extraction.
- * Created by Nektarios on 03/06/2015.
  *
- * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
- *         (c) 2015 by Nektarios Anagnostopoulos
+ * @author Nektarios Anagnostopoulos, nek.anag@gmail.com (c) 2015 by Nektarios Anagnostopoulos
+ * @author Mathias Lux, mathias@juggle.at
  */
 public class GlobalDocumentBuilder implements DocumentBuilder {
-    public enum HashingMode {BitSampling, LSH, MetricSpaces}
+
+    private boolean useDocValues = false;
+
+    public enum HashingMode {BitSampling, LSH, MetricSpaces, None}
 
     private HashingMode hashingMode = HashingMode.BitSampling;
     private boolean hashingEnabled = false;
@@ -88,12 +90,45 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         if (hashingEnabled) testHashes();
     }
 
+    /**
+     * Creates a GlobalDocumentBuilder with the specific hashing mode. Please note that you have to take care of the
+     * initilization of the hashing subsystem yourself. Optionally use DocValues instead of TextField implementations
+     * for storing the feature vector. Note that this cannot be read by ordinary linear searchers, but must be
+     * implemented in a different way.
+     *
+     * @param hashing      true if you want hashing to be applied.
+     * @param hashingMode  the actual mode, eg. BitSampling or MetricSpaces.
+     * @param useDocValues set to true if you want to use DocValues instead of Lucene fields.
+     */
+    public GlobalDocumentBuilder(boolean hashing, HashingMode hashingMode, boolean useDocValues) {
+        this.hashingEnabled = hashing;
+        this.hashingMode = hashingMode;
+        this.useDocValues = useDocValues;
+        if (hashingEnabled) testHashes();
+    }
+
     public GlobalDocumentBuilder(Class<? extends GlobalFeature> globalFeatureClass) {
         addExtractor(globalFeatureClass);
     }
 
     public GlobalDocumentBuilder(Class<? extends GlobalFeature> globalFeatureClass, boolean hashing) {
         addExtractor(globalFeatureClass);
+        this.hashingEnabled = hashing;
+        if (hashingEnabled) testHashes();
+    }
+
+
+    /**
+     * Use DocValues instead of TextField implementations for storing the feature vector. Note that this cannot be
+     * read by ordinary linear searchers, but must be implmented in a different way.
+     *
+     * @param globalFeatureClass
+     * @param hashing            set to true if hashing should be performed.
+     * @param useDocValues       set to true if you want to use DocValues instead of Lucene fields.
+     */
+    public GlobalDocumentBuilder(Class<? extends GlobalFeature> globalFeatureClass, boolean hashing, boolean useDocValues) {
+        addExtractor(globalFeatureClass);
+        this.useDocValues = useDocValues;
         this.hashingEnabled = hashing;
         if (hashingEnabled) testHashes();
     }
@@ -174,11 +209,14 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
 
         GlobalFeature globalFeature = extractGlobalFeature(image, (GlobalFeature) extractorItem.getExtractorInstance());
 
-        // TODO: Stored field is compressed and upon search decompression takes a lot of time (> 50% with a small index with 50k images). Find something else ...
-        vector = new StoredField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
+        if (!useDocValues) {
+            // TODO: Stored field is compressed and upon search decompression takes a lot of time (> 50% with a small index with 50k images). Find something else ...
+            vector = new StoredField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
+        } else {
+            // Alternative: The DocValues field. It's extremely fast to read, but it's all in RAM most likely.
+            vector = new BinaryDocValuesField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
+        }
 
-        // Alternative: The DocValues field. It's extremely fast to read, but it's all in RAM most likely.
-//        vector = new BinaryDocValuesField(extractorItems.get(extractorItem)[0], new BytesRef(globalFeature.getByteArrayRepresentation()));
 
         // if BitSampling is an issue we add a field with the given hashFunctionsFileName and the suffix "hash":
         if (hashingEnabled) {

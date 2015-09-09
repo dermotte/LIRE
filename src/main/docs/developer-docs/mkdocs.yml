@@ -15,5 +15,6 @@ pages:
 - [features.md, Advanced, Features]
 - [lireinternals.md, Other, LIRE Internals]
 - [imageread.md, Other, Image Handling]
+- [metricindexing.md, Advanced, Metric Spaces Indexing]
 
 

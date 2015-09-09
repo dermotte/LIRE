@@ -7,7 +7,7 @@ image retrieval (CBIR). There is no complete list of features, but these are som
   * Color histograms (HSV and RGB), Tamura & Gabor, auto color correlogram, JPEG coefficient histogram (common global descriptors)
   * Visual words based on [SIFT](http://en.wikipedia.org/wiki/Scale-invariant_feature_transform) and [SURF](http://en.wikipedia.org/wiki/SURF)
   * Visual words based on [SIMPLE](simple.md)
-  * Approximate fast search based on hashing and metric indexing.
+  * Approximate fast search based on hashing and [metric indexing](metricindexing.md).
 
 Furthermore, methods for searching the index based on [Lucene](http://lucene.apache.org) are provided.
 
@@ -33,6 +33,15 @@ If you are searching for the Solr plugin of LIRE ... it's still under constructi
 and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr). It has been reported
 working on distributed installations.
 
+## Making more of LIRE
+If you need **more performance** out of LIRE you can consider using approximate indexing. One option is hashing, ie. BitSampling,
+the other is to use the [approximate indexing based on metric spaces](metricindexing.md) based on the work of [G. Amato](http://www.nmis.isti.cnr.it/amato/).
+Both are supported by the parallel indexer and the generic searcher class, just check the configurations and constructors.
+
+Another option is to switch to [DocValues](docvalues.md). This utilizes another data structure of Lucene and bypasses
+the actual index. Please note that you need to use a custom searcher, the GenericDocValuesSearcher for searching. Indexing
+can be done by the parallel indexer.
+
 ## How does Lire actually work?
 Lire employs *global image features* for *content based image retrieval*. For more information on the underlying methods 
 and techniques you should consult the basic literature on [content based images retrieval](http://en.wikipedia.org/wiki/CBIR):
@@ -44,7 +53,7 @@ and techniques you should consult the basic literature on [content based images 
 Further it uses the Java search engine Lucene to provide
  
   * linear search (opening each and every indexed document and comparing it to the query feature)
-  * approximate indexing based on metric spaces based on the work of [G. Amato](http://www.nmis.isti.cnr.it/amato/)
+  * [approximate indexing based on metric spaces](metricindexing.md) based on the work of [G. Amato](http://www.nmis.isti.cnr.it/amato/)
   * approximate indexing based on locality sensitive hashing
 
 
