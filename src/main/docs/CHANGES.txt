@@ -3,8 +3,13 @@ CHANGES for LIRE
 
 2015-09-09
 ==========
+  - API change and docs on metric indexing.
+
+2015-09-09
+==========
   - DocValues implementation and tests for indexing and search.
   - documentation on metric spaces and docvalues.
+  - Changed the RAM buffer size of IndexWriter instances in LuceneUtils to cope with lots of small files more easily.
 
 2015-09-07
 ==========

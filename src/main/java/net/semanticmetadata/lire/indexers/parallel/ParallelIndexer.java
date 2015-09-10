@@ -125,7 +125,8 @@ public class ParallelIndexer implements Runnable {
     private HashMap<String, Document> allDocuments;
 
     // Note that you can edit the queue size here. 100 is a good value, but I'd raise it to 200.
-    private LinkedBlockingQueue<WorkItem> queue = new LinkedBlockingQueue<>(200);
+    private int queueCapacity = 200;
+    private LinkedBlockingQueue<WorkItem> queue = new LinkedBlockingQueue<>(queueCapacity);
 
 
     public static void main(String[] args) {
@@ -362,6 +363,31 @@ public class ParallelIndexer implements Runnable {
         }
         this.globalHashingMode = hashingMode;
         this.useDocValues = useDocValues;
+    }
+
+    /**
+     * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageList    the list of images, one path per line.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     * @param useDocValues set to true if you want to use DocValues instead of Fields.
+     * @param queueSize    the size of the reading queue to minimize disk usage.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, File imageList, GlobalDocumentBuilder.HashingMode hashingMode, boolean useDocValues, int queueSize) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageList = imageList;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else {
+            this.globalHashing = false;
+        }
+        this.globalHashingMode = hashingMode;
+        this.useDocValues = useDocValues;
+        queueCapacity = queueSize;
+        queue = new LinkedBlockingQueue<>(queueSize);
     }
 
     public ParallelIndexer(int numOfThreads, String indexPath, File imageList, int numOfClusters, int numOfDocsForCodebooks) {
@@ -1135,6 +1161,10 @@ public class ParallelIndexer implements Runnable {
             BufferedImage image;
             while (!locallyEnded) {
                 try {
+                    if (queue.peek()==null) {
+//                        while (queue.remainingCapacity() > 2*queueCapacity/3) Thread.sleep(1000);
+                        Thread.sleep((long) ((Math.random()/2+0.5) * 10000)); // sleep for a second if queue is empty.
+                    }
                     tmp = queue.take();
                     if (tmp.getFileName() == null) locallyEnded = true;
                     else overallCount++;

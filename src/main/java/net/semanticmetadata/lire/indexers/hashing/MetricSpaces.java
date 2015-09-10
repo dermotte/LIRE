@@ -92,7 +92,7 @@ public class MetricSpaces {
         }
         try {
             try {
-                index(CEDD.class, numberOfReferencePoints, lenghtOfPostingList, inFile, outFile);
+                indexReferencePoints(CEDD.class, numberOfReferencePoints, lenghtOfPostingList, inFile, outFile);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
@@ -104,9 +104,19 @@ public class MetricSpaces {
     }
 
     /**
-     * Actual indexing per feature.
+     * Index reference points for use with a specific feature. A file (infile) containing one image path per line is read and
+     * numberOfReferencePoints are randomly selected to serve for indexing and search. The resulting data points plus
+     * configuration are read written to a file (outfile).
+     * @param globalFeatureClass The feature class to be used, eg. CEDD, PHOG, etc.
+     * @param numberOfReferencePoints the number of reference points, eg. 5000
+     * @param lenghtOfPostingList the length of the posting list, ie. how many reference points per image are stored.
+     * @param inFile the file containing the image data, one image path per line
+     * @param outFile the output of processing.
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
      */
-    public static void index(Class globalFeatureClass, int numberOfReferencePoints, int lenghtOfPostingList, File inFile, File outFile) throws IOException, IllegalAccessException, InstantiationException {
+    public static void indexReferencePoints(Class globalFeatureClass, int numberOfReferencePoints, int lenghtOfPostingList, File inFile, File outFile) throws IOException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new FileReader(inFile));
         BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
         String line;
@@ -151,10 +161,10 @@ public class MetricSpaces {
 
     /**
      * Init with a single file. In this file the feature class and all parameters are given. To create such a file see
-     * {@link MetricSpaces#index(Class, int, int, File, File)}. Note that you can load multiple files, one for each
+     * {@link MetricSpaces#indexReferencePoints(Class, int, int, File, File)}. Note that you can load multiple files, one for each
      * feature. If you load more than one per feature class, they will be overwritten.
      *
-     * @param referencePoints is the outFile from the method {@link MetricSpaces#index(Class, int, int, File, File)}
+     * @param referencePoints is the outFile from the method {@link MetricSpaces#indexReferencePoints(Class, int, int, File, File)}
      * @throws IOException
      */
     public static Parameters loadReferencePoints(File referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {

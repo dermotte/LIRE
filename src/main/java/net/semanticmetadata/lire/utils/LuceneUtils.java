@@ -134,6 +134,8 @@ public class LuceneUtils {
 
         // The config
         IndexWriterConfig config = new IndexWriterConfig(tmpAnalyzer);
+        config.setRAMBufferSizeMB(512);
+        config.setCommitOnClose(true);
         if (create)
             config.setOpenMode(IndexWriterConfig.OpenMode.CREATE); // overwrite if it exists.
         else

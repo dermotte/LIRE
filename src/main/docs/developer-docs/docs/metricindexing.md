@@ -15,9 +15,9 @@ your image data.
 
     // create reference points for three features and store them in files. 
     public void testHashIndexing() throws IllegalAccessException, IOException, InstantiationException {
-        MetricSpaces.index(CEDD.class, 2000, 50, new File(infile), new File("dir1.cedd.dat"));
-        MetricSpaces.index(FCTH.class, 2000, 50, new File(infile), new File("dir1.fcth.dat"));
-        MetricSpaces.index(PHOG.class, 2000, 50, new File(infile), new File("dir1.phog.dat"));
+        MetricSpaces.indexReferencePoints(CEDD.class, 2000, 50, new File(infile), new File("dir1.cedd.dat"));
+        MetricSpaces.indexReferencePoints(FCTH.class, 2000, 50, new File(infile), new File("dir1.fcth.dat"));
+        MetricSpaces.indexReferencePoints(PHOG.class, 2000, 50, new File(infile), new File("dir1.phog.dat"));
     }
     
 Indexing then is done with the `ParallelIndexer` with the use of `MetricSpaces`.
