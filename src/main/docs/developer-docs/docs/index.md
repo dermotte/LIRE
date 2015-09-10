@@ -63,4 +63,8 @@ Windows 7 64 bits extracting 7 features at once including hashing is down to ~18
 the 4770K, it runs a lot faster, using an SSD then speeds up the process even more. Extracting single features with the 
 ParallelIndexer is on a core i7 typically faster than 1 MP images can be read from a (magnetic) hard disk.
         
-Search is a matter of index size and is down to a few ms for 100k and less images, and increases linearly. 
+Search is a matter of index size and number of features. Tests on CEDD with 500,000 images have shown that with cached 
+search, LIRE needs around 870 ms per search, with DocValue based indexing and search it's around 630 ms per search.  
+Approximate indexing is faster with more images, for 500k images and 0.72 recall it takes around 370ms per search. This 
+numbers are before optimization based on query bundling, multithreading. Moreover, using L1 as a distance metric can 
+reduce search time significantly. See also [here](http://www.semanticmetadata.net/2015/09/10/a-search-runtime-analysis-of-lire-on-500k-images/) 
