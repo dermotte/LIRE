@@ -3,6 +3,8 @@ LIRE (Lucene Image Retrieval) is an open source library for content based image 
 
 An online demo can be found at http://demo-itec.uni-klu.ac.at/liredemo/
 
+Most recent documentation is found at the [github repo] (https://github.com/dermotte/LIRE/blob/master/src/main/docs/developer-docs/docs/index.md).
+
 ## Downloads ##
 Downloads are currently hosted at: http://www.itec.uni-klu.ac.at/~mlux/lire-release/.
 
