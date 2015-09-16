@@ -57,6 +57,7 @@ import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.util.Bits;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -513,7 +514,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         } else if (extractorItem.isLocal()){
             LocalDocumentBuilder localDocumentBuilder = new LocalDocumentBuilder();
             LocalFeatureExtractor localFeatureExtractor = localDocumentBuilder.extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
-            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
+            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + File.separator + codebookName));
             extractorItem.getFeatureInstance().setByteArrayRepresentation(aggregator.getByteVectorRepresentation());
 
             double maxDistance = findSimilar(reader, extractorItem.getFeatureInstance());
@@ -525,7 +526,7 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
         } else if (extractorItem.isSimple()){
             SimpleDocumentBuilder simpleDocumentBuilder = new SimpleDocumentBuilder();
             LocalFeatureExtractor localFeatureExtractor = simpleDocumentBuilder.extractLocalFeatures(image, (LocalFeatureExtractor) extractorItem.getExtractorInstance());
-            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + "\\" + codebookName));
+            aggregator.createVectorRepresentation(localFeatureExtractor.getFeatures(), Cluster.readClusters(codebooksDir + File.separator + codebookName));
             extractorItem.getFeatureInstance().setByteArrayRepresentation(aggregator.getByteVectorRepresentation());
             double maxDistance = findSimilar(reader, extractorItem.getFeatureInstance());
             if (!useSimilarityScore) {
