@@ -3,6 +3,10 @@ CHANGES for LIRE
 
 2015-09-09
 ==========
+  - Added three distance functions to MetricsUtils
+
+2015-09-09
+==========
   - API change and docs on metric indexing.
 
 2015-09-09

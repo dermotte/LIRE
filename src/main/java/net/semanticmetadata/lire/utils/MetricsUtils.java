@@ -139,6 +139,63 @@ public class MetricsUtils {
         return sum;
     }
 
+    /**
+     * Chi^2 statistics.
+     * @param d1
+     * @param d2
+     * @return distance like "unlikelihood"
+     */
+    public static double chisquare(double[] d1, double[] d2) {
+        assert (d1.length == d2.length);
+        double sum = 0d;
+        double m;
+        for (int i = 0; i < d1.length; i++) {
+            m = (d1[i]+d2[i])/2;
+            sum += (d1[i]-m)*(d1[i]-m)/m;
+        }
+        return sum;
+    }
+
+    /**
+     * Earth Mover's Distance for two equal length, equal summed histograms as described in
+     * Rubner, Yossi, Carlo Tomasi, and Leonidas J. Guibas. "The earth mover's distance as a metric for image
+     * retrieval." International journal of computer vision 40.2 (2000): 99-121.
+     * @param d1 NOTE: sum(d1) needs to be equal to sum(d2)
+     * @param d2
+     * @return EMD
+     */
+    public static double simpleEMD(double[] d1, double[] d2) {
+        assert (d1.length == d2.length);
+        double sum = 0d;
+        double m1=0, m2=0;
+        for (int i = 0; i < d1.length; i++) {
+            m1 += d1[i];
+            m2 += d2[i];
+            sum += Math.abs(m1-m2);
+        }
+        return sum;
+    }
+
+    /**
+     * Kolmogorov-Smirnoff Distance for two equal length, equal summed histograms as described in
+     * Rubner, Yossi, Carlo Tomasi, and Leonidas J. Guibas. "The earth mover's distance as a metric for image
+     * retrieval." International journal of computer vision 40.2 (2000): 99-121.
+     * @param d1 NOTE: sum(d1) needs to be equal to sum(d2)
+     * @param d2
+     * @return EMD
+     */
+    public static double ksDistance(double[] d1, double[] d2) {
+        assert (d1.length == d2.length);
+        double max = 0d;
+        double m1=0, m2=0;
+        for (int i = 0; i < d1.length; i++) {
+            m1 += d1[i];
+            m2 += d2[i];
+            max = Math.max(Math.abs(m1-m2), max);
+        }
+        return max;
+    }
+
     public static double jsd(byte[] h1, byte[] h2) {
         assert (h1.length == h2.length);
         double sum = 0d;
