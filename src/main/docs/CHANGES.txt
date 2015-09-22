@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2015-09-22
+==========
+  - Changed MetricSpaces query mode to term boosting to reduce size of query.
+  - Added statistics to docs.
+
 2015-09-09
 ==========
   - Added three distance functions to MetricsUtils

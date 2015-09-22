@@ -27,19 +27,25 @@ import java.util.Timer;
  * @author Mathias Lux, mathias@juggle.at, 26.08.2015.
  */
 public class MetricSpacesTest extends TestCase {
-    String infile = "testdata/images.lst";
+    String infile = "/media/mlux/27af5468-1841-447c-9ff5-88030faa0d49/MirFlickr/image.lst";
+//    String infile = "testdata/images.lst";
 //    String infile = "D:\\DataSets\\MirFlickr\\images01.lst";
 
     public void testHashIndexing() throws IllegalAccessException, IOException, InstantiationException {
-        MetricSpaces.indexReferencePoints(CEDD.class, 1000, 50, new File(infile), new File("dir.cedd.dat"));
-//        MetricSpaces.index(FCTH.class, 50, 8, new File(infile), new File("dir.fcth.dat"));
-//        MetricSpaces.index(PHOG.class, 50, 8, new File(infile), new File("dir.phog.dat"));
+//        MetricSpaces.indexReferencePoints(CEDD.class, 10000, 50, new File(infile), new File("dir.cedd1.dat"));
+//        MetricSpaces.indexReferencePoints(FCTH.class, 10000, 50, new File(infile), new File("dir.fcth1.dat"));
+//        MetricSpaces.indexReferencePoints(PHOG.class, 10000, 50, new File(infile), new File("dir.phog1.dat"));
+//        MetricSpaces.indexReferencePoints(OpponentHistogram.class, 10000, 50, new File(infile), new File("dir.ophist1.dat"));
+//        MetricSpaces.indexReferencePoints(AutoColorCorrelogram.class, 10000, 50, new File(infile), new File("dir.acc1.dat"));
+        MetricSpaces.indexReferencePoints(ColorLayout.class, 10000, 50, new File(infile), new File("dir.cl1.dat"));
     }
 
     public void testLoadingIndex() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        MetricSpaces.loadReferencePoints(new File("dir.cedd.dat"));
-        MetricSpaces.loadReferencePoints(new File("dir.fcth.dat"));
-        MetricSpaces.loadReferencePoints(new File("dir.phog.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.cedd1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.fcth1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.phog1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.ophist1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.acc1.dat"));
 
 
         GlobalFeature feature;
@@ -58,20 +64,38 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testImageIndexing() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        MetricSpaces.loadReferencePoints(new File("dir.cedd.dat"));
-//        MetricSpaces.loadReferencePoints(new File("dir.fcth.dat"));
-//        MetricSpaces.loadReferencePoints(new File("dir.phog.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.cedd1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.fcth1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.phog1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.ophist1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.acc1.dat"));
+        MetricSpaces.loadReferencePoints(new File("dir.cl1.dat"));
 
-        ParallelIndexer p = new ParallelIndexer(6, "ms-index-docval", new File(infile), GlobalDocumentBuilder.HashingMode.MetricSpaces);
+        // running the index with metric spaces & text fields
+        ParallelIndexer p = new ParallelIndexer(8, "ms-index-mirflickr-10kro-all", new File(infile), GlobalDocumentBuilder.HashingMode.MetricSpaces);
         p.addExtractor(CEDD.class);
-//        p.addExtractor(FCTH.class);
-//        p.addExtractor(PHOG.class);
+        p.addExtractor(FCTH.class);
+        p.addExtractor(PHOG.class);
+        p.addExtractor(OpponentHistogram.class);
+        p.addExtractor(AutoColorCorrelogram.class);
+        p.addExtractor(ColorLayout.class);
+        p.run();
+
+        // running the index with metric spaces & docvals
+        p = new ParallelIndexer(8, "ms-index-mirflickr-docvals", new File(infile), GlobalDocumentBuilder.HashingMode.MetricSpaces, true);
+        p.addExtractor(CEDD.class);
+        p.addExtractor(FCTH.class);
+        p.addExtractor(PHOG.class);
+        p.addExtractor(OpponentHistogram.class);
+        p.addExtractor(AutoColorCorrelogram.class);
+        p.addExtractor(ColorLayout.class);
         p.run();
     }
 
     public void testSearch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-mirflickr-docval")));
         MetricSpacesImageSearcher is = new MetricSpacesImageSearcher(10, new File("dir.cedd.dat"), 100);
+        is.setNumHashesUsedForQuery(15);
 //        GenericFastImageSearcher is = new GenericFastImageSearcher(10, CEDD.class, false, reader);
         for (int i = 0; i < 10; i++) {
             ImageSearchHits hits = is.search(reader.document(i), reader);
@@ -83,11 +107,12 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testSearchAccuracy() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("/media/mlux/SSD02/ms-index-ms-500k")));
-        int maxResults = 10;
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-mirflickr-10kro")));
+        int maxResults = 100;
         int intersectSum = 0;
-        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("ms-cedd.dat"), 1000);
-        mis.setNumHashesUsedForQuery(15);
+        System.out.println("CEDD with BaseSimilarity");
+        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cedd1.dat"), 10000);
+//        mis.setNumHashesUsedForQuery(50);
         GenericFastImageSearcher fis = new GenericFastImageSearcher(maxResults, CEDD.class, true, reader);
         StopWatch sm = new StopWatch();
         StopWatch sf = new StopWatch();
@@ -108,10 +133,11 @@ public class MetricSpacesTest extends TestCase {
             }
             setF.removeAll(setM);
             int intersect = (maxResults - setF.size());
-            System.out.println("intersect = " + intersect);
+//            System.out.println("intersect = " + intersect);
+            if (i%10==0) System.out.print('.');
             intersectSum += intersect;
         }
-        System.out.printf("Time for MetricSpaces vs. linear: %02.3f vs. %02.3f seconds for %d runs at %02.2f recall\n", sm.getTime()/ 1000d, sf.getTime()/1000d, numRuns, ((double) intersectSum / (double) numRuns)/((double) maxResults));
+        System.out.printf("\nTime for MetricSpaces vs. linear: %02.3f vs. %02.3f seconds for %d runs at %02.2f recall\n", sm.getTime()/ 1000d, sf.getTime()/1000d, numRuns, ((double) intersectSum / (double) numRuns)/((double) maxResults));
     }
 }
 

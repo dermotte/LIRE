@@ -61,7 +61,10 @@ Further it uses the Java search engine Lucene to provide
 Parallel indexing with the [ParallelIndexer](createindex.md) running with 8 threads on a AMD A10 with 4 cores and 4.4 GHz, 
 Windows 7 64 bits extracting 7 features at once including hashing is down to ~180 ms per image. On a Intel Core i7, ie. 
 the 4770K, it runs a lot faster, using an SSD then speeds up the process even more. Extracting single features with the 
-ParallelIndexer is on a core i7 typically faster than 1 MP images can be read from a (magnetic) hard disk.
+`ParallelIndexer` is on an Intel Core i7 typically faster than 1 MP images can be read from a (magnetic) hard disk. Example:
+Extracting PHOG, FCTH, CEDD and OpponentHistogram and indexing with MetricSpaces hashing with 8 concurrent threads from the MIRFlickr images stored on a Samsung 
+SSD with a Linux Mint 17.2, OpenJDK 1.7, and a Core i7 3770K takes ~15.15 ms per image, so roughly 4 hours and 13 
+minutes for the whole MIRFlickr 1M data set or 1 million images.
         
 Search is a matter of index size and number of features. Tests on CEDD with 500,000 images have shown that with cached 
 search, LIRE needs around 870 ms per search, with DocValue based indexing and search it's around 630 ms per search.  

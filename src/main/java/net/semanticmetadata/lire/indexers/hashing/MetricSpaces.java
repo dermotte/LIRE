@@ -131,7 +131,7 @@ public class MetricSpaces {
             }
         }
         br.close();
-        System.out.printf("Read %d lines from the input file. Now selecting reference points.\n", lines.size());
+        System.out.printf("Read %,d lines from the input file. Now selecting reference points.\n", lines.size());
         // now for the randomness:
         Collections.shuffle(lines);
         // now for the reference points:
@@ -245,6 +245,48 @@ public class MetricSpaces {
             for (int i = 0; i<lenghtOfPostingList; i++) {
                 sb.append(String.format("R%05d ", result.index));
             }
+            lenghtOfPostingList--;
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Creates a text String to be used for search based on the reference points using term boosting instead of repetition.
+     * @param feature the feature instance the string is generated for.
+     * @param queryLength the length of the posting list. If 0, then it's set to the preset.
+     * @return the text for the Lucene index.
+     */
+    public static String generateBoostedQuery(GlobalFeature feature, int queryLength) {
+        ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
+        // break up if the feature is not indexed ...
+        if (l == null) return null;
+        int lenghtOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lenghtOfPostingList);
+        if (lenghtOfPostingList<1) {
+            lenghtOfPostingList = parameters.get(feature.getClass().getName()).lenghtOfPostingList;
+        }
+        TreeSet<Result> results = new TreeSet<>();
+        double maxDistance = Double.MAX_VALUE;
+        double distance;
+        int count = 0;
+        for (GlobalFeature f : l) {
+            distance = f.getDistance(feature);
+            if (results.size() < lenghtOfPostingList) {
+                results.add(new Result(distance, count));
+                maxDistance = l.get(results.last().index).getDistance(feature);
+            } else if (distance < maxDistance) {
+                results.add(new Result(distance, count));
+                maxDistance = distance;
+                if (results.size() > lenghtOfPostingList) {
+                    results.pollLast();
+                }
+            }
+            count++;
+        }
+        StringBuilder sb = new StringBuilder(lenghtOfPostingList * 11);
+        double max = lenghtOfPostingList;
+        for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
+            Result result = resultIterator.next();
+            sb.append(String.format("R%05d^%1.2f ", result.index, (double) lenghtOfPostingList / max));
             lenghtOfPostingList--;
         }
         return sb.toString();

@@ -47,6 +47,7 @@ import net.semanticmetadata.lire.indexers.hashing.BitSampling;
 import net.semanticmetadata.lire.indexers.hashing.MetricSpaces;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
@@ -79,12 +80,17 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
     private String hashesFieldName = null;
     private int numHashesUsedForQuery = 25;
 
+    // for DocValues based storage, currently not implemented:
+    private boolean useDocValues = false;
+    private BinaryDocValues docValues = null;
+    private IndexReader reader = null;
+
     /**
      * Creates a new searcher for MetricSpaces based indexed features.The field names are inferred from the entries in the reference point file.
      *
      * @param maximumHits        how many hits the searcher shall return.
      * @param referencePointFile the file created by MetricSpaces
-     * @see net.semanticmetadata.lire.indexers.hashing.MetricSpaces#index(Class, int, int, File, File)
+     * @see net.semanticmetadata.lire.indexers.hashing.MetricSpaces#indexReferencePoints(Class, int, int, File, File)
      */
     public MetricSpacesImageSearcher(int maximumHits, File referencePointFile) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         this.maximumHits = maximumHits;
@@ -107,7 +113,7 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
      * @param maximumHits        how many hits the searcher shall return.
      * @param referencePointFile the file created by MetricSpaces
      * @param numHashedResults   the number of candidate results retrieved from the index before re-ranking.
-     * @see net.semanticmetadata.lire.indexers.hashing.MetricSpaces#index(Class, int, int, File, File)
+     * @see net.semanticmetadata.lire.indexers.hashing.MetricSpaces#indexReferencePoints(Class, int, int, File, File)
      */
     public MetricSpacesImageSearcher(int maximumHits, File referencePointFile, int numHashedResults) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         this.maximumHits = maximumHits;
@@ -127,7 +133,7 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
         try {
             GlobalFeature queryFeature = feature.getClass().newInstance();
             queryFeature.extract(image);
-            String query = MetricSpaces.generateHashString(queryFeature, numHashesUsedForQuery);
+            String query = MetricSpaces.generateBoostedQuery(queryFeature, numHashesUsedForQuery);
             return search(query, queryFeature, reader);
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,7 +147,7 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
             queryFeature.setByteArrayRepresentation(doc.getBinaryValue(featureFieldName).bytes,
                     doc.getBinaryValue(featureFieldName).offset,
                     doc.getBinaryValue(featureFieldName).length);
-            return search(MetricSpaces.generateHashString(queryFeature, numHashesUsedForQuery), queryFeature, reader);
+            return search(MetricSpaces.generateBoostedQuery(queryFeature, numHashesUsedForQuery), queryFeature, reader);
         } catch (Exception e) {
             e.printStackTrace();
         }

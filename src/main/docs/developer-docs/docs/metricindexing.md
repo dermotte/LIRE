@@ -60,3 +60,28 @@ Search is as easy as:
         for (int j =0; j< hits.length(); j++) {
             System.out.printf("%02d: %06d %02.3f\n", j + 1, hits.documentID(j), hits.score(j));
         }
+
+## Experimental results
+Using the MIRFlickr data set with 1 million digital photos we tested search performance. We used 1,000 reference points, 
+25 reference points for indexing and search and re-ordered 10,000 results.   
+
+Time for MetricSpaces vs. cached linear search, giving the precision for 100 runs with TF*IDF:
+
+* CEDD: : 72.788 vs. 213.069 seconds for 100 runs at 0.81 recall
+* FCTH: 70.397 vs. 167.995 seconds for 100 runs at 0.85 recall
+* PHOG: 90.461 vs. 194.189 seconds for 100 runs at 0.57 recall
+* OpponentHistogram: 93.684 vs. 146.364 seconds for 100 runs at 0.88 recall
+
+with BaseSimilarity:
+
+* CEDD: 80.537 vs. 239.259 seconds for 100 runs at 0.79 recall
+* FCTH: 83.118 vs. 189.970 seconds for 100 runs at 0.84 recall
+* PHOG: 74.270 vs. 166.404 seconds for 100 runs at 0.60 recall
+* OpponentHistogram: 87.038 vs. 141.582 seconds for 100 runs at 0.85 recall
+
+Using 10,000 reference points and 50 points for indexing and querying, it comes to
+
+Time for MetricSpaces vs. cached linear search, giving the precision for 100 runs with BaseSimilarity:
+
+* CEDD: 93.542 vs. 217.512 seconds for 100 runs at 0.85 recall
+* PHOG: 89.676 vs. 161.016 seconds for 100 runs at 0.71 recall
