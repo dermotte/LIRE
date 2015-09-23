@@ -67,7 +67,7 @@ public class ImageArrayConverter {
         FloatArray2D image;
         Raster pixelArray = ip.getRaster();
         int count = 0;
-        int[] rgb = new int[3];
+        int[] rgb = new int[4];
         image = new FloatArray2D(ip.getWidth(), ip.getHeight());
         for (int y = 0; y < ip.getHeight(); y++) {
             for (int x = 0; x < ip.getWidth(); x++) {

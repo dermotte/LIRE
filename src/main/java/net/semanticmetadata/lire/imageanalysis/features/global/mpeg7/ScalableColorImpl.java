@@ -344,13 +344,13 @@ public class ScalableColorImpl {
         hsvImageBuffer = new int[imageColSize];
         if (img != null) {
             //convertRgbToHsv
-            int[] hsv = new int[3];
+            int[] hsv = new int[4];
             WritableRaster raster = img.getRaster();
             int[] pixel;     // fix from Patti Spala Nov-27-2014
             if (raster.getNumBands() > 3) {
                 pixel = new int[raster.getNumBands()];
             } else {
-                pixel = new int[3];
+                pixel = new int[4];
             }
             for (int i = 0; i < imageColSize; i += 3) {
                 raster.getPixel((i / 3) % _xSize, (i / 3) / _xSize, pixel);
@@ -360,7 +360,7 @@ public class ScalableColorImpl {
                 hsvImageBuffer[i + 2] = hsv[2];
             }
         } else if (pixels != null) {
-            int[] hsv = new int[3];
+            int[] hsv = new int[4];
             for (int i = 0; i < pixels.length; i += 3) {
                 convertRgbToHsv(pixels[i], pixels[i + 1], pixels[i + 2], hsv);
                 hsvImageBuffer[i] = hsv[0];

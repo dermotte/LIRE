@@ -191,7 +191,7 @@ public class StentifordModel {
      */
     public BufferedImage getAttentionVisualization() {
         BufferedImage result = new BufferedImage(attentionModel.length, attentionModel[0].length, BufferedImage.TYPE_INT_RGB);
-        int[] pixel = new int[3];
+        int[] pixel = new int[4];
         for (int i = 0; i < attentionModel.length; i++) {
             for (int j = 0; j < attentionModel[i].length; j++) {
                 pixel[0] = (int) (((float) attentionModel[i][j]) / ((float) maxChecks) * 255f);

@@ -17,6 +17,9 @@ profile
 # Windows noise
 desktop.ini
 
+# Linux noise
+hs_err_pid*.log
+
 # Eclipse/Flash Builder noise
 .actionScriptProperties
 .flexProperties
@@ -51,4 +54,5 @@ out.png
 results-*/*
 textindextest/*
 wang-index-*/*
+*-index-*/
 testxml.xml

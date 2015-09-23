@@ -90,7 +90,7 @@ public class FuzzyColorHistogram implements GlobalFeature {
         int height = bimg.getHeight();
 
         WritableRaster raster = bimg.getRaster();
-        int[] pixel = new int[3];
+        int[] pixel = new int[4];
 
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {

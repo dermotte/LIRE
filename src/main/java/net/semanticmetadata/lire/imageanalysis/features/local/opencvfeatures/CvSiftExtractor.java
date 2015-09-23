@@ -36,6 +36,7 @@ package net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures;
 
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
+import net.semanticmetadata.lire.utils.NativeUtils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -60,6 +61,11 @@ import java.util.List;
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class CvSiftExtractor implements LocalFeatureExtractor {
+
+    static {
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
+
     //Default: int nfeatures=0, int nOctaveLayers=3, double contrastThreshold=0.04, double edgeThreshold=10, double sigma=1.6
     private int nfeatures=0;
     private int nOctaveLayers=3;
@@ -88,8 +94,7 @@ public class CvSiftExtractor implements LocalFeatureExtractor {
         init();
     }
 
-    private void init(){
-        System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+    private void init() {
 
         detector = FeatureDetector.create(FeatureDetector.SIFT);
         extractor = DescriptorExtractor.create(DescriptorExtractor.SIFT);

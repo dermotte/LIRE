@@ -452,7 +452,7 @@ public class ColorLayoutImpl {
         BufferedImage br = new BufferedImage(8, 8, BufferedImage.TYPE_INT_RGB);
         WritableRaster r = br.getRaster();
         double rImage, gImage, bImage;
-        int pixel[] = new int[3];
+        int pixel[] = new int[4];
 
         for (int i = 0; i < 64; i++) {
             rImage = ((rgbSmallImage[0][i] - 16.0) * 256.0) / 219.0;

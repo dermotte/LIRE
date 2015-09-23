@@ -95,7 +95,7 @@ public class FuzzyOpponentHistogram implements GlobalFeature {
         }
         WritableRaster grey = ImageUtils.getGrayscaleImage(bimg).getRaster();
         WritableRaster raster = bimg.getRaster();
-        int[] px = new int[3];
+        int[] px = new int[4];
         int[] intens = new int[1];
         int colorPos;
         for (int x = 1; x < raster.getWidth() - 1; x++) {

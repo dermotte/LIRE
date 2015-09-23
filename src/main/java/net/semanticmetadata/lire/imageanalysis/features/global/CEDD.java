@@ -101,7 +101,7 @@ public class CEDD implements GlobalFeature {
         Fuzzy10Bin Fuzzy10 = new Fuzzy10Bin(false);
         Fuzzy24Bin Fuzzy24 = new Fuzzy24Bin(false);
         RGB2HSV HSVConverter = new RGB2HSV();
-        int[] HSV = new int[3];
+        int[] HSV = new int[4];
 
         double[] Fuzzy10BinResultTable = new double[10];
         double[] Fuzzy24BinResultTable = new double[24];

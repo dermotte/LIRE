@@ -32,7 +32,7 @@ public class SimpleCentrist implements GlobalFeature {
             histogram[i] = 0;
         }
         WritableRaster raster = ImageUtils.getGrayscaleImage(image).getRaster();
-        int[] px = new int[3];
+        int[] px = new int[4];
         for (int x = 1; x < raster.getWidth() - 1; x++) {
             for (int y = 1; y < raster.getHeight() - 1; y++) {
                 raster.getPixel(x, y, px);

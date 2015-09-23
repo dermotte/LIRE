@@ -163,7 +163,7 @@ public class SimpleExtractor implements LocalFeatureExtractor{
 
     private void useRandom(BufferedImage image) {
         listOfFeatures = new LinkedList<SimpleFeature>();
-        int[] myKeypoint = new int[3];
+        int[] myKeypoint = new int[4];
         Random r = new Random();
         for (int i = 0; i < samplePoints; i++) {
             createNextRandomPoint(myKeypoint, image.getWidth(), image.getHeight(), r);

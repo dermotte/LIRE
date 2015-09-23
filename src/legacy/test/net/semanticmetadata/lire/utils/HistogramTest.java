@@ -63,7 +63,7 @@ public class HistogramTest extends TestGeneral {
             String s = iterator.next();
             BufferedImage image = ImageIO.read(new FileInputStream(s));
             WritableRaster raster = image.getRaster();
-            int[] pixel = new int[3];
+            int[] pixel = new int[4];
             for (int i = 0; i < raster.getWidth(); i++) {
                 for (int j = 0; j < raster.getHeight(); j++) {
                     raster.getPixel(i, j, pixel);

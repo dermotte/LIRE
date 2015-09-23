@@ -71,7 +71,7 @@
     <!-- define the classpath  -->
     <path id="classpath.path">
         <pathelement location="${build}"/>
-        <fileset dir="lib">
+        <fileset dir="libs">
             <include name="*.jar"/>
         </fileset>
     </path>
@@ -135,7 +135,7 @@
         <mkdir dir="${dist}/docs"/>
 
         <copy todir="${dist}/lib">
-            <fileset dir="lib">
+            <fileset dir="libs">
                 <patternset>
                     <include name="**/*.*"/>
                     <exclude name="**/CVS/*"/>

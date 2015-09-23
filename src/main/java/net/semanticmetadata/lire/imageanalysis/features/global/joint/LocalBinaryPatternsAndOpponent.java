@@ -124,7 +124,7 @@ public class LocalBinaryPatternsAndOpponent implements GlobalFeature {
         // cached pixel array
         int[] pixel = new int[9];
         int[] pattern = new int[8];
-        int[] px = new int[3];
+        int[] px = new int[4];
         // now fill histogram according to LBP definition.
         for (int x = 0; x < raster.getWidth() - 2; x++) {
             for (int y = 0; y < raster.getHeight() - 2; y++) {
