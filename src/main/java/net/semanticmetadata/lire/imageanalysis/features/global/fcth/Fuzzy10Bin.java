@@ -145,17 +145,17 @@ public class Fuzzy10Bin {
 
             MembershipFunctionToSave[Temp] = 0;
 
-            //�� ����� ������� ��� ������
+            //�� ���� ������ �� �����
             if (Input >= Triangles[i + 1] && Input <= +Triangles[i + 2]) {
                 MembershipFunctionToSave[Temp] = 1;
             }
 
-            //�� ����� ����� ��� ��������    
+            //�� ���� ���� �� �������
             if (Input >= Triangles[i] && Input < Triangles[i + 1]) {
                 MembershipFunctionToSave[Temp] = (Input - Triangles[i]) / (Triangles[i + 1] - Triangles[i]);
             }
 
-            //�� ����� �������� ��� ��������    
+            //�� ���� ������� �� �������
 
             if (Input > Triangles[i + 2] && Input <= Triangles[i + 3]) {
                 MembershipFunctionToSave[Temp] = (Input - Triangles[i + 2]) / (Triangles[i + 2] - Triangles[i + 3]) + 1;
