@@ -124,6 +124,8 @@ public class ParallelIndexer implements Runnable {
 
     private HashMap<String, Document> allDocuments;
 
+    private ImagePreprocessor imagePreprocessor;
+
     // Note that you can edit the queue size here. 100 is a good value, but I'd raise it to 200.
     private int queueCapacity = 200;
     private LinkedBlockingQueue<WorkItem> queue = new LinkedBlockingQueue<>(queueCapacity);
@@ -930,6 +932,13 @@ public class ParallelIndexer implements Runnable {
         return (double) overallCount / (double) numImages;
     }
 
+    public ImagePreprocessor getImagePreprocessor() {
+        return imagePreprocessor;
+    }
+
+    public void setImagePreprocessor(ImagePreprocessor imagePreprocessor) {
+        this.imagePreprocessor = imagePreprocessor;
+    }
 
     class Producer implements Runnable {
         private List<String> localList;
@@ -1170,6 +1179,9 @@ public class ParallelIndexer implements Runnable {
                     else overallCount++;
                     if (!locallyEnded) {    //&& tmp != null
                         image = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
+                        if(imagePreprocessor != null){
+                            image = imagePreprocessor.process(image);
+                        }
                         doc = localCustomDocumentBuilder.createDocument(image, tmp.getFileName());
                         fields = globalDocumentBuilder.createDescriptorFields(image);
                         for (Field field : fields) {
