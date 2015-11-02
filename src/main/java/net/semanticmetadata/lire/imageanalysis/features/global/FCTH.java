@@ -98,7 +98,7 @@ public class FCTH implements GlobalFeature {
 
 
         RGB2HSV HSVConverter = new RGB2HSV();
-        int[] HSV = new int[4];
+        int[] HSV = new int[3];
 
         WaveletMatrixPlus Matrix = new WaveletMatrixPlus();
 

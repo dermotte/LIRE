@@ -137,7 +137,7 @@ public class ImageUtils {
      */
     public static void invertImage(BufferedImage image) {
         WritableRaster inRaster = image.getRaster();
-        int[] p = new int[4];
+        int[] p = new int[3];
 //        float v = 0;
         for (int x = 0; x < inRaster.getWidth(); x++) {
             for (int y = 0; y < inRaster.getHeight(); y++) {
@@ -274,8 +274,8 @@ public class ImageUtils {
 
         WritableRaster r1 = img1.getRaster();
         WritableRaster r2 = img2.getRaster();
-        int[] tmp1 = new int[4];
-        int[] tmp2 = new int[4];
+        int[] tmp1 = new int[3];
+        int[] tmp2 = new int[3];
         for (int x = 0; x < img1.getWidth(); x++) {
             for (int y = 0; y < img1.getHeight(); y++) {
                 r1.getPixel(x, y, tmp1);

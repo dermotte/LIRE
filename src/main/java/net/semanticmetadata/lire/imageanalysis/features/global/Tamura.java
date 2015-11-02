@@ -284,7 +284,7 @@ public class Tamura implements GlobalFeature {
         BufferedImage bimg = op.filter(image, null);
         bimg = ImageUtils.scaleImage(bimg, MAX_IMG_HEIGHT);
         Raster raster = bimg.getRaster();
-        int[] tmp = new int[4];
+        int[] tmp = new int[3];
         this.grayScales = new int[raster.getWidth()][raster.getHeight()];
         for (int i = 0; i < raster.getWidth(); i++) {
             for (int j = 0; j < raster.getHeight(); j++) {

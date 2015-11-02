@@ -265,7 +265,7 @@ public class JpegCoefficientHistogram implements GlobalFeature {
 
     protected int[][][] getYUVImage(WritableRaster raster, int newWidth, int newHeight, int shift) {    //TODO: rgb2yuv Conversion
         int[][][] yuvImage = new int[newWidth][newHeight][3];
-        int[] rgbPixel = new int[4];
+        int[] rgbPixel = new int[3];
         for (int j = 0; j < newHeight; j++) {
             for (int i = 0; i < newWidth; i++) {
                 raster.getPixel(i, j, rgbPixel);

@@ -161,7 +161,7 @@ public class Gabor implements GlobalFeature {
         image = ImageUtils.scaleImage(image, MAX_IMG_HEIGHT);
         Raster imageRaster = image.getRaster();
         int[][] grayLevel = new int[imageRaster.getWidth()][imageRaster.getHeight()];
-        int[] tmp = new int[4];
+        int[] tmp = new int[3];
         for (int i = 0; i < imageRaster.getWidth(); i++) {
             for (int j = 0; j < imageRaster.getHeight(); j++) {
                 grayLevel[i][j] = imageRaster.getPixel(i, j, tmp)[0];

@@ -127,7 +127,7 @@ public class QuantizationUtilsTest extends TestCase {
         for (int i = 0; i < histogram.length; i++) histogram[i] = 0;
         BufferedImage img = ImageIO.read(new FileInputStream("wang-1000/0.jpg"));
         WritableRaster raster = img.getRaster();
-        int[] px = new int[4];
+        int[] px = new int[3];
         for (int x = 0; x < raster.getWidth(); x++) {
             for (int y = 0; y < raster.getHeight(); y++) {
                 raster.getPixel(x, y, px);

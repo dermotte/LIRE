@@ -222,11 +222,11 @@ public class AutoColorCorrelogram implements GlobalFeature {
     private static int[][][] hsvImage(Raster r) {
         int[][][] pixels = new int[r.getWidth()][r.getHeight()][3];
         // quantize colors for each pixel (done in HSV color space):
-        int[] pixel = new int[4];
+        int[] pixel = new int[3];
         for (int x = 0; x < r.getWidth(); x++) {
             for (int y = 0; y < r.getHeight(); y++) {
                 // converting to HSV:
-                int[] hsv = new int[4];
+                int[] hsv = new int[3];
                 convertRgbToHsv(r.getPixel(x, y, pixel), hsv);
                 // quantize the actual pixel:
                 pixels[x][y] = hsv;

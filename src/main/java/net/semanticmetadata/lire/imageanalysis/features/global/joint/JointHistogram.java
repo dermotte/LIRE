@@ -71,7 +71,7 @@ public class JointHistogram implements GlobalFeature {
         }
         WritableRaster grey = ImageUtils.getGrayscaleImage(bimg).getRaster();
         WritableRaster raster = bimg.getRaster();
-        int[] px = new int[4];
+        int[] px = new int[3];
         int[] intens = new int[1];
         for (int x = 1; x < raster.getWidth() - 1; x++) {
             for (int y = 1; y < raster.getHeight() - 1; y++) {

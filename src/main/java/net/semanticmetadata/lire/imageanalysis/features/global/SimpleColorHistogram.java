@@ -161,7 +161,7 @@ public class SimpleColorHistogram implements GlobalFeature {
     /**
      * Temporary pixel field ... re used for speed and memory issues ...
      */
-    private int[] pixel = new int[4];
+    private int[] pixel = new int[3];
     private int[] histogram;
     private HistogramType histogramType;
     private DistanceFunction distFunc;

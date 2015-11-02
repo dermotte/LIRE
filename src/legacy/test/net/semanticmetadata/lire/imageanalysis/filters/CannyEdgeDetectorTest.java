@@ -72,7 +72,7 @@ public class CannyEdgeDetectorTest extends TestCase {
         WritableRaster raster = flower.getRaster();
         Graphics graphics = flower.getGraphics();
         graphics.setColor(Color.black);
-        int[] tmp = new int[4];
+        int[] tmp = new int[3];
         for (int x = 0; x < raster.getWidth(); x++) {
             for (int y = 0; y < raster.getHeight(); y++) {
                 filter.getRaster().getPixel(x, y, tmp);
