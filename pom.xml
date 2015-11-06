@@ -33,18 +33,20 @@
   ~
   ~ Copyright statement:
   ~ ~~~~~~~~~~~~~~~~~~~~
-  ~ (c) 2002-2013 by Mathias Lux (mathias@juggle.at)
+  ~ (c) 2002-2015 by Mathias Lux (mathias@juggle.at)
   ~     http://www.semanticmetadata.net/lire, http://www.lire-project.net
+  ~ pom.xml file contributed and edited by Lukas Knoch and Bart Van Bos
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
-  
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.semanticmetadata</groupId>
@@ -56,54 +58,82 @@
 	<description>Lucene Image Retrieval</description>
 	<url>http://www.semanticmetadata.net/</url>
 	<inceptionYear>2012</inceptionYear>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		
+		<java.version>1.8</java.version>
+
 		<maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-        <build.timestamp>${maven.build.timestamp}</build.timestamp>
-        <build.number />
+		<build.timestamp>${maven.build.timestamp}</build.timestamp>
+		<build.number/>
+
+		<lucene-core.version>5.2.1</lucene-core.version>
+		<commons-math3.version>3.5</commons-math3.version>
+		<commons-codec.version>1.10</commons-codec.version>
+		<commons-io.version>2.4</commons-io.version>
+		<jopensurf.version>1.0.0</jopensurf.version>
+		<opencv.version>2.4.9-7</opencv.version>
+
+		<junit.version>4.12</junit.version>
+
+		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
+		<maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+		<maven-source-plugin.version>2.4</maven-source-plugin.version>
+		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 	</properties>
-	
+
 	<prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
+		<maven>3.0.0</maven>
+	</prerequisites>
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
-			<version>4.10.2</version>
+			<version>${lucene-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-queryparser</artifactId>
-			<version>4.10.2</version>
+			<version>${lucene-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-analyzers-common</artifactId>
-			<version>4.10.2</version>
+			<version>${lucene-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
-			<version>3.2</version>
+			<version>${commons-math3.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.stromberglabs</groupId>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sangupta</groupId>
 			<artifactId>jopensurf</artifactId>
-			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/jopensurf.jar</systemPath>
+			<version>${jopensurf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>nu.pattern</groupId>
+			<artifactId>opencv</artifactId>
+			<version>${opencv.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -113,10 +143,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 
@@ -124,21 +154,33 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.8.1</version>
+				<version>${maven-javadoc-plugin.version}</version>
 			</plugin>
 
 			<!-- Generate the project-sources.jar for OSS repository -->
 			<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
-            </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven-source-plugin.version}</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<forkMode>once</forkMode>
+					<argLine>
+						-Djava.library.path=${project.basedir}/libs/native/linux:${project.basedir}/libs/native/osx:${project.basedir}/libs/native/win:${java.library.path}
+					</argLine>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
-			<id>release</id>	
+			<id>release</id>
 			<build>
 				<plugins>
 					<!-- Sign the Maven artifacts -->
@@ -154,7 +196,7 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>			
+					</plugin>
 				</plugins>
 			</build>
 		</profile>

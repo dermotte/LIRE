@@ -1,3 +1,2 @@
-Build-Date: 17.06.2015 02:33 μμ
-            Build-Number: 255
-        
+Build-Date: 17.06.2015 02:33
+Build-Number: 255

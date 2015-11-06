@@ -1,6 +1,12 @@
 CHANGES for LIRE
 ================
 
+2015-11-06
+==========
+  - Invalid character in comments removed (based on pull request of Bart Van Bos)
+  - Adapted .gitignore from https://github.com/boeboe/LIRE/ fork
+  - Adapted pom.xml from https://github.com/boeboe/LIRE/ fork
+
 2015-09-22
 ==========
   - Changed MetricSpaces query mode to term boosting to reduce size of query.
