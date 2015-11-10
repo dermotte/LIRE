@@ -112,10 +112,10 @@ public class ImageUtils {
         int toX = Math.min(fromX + width, image.getWidth());
         int toY = Math.min(fromY + height, image.getHeight());
         // create smaller image
-        BufferedImage cropped = new BufferedImage(toX-fromX, toY-fromY, BufferedImage.TYPE_INT_RGB);
+        BufferedImage cropped = new BufferedImage(toX - fromX, toY - fromY, BufferedImage.TYPE_INT_RGB);
         // fast scale (Java 1.4 & 1.5)
         Graphics g = cropped.getGraphics();
-        g.drawImage(image,0, 0, cropped.getWidth(), cropped.getHeight(), fromX, fromY, toX, toY, null);
+        g.drawImage(image, 0, 0, cropped.getWidth(), cropped.getHeight(), fromX, fromY, toX, toY, null);
         return cropped;
     }
 
@@ -175,12 +175,22 @@ public class ImageUtils {
      * @return a new image, hopefully trimmed.
      */
     public static BufferedImage trimWhiteSpace(BufferedImage img) {
+        return trimWhiteSpace(img, 253, 0, 0, 0, 0);
+    }
+
+    /**
+     * Trims the white border around an image.
+     *
+     * @param img
+     * @return a new image, hopefully trimmed.
+     */
+    public static BufferedImage trimWhiteSpace(BufferedImage img, int whiteThreshold, int startTop, int startRight, int startBottom, int startLeft) {
         // idea is to scan lines of an image starting from each side.
         // As soon as a scan line encounters non-white (or non-black) pixels we know there is actual image content.
         WritableRaster raster = getGrayscaleImage(img).getRaster();
         int[] pixels = new int[Math.max(raster.getWidth(), raster.getHeight())];
-        int thresholdWhite = 253;
-        int trimTop = 0, trimBottom = 0, trimLeft = 0, trimRight = 0;
+        int thresholdWhite = whiteThreshold;
+        int trimTop = startTop, trimBottom = startBottom, trimLeft = startLeft, trimRight = startRight;
         boolean white = true;
         while (white) {
             raster.getPixels(0, trimTop, raster.getWidth(), 1, pixels);
@@ -238,6 +248,56 @@ public class ImageUtils {
     }
 
     /**
+     * Non-local means denoising.
+     *
+     * @param img
+     * @return
+     */
+    public static BufferedImage denoiseImage(BufferedImage img) {
+        double h = 5d;
+        double sigma = 2d;
+        int distance = 5;
+
+        double sigma2 = 2 * sigma * sigma;
+        double h2 = h * h;
+        // make it grayscale
+        BufferedImage result = getGrayscaleImage(img);
+        WritableRaster raster = result.getRaster();
+        int[] p = new int[1];  // actual pixel
+        int[] pCol = new int[img.getHeight()];  // actual pixels
+        int[] pColD = new int[img.getHeight()];  // actual pixel
+        // now for each pixel:
+        for (int x = 0; x < raster.getWidth(); x++) {
+            raster.getPixels(x, 0, 1, raster.getHeight(), pCol);
+            for (int y = 0; y < raster.getHeight(); y++) {
+                // get pixel value:
+//                raster.getPixel(x, y, p);
+                if (pCol[y] < 250) { // speed up by only checking non-white pixels.
+                    double weightSum = 0;
+                    double weight = 0;
+                    double graySum = 0;
+                    for (int dx = Math.max(0, x - distance); dx < Math.min(raster.getWidth(), x + distance); dx++) {
+                        raster.getPixels(dx, 0, 1, raster.getHeight(), pColD);
+                        for (int dy = Math.max(0, y - distance); dy < Math.min(y + distance, raster.getHeight()); dy++) {
+                            if (dx != x && dy != y) {
+                                double d2 = (pCol[y] - pColD[dy]) * (pCol[y] - pColD[dy]);
+                                //                        double d2 = (x - dx) * (x - dx) + (y - dy) * (y - dy);
+                                weight = Math.exp(-1d / (h2) * Math.max(0d, d2 - sigma2));
+                                weightSum += weight;
+                                //                        raster.getPixel(dx, dy, dp);
+                                graySum += pColD[dy] * weight;
+                            }
+                        }
+                    }
+                    p[0] = ((int) (graySum / weightSum));
+                    raster.setPixel(x, y, p);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * creates a Gaussian kernel for ConvolveOp for blurring an image
      *
      * @param radius the radius, i.e. 5
@@ -280,9 +340,9 @@ public class ImageUtils {
             for (int y = 0; y < img1.getHeight(); y++) {
                 r1.getPixel(x, y, tmp1);
                 r2.getPixel(x, y, tmp2);
-                tmp1[0] = Math.abs(tmp1[0]-tmp2[0]);
+                tmp1[0] = Math.abs(tmp1[0] - tmp2[0]);
                 // System.out.println("tmp1 = " + tmp1[0]);
-                if (tmp1[0]>5) tmp1[0] =255;
+                if (tmp1[0] > 5) tmp1[0] = 255;
                 r1.setPixel(x, y, tmp1);
             }
         }
