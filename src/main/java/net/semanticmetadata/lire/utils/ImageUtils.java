@@ -41,12 +41,18 @@
 
 package net.semanticmetadata.lire.utils;
 
+import com.sun.corba.se.spi.ior.Writeable;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Some little helper methods.<br>
@@ -175,7 +181,7 @@ public class ImageUtils {
      * @return a new image, hopefully trimmed.
      */
     public static BufferedImage trimWhiteSpace(BufferedImage img) {
-        return trimWhiteSpace(img, 253, 0, 0, 0, 0);
+        return trimWhiteSpace(img, 250, 0, 0, 0, 0);
     }
 
     /**
@@ -185,9 +191,13 @@ public class ImageUtils {
      * @return a new image, hopefully trimmed.
      */
     public static BufferedImage trimWhiteSpace(BufferedImage img, int whiteThreshold, int startTop, int startRight, int startBottom, int startLeft) {
+        return trimWhiteSpace(img, img, whiteThreshold, startTop, startRight, startBottom, startLeft);
+    }
+
+    public static BufferedImage trimWhiteSpace(BufferedImage src, BufferedImage tgt, int whiteThreshold, int startTop, int startRight, int startBottom, int startLeft) {
         // idea is to scan lines of an image starting from each side.
         // As soon as a scan line encounters non-white (or non-black) pixels we know there is actual image content.
-        WritableRaster raster = getGrayscaleImage(img).getRaster();
+        WritableRaster raster = getGrayscaleImage(src).getRaster();
         int[] pixels = new int[Math.max(raster.getWidth(), raster.getHeight())];
         int thresholdWhite = whiteThreshold;
         int trimTop = startTop, trimBottom = startBottom, trimLeft = startLeft, trimRight = startRight;
@@ -201,7 +211,8 @@ public class ImageUtils {
                 trimTop++;
                 // handling white only images ..
                 if (trimTop > raster.getHeight() - 10) {
-                    return img;
+                    System.err.println("Only white ...");
+                    return src;
                 }
             }
         }
@@ -243,7 +254,7 @@ public class ImageUtils {
 //        System.out.println("trimLeft = " + trimLeft);
 //        System.out.println("trimRight = " + trimRight);
         BufferedImage result = new BufferedImage(raster.getWidth() - (trimLeft + trimRight), raster.getHeight() - (trimTop + trimBottom), BufferedImage.TYPE_INT_RGB);
-        result.getGraphics().drawImage(img, 0, 0, result.getWidth(), result.getHeight(), trimLeft, trimTop, img.getWidth() - trimRight, img.getHeight() - trimBottom, null);
+        result.getGraphics().drawImage(tgt, 0, 0, result.getWidth(), result.getHeight(), trimLeft, trimTop, src.getWidth() - trimRight, src.getHeight() - trimBottom, null);
         return result;
     }
 
@@ -297,6 +308,87 @@ public class ImageUtils {
         return result;
     }
 
+    public static BufferedImage removeScratches(BufferedImage img) {
+        int thresholdGray = 196;
+        int thresholdCount = 12;
+        BufferedImage result = getGrayscaleImage(img);
+        WritableRaster raster;
+        int[] pCol = new int[img.getHeight()];
+        int[] pRow = new int[img.getWidth()];
+        if (false) { // equalize histogram or not.
+            raster = result.getRaster();
+            // histogram equalization, uniform:
+            int min = 255, max = 0;
+            for (int x = 0; x < raster.getWidth(); x++) {
+                raster.getPixels(x, 0, 1, raster.getHeight(), pCol);
+                for (int y = 0; y < raster.getHeight(); y++) {
+                    min = Math.min(pCol[y], min);
+                    max = Math.max(pCol[y], max);
+                }
+            }
+            for (int x = 0; x < raster.getWidth(); x++) {
+                raster.getPixels(x, 0, 1, raster.getHeight(), pCol);
+                for (int y = 0; y < raster.getHeight(); y++) {
+                    pCol[y] = ((int) (255* (pCol[y] - min) / ((double) max - min) ));
+                }
+                raster.setPixels(x, 0, 1, raster.getHeight(), pCol);
+            }
+        }
+        ConvolveOp op = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 1.0f)));
+        result = op.filter(result, null);
+        raster = result.getRaster();
+        Arrays.fill(pCol, 255);
+        Arrays.fill(pRow, 255);
+        int[] p = new int[1];
+        // repair from the convolveop
+        raster.setPixels(0, 0, 1, raster.getHeight(), pCol);
+        raster.setPixels(1, 0, 1, raster.getHeight(), pCol);
+        raster.setPixels(raster.getWidth() - 1, 0, 1, raster.getHeight(), pCol);
+        raster.setPixels(raster.getWidth() - 2, 0, 1, raster.getHeight(), pCol);
+        raster.setPixels(0, 0, raster.getWidth(), 1, pRow);
+        raster.setPixels(0, 1, raster.getWidth(), 1, pRow);
+        raster.setPixels(0, raster.getHeight() - 1, raster.getWidth(), 1, pRow);
+        raster.setPixels(0, raster.getHeight() - 2, raster.getWidth(), 1, pRow);
+        // now for each pixel:
+        for (int x = 0; x < raster.getWidth(); x++) {
+            raster.getPixels(x, 0, 1, raster.getHeight(), pCol);
+            for (int y = 0; y < raster.getHeight(); y++) {
+                int[] count = {0};
+                raster.getPixel(x, y, p);
+                if (p[0] < thresholdGray) { // thresholding
+                    // track and find out how many are connected.
+                    checkNeighbour(raster, x, y, thresholdGray, thresholdCount, count);
+                    if (count[0] < thresholdCount) {
+                        p[0] = 255;
+                    }
+                } else {
+                    p[0] = 255;
+                }
+                raster.setPixel(x, y, p);
+            }
+//            raster.setPixels(x, 0, 1, raster.getHeight(), pCol);
+        }
+        return result;
+    }
+
+    private static void checkNeighbour(WritableRaster raster, int x, int y, int thresholdGray, int thresholdCount, int[] count) {
+        if (count[0] > thresholdCount)
+            return;
+        int[] pixel = new int[1];
+        if (x >= raster.getWidth()) return;
+        if (y >= raster.getHeight()) return;
+        raster.getPixel(x, y, pixel);
+        if (pixel[0] < thresholdGray) {
+            count[0] += 1;
+            if (count[0] < thresholdCount) {
+//            checkNeighbour(raster, x, y, thresholdGray, thresholdCount, count);
+                checkNeighbour(raster, x, y + 1, thresholdGray, thresholdCount, count);
+                checkNeighbour(raster, x + 1, y, thresholdGray, thresholdCount, count);
+                checkNeighbour(raster, x + 1, y + 1, thresholdGray, thresholdCount, count);
+            }
+        }
+    }
+
     /**
      * creates a Gaussian kernel for ConvolveOp for blurring an image
      *
@@ -342,7 +434,8 @@ public class ImageUtils {
                 r2.getPixel(x, y, tmp2);
                 tmp1[0] = Math.abs(tmp1[0] - tmp2[0]);
                 // System.out.println("tmp1 = " + tmp1[0]);
-                if (tmp1[0] > 5) tmp1[0] = 255;
+                if (tmp1[0] > 5) tmp1[0] = 0;
+                else tmp1[0] = 255;
                 r1.setPixel(x, y, tmp1);
             }
         }
