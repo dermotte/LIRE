@@ -20,10 +20,10 @@
 
     <target name="nightly" depends="init">
         <!-- download & unzip -->
-        <get src="http://caliph-emir.svn.sourceforge.net/viewvc/caliph-emir/lire/?view=tar"
-             dest="${build}/tmp/lire.tar.gz"/>
-        <gunzip src="${build}/tmp/lire.tar.gz" dest="${build}/tmp/lire.tar"/>
-        <untar dest="${build}/tmp" src="${build}/tmp/lire.tar"/>
+        <!--get src="http://caliph-emir.svn.sourceforge.net/viewvc/caliph-emir/lire/?view=tar"
+             dest="${build}/tmp/lire.tar.gz"/-->
+        <!--gunzip src="${build}/tmp/lire.tar.gz" dest="${build}/tmp/lire.tar"/-->
+        <!--untar dest="${build}/tmp" src="${build}/tmp/lire.tar"/-->
         <!-- build -->
         <ant antfile="build.xml" dir="${build}/tmp/lire/" target="dist"/>
         <ant antfile="build.xml" dir="${build}/tmp/lire/" target="javadoc"/>
