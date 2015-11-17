@@ -16,6 +16,7 @@
         <delete dir="${build}"/>
         <mkdir dir="${build}"/>
         <mkdir dir="${build}/tmp"/>
+        <mkdir dir="${build}/tmp/lire"/>
     </target>
 
     <target name="nightly" depends="init">
