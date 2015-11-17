@@ -9,6 +9,8 @@ Most recent documentation is found at the [github repo] (https://github.com/derm
 ## Downloads ##
 Downloads are currently hosted at: http://www.itec.uni-klu.ac.at/~mlux/lire-release/.
 
+Nightly builds are available at http://www.itec.uni-klu.ac.at/~mlux/lire-release/lire-nightly.zip
+
 ## Getting Started ##
 The developer documentation & blog are currently hosted on http://www.semanticmetadata.net/wiki/. In the developer docs common tasks are described, so take a look there if you are starting to use LIRE.
 
