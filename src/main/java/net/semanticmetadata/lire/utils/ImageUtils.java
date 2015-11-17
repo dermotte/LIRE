@@ -334,7 +334,7 @@ public class ImageUtils {
                 raster.setPixels(x, 0, 1, raster.getHeight(), pCol);
             }
         }
-        ConvolveOp op = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 1.0f)));
+        ConvolveOp op = new ConvolveOp(new Kernel(5, 5, ImageUtils.makeGaussianKernel(5, 2.0f)));
         result = op.filter(result, null);
         raster = result.getRaster();
         Arrays.fill(pCol, 255);
@@ -385,6 +385,7 @@ public class ImageUtils {
                 checkNeighbour(raster, x, y + 1, thresholdGray, thresholdCount, count);
                 checkNeighbour(raster, x + 1, y, thresholdGray, thresholdCount, count);
                 checkNeighbour(raster, x + 1, y + 1, thresholdGray, thresholdCount, count);
+                checkNeighbour(raster, x - 1, y + 1, thresholdGray, thresholdCount, count);
             }
         }
     }

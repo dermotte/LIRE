@@ -94,7 +94,7 @@
         <echo file="default.mf" append="false">Build-Date: ${touch.time}
 Build-Number: ${build-number}
         </echo>
-        <javac srcdir="${src}" destdir="${build}" debug="true" debuglevel="lines,vars,source">
+        <javac srcdir="${src}" destdir="${build}" debug="true" debuglevel="lines,vars,source" encoding="UTF-8">
             <classpath refid="classpath.path"/>
             <exclude name="**/ClassifierTest.java"/>
             <exclude name="**/net.semanticmetadata.lire.classifiers.HashingSearchBasedClassifierMod.java"/>
@@ -121,7 +121,7 @@ Build-Number: ${build-number}
                  version="true"
                  use="true"
                  windowtitle="LIRE API"
-                 classpathref="classpath.path"/>
+                 classpathref="classpath.path" encoding="UTF-8"/>
     </target>
 
     <target name="clean">

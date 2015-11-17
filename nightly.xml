@@ -2,7 +2,7 @@
     <description>
         This buildfile is used to create a nightly build of Lire.
 
-        - Mathias Lux, Klagenfurt 2012-03-19
+        - Mathias Lux, Klagenfurt 2015-11-17
         http://www.SemanticMetadata.net
     </description>
 
@@ -15,8 +15,6 @@
         </tstamp>
         <delete dir="${build}"/>
         <mkdir dir="${build}"/>
-        <mkdir dir="${build}/tmp"/>
-        <mkdir dir="${build}/tmp/lire"/>
     </target>
 
     <target name="nightly" depends="init">
@@ -26,21 +24,21 @@
         <!--gunzip src="${build}/tmp/lire.tar.gz" dest="${build}/tmp/lire.tar"/-->
         <!--untar dest="${build}/tmp" src="${build}/tmp/lire.tar"/-->
         <!-- build -->
-        <ant antfile="build.xml" dir="${build}/tmp/lire/" target="dist"/>
-        <ant antfile="build.xml" dir="${build}/tmp/lire/" target="javadoc"/>
+        <ant antfile="build.xml" dir="." target="dist"/>
+        <ant antfile="build.xml" dir="." target="javadoc"/>
         <!-- package -->
         <zip destfile="${build}/lire.zip">
-            <fileset dir="${build}/tmp/lire/dist">
+            <fileset dir="dist">
                 <include name="lib/**"/>
                 <include name="lire.jar"/>
             </fileset>
         </zip>
         <move todir="${build}">
-            <fileset dir="${build}/tmp/lire/dist/docs">
+            <fileset dir="dist/docs">
                 <include name="api/**"/>
             </fileset>
         </move>
         <!-- clean up -->
-        <delete dir="${build}/tmp/"/>
+        <delete dir="dist"/>
     </target>
 </project>
