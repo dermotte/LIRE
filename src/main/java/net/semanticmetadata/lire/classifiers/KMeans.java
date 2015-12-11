@@ -172,7 +172,7 @@ public class KMeans {
                 System.err.println("** There is NO member in cluster " + i);
                 // fill it with a random member?!?
                 int index = (int) Math.floor(Math.random()*features.size());
-                for (int j=0;j<features.get(index).length;j++) clusters[i].assignMember(features.get(index));
+                clusters[i].assignMember(features.get(index));
             }
             cluster.move();
         }
