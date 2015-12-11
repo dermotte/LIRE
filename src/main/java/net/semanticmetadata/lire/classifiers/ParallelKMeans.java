@@ -50,11 +50,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  *
  * @author Mathias Lux, mathias@juggle.at
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * @author Lazaros Tsochatzidis, ltsochat@ee.duth.gr
  */
 public class ParallelKMeans extends KMeans {
     int numThreads = DocumentBuilder.NUM_OF_THREADS;
     private LinkedBlockingQueue<Item> queue = new LinkedBlockingQueue<Item>(100);
-    private ConcurrentHashMap<Integer, Integer> results;
 
     public ParallelKMeans(int numClusters) {
         super(numClusters);
@@ -64,7 +64,6 @@ public class ParallelKMeans extends KMeans {
      * Re-shuffle all features.
      */
     protected void reOrganizeFeatures() {
-        results = new ConcurrentHashMap<Integer, Integer>(features.size());
         LinkedList<Thread> threads = new LinkedList<Thread>();
         Thread thread;
         Thread p = new Thread(new ProducerForFeatures());
@@ -81,12 +80,7 @@ public class ParallelKMeans extends KMeans {
                 e.printStackTrace();
             }
         }
-        for (Integer integer : results.keySet()) {
-            clusters[results.get(integer)].members.add(integer);
-        }
         threads.clear();
-        results.clear();
-        results = null;
     }
 
     protected void recomputeMeans() {
@@ -197,46 +191,14 @@ public class ParallelKMeans extends KMeans {
                     if (tmp.getNum() == -1) locallyEnded = true;
                     if (!locallyEnded) {    // && tmp != -1
                         cluster = tmp.getCluster();
-                        mean = cluster.mean;
-//                        for (int j = 0; j < length; j++) {
-//                            mean[j] = 0;
-//                            for (Integer member : cluster.members) {
-//                                mean[j] += features.get(member)[j];
-//                            }
-//                            if (cluster.members.size() > 1)
-//                                mean[j] = mean[j] / (double) cluster.members.size();
-//                        }
-                        for (int j = 0; j < length; j++) {
-                            mean[j] = 0.0;
-                        }
-                        for (Integer member : cluster.members) {
-                            f = features.get(member);
-                            for (int j = 0; j < length; j++) {
-                                mean[j] += f[j];
-                            }
-                        }
-                        if (cluster.members.size() > 1) {
-                            size = (double) cluster.members.size();
-                            for (int j = 0; j < length; j++) {
-                                mean[j] /= size;
-                            }
-                        } else if (cluster.members.size() == 1) {
+                        if (cluster.getSize() == 1) {
                             System.err.println("** There is just one member in cluster " + tmp.getNum());
-                        } else if (cluster.members.size() < 1) {
+                        } else if (cluster.getSize() < 1) {
                             System.err.println("** There is NO member in cluster " + tmp.getNum());
                             // fill it with a random member?!?
-                            System.arraycopy(features.get((int) Math.floor(Math.random() * features.size())), 0, mean, 0, mean.length);
+                            cluster.assignMember(features.get((int) Math.floor(Math.random() * features.size())));
                         }
-
-                        stress  = 0.0;
-                        for (Integer member : cluster.members) {
-                            f = features.get(member);
-                            for (int j = 0; j < length; j++) {
-                                stress += Math.abs(mean[j] - f[j]);
-                            }
-                        }
-                        cluster.setStress(stress);
-
+                        cluster.move();
                     }
                 } catch (InterruptedException e) {
                     e.getMessage();
@@ -272,7 +234,7 @@ public class ParallelKMeans extends KMeans {
                                 minDistance = v;
                             }
                         }
-                        results.put(tmp.getNum(), best);
+                        clusters[best].assignMember(f);
                     }
                 } catch (InterruptedException e) {
                     e.getMessage();

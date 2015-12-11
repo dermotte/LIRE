@@ -49,6 +49,7 @@ import java.util.Set;
  *
  * @author Mathias Lux, mathias@juggle.at
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * @author Lazaros Tsochatzidis, ltsochat@ee.duth.gr
  */
 public class KMeans {
     protected int countAllFeatures = 0, numClusters = 512;
@@ -108,7 +109,7 @@ public class KMeans {
      */
     public double clusteringStep() {
         for (Cluster cluster : clusters) {
-            cluster.members.clear();
+            cluster.reset();
         }
         reOrganizeFeatures();
         recomputeMeans();
@@ -152,7 +153,7 @@ public class KMeans {
                     minDistance = v;
                 }
             }
-            best.members.add(k);
+            best.assignMember(f);
         }
     }
 
@@ -165,23 +166,15 @@ public class KMeans {
         double[] mean;
         for (int i = 0; i < clusters.length; i++) {
             cluster = clusters[i];
-            mean = cluster.mean;
-            for (int j = 0; j < length; j++) {
-                mean[j] = 0;
-                for (Integer member : cluster.members) {
-                    mean[j] += features.get(member)[j];
-                }
-                if (cluster.members.size() > 1)
-                    mean[j] = mean[j] / (double) cluster.members.size();
-            }
-            if (cluster.members.size() == 1) {
+            if (cluster.getSize() == 1) {
                 System.err.println("** There is just one member in cluster " + i);
-            } else if (cluster.members.size() < 1) {
+            } else if (cluster.getSize() < 1) {
                 System.err.println("** There is NO member in cluster " + i);
                 // fill it with a random member?!?
                 int index = (int) Math.floor(Math.random()*features.size());
-                System.arraycopy(features.get(index), 0, clusters[i].mean, 0, clusters[i].mean.length);
+                for (int j=0;j<features.get(index).length;j++) clusters[i].assignMember(features.get(index));
             }
+            cluster.move();
         }
     }
 
@@ -192,16 +185,8 @@ public class KMeans {
      */
     protected double overallStress() {
         double v = 0;
-        int length = features.get(0).length;
         for (Cluster cluster : clusters) {
-            for (Integer member : cluster.members) {
-                double tmpStress = 0;
-                for (int j = 0; j < length; j++) {
-//                    if (Float.isNaN(features.get(member).descriptor[j])) System.err.println("Error: there is a NaN in cluster " + i + " at member " + member);
-                    tmpStress += Math.abs(cluster.mean[j] - features.get(member)[j]);
-                }
-                v += tmpStress;
-            }
+            v+=cluster.getStress();
         }
 
         return v;
