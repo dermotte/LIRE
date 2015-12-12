@@ -68,6 +68,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Provides a simple implementation for a cluster used with the visual bag of words approach.
@@ -76,28 +77,33 @@ import java.util.HashSet;
  *
  * @author Mathias Lux, mathias@juggle.at
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
+ * @author Lazaros Tsochatzidis, ltsochat@ee.duth.gr
  */
 public class Cluster implements Comparable<Object> {
     double[] mean;
-    HashSet<Integer> members = new HashSet<Integer>();
+
+    AtomicInteger size;
+    AtomicDouble[] newmean;
 
     private double stress = 0.0;
 
     public Cluster() {
         this.mean = new double[4 * 4 * 8];
         Arrays.fill(mean, 0d);
+        size=new AtomicInteger(0);
+        newmean=new AtomicDouble[mean.length];
+        for (int i=0;i<mean.length;i++) newmean[i]=new AtomicDouble(0);
     }
 
     public Cluster(double[] mean) {
         this.mean = mean;
+        size=new AtomicInteger(0);
+        newmean=new AtomicDouble[mean.length];
+        for (int i=0;i<mean.length;i++) newmean[i]=new AtomicDouble(0);
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder(512);
-        for (Integer next : members) {
-            sb.append(next);
-            sb.append(", ");
-        }
         for (double next : mean) {
             sb.append(next);
             sb.append(';');
@@ -106,7 +112,7 @@ public class Cluster implements Comparable<Object> {
     }
 
     public int compareTo(Object o) {
-        return ((Cluster) o).members.size() - members.size();
+        return ((Cluster) o).getSize() - getSize();
     }
 
     public double getDistance(FeatureVector f) {
@@ -142,12 +148,30 @@ public class Cluster implements Comparable<Object> {
         this.stress = stress;
     }
 
-    public HashSet<Integer> getMembers() {
-        return members;
+    public int getSize() {
+        return size.get();
     }
 
-    public void setMembers(HashSet<Integer> members) {
-        this.members = members;
+    public void reset() {
+        size.set(0);
+        for (AtomicDouble ad : newmean) ad.set(0);
+    }
+
+    public void assignMember(double[] feat) {
+        size.addAndGet(1);
+        int i=0;
+        for (AtomicDouble ad : newmean) ad.addAndGet(feat[i++]);
+    }
+
+    public void move() {
+        double lsize=size.get();
+        stress=0d;
+        double diff;
+        for (int i=0;i<mean.length;i++){
+            diff=mean[i]-newmean[i].divideAndGet(lsize);
+            stress+=lsize*diff*diff;
+            mean[i]=newmean[i].get();
+        }
     }
 
     /**
