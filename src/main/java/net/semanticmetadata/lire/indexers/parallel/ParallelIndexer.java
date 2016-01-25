@@ -1043,7 +1043,11 @@ public class ParallelIndexer implements Runnable {
                     else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
                         b = new ByteArrayInputStream(tmp.getBuffer());
-                        conSampleMap.put(tmp.getFileName(), (documentBuilder.extractLocalFeatures(ImageIO.read(b), ((LocalFeatureExtractor) extractorItem.getExtractorInstance())).getFeatures()));
+                        BufferedImage image = ImageIO.read(b);
+                        if(imagePreprocessor != null){
+                            image = imagePreprocessor.process(image);
+                        }
+                        conSampleMap.put(tmp.getFileName(), (documentBuilder.extractLocalFeatures(image, ((LocalFeatureExtractor) extractorItem.getExtractorInstance())).getFeatures()));
                     }
                 } catch (InterruptedException | IOException e) {
                     log.severe(e.getMessage());
@@ -1117,7 +1121,11 @@ public class ParallelIndexer implements Runnable {
                     if (tmp.getFileName() == null) locallyEnded = true;
                     else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
-                        fields = globalDocumentBuilder.createDescriptorFields(ImageIO.read(new ByteArrayInputStream(tmp.getBuffer())));
+                        BufferedImage image = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
+                        if(imagePreprocessor != null){
+                            image = imagePreprocessor.process(image);
+                        }
+                        fields = globalDocumentBuilder.createDescriptorFields(image);
                         doc = allDocuments.get(tmp.getFileName());
                         for (Field field : fields) {
                             doc.add(field);
