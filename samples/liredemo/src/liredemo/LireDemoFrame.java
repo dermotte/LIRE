@@ -1577,7 +1577,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(null, "An error occurred while searching: " + e.getMessage() + "\nIf you tried to search for local features (SURF) then please \n" +
                             "make sure you used the menu item Developer -> Bag of Visual Words -> Index All first ", "Error while searching", JOptionPane.ERROR_MESSAGE);
-
+                    e.printStackTrace();
                 } finally {
                     resultsTable.setRowHeight(220);
                     // resultsTable.getColumnModel().getColumn(0).setMaxWidth(64);
@@ -1650,17 +1650,17 @@ public class LireDemoFrame extends javax.swing.JFrame {
     private void helpMenuAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuAboutActionPerformed
         JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for Lucene Image Retrieval (LIRE) library.</b><br>"
                         + "<br>Visit http://lire-project.net for more information.<br>"
-                        + "<br>&copy; 2007-2015 by Mathias Lux<br>"
+                        + "<br>&copy; 2007-2016 by Mathias Lux<br>"
                         + "mathias@juggle.at<br></center></html>",
-                "About LIRe demo", JOptionPane.PLAIN_MESSAGE);
+                "About LIRE demo", JOptionPane.PLAIN_MESSAGE);
     }//GEN-LAST:event_helpMenuAboutActionPerformed
 
     private void showAbout() {
-        JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for<br>Lucene Image Retrieval (LIRe) library.</b><br>"
+        JOptionPane.showMessageDialog(this, "<html><center><b>Simple demo for<br>Lucene Image Retrieval (LIRE) library.</b><br>"
                         + "<br>Visit http://lire-project.net<br>for more information.<br>"
-                        + "<br>&copy; 2007-2015 by Mathias Lux<br>"
+                        + "<br>&copy; 2007-2016 by Mathias Lux<br>"
                         + "mathias@juggle.at<br></center></html>",
-                "About LIRe demo", JOptionPane.PLAIN_MESSAGE);
+                "About LIRE demo", JOptionPane.PLAIN_MESSAGE);
     }
 
     private void fileMenuExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileMenuExitActionPerformed

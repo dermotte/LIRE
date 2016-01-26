@@ -164,10 +164,10 @@ public class ImageUtils {
      */
     public static BufferedImage createWorkingCopy(BufferedImage bimg) {
         BufferedImage image;
-        if (bimg.getType() == BufferedImage.TYPE_INT_RGB) {
+        if (bimg.getType() == BufferedImage.TYPE_3BYTE_BGR) {
             image = bimg;
         } else {
-            image = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_INT_RGB);
+            image = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
             Graphics2D g2d = image.createGraphics();
             g2d.drawImage(bimg, null, 0, 0);
         }

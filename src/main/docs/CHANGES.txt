@@ -1,6 +1,17 @@
 CHANGES for LIRE
 ================
 
+2016-01-26
+==========
+  - Changed conversion of images to TYPE_3BYTE_BGR in ImageUtils.
+  - Fixed a bug with GenericFastImageSearcher using multiple fields.
+  - Added example for local feature based search.
+
+2016-01-25
+==========
+  - Bugfix in ParallelIndexer, adding Preprocessor for images in local sampling routine
+    (based on bug descrition of Myrtha Fuog)
+
 2015-11-06
 ==========
   - Invalid character in comments removed (based on pull request of Bart Van Bos)
