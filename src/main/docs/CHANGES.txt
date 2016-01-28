@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2016-01-28
+==========
+  - Mapped the number of key points for random selection from ParallelIndexer through to the end
+  - Added security for small images in SimpleExtractor
+
 2016-01-26
 ==========
   - Changed conversion of images to TYPE_3BYTE_BGR in ImageUtils.

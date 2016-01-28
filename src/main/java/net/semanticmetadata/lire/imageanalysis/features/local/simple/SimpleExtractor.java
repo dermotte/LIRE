@@ -87,6 +87,15 @@ public class SimpleExtractor implements LocalFeatureExtractor{
 
 
     public SimpleExtractor(GlobalFeature globalFeature, KeypointDetector detector) {
+        init(globalFeature, detector);
+    }
+
+    public SimpleExtractor(GlobalFeature globalFeature, KeypointDetector detector, int numberOfKeypoints) {
+        samplePoints = numberOfKeypoints;
+        init(globalFeature, detector);
+    }
+
+    private void init(GlobalFeature globalFeature, KeypointDetector detector) {
         this.globalFeature = globalFeature;
         this.globalFeatureClass = globalFeature.getClass();
         this.kpdetector = detector;
@@ -183,6 +192,8 @@ public class SimpleExtractor implements LocalFeatureExtractor{
 
     private void createNextRandomPoint(int[] myKeypoint, int width, int height, Random random) {
         myKeypoint[2] = sizeLookUp[random.nextInt(4)];
+        // make sure this stays within a certain range even for small images.
+        if (!(myKeypoint[2] < width && myKeypoint[2] < height))  myKeypoint[2] = sizeLookUp[0];
         myKeypoint[0] = random.nextInt(width-myKeypoint[2]);
         myKeypoint[1] = random.nextInt(height-myKeypoint[2]);
     }

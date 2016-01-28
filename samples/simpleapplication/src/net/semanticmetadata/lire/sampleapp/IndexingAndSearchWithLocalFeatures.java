@@ -66,7 +66,7 @@ import java.nio.file.Paths;
  * Note that you have to run it with giving the OpenCV library path, eg. "-Djava.library.path="lib\opencv"
  * @author Mathias Lux, mathias@juggle.at
  */
-public class LocalIndexingAndSearch {
+public class IndexingAndSearchWithLocalFeatures {
     public static void main(String[] args) throws IOException {
         // indexing all images in "testdata"
         index("index", "testdata");
