@@ -362,7 +362,8 @@ public class ParallelExtractor implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount > 0) ? (time / overallCount) : "n.a.") + " ms each (" + images.size() + " images currently in queue).");
+//                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount > 0) ? (time / overallCount) : "n.a.") + " ms each (" + images.size() + " images currently in queue).");
+                    System.out.printf("Analyzed %,d images in %,d seconds, %s ms each (%,d images currently in queue).\n", overallCount, time / 1000, ((overallCount > 0) ? (time / overallCount) : "n.a."), images.size());
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();

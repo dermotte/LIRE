@@ -76,21 +76,21 @@ import java.util.Properties;
  */
 public class Extractor implements Runnable {
     public static final String[] features = new String[]{
-            "CEDD",                  // 0
-            "FCTH",                  // 1
-            "OpponentHistogram",     // 2
-            "JointHistogram",        // 3
-            "AutoColorCorrelogram",  // 4
-            "ColorLayout",           // 5
-            "EdgeHistogram",         // 6
-            "Gabor",                 // 7
-            "JCD",                   // 8
-            "JpegCoefficientHistogram",
-            "ScalableColor",         // 10
-            "SimpleColorHistogram",  // 11
-            "Tamura",                // 12
-            "LuminanceLayout",       // 13
-            "PHOG",                  // 14
+            "net.semanticmetadata.lire.imageanalysis.features.global.CEDD",                  // 0
+            "net.semanticmetadata.lire.imageanalysis.features.global.FCTH",                  // 1
+            "net.semanticmetadata.lire.imageanalysis.features.global.OpponentHistogram",     // 2
+            "net.semanticmetadata.lire.imageanalysis.features.global.JointHistogram",        // 3
+            "net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram",  // 4
+            "net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout",           // 5
+            "net.semanticmetadata.lire.imageanalysis.features.global.EdgeHistogram",         // 6
+            "net.semanticmetadata.lire.imageanalysis.features.global.Gabor",                 // 7
+            "net.semanticmetadata.lire.imageanalysis.features.global.JCD",                   // 8
+            "net.semanticmetadata.lire.imageanalysis.features.global.JpegCoefficientHistogram", //9
+            "net.semanticmetadata.lire.imageanalysis.features.global.ScalableColor",         // 10
+            "net.semanticmetadata.lire.imageanalysis.features.global.SimpleColorHistogram",  // 11
+            "net.semanticmetadata.lire.imageanalysis.features.global.Tamura",                // 12
+            "net.semanticmetadata.lire.imageanalysis.features.global.LuminanceLayout",       // 13
+            "net.semanticmetadata.lire.imageanalysis.features.global.PHOG",                  // 14
     };
 
     public static final String[] featureFieldNames = new String[]{
@@ -302,7 +302,7 @@ public class Extractor implements Runnable {
                     count++;
                 } catch (Exception e) {
                     System.err.println("Error processing image " + relFile + ": " + e.getMessage());
-                    // e.printStackTrace();
+                    e.printStackTrace();
                 }
                 if (count%100==0 && count > 0)
                     System.out.println(count + " files processed, " + (System.currentTimeMillis()-ms)/count + " ms per file.");

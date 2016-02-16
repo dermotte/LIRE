@@ -93,8 +93,8 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testSearch() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-mirflickr-docval")));
-        MetricSpacesImageSearcher is = new MetricSpacesImageSearcher(10, new File("dir.cedd.dat"), 100);
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-mirflickr-10kro-all")));
+        MetricSpacesImageSearcher is = new MetricSpacesImageSearcher(10, new File("dir.ophist1.dat"), 100);
         is.setNumHashesUsedForQuery(15);
 //        GenericFastImageSearcher is = new GenericFastImageSearcher(10, CEDD.class, false, reader);
         for (int i = 0; i < 10; i++) {
@@ -107,13 +107,13 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testSearchAccuracy() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-mirflickr-10kro")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("ms-index-mirflickr-10kro-all")));
         int maxResults = 100;
         int intersectSum = 0;
-        System.out.println("CEDD with BaseSimilarity");
-        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cedd1.dat"), 10000);
+        System.out.println("ColorLayout with BaseSimilarity");
+        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new File("dir.cl1.dat"), 1000);
 //        mis.setNumHashesUsedForQuery(50);
-        GenericFastImageSearcher fis = new GenericFastImageSearcher(maxResults, CEDD.class, true, reader);
+        GenericFastImageSearcher fis = new GenericFastImageSearcher(maxResults, ColorLayout.class, true, reader);
         StopWatch sm = new StopWatch();
         StopWatch sf = new StopWatch();
         int numRuns = 100;
