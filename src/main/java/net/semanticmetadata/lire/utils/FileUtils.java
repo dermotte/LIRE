@@ -44,6 +44,10 @@ package net.semanticmetadata.lire.utils;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.global.ColorLayout;
 import net.semanticmetadata.lire.searchers.ImageSearchHits;
+import org.apache.commons.io.IOCase;
+import org.apache.commons.io.filefilter.IOFileFilter;
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.TopDocs;
 
@@ -70,27 +74,26 @@ import java.util.zip.ZipOutputStream;
  */
 public class FileUtils {
     enum FileTypes {JPG, GIF, TIF, PNG, PDF, UNKNOWN};
+
+    /** basic image file filter. */
+    public static final SuffixFileFilter fileFilter = new SuffixFileFilter(new String[]{".jpg", ".jpeg", ".png", ".gif"}, IOCase.INSENSITIVE);
+
     /**
-     * Returns all jpg images from a directory in an array.
+     * Returns all images from a directory in an array. Image files are identified by their suffix being from {.png, .jpg, .jpeg, .gif} in case insensitive manner.
      *
      * @param directory                 the directory to start with
      * @param descendIntoSubDirectories should we include sub directories?
-     * @return an ArrayList<String> containing all the files or nul if none are found..
+     * @return an ArrayList<String> containing all the files or null if none are found..
      * @throws IOException
      */
     public static ArrayList<String> getAllImages(File directory, boolean descendIntoSubDirectories) throws IOException {
         ArrayList<String> resultList = new ArrayList<String>(256);
-        File[] f = directory.listFiles();
-        for (File file : f) {
-            if (file != null && (file.getName().toLowerCase().endsWith(".jpg") || file.getName().toLowerCase().endsWith(".png") || file.getName().toLowerCase().endsWith(".gif")) && !file.getName().startsWith("tn_")) {
-                resultList.add(file.getCanonicalPath());
-            }
-            if (descendIntoSubDirectories && file.isDirectory()) {
-                ArrayList<String> tmp = getAllImages(file, true);
-                if (tmp != null) {
-                    resultList.addAll(tmp);
-                }
-            }
+        IOFileFilter includeSubdirectories = TrueFileFilter.INSTANCE;
+        if (!descendIntoSubDirectories) includeSubdirectories = null;
+        Iterator<File> fileIterator = org.apache.commons.io.FileUtils.iterateFiles(directory, fileFilter, includeSubdirectories);
+        while (fileIterator.hasNext()) {
+            File next = fileIterator.next();
+            resultList.add(next.getCanonicalPath());
         }
         if (resultList.size() > 0)
             return resultList;
@@ -150,7 +153,7 @@ public class FileUtils {
 //    }
 
     /**
-     * Returns all jpg & png images from a directory in an array.
+     * Returns all images from a directory in an array of File. Image files are identified by their suffix being from {.png, .jpg, .jpeg, .gif}.
      *
      * @param directory                 the directory to start with
      * @param descendIntoSubDirectories should we include sub directories?
@@ -159,18 +162,11 @@ public class FileUtils {
      */
     public static ArrayList<File> getAllImageFiles(File directory, boolean descendIntoSubDirectories) throws IOException {
         ArrayList<File> resultList = new ArrayList<File>(256);
-        File[] f = directory.listFiles();
-        for (File file : f) {
-            if (file != null && (file.getName().toLowerCase().endsWith(".jpg") || file.getName().toLowerCase().endsWith(".png")) && !file.getName().startsWith("tn_")) {
-                resultList.add(file);
-            }
-            if (descendIntoSubDirectories && file.isDirectory()) {
-                ArrayList<File> tmp = getAllImageFiles(file, true);
-                if (tmp != null) {
-                    resultList.addAll(tmp);
-                }
-            }
-        }
+
+        IOFileFilter includeSubdirectories = TrueFileFilter.INSTANCE;
+        if (!descendIntoSubDirectories) includeSubdirectories = null;
+        resultList.addAll(org.apache.commons.io.FileUtils.listFiles(directory, fileFilter, includeSubdirectories));
+
         if (resultList.size() > 0)
             return resultList;
         else
@@ -179,6 +175,7 @@ public class FileUtils {
 
     /**
      * Puts results into a HTML file.
+     *
      * @param prefix
      * @param hits
      * @param queryImage
@@ -206,6 +203,7 @@ public class FileUtils {
 
     /**
      * Puts results into a HTML file.
+     *
      * @param prefix
      * @param hits
      * @param reader
@@ -345,6 +343,7 @@ public class FileUtils {
 
     /**
      * Identifies the type of image based on the magic bytes at the beginning of the file.
+     *
      * @param file the File to test.
      * @return the file type by enumeration FileTypes.
      * @throws IOException
@@ -378,7 +377,7 @@ public class FileUtils {
                 return FileTypes.UNKNOWN;
             }
         } finally {
-            if(in != null) {
+            if (in != null) {
                 in.close();
             }
         }
@@ -387,6 +386,7 @@ public class FileUtils {
     /**
      * Just opens an image with Java and reports if false if there are problems. This method can be used
      * to check for JPG etc. that are not supported by the employed Java version.
+     *
      * @param f the file to check.
      * @return true if no exceptions are thrown bey the decoder.
      */
@@ -418,12 +418,13 @@ public class FileUtils {
 
     /**
      * Reads a whole file into a StringBuffer based on java.nio
-     * @param file the file to open.
+     *
+     * @param file          the file to open.
      * @param stringBuilder to write the File to.
      * @throws IOException
      */
     public static void readWholeFile(File file, StringBuilder stringBuilder) throws IOException {
-        long length =file.length();
+        long length = file.length();
         MappedByteBuffer in = new FileInputStream(file).getChannel().map(
                 FileChannel.MapMode.READ_ONLY, 0, length);
         int i = 0;
@@ -434,6 +435,7 @@ public class FileUtils {
 
     /**
      * Reads a whole file into a StringBuffer based on java.nio
+     *
      * @param file the file to open.
      * @throws IOException
      */
