@@ -182,11 +182,13 @@ public class ImageSearcherUsingWSs extends GenericFastImageSearcher {
                 for (int i = counter; i < docs; i++) {
                     if (!(reader.hasDeletions() && !liveDocs.get(i))) {
                         d = reader.document(i);
-                        cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
-                        featureCache.put(i, cachedInstance.getByteArrayRepresentation());
+                        if (d.getField(fieldName) !=null) {
+                            cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+                            featureCache.put(i, cachedInstance.getByteArrayRepresentation());
 //                        featureCache.put(i, new SearchItem(cachedInstance.getByteArrayRepresentation(), new SimpleResult(-1d, i, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
-                        for (int j = 0; j < cachedInstance.getFeatureVector().length; j++) {
-                            if (cachedInstance.getFeatureVector()[j] > 0d) idfValues[j]++;
+                            for (int j = 0; j < cachedInstance.getFeatureVector().length; j++) {
+                                if (cachedInstance.getFeatureVector()[j] > 0d) idfValues[j]++;
+                            }
                         }
                     }
                 }
