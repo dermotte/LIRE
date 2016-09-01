@@ -4,6 +4,8 @@ import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -102,14 +104,14 @@ class SinglePhotoThread implements Runnable {
             File cachedImage = new File(FlickrIndexingThread.cacheDirectory + photo.photourl.substring(photo.photourl.lastIndexOf("/") + 1, photo.photourl.length()));
             ImageIO.write(image, "jpg", cachedImage);
             Document doc = fdt.getDocumentBuilder().createDocument(image, cachedImage.getAbsolutePath());
-            doc.add(new Field("FlickrURL", photo.url, Field.Store.YES, Field.Index.NOT_ANALYZED));
-            doc.add(new Field("FlickrTitle", photo.title, Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.add(new StoredField("FlickrURL", photo.url));
+            doc.add(new StoredField("FlickrTitle", photo.title));
             StringBuilder sb = new StringBuilder(256);
             for (String tag : photo.tags) {
                 sb.append(tag);
                 sb.append(' ');
             }
-            doc.add(new Field("tags", sb.toString(), Field.Store.YES, Field.Index.ANALYZED));
+            doc.add(new TextField("tags", sb.toString(), Field.Store.YES));
             fdt.addDocumentToFinished(doc);
         } catch (IOException e) {
             System.out.println("Warning: Exception reading & indexing image " + photo.photourl + ": " + e.getMessage());

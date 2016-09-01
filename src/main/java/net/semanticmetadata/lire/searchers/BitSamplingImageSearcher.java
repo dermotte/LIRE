@@ -49,7 +49,7 @@ import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
-import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -232,15 +232,17 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         // first search by text:
         IndexSearcher searcher = new IndexSearcher(reader);
         searcher.setSimilarity(new BaseSimilarity());
-        BooleanQuery query = new BooleanQuery();
+        BooleanQuery query = null;
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
         for (int i = 0; i < hashes.length; i++) {
             // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.
             if (partialHashes) {
                 if (Math.random() < 0.5)
-                    query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
+                    builder.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
             } else
-                query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
+                builder.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
         }
+        query = builder.build();
         TopDocs docs = searcher.search(query, maxResultsHashBased);
 //        System.out.println(docs.totalHits);
         // then re-rank
@@ -274,7 +276,7 @@ public class BitSamplingImageSearcher extends AbstractImageSearcher {
         throw new UnsupportedOperationException("not implemented.");
     }
 
-    class BaseSimilarity extends DefaultSimilarity {
+    class BaseSimilarity extends ClassicSimilarity {
         public float tf(float freq) {
             return freq;
         }

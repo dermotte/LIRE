@@ -43,7 +43,7 @@ package net.semanticmetadata.lire.indexers;
 
 import org.apache.lucene.codecs.FilterCodec;
 import org.apache.lucene.codecs.StoredFieldsFormat;
-import org.apache.lucene.codecs.lucene50.Lucene50Codec;
+import org.apache.lucene.codecs.lucene62.Lucene62Codec;
 
 /**
  * Custom stored fields compression configuration. Smaller chunk size and faster compression routine.
@@ -57,7 +57,7 @@ import org.apache.lucene.codecs.lucene50.Lucene50Codec;
 public final class LireCustomCodec extends FilterCodec {
 
     public LireCustomCodec() {
-        super("LireCustomCodec", new Lucene50Codec());
+        super("LireCustomCodec", new Lucene62Codec());
     }
 
     @Override
