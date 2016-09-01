@@ -5,7 +5,6 @@ import junit.framework.TestCase;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 /**
  * Created by Mathias Lux on 14.03.2016.
@@ -52,10 +51,10 @@ public class FileUtilsTest extends TestCase {
     /**
      * litlle helper
      */
-    private static class ArrayPrint implements Consumer<String> {
-        @Override
-        public void accept(String s) {
-            System.out.println(s);
-        }
-    }
+//    private static class ArrayPrint implements Consumer<String> {
+//        @Override
+//        public void accept(String s) {
+//            System.out.println(s);
+//        }
+//    }
 }
