@@ -474,7 +474,7 @@ public class ImageUtils {
      */
     public static BufferedImage get8BitRGBImage(BufferedImage bufferedImage) {
         // check if it's (i) RGB and (ii) 8 bits per pixel.
-        if (bufferedImage.getType() != ColorSpace.TYPE_RGB || bufferedImage.getSampleModel().getSampleSize(0) != 8) {
+        if (bufferedImage.getType() != BufferedImage.TYPE_INT_RGB || bufferedImage.getSampleModel().getSampleSize(0) != 8) {
             BufferedImage img = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
             img.getGraphics().drawImage(bufferedImage, 0, 0, null);
             bufferedImage = img;
