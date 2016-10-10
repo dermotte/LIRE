@@ -1067,6 +1067,8 @@ public class ParallelIndexer implements Runnable {
                     }
                 } catch (InterruptedException | IOException e) {
                     log.severe(e.getMessage());
+                }  catch (Exception e) {
+                    log.severe(e.getMessage());
                 }
             }
         }
@@ -1110,6 +1112,8 @@ public class ParallelIndexer implements Runnable {
                     }
                 } catch (InterruptedException e) {
                     log.severe(e.getMessage());
+                }  catch (Exception e) {
+                    log.severe(e.getMessage());
                 }
             }
         }
@@ -1148,6 +1152,8 @@ public class ParallelIndexer implements Runnable {
                         }
                     }
                 } catch (InterruptedException | IOException e) {
+                    log.severe(e.getMessage());
+                } catch (Exception e) {
                     log.severe(e.getMessage());
                 }
             }
