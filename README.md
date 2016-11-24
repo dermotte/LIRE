@@ -16,6 +16,8 @@ The developer documentation & blog are currently hosted [here in the repo](https
 
 If you are very new to Lire and just want to try out the image search functionality I recommend to start with _LireDemo_, a GUI application which lets you index and search your own photos. If you want to integrate search functions in your software, then take a look at _Lire-SimpleApplication_, which shows you the most straightforward way to use Lire. Both are available in the Downloads section. Small tutorials are available for creating an index and searching images in the wiki at http://www.semanticmetadata.net/wiki/.
 
+If you want to setup your IDE to use LIRE, there is a gradle build script for SimpleApplication as well as LireDemo. You can find directions and the files for setup [at the release page](https://github.com/dermotte/LIRE/releases/tag/gradle).
+
 We further highly recommend the book titled “Visual Information Retrieval using Java and LIRE”, written by Mathias Lux and Oge Marques. It’s available from Morgan & Claypool, i.e. as PDF eBook (doi:10.2200/S00468ED1V01Y201301ICR025, see [here](http://www.morganclaypool.com/doi/abs/10.2200/S00468ED1V01Y201301ICR025) or on Kindle [here](http://www.amazon.de/gp/product/B00CDGMPR0/ref=as_li_tl?ie=UTF8&camp=1638&creative=6742&creativeASIN=B00CDGMPR0&linkCode=as2&tag=liluimre-21)).
 
 [![](http://ecx.images-amazon.com/images/I/41Rot9eQLKL._SS400_.jpg)](http://www.amazon.de/gp/product/B00CDGMPR0/ref=as_li_tl?ie=UTF8&camp=1638&creative=6742&creativeASIN=B00CDGMPR0&linkCode=as2&tag=liluimre-21)
