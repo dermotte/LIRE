@@ -2,7 +2,7 @@
 LIRE (Lucene Image Retrieval) is an open source library for content based image retrieval, which means you can search for images that look similar. Besides providing multiple common and state of the art retrieval mechanisms LIRE allows for easy use on multiple platforms. LIRE is actively used for research, teaching and commercial applications. Due to its modular nature it can be used on process level (e.g. index images and search) as well as on image feature level. Developers and researchers can easily extend and modify LIRE to adapt it to their needs.
 
 An online demo can be found at http://demo-itec.uni-klu.ac.at/liredemo/
-Most recent documentation is found at the [github repo] (https://github.com/dermotte/LIRE/blob/master/src/main/docs/developer-docs/docs/index.md).
+Most [recent documentation is found here at the github repo] (https://github.com/dermotte/LIRE/blob/master/src/main/docs/developer-docs/docs/index.md).
 
 ❗ **Please cite LIRE if you use it!** LIRE is open source and free, the only thing we ask for is that you cite it if you use it in your work. For references see below.
 
@@ -12,7 +12,7 @@ Downloads are currently hosted at: http://www.itec.uni-klu.ac.at/~mlux/lire-rele
 Nightly builds are available at http://www.itec.uni-klu.ac.at/~mlux/lire-release/lire-nightly.zip
 
 ## Getting Started ##
-The developer documentation & blog are currently hosted on http://www.semanticmetadata.net/wiki/. In the developer docs common tasks are described, so take a look there if you are starting to use LIRE.
+The developer documentation & blog are currently hosted [here in the repo](https://github.com/dermotte/LIRE/blob/master/src/main/docs/developer-docs/docs/index.md). In the developer docs common tasks are described, so take a look there if you are starting to use LIRE.
 
 If you are very new to Lire and just want to try out the image search functionality I recommend to start with _LireDemo_, a GUI application which lets you index and search your own photos. If you want to integrate search functions in your software, then take a look at _Lire-SimpleApplication_, which shows you the most straightforward way to use Lire. Both are available in the Downloads section. Small tutorials are available for creating an index and searching images in the wiki at http://www.semanticmetadata.net/wiki/.
 

@@ -346,6 +346,24 @@ public class ParallelIndexer implements Runnable {
     }
 
     /**
+     * Constructor for use with hashing.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageDirectory    the directory where images can be found.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, String imageDirectory, GlobalDocumentBuilder.HashingMode hashingMode) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageDirectory = imageDirectory;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else this.globalHashing = false;
+        this.globalHashingMode = hashingMode;
+    }
+
+    /**
      * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
      *
      * @param numOfThreads number of threads used for processing.

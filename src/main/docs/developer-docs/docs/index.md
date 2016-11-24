@@ -1,13 +1,13 @@
 # Lire - Lucene Image REtrieval
 The LIRE (Lucene Image REtrieval) library a simple way to create a Lucene index of image features for content based 
-image retrieval (CBIR). There is no complete list of features, but these are some of them:
+image retrieval (CBIR). This is not a complete list of features, but here are some of them:
 
   * ScalableColor, ColorLayout and EdgeHistogram [MPEG-7](http://mpeg.chiariglione.org/standards/mpeg-7/mpeg-7.htm)
   * CEDD and FCTH (contributed by [Savvas Chatzichristofis](http://savvash.blogspot.com/))
   * Color histograms (HSV and RGB), Tamura & Gabor, auto color correlogram, JPEG coefficient histogram (common global descriptors)
   * Visual words based on [SIFT](http://en.wikipedia.org/wiki/Scale-invariant_feature_transform) and [SURF](http://en.wikipedia.org/wiki/SURF)
   * Visual words based on [SIMPLE](simple.md)
-  * Approximate fast search based on hashing and [metric indexing](metricindexing.md).
+  * Approximate fast search based on [hashing](hashing.md) and [metric indexing](metricindexing.md).
 
 Furthermore, methods for searching the index based on [Lucene](http://lucene.apache.org) are provided.
 
@@ -22,7 +22,7 @@ With Lire you can easily [create an index](createindex.md) and [search through t
   
 I recommend to start with taking a look at the [SimpleApplication](https://github.com/dermotte/LIRE/tree/master/samples/simpleapplication)
 package of LIRE, which covers the most needed stuff including indexing, search and extraction of image features for use 
-in other applications. It's also a good idea to work on the current SVN version of LIRE:
+in other applications. It's also a good idea to work on the current Git version of LIRE:
 [How to check out and set up LIRE in the IDEA IDE](https://www.youtube.com/watch?v=vG_yvB_UfAU&list=PLkb7TymgoWW4zfjepAmYNz03ABDQWGHfl).
 
 Note at this point that LIRE comes with Apache Ant build files, named build.xml. You can use the tasks to create the jar
