@@ -21,7 +21,7 @@ dependencies {
 task runIndexing(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
-    main = 'samples.Indexing'
+    main = 'net.semanticmetadata.lire.sampleapp.ParallelIndexing'
 
     // Define the directory where to find the images to index.
     args 'D:/Temp/twd'
@@ -30,7 +30,7 @@ task runIndexing(type: JavaExec) {
 task runSearch(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
-    main = 'samples.Search'
+    main = 'net.semanticmetadata.lire.sampleapp.Searcher'
 
     // Define the image to be used as query
     args 'D:/Temp/twd/frame0001.jpg'

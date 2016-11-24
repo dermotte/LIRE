@@ -12,26 +12,18 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     // https://mvnrepository.com/artifact/com.sangupta/jopensurf
     compile group: 'com.sangupta', name: 'jopensurf', version: '1.0.0'
+    // https://mvnrepository.com/artifact/com.drewnoakes/metadata-extractor
+    compile group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.9.1'
+    // compile group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.3.1'
+
     // https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/opencv
     // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '2.4.11-0.11'
     compile fileTree(dir: 'lib', include: '*.jar')
     // runtime fileTree(dir: 'lib', include: '*.jar')
 }
 
-task runIndexing(type: JavaExec) {
+task runDemo(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 
-    main = 'samples.Indexing'
-
-    // Define the directory where to find the images to index.
-    args 'D:/Temp/twd'
-}
-
-task runSearch(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-
-    main = 'samples.Search'
-
-    // Define the image to be used as query
-    args 'D:/Temp/twd/frame0001.jpg'
+    main = 'liredemo.LireDemoFrame'
 }
