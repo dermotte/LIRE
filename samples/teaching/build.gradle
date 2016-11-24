@@ -1,0 +1,24 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'lib', include: '*.jar')
+    runtime fileTree(dir: 'lib', include: '*.jar')
+}
+
+task runIndexing(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'samples.Indexing'
+
+    // Define the directory where to find the images to index.
+    args 'D:/Temp/twd'
+}
+
+task runSearch(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'samples.Search'
+
+    // Define the image to be used as query
+    args 'D:/Temp/twd/frame0001.jpg'
+}

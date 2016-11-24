@@ -170,8 +170,9 @@ Build-Number: ${build-number}
     </target>
 
     <target name="copy_jar_to_liredemo" depends="dist">
-        <copy file="dist/lire.jar" todir="./samples/liredemo/lib"/>
-        <copy file="dist/lire.jar" todir="./samples/simpleapplication/lib"/>
+        <copy force="true" file="dist/lire.jar" todir="./samples/liredemo/lib"/>
+        <copy force="true" file="dist/lire.jar" todir="./samples/simpleapplication/lib"/>
+        <copy force="true" file="dist/lire.jar" todir="./samples/teaching/lib"/>
         <!--delete file="../LireSolr/lib/lire.jar"/-->
         <!--copy force="true" file="dist/lire.jar" todir="../LireSolr/lib"/-->
     </target>
