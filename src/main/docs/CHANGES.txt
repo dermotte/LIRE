@@ -1,6 +1,14 @@
 CHANGES for LIRE
 ================
 
+2016-11-25
+==========
+  - Updated documentation
+
+2016-11-24
+==========
+  - Made liredemo and simpleapplication gradle based.
+
 2016-01-28
 ==========
   - Mapped the number of key points for random selection from ParallelIndexer through to the end

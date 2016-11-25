@@ -20,27 +20,20 @@ With Lire you can easily [create an index](createindex.md) and [search through t
   * How to [search through the index](searchindex.md) with Lire?
   * [Frequently Asked Questions](lirefaq.md)
   
-I recommend to start with taking a look at the [SimpleApplication](https://github.com/dermotte/LIRE/tree/master/samples/simpleapplication)
-package of LIRE, which covers the most needed stuff including indexing, search and extraction of image features for use 
-in other applications. It's also a good idea to work on the current Git version of LIRE:
+I recommend to start with taking a look at the SimpleAplication, either in the [repository](https://github.com/dermotte/LIRE/tree/master/samples/simpleapplication) or as a [release](https://github.com/dermotte/LIRE/releases/tag/gradle). SimpleApplication features a gradle build file and is much easier to handle. SimpleApplication is a package of LIRE, which covers the most needed stuff including indexing, search and extraction of image features for use in other applications. 
+
+If you plan to extend LIRE, it's also a good idea to work on the current Git version of LIRE:
 [How to check out and set up LIRE in the IDEA IDE](https://www.youtube.com/watch?v=vG_yvB_UfAU&list=PLkb7TymgoWW4zfjepAmYNz03ABDQWGHfl).
 
-Note at this point that LIRE comes with Apache Ant build files, named build.xml. You can use the tasks to create the jar
-from the source code as soon as you have Ant installed, or you are using an IDE prepared for that, like IDEA, Eclipse or NetBeans.
-Apache Ant can be found at the [Apache Ant Project Page](https://ant.apache.org/)
+Note at this point that the LIRE library also comes with Apache Ant build files, named **build.xml**. You can use the tasks to create the jar from the source code as soon as you have Ant installed, or you are using an IDE prepared for that, like IDEA, Eclipse or NetBeans. Apache Ant can be found at the [Apache Ant Project Page](https://ant.apache.org/)
 
-If you are searching for the Solr plugin of LIRE ... it's still under construction. Some global features are working fine 
-and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr). It has been reported
-working on distributed installations.
+If you are searching for the Solr plugin of LIRE ... it's still under construction. Some global features are working fine and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr). It has been reported working on distributed installations.
 
 ## Making more of LIRE
-If you need **more performance** out of LIRE you can consider using approximate indexing. One option is hashing, ie. BitSampling,
-the other is to use the [approximate indexing based on metric spaces](metricindexing.md) based on the work of [G. Amato](http://www.nmis.isti.cnr.it/amato/).
+If you need **more performance** out of LIRE you can consider using approximate indexing. One option is hashing, ie. [BitSampling](hashing.md), the other is to use the [approximate indexing based on metric spaces](metricindexing.md) based on the work of [G. Amato](http://www.nmis.isti.cnr.it/amato/).
 Both are supported by the parallel indexer and the generic searcher class, just check the configurations and constructors.
 
-Another option is to switch to [DocValues](docvalues.md). This utilizes another data structure of Lucene and bypasses
-the actual index. Please note that you need to use a custom searcher, the GenericDocValuesSearcher for searching. Indexing
-can be done by the parallel indexer.
+Another option is to switch to [DocValues](docvalues.md). This utilizes another data structure of Lucene and bypasses the actual index. Please note that you need to use a custom searcher, the GenericDocValuesSearcher for searching. Indexing can be done by the parallel indexer.
 
 ## How does Lire actually work?
 Lire employs *global image features* for *content based image retrieval*. For more information on the underlying methods 
