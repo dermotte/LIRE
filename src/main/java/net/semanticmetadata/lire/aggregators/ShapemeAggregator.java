@@ -11,8 +11,8 @@ import java.util.List;
  * http://www.cs.berkeley.edu/~malik/papers/mori-belongie-malik-pami05.pdf
  * Shape Context implemented according to
  *
- * S. Belongie, J. Malik, and J. Puzicha, “Shape Matching and Object
- * Recognition Using Shape Contexts,” IEEE Trans. Pattern Analysis and
+ * S. Belongie, J. Malik, and J. Puzicha, "Shape Matching and Object
+ * Recognition Using Shape Contexts," IEEE Trans. Pattern Analysis and
  * Machine Intelligence, vol. 24, no. 4, pp. 509-522, Apr. 2002
  * https://www.cs.berkeley.edu/~malik/papers/BMP-shape.pdf
  *

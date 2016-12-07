@@ -41,17 +41,11 @@
 
 package net.semanticmetadata.lire.utils;
 
-import com.sun.corba.se.spi.ior.Writeable;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
