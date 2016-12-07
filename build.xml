@@ -57,6 +57,7 @@
     </description>
 
     <property name="src" value="src/main/java"/>
+    <property name="res" value="src/main/resources"/>
     <property name="config" value="src/main/config"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
@@ -101,6 +102,17 @@ Build-Number: ${build-number}
         </javac>
         <copy todir="${build}">
             <fileset dir="${src}">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/*.java"/>
+                    <exclude name="**/*.html"/>
+                    <exclude name="**/.svn/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+        <copy todir="${build}">
+            <fileset dir="${res}">
                 <patternset>
                     <include name="**/*.*"/>
                     <exclude name="**/*.java"/>

@@ -56,3 +56,4 @@ textindextest/*
 wang-index-*/*
 *-index-*/
 testxml.xml
+.gradle/*
