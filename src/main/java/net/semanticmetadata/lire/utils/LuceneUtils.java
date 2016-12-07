@@ -77,7 +77,7 @@ public class LuceneUtils {
     /**
      * Currently employed version of Lucene
      */
-    public static final Version LUCENE_VERSION = Version.LUCENE_6_2_0;
+    public static final Version LUCENE_VERSION = Version.LATEST;
 
     /**
      * Different types of analyzers

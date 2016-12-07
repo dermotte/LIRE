@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2016-12-07
+==========
+  - Switched to gradle for the main LIRE project.
+  - Updated everything to latest Lucene version.
+
 2016-11-25
 ==========
   - Updated documentation

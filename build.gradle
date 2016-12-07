@@ -17,9 +17,9 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.2.1'
-    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.2.1'
-    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.2.1'
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.3.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.3.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.3.0'
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
@@ -36,6 +36,25 @@ dependencies {
 
 }
 
+/**
+ * Task for getting all the dependencies downloaded.
+ */
+task getDeps(type: Copy) {
+    from sourceSets.main.runtimeClasspath
+    into 'dist/lib'
+}
+
+/**
+ * Clean up the mess by the other tasks.
+ */
+clean.doFirst {
+    delete 'dist'
+}
+
+/**
+ * For now we do not use the tests given by the system.
+ * We'll gradually add them back again.
+ */
 test {
     exclude 'net/semanticmetadata/**'
 }
