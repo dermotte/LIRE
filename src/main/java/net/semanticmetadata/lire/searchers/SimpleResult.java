@@ -83,7 +83,9 @@ public class SimpleResult implements Comparable<SimpleResult> {
         return indexNumber;
     }
 
-
+    public void setIndexNumber(int indexNumber) {
+        this.indexNumber = indexNumber;
+    }
 //    public Document getDocument() {
 //        return document;
 //    }
