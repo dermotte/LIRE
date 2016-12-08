@@ -3,6 +3,11 @@ CHANGES for LIRE
 
 2016-12-07
 ==========
+  - Fixed WorkItem to work with LireSolr
+  - Fixed hash problem (moved to resources folder)
+
+2016-12-07
+==========
   - Switched to gradle for the main LIRE project.
   - Updated everything to latest Lucene version.
 

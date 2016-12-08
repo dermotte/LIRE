@@ -2,9 +2,11 @@
 This is the GRADLE build file for LIRE.
  */
 apply plugin: 'java'
+apply plugin: 'project-report'
+
 
 sourceCompatibility = 1.8
-version = '1.0 beta'
+version = '1.0_b04'
 jar {
     manifest {
         attributes 'Implementation-Title': 'LIRE',
