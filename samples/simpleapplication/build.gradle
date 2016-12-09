@@ -35,3 +35,18 @@ task runSearch(type: JavaExec) {
     // Define the image to be used as query
     args 'D:/Temp/twd/frame0001.jpg'
 }
+
+/**
+ * Based on a suggestion by Nelson Silva from the lire-dev group.
+ */
+task runIndexLocalSLocalFeat(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    // define where to find all the .so or .dll files needed
+    systemProperty "java.library.path", "/home/user/Documents/LIRE/LIREGit_latest/LIRE/samples/simpleapplication/lib"
+
+    main = 'net.semanticmetadata.lire.sampleapp.IndexingAndSearchWithLocalFeatures'
+
+    // Define the directory where to find the images to index.
+    //args '/home/user/Documents/images/'
+}
+
