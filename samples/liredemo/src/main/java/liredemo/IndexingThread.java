@@ -130,6 +130,7 @@ public class IndexingThread extends Thread {
             pin.addExtractor(JointHistogram.class);
             pin.addExtractor(LuminanceLayout.class);
             pin.addExtractor(PHOG.class);
+            pin.addExtractor(ACCID.class);
             pin.setCustomDocumentBuilder(MetadataBuilder.class);
             Thread t = new Thread(pin);
             t.start();

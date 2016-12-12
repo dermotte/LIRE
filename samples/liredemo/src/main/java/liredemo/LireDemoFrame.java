@@ -882,7 +882,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Type of IndexSearcher:");
 
-        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG"}));
+        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG", "ACCID"}));
         selectboxDocumentBuilder.setToolTipText(bundle.getString("options.tooltip.documentbuilderselection")); // NOI18N
         selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1855,8 +1855,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
             filter = new LsaFilter(OpponentHistogram.class, DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 14) {  // LuminanceLayout
             filter = new LsaFilter(LuminanceLayout.class, DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 15) {  // PHOG
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 15) {  // PHOG
             filter = new LsaFilter(PHOG.class, DocumentBuilder.FIELD_NAME_PHOG);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 16) {  // PHOG
+            filter = new LsaFilter(ACCID.class, new ACCID().getFieldName());
         }
         try {
             IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(textfieldIndexName.getText())));
@@ -1998,8 +2000,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
             searcher = new GenericFastImageSearcher(numResults, OpponentHistogram.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 14) {
             searcher = new GenericFastImageSearcher(numResults, LuminanceLayout.class);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 15) {
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 15) {
             searcher = new GenericFastImageSearcher(numResults, PHOG.class);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 16) {
+            searcher = new GenericFastImageSearcher(numResults, ACCID.class);
         }
         return searcher;
     }

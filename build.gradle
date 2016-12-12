@@ -58,5 +58,11 @@ clean.doFirst {
  * We'll gradually add them back again.
  */
 test {
-    exclude 'net/semanticmetadata/**'
+    exclude 'net/semanticmetadata/lire/benchmarking/**'
+    exclude 'net/semanticmetadata/lire/builders/**'
+    exclude 'net/semanticmetadata/lire/classifiers/**'
+    exclude 'net/semanticmetadata/lire/indexers/**'
+    exclude 'net/semanticmetadata/lire/searchers/**'
+    exclude 'net/semanticmetadata/lire/imageanalysis/TestExtraction**'
+    exclude 'net/semanticmetadata/lire/TestProperties**'
 }
