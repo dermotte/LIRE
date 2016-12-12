@@ -1,4 +1,0 @@
-# adds the LireCustomCodec to the SPI.
-# This Codec is needed to ensure fast reading for linear search.
-
-net.semanticmetadata.lire.indexers.LireCustomCodec

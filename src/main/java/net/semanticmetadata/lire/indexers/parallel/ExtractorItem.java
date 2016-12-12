@@ -43,7 +43,7 @@ import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtra
 /**
  * This class is a container for all features.
  * It contains the class of the extractor, an instance of the extractor, an instance of the feature, the field name of the feature
- * and for the simple model, the keypoint detector. (In case of global features the extractor and the feature instances, are
+ * and for the isSimpleExtractorItem model, the keypoint detector. (In case of global features the extractor and the feature instances, are
  * the same object).
  * Created by Nektarios on 6/5/2015.
  *
@@ -59,7 +59,9 @@ public class ExtractorItem {
 
     private boolean global = false;
     private boolean local = false;
-    private boolean simple = false;
+    private boolean isSimpleExtractorItem = false;
+
+    private int numKeypoints = -1;
 
     public ExtractorItem(Class<? extends Extractor> extractorClass){
         if (extractorClass == null) throw new UnsupportedOperationException("extractorClass cannot be null");
@@ -108,7 +110,25 @@ public class ExtractorItem {
         }
         this.fieldName = ((SimpleExtractor) extractorInstance).getFieldName();
         this.keypointDetector = keypointDetector;
-        this.simple = true;
+        this.isSimpleExtractorItem = true;
+    }
+
+    public ExtractorItem(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector keypointDetector, int numKeypoints){
+        if ((globalFeatureClass == null)||(keypointDetector == null)) throw new UnsupportedOperationException("globalFeature or detector cannot be null");
+
+        this.extractorClass = globalFeatureClass;   //GlobalFeature!!
+        try {
+            this.extractorInstance = new SimpleExtractor(globalFeatureClass.newInstance(), keypointDetector, numKeypoints);
+            this.numKeypoints = numKeypoints;
+            this.featureInstance = ((SimpleExtractor) extractorInstance).getClassOfFeatures().newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        this.fieldName = ((SimpleExtractor) extractorInstance).getFieldName();
+        this.keypointDetector = keypointDetector;
+        this.isSimpleExtractorItem = true;
     }
 
     public Class<? extends Extractor> getExtractorClass(){
@@ -133,13 +153,17 @@ public class ExtractorItem {
 
     public boolean isLocal(){ return local; }
 
-    public boolean isSimple(){ return simple; }
+    public boolean isSimple(){ return isSimpleExtractorItem; }
 
     public ExtractorItem clone(){
         ExtractorItem clone;
 
-        if (simple)
-            clone = new ExtractorItem((Class<? extends GlobalFeature>) extractorClass, keypointDetector);
+        if (isSimpleExtractorItem)
+            if (numKeypoints > 0) {
+                clone = new ExtractorItem((Class<? extends GlobalFeature>) extractorClass, keypointDetector, numKeypoints);
+            } else {
+                clone = new ExtractorItem((Class<? extends GlobalFeature>) extractorClass, keypointDetector);
+            }
         else
             clone = new ExtractorItem(extractorClass);
 

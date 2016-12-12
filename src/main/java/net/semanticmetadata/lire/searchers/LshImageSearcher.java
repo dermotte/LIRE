@@ -49,7 +49,7 @@ import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
-import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -166,7 +166,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
     private ImageSearchHits search(String[] hashes, GlobalFeature queryFeature, IndexReader reader) throws IOException {
         // first search by text:
         IndexSearcher searcher = new IndexSearcher(reader);
-        searcher.setSimilarity(new DefaultSimilarity(){
+        searcher.setSimilarity(new ClassicSimilarity(){
             @Override
             public float tf(float freq) {
                 return 1;
@@ -197,12 +197,12 @@ public class LshImageSearcher extends AbstractImageSearcher {
                 return 1;
             }
         });
-        BooleanQuery query = new BooleanQuery();
+        BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
         for (int i = 0; i < hashes.length; i++) {
             // be aware that the hashFunctionsFileName of the field must match the one you put the hashes in before.
-            query.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
+            queryBuilder.add(new BooleanClause(new TermQuery(new Term(hashesFieldName, hashes[i] + "")), BooleanClause.Occur.SHOULD));
         }
-        TopDocs docs = searcher.search(query, maxResultsHashBased);
+        TopDocs docs = searcher.search(queryBuilder.build(), maxResultsHashBased);
         // then re-rank
         TreeSet<SimpleResult> resultScoreDocs = new TreeSet<SimpleResult>();
         double maxDistance = 0d;

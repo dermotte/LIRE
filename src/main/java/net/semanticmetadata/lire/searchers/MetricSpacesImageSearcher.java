@@ -50,16 +50,16 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.BinaryDocValues;
 import org.apache.lucene.index.FieldInvertState;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.*;
-import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.TreeSet;
 
 /**
@@ -207,7 +207,7 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
         this.numHashesUsedForQuery = numHashesUsedForQuery;
     }
 
-    class BaseSimilarity extends DefaultSimilarity {
+    class BaseSimilarity extends ClassicSimilarity {
         public float tf(float freq) {
             return freq;
         }

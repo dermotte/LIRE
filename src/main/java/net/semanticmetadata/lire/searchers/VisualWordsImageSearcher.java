@@ -49,7 +49,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.similarities.DefaultSimilarity;
+import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.apache.lucene.search.similarities.Similarity;
 import org.apache.lucene.util.BytesRef;
 
@@ -66,7 +66,7 @@ import java.util.LinkedList;
 public class VisualWordsImageSearcher extends AbstractImageSearcher {
     private int numMaxHits;
     private String fieldName;
-    private Similarity similarity = new DefaultSimilarity();
+    private Similarity similarity = new ClassicSimilarity();
     //    private Similarity similarity = new MySimilarity();
 //    private Similarity similarity = new BM25Similarity();
     QueryParser qp;
@@ -124,7 +124,7 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
      * This implementation has shown formidable results with the Nister UKBench data set.
      */
     @SuppressWarnings("unused")
-    private static class MySimilarity extends DefaultSimilarity {
+    private static class MySimilarity extends ClassicSimilarity {
         @Override
         public float coord(int overlap, int maxOverlap) {
             return super.coord(overlap, maxOverlap);

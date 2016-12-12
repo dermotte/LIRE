@@ -5,6 +5,7 @@ import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
 import net.semanticmetadata.lire.searchers.SimpleResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.math3.random.RandomDataGenerator;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -134,6 +135,11 @@ public class MetricSpaces {
         System.out.printf("Read %,d lines from the input file. Now selecting reference points.\n", lines.size());
         // now for the randomness:
         Collections.shuffle(lines);
+
+        // or using Java Math, creating a sampling permutation:
+//        RandomDataGenerator randomDataGenerator = new RandomDataGenerator();
+//        int[] ints = randomDataGenerator.nextPermutation(lines.size(), numberOfReferencePoints);
+
         // now for the reference points:
         GlobalFeature feature = (GlobalFeature) globalFeatureClass.newInstance();
         // Write the parameters into the file:

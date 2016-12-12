@@ -57,10 +57,11 @@
     </description>
 
     <property name="src" value="src/main/java"/>
+    <property name="res" value="src/main/resources"/>
     <property name="config" value="src/main/config"/>
     <property name="build" value="classes"/>
     <property name="dist" value="dist"/>
-    <property name="versionstring" value="1.0beta"/>
+    <property name="versionstring" value="1.0b2"/>
     <!-- path to test files -->
     <property name="test" value="test"/>
     <!-- path to documentation like README or CHANGES -->
@@ -101,6 +102,17 @@ Build-Number: ${build-number}
         </javac>
         <copy todir="${build}">
             <fileset dir="${src}">
+                <patternset>
+                    <include name="**/*.*"/>
+                    <exclude name="**/*.java"/>
+                    <exclude name="**/*.html"/>
+                    <exclude name="**/.svn/*"/>
+                    <exclude name="**/.svn/*"/>
+                </patternset>
+            </fileset>
+        </copy>
+        <copy todir="${build}">
+            <fileset dir="${res}">
                 <patternset>
                     <include name="**/*.*"/>
                     <exclude name="**/*.java"/>
@@ -170,8 +182,9 @@ Build-Number: ${build-number}
     </target>
 
     <target name="copy_jar_to_liredemo" depends="dist">
-        <copy file="dist/lire.jar" todir="./samples/liredemo/lib"/>
-        <copy file="dist/lire.jar" todir="./samples/simpleapplication/lib"/>
+        <copy force="true" file="dist/lire.jar" todir="./samples/liredemo/lib"/>
+        <copy force="true" file="dist/lire.jar" todir="./samples/simpleapplication/lib"/>
+        <copy force="true" file="dist/lire.jar" todir="./samples/teaching/lib"/>
         <!--delete file="../LireSolr/lib/lire.jar"/-->
         <!--copy force="true" file="dist/lire.jar" todir="../LireSolr/lib"/-->
     </target>

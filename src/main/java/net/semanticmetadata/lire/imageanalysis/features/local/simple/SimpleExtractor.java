@@ -50,6 +50,7 @@ import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvS
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfFeature;
 import net.semanticmetadata.lire.utils.ImageUtils;
+import net.semanticmetadata.lire.utils.StatsUtils;
 
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -64,15 +65,18 @@ import java.util.Random;
  * @author Mathias Lux, mathias@juggle.at
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
-public class SimpleExtractor implements LocalFeatureExtractor{
-    public enum KeypointDetector {CVSURF, CVSIFT, Random, GaussRandom};
+public class SimpleExtractor implements LocalFeatureExtractor {
+    public enum KeypointDetector {CVSURF, CVSIFT, Random, GaussRandom}
+
+    ;
 
     private static final String Detector_CVSURF = "detCVSURF";
     private static final String Detector_CVSIFT = "detCVSIFT";
     private static final String Detector_RANDOM = "detRnd";
     private static final String Detector_GAUSSRANDOM = "detGRnd";
 
-    private final int[] sizeLookUp = new int[] {40, (int) (40 * 1.6), (int) (40 * 2.3), 40 * 3};
+    private int[] sizeLookUp = new int[]{20, 40, (int) (40 * 1.6), (int) (40 * 2.3), 40 * 3};
+    // private final int[] sizeLookUp = new int[]{20, 40};
     private String fieldName, featureName;
 
     private Class<? extends GlobalFeature> globalFeatureClass;
@@ -87,6 +91,15 @@ public class SimpleExtractor implements LocalFeatureExtractor{
 
 
     public SimpleExtractor(GlobalFeature globalFeature, KeypointDetector detector) {
+        init(globalFeature, detector);
+    }
+
+    public SimpleExtractor(GlobalFeature globalFeature, KeypointDetector detector, int numberOfKeypoints) {
+        samplePoints = numberOfKeypoints;
+        init(globalFeature, detector);
+    }
+
+    private void init(GlobalFeature globalFeature, KeypointDetector detector) {
         this.globalFeature = globalFeature;
         this.globalFeatureClass = globalFeature.getClass();
         this.kpdetector = detector;
@@ -95,12 +108,12 @@ public class SimpleExtractor implements LocalFeatureExtractor{
         if (kpdetector == KeypointDetector.CVSURF) {
             cvSurfExtractor = new CvSurfExtractor();
             featureName = DocumentBuilder.FIELD_NAME_SIMPLE + " using " + globalFeature.getFeatureName() + " and the CVSURF Detector";
-        } else if (kpdetector == KeypointDetector.CVSIFT){
+        } else if (kpdetector == KeypointDetector.CVSIFT) {
             cvSiftExtractor = new CvSiftExtractor();
             featureName = DocumentBuilder.FIELD_NAME_SIMPLE + " using " + globalFeature.getFeatureName() + " and the CVSIFT Detector";
-        } else if (kpdetector == KeypointDetector.Random){
+        } else if (kpdetector == KeypointDetector.Random) {
             featureName = DocumentBuilder.FIELD_NAME_SIMPLE + " using " + globalFeature.getFeatureName() + " and a Random keypoint Detector";
-        } else if (kpdetector == KeypointDetector.GaussRandom){
+        } else if (kpdetector == KeypointDetector.GaussRandom) {
             featureName = DocumentBuilder.FIELD_NAME_SIMPLE + " using " + globalFeature.getFeatureName() + " and a GaussRandom keypoint Detector";
         } else
             throw new UnsupportedOperationException("Something was wrong in setting the desired detector");
@@ -116,11 +129,11 @@ public class SimpleExtractor implements LocalFeatureExtractor{
         return SimpleFeature.class;
     }
 
-    public Class<? extends GlobalFeature> getGlobalFeatureClass(){
+    public Class<? extends GlobalFeature> getGlobalFeatureClass() {
         return globalFeatureClass;
     }
 
-    public KeypointDetector getKpdetector () {
+    public KeypointDetector getKpdetector() {
         return kpdetector;
     }
 
@@ -129,17 +142,13 @@ public class SimpleExtractor implements LocalFeatureExtractor{
     public void extract(BufferedImage image) {
         if (kpdetector == KeypointDetector.CVSURF) {
             useCVSURF(image);
-        }
-        else if (kpdetector == KeypointDetector.CVSIFT){
+        } else if (kpdetector == KeypointDetector.CVSIFT) {
             useCVSIFT(image);
-        }
-        else if (kpdetector == KeypointDetector.Random){
+        } else if (kpdetector == KeypointDetector.Random) {
             useRandom(image);
-        }
-        else if (kpdetector == KeypointDetector.GaussRandom){
+        } else if (kpdetector == KeypointDetector.GaussRandom) {
             useGaussRandom(image);
-        }
-        else
+        } else
             throw new UnsupportedOperationException("Something was wrong in setting the desired detector");
     }
 
@@ -182,98 +191,86 @@ public class SimpleExtractor implements LocalFeatureExtractor{
     }
 
     private void createNextRandomPoint(int[] myKeypoint, int width, int height, Random random) {
-        myKeypoint[2] = sizeLookUp[random.nextInt(4)];
-        myKeypoint[0] = random.nextInt(width-myKeypoint[2]);
-        myKeypoint[1] = random.nextInt(height-myKeypoint[2]);
+        myKeypoint[2] = sizeLookUp[random.nextInt(sizeLookUp.length)];
+        // make sure this stays within a certain range even for small images.
+        if (!(myKeypoint[2] < width && myKeypoint[2] < height)) myKeypoint[2] = sizeLookUp[0];
+        myKeypoint[0] = random.nextInt(width - myKeypoint[2]);
+        myKeypoint[1] = random.nextInt(height - myKeypoint[2]);
     }
 
-    private LinkedList<keypoint> createGaussRndPts(int width, int height, int samples){
+    private LinkedList<keypoint> createGaussRndPts(int width, int height, int samples) {
         Random ran = new Random();
 
-        double seedWidth = (width / 4) - 10;
-        double seedHeight = (height / 4) - 10;
-        double meanWidth = width / 2;
-        double meanHeight = height / 2;
-
-        int size, x, y, sizeLimit, widthLimit, heightLimit;
+        int size, x, y;
         keypoint key;
         LinkedList<keypoint> keypointsList = new LinkedList<keypoint>();
+        sizeLookUp = getLookupTable(Math.min(width, height)/4);
         for (int i = 0; i < samples; i++) {
-            size = sizeLookUp[ran.nextInt(4)];
-            sizeLimit = size / 2;
-            widthLimit = width - sizeLimit;
-            heightLimit = height - sizeLimit;
-
-            //TODO: change do...while
-            do
-            {
-                x = (int) (ran.nextGaussian() * seedWidth + meanWidth);
-            } while (!((x > sizeLimit) && (x < widthLimit)));
-            do
-            {
-                y = (int) (ran.nextGaussian() * seedHeight + meanHeight);
-            } while (!((y > sizeLimit) && (y < heightLimit)));
-
+            size = sizeLookUp[ran.nextInt(sizeLookUp.length)];
+            // sanity check: Is the size fit for the image size?!?
+            if (size > Math.min(width, height)) {
+                System.err.println("[" + getClass().getName() + "] Too big a patch for this image. Consider using bigger images.");
+                size = sizeLookUp[0];
+            }
+            // bounding box
+            double boundx = width - size;
+            double boundy = height - size;
+            // System.out.printf("(%d, %d) %d, %f -- ", width, height, size, boundx);
+            x = (int) Math.floor(StatsUtils.clamp(ran.nextGaussian(), -3, 3) / 3d * boundx / 2 + width / 2);
+            y = (int) Math.floor(StatsUtils.clamp(ran.nextGaussian(), -3, 3) / 3d * boundy / 2 + height / 2);
+            // System.out.printf("(%d, %d)\n", x, y);
             key = new keypoint(x, y, size);
-//            System.out.println("(" + (key.X) + "," + (key.Y) + ")\t" + key.Size);
             keypointsList.add(key);
         }
 
         return keypointsList;
     }
 
-    public static String getDetector(KeypointDetector detector)
-    {
+    public static String getDetector(KeypointDetector detector) {
         if (detector == KeypointDetector.CVSURF) {
             return Detector_CVSURF;
-        }
-        else if (detector == KeypointDetector.CVSIFT){
+        } else if (detector == KeypointDetector.CVSIFT) {
             return Detector_CVSIFT;
-        }
-        else if (detector == KeypointDetector.Random){
+        } else if (detector == KeypointDetector.Random) {
             return Detector_RANDOM;
-        }
-        else if (detector == KeypointDetector.GaussRandom){
+        } else if (detector == KeypointDetector.GaussRandom) {
             return Detector_GAUSSRANDOM;
-        }
-        else
+        } else
             throw new UnsupportedOperationException("Something was wrong in returning the used detector");
     }
 
-    public static KeypointDetector getDetector(String detector)
-    {
+    public static KeypointDetector getDetector(String detector) {
         if (detector.equals(Detector_CVSURF)) {
             return KeypointDetector.CVSURF;
-        }
-        else if (detector.equals(Detector_CVSIFT)){
+        } else if (detector.equals(Detector_CVSIFT)) {
             return KeypointDetector.CVSIFT;
-        }
-        else if (detector.equals(Detector_RANDOM)){
+        } else if (detector.equals(Detector_RANDOM)) {
             return KeypointDetector.Random;
-        }
-        else if (detector.equals(Detector_GAUSSRANDOM)){
+        } else if (detector.equals(Detector_GAUSSRANDOM)) {
             return KeypointDetector.GaussRandom;
-        }
-        else
+        } else
             throw new UnsupportedOperationException("Something was wrong in returning the used detector");
+    }
+
+    public int[] getLookupTable(int base) {
+        return new int[]{base/2, base, (int) (base * 1.6), (int) (base * 2.3), base * 3};
     }
 
     public String getFieldName() {
         return fieldName;
     }
 
-    public String getFeatureName(){
+    public String getFeatureName() {
         return featureName;
     }
 
-    private class keypoint
-    {
+    private class keypoint {
+        // I suggest the patch is centered around x,y.
         private int X;
         private int Y;
         private int Size;
 
-        public keypoint(int x, int y, int size)
-        {
+        public keypoint(int x, int y, int size) {
             this.X = x;
             this.Y = y;
             this.Size = size;

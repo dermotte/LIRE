@@ -91,24 +91,26 @@ public class ParallelExtractor implements Runnable {
             "SimpleColorHistogram",  // 11
             "Tamura",                // 12
             "LuminanceLayout",       // 13
-            "PHOG",                   // 14
+            "PHOG",                  // 14
+            "LocalBinaryPatterns",   // 15
     };
     public static final String[] featureFieldNames = new String[]{
-            DocumentBuilder.FIELD_NAME_CEDD,                 // 0
-            DocumentBuilder.FIELD_NAME_FCTH,                 // 1
-            DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM,   // 2
-            DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM,      // 3
-            DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM, // 4
-            DocumentBuilder.FIELD_NAME_COLORLAYOUT,          // 5
-            DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,        // 6
-            DocumentBuilder.FIELD_NAME_GABOR,                // 7
-            DocumentBuilder.FIELD_NAME_JCD,                  // 8
+            DocumentBuilder.FIELD_NAME_CEDD,                  // 0
+            DocumentBuilder.FIELD_NAME_FCTH,                  // 1
+            DocumentBuilder.FIELD_NAME_OPPONENT_HISTOGRAM,    // 2
+            DocumentBuilder.FIELD_NAME_JOINT_HISTOGRAM,       // 3
+            DocumentBuilder.FIELD_NAME_AUTOCOLORCORRELOGRAM,  // 4
+            DocumentBuilder.FIELD_NAME_COLORLAYOUT,           // 5
+            DocumentBuilder.FIELD_NAME_EDGEHISTOGRAM,         // 6
+            DocumentBuilder.FIELD_NAME_GABOR,                 // 7
+            DocumentBuilder.FIELD_NAME_JCD,                   // 8
             DocumentBuilder.FIELD_NAME_JPEGCOEFFS,
             DocumentBuilder.FIELD_NAME_SCALABLECOLOR,
             DocumentBuilder.FIELD_NAME_COLORHISTOGRAM,
-            DocumentBuilder.FIELD_NAME_TAMURA,               // 12
-            DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,     // 13
-            DocumentBuilder.FIELD_NAME_PHOG,                 // 14
+            DocumentBuilder.FIELD_NAME_TAMURA,                // 12
+            DocumentBuilder.FIELD_NAME_LUMINANCE_LAYOUT,      // 13
+            DocumentBuilder.FIELD_NAME_PHOG,                  // 14
+            DocumentBuilder.FIELD_NAME_LOCAL_BINARY_PATTERNS, // 15
     };
     static HashMap<String, Integer> feature2index;
 
@@ -362,7 +364,8 @@ public class ParallelExtractor implements Runnable {
                 try {
                     // print the current status:
                     long time = System.currentTimeMillis() - ms;
-                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount > 0) ? (time / overallCount) : "n.a.") + " ms each (" + images.size() + " images currently in queue).");
+//                    System.out.println("Analyzed " + overallCount + " images in " + time / 1000 + " seconds, " + ((overallCount > 0) ? (time / overallCount) : "n.a.") + " ms each (" + images.size() + " images currently in queue).");
+                    System.out.printf("Analyzed %,d images in %,d seconds, %s ms each (%,d images currently in queue).\n", overallCount, time / 1000, ((overallCount > 0) ? (time / overallCount) : "n.a."), images.size());
                     Thread.sleep(1000 * monitoringInterval); // wait xx seconds
                 } catch (InterruptedException e) {
                     e.printStackTrace();

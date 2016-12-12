@@ -85,3 +85,6 @@ Time for MetricSpaces vs. cached linear search, giving the precision for 100 run
 
 * CEDD: 93.542 vs. 217.512 seconds for 100 runs at 0.85 recall
 * PHOG: 89.676 vs. 161.016 seconds for 100 runs at 0.71 recall
+
+One important thing is to keep the index as small as possible. The larger the index, the slower the random access on the 
+documents and, therefore, the slower the re-ranking step. 

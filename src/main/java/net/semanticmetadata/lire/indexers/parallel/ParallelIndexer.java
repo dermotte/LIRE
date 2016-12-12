@@ -346,6 +346,24 @@ public class ParallelIndexer implements Runnable {
     }
 
     /**
+     * Constructor for use with hashing.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
+     * @param imageDirectory    the directory where images can be found.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, String imageDirectory, GlobalDocumentBuilder.HashingMode hashingMode) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageDirectory = imageDirectory;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else this.globalHashing = false;
+        this.globalHashingMode = hashingMode;
+    }
+
+    /**
      * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
      *
      * @param numOfThreads number of threads used for processing.
@@ -544,6 +562,22 @@ public class ParallelIndexer implements Runnable {
         }
         if (flag) {
             this.SimpleExtractorsAndCodebooks.put(new ExtractorItem(globalFeatureClass, detector), new LinkedList<Cluster[]>());
+            this.sampling = true;
+        } else {
+            throw new UnsupportedOperationException(globalFeatureClass.getSimpleName() + " with " + detector.name() + " already exists!!");
+        }
+    }
+
+    public void addExtractor(Class<? extends GlobalFeature> globalFeatureClass, SimpleExtractor.KeypointDetector detector, int numKeyPoints) {
+        if (lockLists) throw new UnsupportedOperationException("Cannot add extractors!");
+        boolean flag = true;
+        for (Map.Entry<ExtractorItem, LinkedList<Cluster[]>> next : SimpleExtractorsAndCodebooks.entrySet()) {
+            if ((next.getKey().getExtractorClass().equals(globalFeatureClass)) && (next.getKey().getKeypointDetector() == detector)) {
+                flag = false;
+            }
+        }
+        if (flag) {
+            this.SimpleExtractorsAndCodebooks.put(new ExtractorItem(globalFeatureClass, detector, numKeyPoints), new LinkedList<Cluster[]>());
             this.sampling = true;
         } else {
             throw new UnsupportedOperationException(globalFeatureClass.getSimpleName() + " with " + detector.name() + " already exists!!");
@@ -1043,9 +1077,15 @@ public class ParallelIndexer implements Runnable {
                     else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
                         b = new ByteArrayInputStream(tmp.getBuffer());
-                        conSampleMap.put(tmp.getFileName(), (documentBuilder.extractLocalFeatures(ImageIO.read(b), ((LocalFeatureExtractor) extractorItem.getExtractorInstance())).getFeatures()));
+                        BufferedImage image = ImageIO.read(b);
+                        if(imagePreprocessor != null){
+                            image = imagePreprocessor.process(image);
+                        }
+                        conSampleMap.put(tmp.getFileName(), (documentBuilder.extractLocalFeatures(image, ((LocalFeatureExtractor) extractorItem.getExtractorInstance())).getFeatures()));
                     }
                 } catch (InterruptedException | IOException e) {
+                    log.severe(e.getMessage());
+                }  catch (Exception e) {
                     log.severe(e.getMessage());
                 }
             }
@@ -1090,6 +1130,8 @@ public class ParallelIndexer implements Runnable {
                     }
                 } catch (InterruptedException e) {
                     log.severe(e.getMessage());
+                }  catch (Exception e) {
+                    log.severe(e.getMessage());
                 }
             }
         }
@@ -1117,13 +1159,19 @@ public class ParallelIndexer implements Runnable {
                     if (tmp.getFileName() == null) locallyEnded = true;
                     else overallCount++;
                     if (!locallyEnded) {   //&& tmp != null
-                        fields = globalDocumentBuilder.createDescriptorFields(ImageIO.read(new ByteArrayInputStream(tmp.getBuffer())));
+                        BufferedImage image = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
+                        if(imagePreprocessor != null){
+                            image = imagePreprocessor.process(image);
+                        }
+                        fields = globalDocumentBuilder.createDescriptorFields(image);
                         doc = allDocuments.get(tmp.getFileName());
                         for (Field field : fields) {
                             doc.add(field);
                         }
                     }
                 } catch (InterruptedException | IOException e) {
+                    log.severe(e.getMessage());
+                } catch (Exception e) {
                     log.severe(e.getMessage());
                 }
             }
@@ -1198,6 +1246,8 @@ public class ParallelIndexer implements Runnable {
                         writer.addDocument(doc);
                     }
                 } catch (InterruptedException | IOException e) {
+                    log.severe(e.getMessage());
+                } catch (Exception e) {
                     log.severe(e.getMessage());
                 }
             }

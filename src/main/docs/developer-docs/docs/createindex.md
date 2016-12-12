@@ -130,7 +130,9 @@ If you have multiple CPU cores you can use the parallel indexing tool. Note that
 
 
 ## Sample Code - Parallel Indexing using multiple and different features
-Parallel Indexer can be used to create index using global as well as local [features](features.md), at the same time.
+Parallel Indexer can be used to create index using global as well as local [features](features.md), at the same time. 
+For local features you have to make sure the Java OpenCV wrapper is set up and working. There is a 
+[HowTo for Ubuntu available](opencv-ubuntu.md) available.
 
     /**
      * Simple class showing the use of the ParallelIndexer, which uses up as much CPU as it can get.

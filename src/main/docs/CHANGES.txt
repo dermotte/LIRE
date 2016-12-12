@@ -1,11 +1,49 @@
 CHANGES for LIRE
 ================
 
+2016-12-07
+==========
+  - Fixed WorkItem to work with LireSolr
+  - Fixed hash problem (moved to resources folder)
+
+2016-12-07
+==========
+  - Switched to gradle for the main LIRE project.
+  - Updated everything to latest Lucene version.
+
+2016-11-25
+==========
+  - Updated documentation
+
+2016-11-24
+==========
+  - Made liredemo and simpleapplication gradle based.
+
+2016-01-28
+==========
+  - Mapped the number of key points for random selection from ParallelIndexer through to the end
+  - Added security for small images in SimpleExtractor
+
+2016-01-26
+==========
+  - Changed conversion of images to TYPE_3BYTE_BGR in ImageUtils.
+  - Fixed a bug with GenericFastImageSearcher using multiple fields.
+  - Added example for local feature based search.
+
+2016-01-25
+==========
+  - Bugfix in ParallelIndexer, adding Preprocessor for images in local sampling routine
+    (based on bug descrition of Myrtha Fuog)
+
 2015-11-06
 ==========
   - Invalid character in comments removed (based on pull request of Bart Van Bos)
   - Adapted .gitignore from https://github.com/boeboe/LIRE/ fork
   - Adapted pom.xml from https://github.com/boeboe/LIRE/ fork
+
+2015-09-23
+==========
+  - Fixed Extractor bug.
 
 2015-09-22
 ==========

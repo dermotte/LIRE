@@ -58,6 +58,11 @@ public class WorkItem {
     private String fileName;
     private List<? extends LocalFeature> listOfFeatures;
 
+    /**
+     * Creates a new WorkItem based on the actual byte[] data of the image, not decoded
+     * @param path the loccation of the image / stream.
+     * @param buffer the actual byte[] data of the image, as is from the stream, to be handed over to ImageIO.read(,..)
+     */
     public WorkItem(String path, byte[] buffer) {
         this.fileName = path;
         this.buffer = buffer;

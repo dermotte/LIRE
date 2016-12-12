@@ -77,7 +77,7 @@ public class LuceneUtils {
     /**
      * Currently employed version of Lucene
      */
-    public static final Version LUCENE_VERSION = Version.LUCENE_5_2_1;
+    public static final Version LUCENE_VERSION = Version.LATEST;
 
     /**
      * Different types of analyzers
@@ -202,7 +202,7 @@ public class LuceneUtils {
     }
 
     public static IndexReader openIndexReader(IndexWriter writer, boolean applyDeletes) throws IOException {
-        return DirectoryReader.open(writer, applyDeletes);
+        return DirectoryReader.open(writer, applyDeletes, applyDeletes);
     }
 
     public static void closeReader(IndexReader reader) throws IOException {

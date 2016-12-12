@@ -41,17 +41,11 @@
 
 package net.semanticmetadata.lire.utils;
 
-import com.sun.corba.se.spi.ior.Writeable;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -164,10 +158,10 @@ public class ImageUtils {
      */
     public static BufferedImage createWorkingCopy(BufferedImage bimg) {
         BufferedImage image;
-        if (bimg.getType() == BufferedImage.TYPE_INT_RGB) {
+        if (bimg.getType() == BufferedImage.TYPE_3BYTE_BGR) {
             image = bimg;
         } else {
-            image = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_INT_RGB);
+            image = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_3BYTE_BGR);
             Graphics2D g2d = image.createGraphics();
             g2d.drawImage(bimg, null, 0, 0);
         }
@@ -474,7 +468,7 @@ public class ImageUtils {
      */
     public static BufferedImage get8BitRGBImage(BufferedImage bufferedImage) {
         // check if it's (i) RGB and (ii) 8 bits per pixel.
-        if (bufferedImage.getType() != ColorSpace.TYPE_RGB || bufferedImage.getSampleModel().getSampleSize(0) != 8) {
+        if (bufferedImage.getType() != BufferedImage.TYPE_INT_RGB || bufferedImage.getSampleModel().getSampleSize(0) != 8) {
             BufferedImage img = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
             img.getGraphics().drawImage(bufferedImage, 0, 0, null);
             bufferedImage = img;

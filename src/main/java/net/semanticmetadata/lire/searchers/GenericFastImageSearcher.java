@@ -260,10 +260,12 @@ public class GenericFastImageSearcher extends AbstractImageSearcher {
                 for (int i = 0; i < docs; i++) {
                     if (!(reader.hasDeletions() && !liveDocs.get(i))) {
                         d = reader.document(i);
-                        cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
+                        if (d.getField(fieldName) != null) {
+                            cachedInstance.setByteArrayRepresentation(d.getField(fieldName).binaryValue().bytes, d.getField(fieldName).binaryValue().offset, d.getField(fieldName).binaryValue().length);
 //                        featureCache.put(i, new SearchItem(cachedInstance.getByteArrayRepresentation(), new SimpleResult(-1d, i, d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0])));
 //                        featureCache.put(i, new SearchItem(i, cachedInstance.getByteArrayRepresentation(), d.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]));
-                        featureCache.put(i, cachedInstance.getByteArrayRepresentation());
+                            featureCache.put(i, cachedInstance.getByteArrayRepresentation());
+                        }
                     }
                 }
             } catch (IOException e) {

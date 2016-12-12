@@ -1,0 +1,52 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.3.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.3.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.3.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    // https://mvnrepository.com/artifact/com.sangupta/jopensurf
+    compile group: 'com.sangupta', name: 'jopensurf', version: '1.0.0'
+    // https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/opencv
+    // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '2.4.11-0.11'
+    compile fileTree(dir: 'lib', include: '*.jar')
+    // runtime fileTree(dir: 'lib', include: '*.jar')
+}
+
+task runIndexing(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'net.semanticmetadata.lire.sampleapp.ParallelIndexing'
+
+    // Define the directory where to find the images to index.
+    args 'D:/Temp/twd'
+}
+
+task runSearch(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'net.semanticmetadata.lire.sampleapp.Searcher'
+
+    // Define the image to be used as query
+    args 'D:/Temp/twd/frame0001.jpg'
+}
+
+/**
+ * Based on a suggestion by Nelson Silva from the lire-dev group.
+ */
+task runIndexLocalSLocalFeat(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    // define where to find all the .so or .dll files needed
+    systemProperty "java.library.path", "/home/user/Documents/LIRE/LIREGit_latest/LIRE/samples/simpleapplication/lib"
+
+    main = 'net.semanticmetadata.lire.sampleapp.IndexingAndSearchWithLocalFeatures'
+
+    // Define the directory where to find the images to index.
+    //args '/home/user/Documents/images/'
+}
+

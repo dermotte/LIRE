@@ -1,0 +1,62 @@
+/*
+This is the GRADLE build file for LIRE.
+ */
+apply plugin: 'java'
+apply plugin: 'project-report'
+
+
+sourceCompatibility = 1.8
+version = '1.0_b04'
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'LIRE',
+                'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.3.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.3.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.3.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    // https://mvnrepository.com/artifact/com.sangupta/jopensurf
+    compile group: 'com.sangupta', name: 'jopensurf', version: '1.0.0'
+    // https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/opencv
+    // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '2.4.11-0.11'
+    compile fileTree(dir: 'lib', include: '*.jar')
+    runtime fileTree(dir: 'lib', include: '*.jar')
+
+    // https://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+}
+
+/**
+ * Task for getting all the dependencies downloaded.
+ */
+task getDeps(type: Copy) {
+    from sourceSets.main.runtimeClasspath
+    into 'dist/lib'
+}
+
+/**
+ * Clean up the mess by the other tasks.
+ */
+clean.doFirst {
+    delete 'dist'
+}
+
+/**
+ * For now we do not use the tests given by the system.
+ * We'll gradually add them back again.
+ */
+test {
+    exclude 'net/semanticmetadata/**'
+}
