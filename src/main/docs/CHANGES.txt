@@ -3,6 +3,10 @@ CHANGES for LIRE
 
 2016-12-12
 ==========
+  - Changed ACCID quantization (double -> short) and serialization (8 -> 2 bytes).
+
+2016-12-12
+==========
   - Added ACCID feature to LIRE and LireDemo (Thanks go to Chrysa and Nektarios)
   - Re-added some of the test cases in Gradle build file
   - removed photos with unclear licenses and added 10 with (CC) for testing

@@ -49,10 +49,7 @@ import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.Extractor;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
-import net.semanticmetadata.lire.imageanalysis.features.global.AutoColorCorrelogram;
-import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
-import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
+import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.SPACC;
 import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.SPCEDD;
 import net.semanticmetadata.lire.imageanalysis.features.global.spatialpyramid.SPFCTH;
@@ -163,7 +160,7 @@ public class TestUniversal extends TestCase {
 //        ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive);
 
         //GLOBALS
-//        parallelIndexer.addExtractor(ACCID.class);
+        parallelIndexer.addExtractor(ACCID.class);
         parallelIndexer.addExtractor(CEDD.class);
 //        parallelIndexer.addExtractor(FCTH.class);
 //        parallelIndexer.addExtractor(JCD.class);
@@ -195,7 +192,7 @@ public class TestUniversal extends TestCase {
         //SIMPLE
 //        parallelIndexer.addExtractor(CEDD.class, SimpleExtractor.KeypointDetector.CVSURF);
 //        parallelIndexer.addExtractor(FCTH.class, SimpleExtractor.KeypointDetector.CVSURF);
-        parallelIndexer.addExtractor(JCD.class, SimpleExtractor.KeypointDetector.CVSURF);
+//        parallelIndexer.addExtractor(JCD.class, SimpleExtractor.KeypointDetector.CVSURF);
 //        parallelIndexer.addExtractor(AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF);
 //        parallelIndexer.addExtractor(OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF);
 //        parallelIndexer.addExtractor(ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF);
@@ -204,7 +201,7 @@ public class TestUniversal extends TestCase {
 
 
         //LOCAL
-        parallelIndexer.addExtractor(CvSurfExtractor.class);
+//        parallelIndexer.addExtractor(CvSurfExtractor.class);
 //        parallelIndexer.addExtractor(CvSiftExtractor.class);
 //        parallelIndexer.addExtractor(SurfExtractor.class);
 //        parallelIndexer.addExtractor(SiftExtractor.class);
@@ -222,7 +219,7 @@ public class TestUniversal extends TestCase {
 //
         long start = System.currentTimeMillis();
 //
-//        computeMAP(new GenericFastImageSearcher(1000, ACCID.class, true, reader), "ACCID", reader);
+        computeMAP(new GenericFastImageSearcher(1000, ACCID.class, true, reader), "ACCID", reader);
         computeMAP(new GenericFastImageSearcher(1000, CEDD.class, true, reader), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
@@ -256,7 +253,7 @@ public class TestUniversal extends TestCase {
         for (int i = 0; i < numOfClusters.length; i++) {
 //            computeMAP(new GenericFastImageSearcher(1000, CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW CEDD CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW FCTH CVSURF", reader, numOfClusters[i]);
-            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW JCD CVSURF", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW JCD CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW AutoColorCorrelogram CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW OpponentHistogram CVSURF", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "Simple BOVW ColorLayout CVSURF", reader, numOfClusters[i]);
@@ -266,7 +263,7 @@ public class TestUniversal extends TestCase {
 
 //            performWSs(CEDD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW CEDD CVSURF");
 //            performWSs(FCTH.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW FCTH CVSURF");
-            performWSs(JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW JCD CVSURF");
+//            performWSs(JCD.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW JCD CVSURF");
 //            performWSs(AutoColorCorrelogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW AutoColorCorrelogram CVSURF");
 //            performWSs(OpponentHistogram.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW OpponentHistogram CVSURF");
 //            performWSs(ColorLayout.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW ColorLayout CVSURF");
@@ -274,13 +271,13 @@ public class TestUniversal extends TestCase {
 //            performWSs(ScalableColor.class, SimpleExtractor.KeypointDetector.CVSURF, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "Simple BOVW ScalableColor CVSURF");
 
 
-            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSURF BOVW", reader, numOfClusters[i]);
+//            computeMAP(new GenericFastImageSearcher(1000, CvSurfExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSURF BOVW", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, CvSiftExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "CVSIFT BOVW", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, SurfExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SURF BOVW", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, SiftExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SIFT BOVW", reader, numOfClusters[i]);
 //            computeMAP(new GenericFastImageSearcher(1000, SelfSimilaritiesExtractor.class, new BOVW(), numOfClusters[i], true, reader, indexPath + ".config"), "SelfSimilarities BOVW", reader, numOfClusters[i]);
 
-            performWSs(CvSurfExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "CVSURF BOVW");
+//            performWSs(CvSurfExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "CVSURF BOVW");
 //            performWSs(CvSiftExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "CVSIFT BOVW");
 //            performWSs(SurfExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SURF BOVW");
 //            performWSs(SiftExtractor.class, new BOVW(), numOfClusters[i], reader, indexPath + ".config", "SIFT BOVW");

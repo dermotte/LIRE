@@ -53,4 +53,13 @@ public class TestACCID extends TestCase {
             assertEquals(a2.getDistance(accid), 0d);
         }
     }
+
+    public void testConversion() {
+        short s = 2435;
+        byte x = (byte) ((s >> 8) & 0xff);
+        System.out.println(x);
+        byte y = (byte) (s);
+        System.out.println((short) y);
+        System.out.println((x << 8) | y & 0xff);
+    }
 }

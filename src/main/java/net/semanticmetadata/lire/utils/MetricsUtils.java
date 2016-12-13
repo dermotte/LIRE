@@ -141,6 +141,7 @@ public class MetricsUtils {
 
     /**
      * Chi^2 statistics.
+     *
      * @param d1
      * @param d2
      * @return distance like "unlikelihood"
@@ -150,8 +151,8 @@ public class MetricsUtils {
         double sum = 0d;
         double m;
         for (int i = 0; i < d1.length; i++) {
-            m = (d1[i]+d2[i])/2;
-            sum += (d1[i]-m)*(d1[i]-m)/m;
+            m = (d1[i] + d2[i]) / 2;
+            sum += (d1[i] - m) * (d1[i] - m) / m;
         }
         return sum;
     }
@@ -160,6 +161,7 @@ public class MetricsUtils {
      * Earth Mover's Distance for two equal length, equal summed histograms as described in
      * Rubner, Yossi, Carlo Tomasi, and Leonidas J. Guibas. "The earth mover's distance as a metric for image
      * retrieval." International journal of computer vision 40.2 (2000): 99-121.
+     *
      * @param d1 NOTE: sum(d1) needs to be equal to sum(d2)
      * @param d2
      * @return EMD
@@ -167,11 +169,11 @@ public class MetricsUtils {
     public static double simpleEMD(double[] d1, double[] d2) {
         assert (d1.length == d2.length);
         double sum = 0d;
-        double m1=0, m2=0;
+        double m1 = 0, m2 = 0;
         for (int i = 0; i < d1.length; i++) {
             m1 += d1[i];
             m2 += d2[i];
-            sum += Math.abs(m1-m2);
+            sum += Math.abs(m1 - m2);
         }
         return sum;
     }
@@ -180,6 +182,7 @@ public class MetricsUtils {
      * Kolmogorov-Smirnoff Distance for two equal length, equal summed histograms as described in
      * Rubner, Yossi, Carlo Tomasi, and Leonidas J. Guibas. "The earth mover's distance as a metric for image
      * retrieval." International journal of computer vision 40.2 (2000): 99-121.
+     *
      * @param d1 NOTE: sum(d1) needs to be equal to sum(d2)
      * @param d2
      * @return EMD
@@ -187,11 +190,11 @@ public class MetricsUtils {
     public static double ksDistance(double[] d1, double[] d2) {
         assert (d1.length == d2.length);
         double max = 0d;
-        double m1=0, m2=0;
+        double m1 = 0, m2 = 0;
         for (int i = 0; i < d1.length; i++) {
             m1 += d1[i];
             m2 += d2[i];
-            max = Math.max(Math.abs(m1-m2), max);
+            max = Math.max(Math.abs(m1 - m2), max);
         }
         return max;
     }
@@ -348,24 +351,28 @@ public class MetricsUtils {
     }
 
     /**
-     * Max normalization of a double[] histogram. // todo: make it faster and less memory consuming ...
+     * Max normalization of a double[] histogram.
+     *
      * @param histogram
      * @return
      */
     public static double[] normalizeMax(double[] histogram) {
         double[] result = new double[histogram.length];
-        double max = 0d;
+        double max = Double.MIN_VALUE;
+        double min = Double.MAX_VALUE;
         for (int i = 0; i < histogram.length; i++) {
             max = Math.max(max, histogram[i]);
+            min = Math.min(min, histogram[i]);
         }
         for (int i = 0; i < histogram.length; i++) {
-            result[i] = ((double) histogram[i]) / max;
+            result[i] = ((double) histogram[i] - min) / (max - min);
         }
         return result;
     }
 
     /**
      * Euclidean normalization of a double[] histogram. // todo: make it faster and less memory consuming ...
+     *
      * @param histogram
      * @return
      */
@@ -387,6 +394,7 @@ public class MetricsUtils {
 
     /**
      * Euclidean normalization of a double[] histogram.  // todo: make it faster and less memory consuming ...
+     *
      * @param histogram
      * @return
      */

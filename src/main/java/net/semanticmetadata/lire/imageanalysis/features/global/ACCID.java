@@ -58,7 +58,8 @@ import java.util.Arrays;
  * @author Mathias Lux
  */
 public class ACCID implements GlobalFeature {
-    double[] feature;
+    double[] feature = new double[120];
+    private boolean doQuantize = true;
 
 
     @Override
@@ -95,7 +96,7 @@ public class ACCID implements GlobalFeature {
                 num += (ThresSmall[ii][jj] - ThresBig[ii]) * (ThresSmall[ii][jj] - ThresBig[ii]);
             }
             num = Math.sqrt(num / (ThresSmall[ii].length - 1));
-            if (ThresBig[ii]>0)
+            if (ThresBig[ii] > 0)
                 CVBigArea[ii] = num / ThresBig[ii];
             else
                 CVBigArea[ii] = 0;
@@ -146,7 +147,6 @@ public class ACCID implements GlobalFeature {
             CVImgB = 0;
 
 
-
         BufferedImage bimg2 = ImageUtils.scaleImage(bimg, (int) (0.5 * bimg.getWidth()), (int) (0.5 * bimg.getHeight()));
         double[][] smapS = createSmap(bimg2, myPMasks.getPmasks(), myPMasks.getMaskWhite());
 
@@ -158,7 +158,7 @@ public class ACCID implements GlobalFeature {
         feature = ComputeDesc(image, smap);
     }
 
-    private double[][] createSmap(BufferedImage img, int[][][] pmasks, int[] whiteMasks){
+    private double[][] createSmap(BufferedImage img, int[][][] pmasks, int[] whiteMasks) {
         int width = img.getWidth();
         int height = img.getHeight();
 
@@ -173,7 +173,7 @@ public class ACCID implements GlobalFeature {
                     j = 0;
                     for (int y = b; y < b + 10; y++) {
                         pixel = img.getRGB(y, x);
-                        myTile[j][i] = (int)Math.round(0.299d * ((pixel >> 16) & 0xff) + 0.5870d * ((pixel >> 8) & 0xff) + 0.1140d * ((pixel) & 0xff));
+                        myTile[j][i] = (int) Math.round(0.299d * ((pixel >> 16) & 0xff) + 0.5870d * ((pixel >> 8) & 0xff) + 0.1140d * ((pixel) & 0xff));
                         j++;
                     }
                     i++;
@@ -195,7 +195,7 @@ public class ACCID implements GlobalFeature {
                     TempW /= whiteMasks[k];
                     TempB /= (100 - whiteMasks[k]);
                     w = ((Math.abs(TempW - TempB) * 100) / 255.0);
-                    if (w > maxR){
+                    if (w > maxR) {
                         maxR = w;
                         winMask = k;
                     }
@@ -209,9 +209,9 @@ public class ACCID implements GlobalFeature {
         return smap;
     }
 
-    private double[][] filterF(double[][] smapF){
+    private double[][] filterF(double[][] smapF) {
         int blocks = smapF.length;
-        int blocks6 = blocks/6;
+        int blocks6 = blocks / 6;
         int step = (int) Math.sqrt(blocks);
         int step6 = step / 6;
         int z, start, end;
@@ -219,27 +219,27 @@ public class ACCID implements GlobalFeature {
         for (int a = 0; a < 6; a++) {
             start = a * blocks6;
             end = start + blocks6;
-            for (int x = start; x < end; x+=step) {
+            for (int x = start; x < end; x += step) {
                 for (int y = 0; y < step6; y++) {
                     z = x + y;
-                    if (a < 3){
-                        smallAreas[0][a*2] += smapF[z][1];
-                        smallAreas[0][a*2 + 1] += smapF[z + step6][1];
+                    if (a < 3) {
+                        smallAreas[0][a * 2] += smapF[z][1];
+                        smallAreas[0][a * 2 + 1] += smapF[z + step6][1];
 
-                        smallAreas[1][a*2] += smapF[z + 2*step6][1];
-                        smallAreas[1][a*2 + 1] += smapF[z + 3*step6][1];
+                        smallAreas[1][a * 2] += smapF[z + 2 * step6][1];
+                        smallAreas[1][a * 2 + 1] += smapF[z + 3 * step6][1];
 
-                        smallAreas[2][a*2] += smapF[z + 4*step6][1];
-                        smallAreas[2][a*2 + 1] += smapF[z + 5*step6][1];
+                        smallAreas[2][a * 2] += smapF[z + 4 * step6][1];
+                        smallAreas[2][a * 2 + 1] += smapF[z + 5 * step6][1];
                     } else {
-                        smallAreas[3][(a-3)*2] += smapF[z][1];
-                        smallAreas[3][(a-3)*2 + 1] += smapF[z + step6][1];
+                        smallAreas[3][(a - 3) * 2] += smapF[z][1];
+                        smallAreas[3][(a - 3) * 2 + 1] += smapF[z + step6][1];
 
-                        smallAreas[4][(a-3)*2] += smapF[z + 2*step6][1];
-                        smallAreas[4][(a-3)*2 + 1] += smapF[z + 3*step6][1];
+                        smallAreas[4][(a - 3) * 2] += smapF[z + 2 * step6][1];
+                        smallAreas[4][(a - 3) * 2 + 1] += smapF[z + 3 * step6][1];
 
-                        smallAreas[5][(a-3)*2] += smapF[z + 4*step6][1];
-                        smallAreas[5][(a-3)*2 + 1] += smapF[z + 5*step6][1];
+                        smallAreas[5][(a - 3) * 2] += smapF[z + 4 * step6][1];
+                        smallAreas[5][(a - 3) * 2 + 1] += smapF[z + 5 * step6][1];
                     }
                 }
             }
@@ -248,19 +248,19 @@ public class ACCID implements GlobalFeature {
         return smallAreas;
     }
 
-    private double[] filterM(double[][] smapM){
+    private double[] filterM(double[][] smapM) {
         int z, Blocks = smapM.length;
-        int Blocks2 = Blocks/2;
-        int Blocks4 = Blocks/4;
+        int Blocks2 = Blocks / 2;
+        int Blocks4 = Blocks / 4;
         int step = (int) Math.sqrt(Blocks);
-        int step2 = step/2;
+        int step2 = step / 2;
 
         double[] AreasQuarters = new double[4];
         Arrays.fill(AreasQuarters, 0d);
 
-        for (int x = 0; x < Blocks2; x+=step) {
+        for (int x = 0; x < Blocks2; x += step) {
             for (int y = 0; y < step2; y++) {
-                z=y+x;
+                z = y + x;
                 AreasQuarters[0] += smapM[z][1];
                 AreasQuarters[1] += smapM[z + step2][1];
                 AreasQuarters[2] += smapM[z + Blocks2][1];
@@ -276,20 +276,20 @@ public class ACCID implements GlobalFeature {
         return AreasQuarters;
     }
 
-    private void filteringMethodF(double[][] smap, double[][] ThresSmall, double[] ThresBig, double ThresImg, double CVImg, double CVImgB, double CVImgS){
+    private void filteringMethodF(double[][] smap, double[][] ThresSmall, double[] ThresBig, double ThresImg, double CVImg, double CVImgB, double CVImgS) {
         int blocks = smap.length;
-        int blocks6 = blocks/6;
+        int blocks6 = blocks / 6;
         int step = (int) Math.sqrt(blocks);
-        int step6 = step/6;
+        int step6 = step / 6;
 
         if (CVImg < 1) {
-            ThresImg = ThresImg * (1 + ((CVImg + CVImgB + CVImgS)/3));
+            ThresImg = ThresImg * (1 + ((CVImg + CVImgB + CVImgS) / 3));
         } else {
             ThresImg = ThresImg * CVImg;
         }
 
         for (int x = 0; x < 6; x++) {
-            if(ThresImg >= ThresBig[x]){
+            if (ThresImg >= ThresBig[x]) {
                 ThresBig[x] = ThresBig[x] * (1 + (1 - (ThresBig[x] / ThresImg)));
             } else {
                 ThresBig[x] = ThresImg * (1 + (1 - (ThresImg / ThresBig[x])));
@@ -310,57 +310,57 @@ public class ACCID implements GlobalFeature {
         for (int a = 0; a < 6; a++) {
             start = a * blocks6;
             end = start + blocks6;
-            for (int x = start; x < end; x+=60) {
+            for (int x = start; x < end; x += 60) {
                 for (int y = 0; y < step6; y++) {
                     k = x + y;
                     if (a < 3) {
                         l = a * 2;
-                        if (smap[k][1]  < ThresSmall[0][l])
-                            smap[k][0]  = 58;
-                        if (smap[k + step6][1]  < ThresSmall[0][l + 1])
-                            smap[k + step6][0]  = 58;
-                        if (smap[k + 2*step6][1]  < ThresSmall[1][l])
-                            smap[k + 2*step6][0]  = 58;
-                        if (smap[k + 3*step6][1]  < ThresSmall[1][l + 1])
-                            smap[k + 3*step6][0]  = 58;
-                        if (smap[k + 4*step6][1]  < ThresSmall[2][l])
-                            smap[k + 4*step6][0]  = 58;
-                        if (smap[k + 5*step6][1]  < ThresSmall[2][l + 1])
-                            smap[k + 5*step6][0]  = 58;
+                        if (smap[k][1] < ThresSmall[0][l])
+                            smap[k][0] = 58;
+                        if (smap[k + step6][1] < ThresSmall[0][l + 1])
+                            smap[k + step6][0] = 58;
+                        if (smap[k + 2 * step6][1] < ThresSmall[1][l])
+                            smap[k + 2 * step6][0] = 58;
+                        if (smap[k + 3 * step6][1] < ThresSmall[1][l + 1])
+                            smap[k + 3 * step6][0] = 58;
+                        if (smap[k + 4 * step6][1] < ThresSmall[2][l])
+                            smap[k + 4 * step6][0] = 58;
+                        if (smap[k + 5 * step6][1] < ThresSmall[2][l + 1])
+                            smap[k + 5 * step6][0] = 58;
                     } else {
                         l = (a - 3) * 2;
                         if (smap[k][1] < ThresSmall[3][l])
                             smap[k][0] = 58;
                         if (smap[k + step6][1] < ThresSmall[3][l + 1])
                             smap[k + step6][0] = 58;
-                        if (smap[k + 2*step6][1] < ThresSmall[4][l])
-                            smap[k + 2*step6][0]  = 58;
-                        if (smap[k + 3*step6][1] < ThresSmall[4][l + 1])
-                            smap[k + 3*step6][0]  = 58;
-                        if (smap[k + 4*step6][1] < ThresSmall[5][l])
-                            smap[k + 4*step6][0]  = 58;
-                        if (smap[k + 5*step6][1] < ThresSmall[5][l + 1])
-                            smap[k + 5*step6][0]  = 58;
+                        if (smap[k + 2 * step6][1] < ThresSmall[4][l])
+                            smap[k + 2 * step6][0] = 58;
+                        if (smap[k + 3 * step6][1] < ThresSmall[4][l + 1])
+                            smap[k + 3 * step6][0] = 58;
+                        if (smap[k + 4 * step6][1] < ThresSmall[5][l])
+                            smap[k + 4 * step6][0] = 58;
+                        if (smap[k + 5 * step6][1] < ThresSmall[5][l + 1])
+                            smap[k + 5 * step6][0] = 58;
                     }
                 }
             }
         }
     }
 
-    private void filteringMethodM(double[][] smap, double[] ThressBigm, double ThressImgm, double CVImg, double CVImgB, double CVImgS){
-        int  Blocks = smap.length;
-        int  Blocks2 = Blocks/2;
+    private void filteringMethodM(double[][] smap, double[] ThressBigm, double ThressImgm, double CVImg, double CVImgB, double CVImgS) {
+        int Blocks = smap.length;
+        int Blocks2 = Blocks / 2;
         int step = (int) Math.sqrt(Blocks);
-        int step2 = step/2;
+        int step2 = step / 2;
 
         if (CVImgB < 1) {
-            ThressImgm = ThressImgm * (1 + ((CVImg + CVImgB + CVImgS)/3));
+            ThressImgm = ThressImgm * (1 + ((CVImg + CVImgB + CVImgS) / 3));
         } else {
             ThressImgm = ThressImgm * CVImgB;
         }
 
         for (int x = 0; x < 4; x++) {
-            if(ThressImgm >= ThressBigm[x]){
+            if (ThressImgm >= ThressBigm[x]) {
                 ThressBigm[x] = ThressBigm[x] * (1 + (1 - (ThressBigm[x] / ThressImgm)));
             } else {
                 ThressBigm[x] = ThressImgm * (1 + (1 - (ThressImgm / ThressBigm[x])));
@@ -368,25 +368,25 @@ public class ACCID implements GlobalFeature {
         }
 
         int z;
-        for (int x = 0; x <Blocks2; x+=step) {
+        for (int x = 0; x < Blocks2; x += step) {
             for (int y = 0; y < step2; y++) {
                 z = x + y;
-                if (smap[z][1]<ThressBigm[0])
-                    smap[z][0]=58;
+                if (smap[z][1] < ThressBigm[0])
+                    smap[z][0] = 58;
 
-                if (smap[z+step2][1]<ThressBigm[1])
-                    smap[z+step2][0]=58;
+                if (smap[z + step2][1] < ThressBigm[1])
+                    smap[z + step2][0] = 58;
 
-                if (smap[z+Blocks2][1]<ThressBigm[2])
-                    smap[z+Blocks2][0]=58;
+                if (smap[z + Blocks2][1] < ThressBigm[2])
+                    smap[z + Blocks2][0] = 58;
 
-                if (smap[z+Blocks2+step2][1]<ThressBigm[3])
-                    smap[z+Blocks2+step2][0]=58;
+                if (smap[z + Blocks2 + step2][1] < ThressBigm[3])
+                    smap[z + Blocks2 + step2][0] = 58;
             }
         }
     }
 
-    private double filteringMethodS(double[][] smap){
+    private double filteringMethodS(double[][] smap) {
         double meanImgS = 0;
         for (int i = 0; i < smap.length; i++) {
             meanImgS += smap[i][1];
@@ -405,14 +405,14 @@ public class ACCID implements GlobalFeature {
 
         for (int x = 0; x < smap.length; x++) {
             if (smap[x][1] < meanImgS) {
-                smap[x][0]=58;
+                smap[x][0] = 58;
             }
         }
 
         return CVImgS;
     }
 
-    private double[][] ScaleFiltering(double[][] smapF, double[][] smapM, double[][] smapS){
+    private double[][] ScaleFiltering(double[][] smapF, double[][] smapM, double[][] smapS) {
         double[][] smapFsm = new double[smapF.length][smapF[0].length];
         double[][] smapFm = new double[smapF.length][smapF[0].length];
         double[][] smapUn = new double[smapF.length][smapF[0].length];
@@ -444,7 +444,7 @@ public class ACCID implements GlobalFeature {
             for (int a = 0; a < 60; a++) {
                 z = a + b * 2 * 60;
                 f = (int) Math.floor(a / 2) + 30 * b;
-                if (smapM[f][0] == 58){
+                if (smapM[f][0] == 58) {
                     smapFm[z][0] = 58;
                     smapFm[z + 60][0] = 58;
                 }
@@ -452,14 +452,14 @@ public class ACCID implements GlobalFeature {
         }
 
         for (int w = 0; w < smapF.length; w++) {
-            if ((smapFm[w][0]==58) && (smapF[w][0]==58) && (smapUn[w][0]!=58)) smapFsm[w][0]=58;
+            if ((smapFm[w][0] == 58) && (smapF[w][0] == 58) && (smapUn[w][0] != 58)) smapFsm[w][0] = 58;
             if (smapFsm[w][1] == 0) smapFsm[w][1] = 30;
         }
 
         return smapFsm;
     }
 
-    private double[] ComputeDesc(BufferedImage image, double[][] smap){
+    private double[] ComputeDesc(BufferedImage image, double[][] smap) {
         double[] desc = new double[120];
         int j, num;
 
@@ -477,7 +477,9 @@ public class ACCID implements GlobalFeature {
         int pixel, R, G, B, counter = 0;
         for (int a = 0; a < height; a += 10) {
             for (int b = 0; b < width; b += 10) {
-                R = 0; G = 0; B = 0;
+                R = 0;
+                G = 0;
+                B = 0;
                 for (int xx = a; xx < a + 10; xx++) {
                     for (int yy = b; yy < b + 10; yy++) {
                         pixel = image.getRGB(yy, xx);
@@ -490,44 +492,59 @@ public class ACCID implements GlobalFeature {
                 Fuzzy10BinResultTable = Fuzzy10.ApplyFilter(HSV[0], HSV[1], HSV[2], 2);
                 Fuzzy24BinResultTable = Fuzzy24.ApplyFilter(HSV[0], HSV[1], HSV[2], Fuzzy10BinResultTable, 2);
 
-                num = (int)smap[counter][0];
-                if      ((num>=0)&&(num<=4))    j=0;
-                else if ((num>=5)&&(num<=8))    j=0;
-                else if ((num>=9)&&(num<=13))   j=1;
-                else if ((num>=14)&&(num<=19))  j=1;
-                else if ((num>=20)&&(num<=24))  j=1;
-                else if ((num>=25)&&(num<=28))  j=2;
-                else if ((num>=29)&&(num<=33))  j=2;
-                else if ((num>=34)&&(num<=37))  j=2;
-                else if ((num>=38)&&(num<=42))  j=3;
-                else if ((num>=43)&&(num<=48))  j=3;
-                else if ((num>=49)&&(num<=53))  j=3;
-                else if ((num>=54)&&(num<=57))  j=0;
-                else                            j=4;
+                num = (int) smap[counter][0];
+                if ((num >= 0) && (num <= 4)) j = 0;
+                else if ((num >= 5) && (num <= 8)) j = 0;
+                else if ((num >= 9) && (num <= 13)) j = 1;
+                else if ((num >= 14) && (num <= 19)) j = 1;
+                else if ((num >= 20) && (num <= 24)) j = 1;
+                else if ((num >= 25) && (num <= 28)) j = 2;
+                else if ((num >= 29) && (num <= 33)) j = 2;
+                else if ((num >= 34) && (num <= 37)) j = 2;
+                else if ((num >= 38) && (num <= 42)) j = 3;
+                else if ((num >= 43) && (num <= 48)) j = 3;
+                else if ((num >= 49) && (num <= 53)) j = 3;
+                else if ((num >= 54) && (num <= 57)) j = 0;
+                else j = 4;
                 for (int ii = 0; ii < 24; ii++) {
-                    desc[j * Fuzzy24BinResultTable.length + ii] += Fuzzy24BinResultTable[ii] * (smap[counter][1] /  100);
+                    desc[j * Fuzzy24BinResultTable.length + ii] += Fuzzy24BinResultTable[ii] * (smap[counter][1] / 100);
                 }
                 counter++;
             }
         }
+        if (doQuantize) desc = quantizeFeature(desc);
+        return desc;
+    }
 
+    private double[] quantizeFeature(double[] desc) {
+        desc = MetricsUtils.normalizeMax(desc);
+        for (int i = 0; i < desc.length; i++) {
+            desc[i] = Math.floor(desc[i] * (double) Short.MAX_VALUE);
+        }
         return desc;
     }
 
 
     @Override
     public byte[] getByteArrayRepresentation() {
-        return SerializationUtils.toByteArray(feature);
+        byte[] result = new byte[feature.length * 2];
+        for (int i = 0; i < feature.length; i += 1) { // convert short to byte ...
+            result[2 * i] = (byte) ((((short) feature[i]) >> 8) & 0xff);
+            result[2 * i + 1] = (byte) (((short) feature[i]) & 0xff);
+        }
+        return result;
     }
 
     @Override
     public void setByteArrayRepresentation(byte[] in) {
-        feature = SerializationUtils.toDoubleArray(in);
+        setByteArrayRepresentation(in, 0, in.length);
     }
 
     @Override
     public void setByteArrayRepresentation(byte[] in, int offset, int length) {
-        feature = SerializationUtils.toDoubleArray(in, offset, length);
+        for (int i = 0; i < feature.length; i++) {
+            feature[i] = (in[2 * i + offset] << 8) | in[2 * i + 1 + offset]&0xff;
+        }
     }
 
     @Override
