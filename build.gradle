@@ -33,6 +33,10 @@ dependencies {
     compile fileTree(dir: 'lib', include: '*.jar')
     runtime fileTree(dir: 'lib', include: '*.jar')
 
+    // ---< Helper files, optional >---
+    // https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-jpeg
+    runtime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.3.1'
+
     // https://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.12'
 

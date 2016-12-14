@@ -1,6 +1,13 @@
 CHANGES for LIRE
 ================
 
+2016-12-14
+==========
+  - Re-visited metric spaces indexing for QA
+  - Implemented DocValues based search for MetricSpacesImageSearcher
+  - Added TwelveMonkeys ImageIO libs to runtime in gradle.build, it's optional, but rather helpful
+  - Added an extraction to base64 tool
+
 2016-12-12
 ==========
   - Changed ACCID quantization (double -> short) and serialization (8 -> 2 bytes).

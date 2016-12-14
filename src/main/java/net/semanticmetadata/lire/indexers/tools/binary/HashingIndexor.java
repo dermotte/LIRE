@@ -39,7 +39,7 @@
  * Updated: 02.06.13 08:13
  */
 
-package net.semanticmetadata.lire.indexers.tools;
+package net.semanticmetadata.lire.indexers.tools.binary;
 
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.PHOG;

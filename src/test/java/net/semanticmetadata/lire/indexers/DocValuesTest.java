@@ -17,6 +17,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 
@@ -35,7 +36,7 @@ public class DocValuesTest extends TestCase {
     }
 
     public void testIndexing() throws IllegalAccessException, IOException, InstantiationException, ClassNotFoundException {
-        MetricSpaces.loadReferencePoints(mfile);
+        MetricSpaces.loadReferencePoints(new FileInputStream(mfile));
         ParallelIndexer p = new ParallelIndexer(8, indexPath, infile, GlobalDocumentBuilder.HashingMode.MetricSpaces, false, 10000);
         p.addExtractor(CEDD.class);
         p.addExtractor(FCTH.class);
@@ -51,7 +52,7 @@ public class DocValuesTest extends TestCase {
         IndexReader readerDocVal = DirectoryReader.open(FSDirectory.open(Paths.get("/media/mlux/SSD02/ms-index-docval-500k")));
         System.out.printf("Number of documents: %d\n", reader.maxDoc());
         GenericDocValuesImageSearcher is = new GenericDocValuesImageSearcher(100, FCTH.class, readerDocVal);
-        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(100, mfile, 500);
+        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(100, new FileInputStream(mfile), 500);
         mis.setNumHashesUsedForQuery(15);
         StopWatch sw0 = new StopWatch();
         sw0.start();
