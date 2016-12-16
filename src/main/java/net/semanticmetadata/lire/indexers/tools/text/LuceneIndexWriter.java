@@ -4,21 +4,25 @@ import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.indexers.hashing.BitSampling;
 import net.semanticmetadata.lire.indexers.hashing.MetricSpaces;
-import net.semanticmetadata.lire.utils.*;
-import org.apache.commons.io.*;
-import org.apache.commons.io.FileUtils;
+import net.semanticmetadata.lire.utils.CommandLineUtils;
+import net.semanticmetadata.lire.utils.LuceneUtils;
+import net.semanticmetadata.lire.utils.SerializationUtils;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.util.BytesRef;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Properties;
 
 /**
  * Reading a file from {@link ParallelExtraction} and writing it to a lucene index.
  */
-public class LuceneIndexWriter implements Runnable {
+public class LuceneIndexWriter extends AbstractDocumentWriter implements Runnable {
     // -------------< static >------------------------
     private static String helpMessage = "Usage of LuceneIndexWriter\n" +
             "==========================\n" +
@@ -32,17 +36,11 @@ public class LuceneIndexWriter implements Runnable {
             "-hm ... employ MetricSpaces Indexing";
 
     // -------------< instance >------------------------
-    private File infile;
     private IndexWriter iw;
-    private boolean doHashingBitSampling = false, doMetricSpaceIndexing = false;
-    private boolean useDocValues = false;
 
     public LuceneIndexWriter(File infile, File indexDirectory, boolean doHashingBitSampling, boolean doMetricSpaceIndexing, boolean useDocValues) throws IOException {
-        this.infile = infile;
+        super(infile, useDocValues, doHashingBitSampling, doMetricSpaceIndexing);
         this.iw = LuceneUtils.createIndexWriter(indexDirectory.getPath(), true, LuceneUtils.AnalyzerType.WhitespaceAnalyzer);
-        this.doHashingBitSampling = doHashingBitSampling;
-        this.doMetricSpaceIndexing = doMetricSpaceIndexing;
-        this.useDocValues = useDocValues;
     }
 
     public static void main(String[] args) {
@@ -64,68 +62,6 @@ public class LuceneIndexWriter implements Runnable {
 
     }
 
-    @Override
-    public void run() {
-        StopWatch sw = new StopWatch();
-        sw.start();
-        double count = 0;
-        try {
-            LineIterator lineIt = IOUtils.lineIterator(new FileReader(infile));
-            // read the first line to determine the fields.
-            String[] fields = lineIt.next().split(";");
-            ArrayList<GlobalFeature> listOfFeatures = new ArrayList<>(fields.length - 1);
-            for (int i = 1; i < fields.length; i++) {
-                String f = fields[i];
-                if (f.trim().length() > 2)
-                    listOfFeatures.add(((GlobalFeature) Class.forName(f).newInstance()));
-            }
-            String tmpOut = Arrays.toString(fields).replaceAll(", ", "\n");
-            System.out.println("Indexing fields " + tmpOut.substring(1, tmpOut.length()-1));
-            // init hashing ...
-            if (doHashingBitSampling) {
-                BitSampling.readHashFunctions();
-            }
-            else if (doMetricSpaceIndexing) {
-                // init metric spaces indexing by reading all files with ending .msd from the current directory.
-                Iterator<File> fileIterator = FileUtils.iterateFiles(new File("."), new String[]{"msd"}, false);
-                while (fileIterator.hasNext()) {
-                    File f = fileIterator.next();
-                    System.out.println("Loading reference points from file " + f.getPath());
-                    MetricSpaces.loadReferencePoints(new FileInputStream(f));
-                }
-            }
-            // reading the rest of the file ...
-            System.out.print("Working now ...\n");
-            while (lineIt.hasNext()) {
-                String[] d = lineIt.next().split(";");
-                String fileName = d[0];
-                for (int i = 1; i < d.length; i++) {
-                    String s = d[i];
-                    if (s.trim().length() > 2) // only if it's not empty.
-                        listOfFeatures.get(i-1).setByteArrayRepresentation(org.apache.commons.codec.binary.Base64.decodeBase64(s));
-                }
-                // write to index ...
-                write(fileName, listOfFeatures);
-                count++;
-                if (count%1000==0) {
-                    System.out.printf("Processed %d images took %s minutes, ~%.2f ms per image.\n", (int) count, StatsUtils.convertTime(sw.getTimeSinceStart()), (double) sw.getTimeSinceStart()/count);
-                }
-            }
-            finish();
-            sw.stop();
-            System.out.printf("\nIt's finished. Processing %d images took %s minutes, ~%.2f ms per image.\n", (int) count, StatsUtils.convertTime(sw.getTime()), (double) sw.getTime()/count);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException | ClassNotFoundException e) {
-            System.err.println("There seems to be a problem with the input file, global feature not found.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Called after the last line is read.
      */
@@ -136,6 +72,11 @@ public class LuceneIndexWriter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void start() {
+        // do nothing in this case.
     }
 
     /**
@@ -173,6 +114,7 @@ public class LuceneIndexWriter implements Runnable {
             e.printStackTrace();
         }
     }
+
 }
 /*
 Usage of LuceneIndexWriter
