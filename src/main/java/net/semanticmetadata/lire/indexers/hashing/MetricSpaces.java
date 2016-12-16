@@ -100,7 +100,7 @@ public class MetricSpaces {
             printHelp();
             System.exit(1);
         }
-        outFile = new File(FilenameUtils.removeExtension(inFile.getAbsolutePath()) + "_" + featureClass.getSimpleName() + ".dat");
+        outFile = new File(FilenameUtils.removeExtension(inFile.getAbsolutePath()) + "_" + featureClass.getSimpleName() + ".msd");
         System.out.printf("MetricSpaces operating on file %s with\n%d number of reference points and %d elements in the posting list.\nIndexing using class %s.\n", inFile.getAbsolutePath(), numberOfReferencePoints, lenghtOfPostingList, featureClass.getName());
         if (outFile.exists()) {
             System.out.printf("NOTE: output file %s will be overwritten.\n", outFile.getAbsolutePath());
@@ -161,6 +161,7 @@ public class MetricSpaces {
         // now for the reference points:
         GlobalFeature feature = (GlobalFeature) globalFeatureClass.newInstance();
         // Write the parameters into the file:
+        bw.write("# Created " + Calendar.getInstance().toString() + " by " + MetricSpaces.class.getName() + " \n");
         bw.write(feature.getClass().getName() + "\n");
         bw.write(numberOfReferencePoints + "," + lenghtOfPostingList + "\n");
         System.out.print("Indexing ");
@@ -173,7 +174,7 @@ public class MetricSpaces {
                 fis.close(); // and closing it again .. just to leave no open file pointers.
                 bw.write(Base64.encodeBase64String(feature.getByteArrayRepresentation()) + "\n");
                 i++;
-                if (i % 100 == 0) {
+                if (i % (numberOfReferencePoints >> 5) == 0) {
                     System.out.print('.');
                 }
             } catch (Exception e) {
@@ -196,6 +197,7 @@ public class MetricSpaces {
     public static Parameters loadReferencePoints(InputStream referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new InputStreamReader(referencePoints));
         String feature = br.readLine().trim();
+        while (feature.startsWith("#"))  feature = br.readLine().trim();
         Class<?> featureClass = Class.forName(feature);
         String[] params = br.readLine().trim().split(",");
         Parameters p = new MetricSpaces.Parameters();
@@ -259,7 +261,7 @@ public class MetricSpaces {
 
     private static TreeSet<Result> getResults(GlobalFeature feature, int queryLength, int lengthOfPostingList) {
         ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
-        // break up if the feature is not indexed ...
+        // break if the feature is not indexed ...
         if (l == null) return null;
         TreeSet<Result> results = new TreeSet<>();
         double maxDistance = Double.MAX_VALUE;

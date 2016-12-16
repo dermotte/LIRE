@@ -2,16 +2,14 @@ package net.semanticmetadata.lire.indexers.tools.text;
 
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.indexers.parallel.WorkItem;
+import net.semanticmetadata.lire.utils.CommandLineUtils;
 import net.semanticmetadata.lire.utils.StatsUtils;
 import org.apache.commons.io.IOUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -21,6 +19,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @autor Mathias Lux
  */
 public class ParallelExtraction implements Runnable {
+    private static String helpMessage = "Use with -i <infile> -o <outfile> -c CEDD,FCTH,PHOG";
+    ;
     private File imageList;
     private File outFile;
     private ArrayList<GlobalFeature> listOfFeatures = new ArrayList<>();
@@ -32,46 +32,24 @@ public class ParallelExtraction implements Runnable {
     private OutputStream dos;
 
     public static void main(String[] args) {
+        Properties cmd = CommandLineUtils.getProperties(args, helpMessage, new String[]{"-i", "-o", "-c"});
         ParallelExtraction e = new ParallelExtraction();
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (arg.startsWith("-i")) {
-                // infile ...
-                if ((i + 1) < args.length)
-                    e.setImageList(new File(args[i + 1]));
-                else {
-                    System.err.println("Please give a input file after the -i option.");
-                    printHelp();
-                }
-            } else if (arg.startsWith("-o")) {
-                // out file
-                if ((i + 1) < args.length)
-                    e.setOutFile(new File(args[i + 1]));
-                else {
-                    System.err.println("Please name an outfile after the -o option.");
-                    printHelp();
-                }
-            } else if (arg.startsWith("-f")) {
-                // features
-                if ((i + 1) < args.length) {
-                    String[] split = args[i + 1].split(",");
-                    for (int j = 0; j < split.length; j++) {
-                        String className = split[j];
-                        if (!className.contains(".")) {
-                            className = "net.semanticmetadata.lire.imageanalysis.features.global." + className;
-                        }
-                        try {
-                            e.addFeature((GlobalFeature) (Class.forName(className).newInstance()));
-                        } catch (Exception erwin) {
-                            erwin.printStackTrace();
-                        }
-                    }
-                } else {
-                    System.err.println("Please name an outfile after the -o option.");
-                    printHelp();
-                }
+        e.setImageList(new File(cmd.getProperty("-i")));
+        e.setOutFile(new File(cmd.getProperty("-o")));
+
+        String[] split = cmd.getProperty("-c").split(",");
+        for (int j = 0; j < split.length; j++) {
+            String className = split[j];
+            if (!className.contains(".")) {
+                className = "net.semanticmetadata.lire.imageanalysis.features.global." + className;
+            }
+            try {
+                e.addFeature((GlobalFeature) (Class.forName(className).newInstance()));
+            } catch (Exception erwin) {
+                erwin.printStackTrace();
             }
         }
+
         if (!e.check()) {
             printHelp();
             System.exit(1);
@@ -86,7 +64,8 @@ public class ParallelExtraction implements Runnable {
     }
 
     private static void printHelp() {
-        System.out.println("Use with -i <infile> -o <outfile> -c CEDD,FCTH,PHOG");
+
+        System.out.println(helpMessage);
     }
 
     public void setImageList(File imageList) {
@@ -108,7 +87,7 @@ public class ParallelExtraction implements Runnable {
         listOfFeatures.forEach(globalFeature -> System.out.println(" - " + globalFeature.getFeatureName()));
         System.out.println("------------------------------------------------------------");
         try {
-            dos = new BufferedOutputStream(new FileOutputStream(outFile), 1024 * 1024 * 100);
+            dos = new BufferedOutputStream(new FileOutputStream(outFile, false), 1024 * 1024 * 100);
             StringBuilder sb = new StringBuilder("file;");
             for (Iterator<GlobalFeature> iterator = listOfFeatures.iterator(); iterator.hasNext(); ) {
                 sb.append(iterator.next().getClass().getName() + ";");
@@ -170,7 +149,7 @@ public class ParallelExtraction implements Runnable {
         public void run() {
             File next;
             String path;
-            while (imageFiles.hasNext() & overallCount < 10000) {
+            while (imageFiles.hasNext()) {
                 path = imageFiles.next();
                 next = new File(path);
                 try {

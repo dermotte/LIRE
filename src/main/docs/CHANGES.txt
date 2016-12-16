@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2016-12-15
+==========
+  - Finished extraction tool by providing and LuceneIndexWriter for it.
+  - Added CommandLineUtils for common tasks.
+
 2016-12-14
 ==========
   - Re-visited metric spaces indexing for QA
