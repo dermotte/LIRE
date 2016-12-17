@@ -6,6 +6,7 @@ CHANGES for LIRE
   - Fixed the distribution of references points in MetricSpaces.generateHashes().
   - Updated SimpleApplication and added DocValues as example.
   - Updated documentation on MetricSpaces indexing and search.
+  - Fixed naming problem in AbstractDocumentWriter
 
 2016-12-16
 ==========

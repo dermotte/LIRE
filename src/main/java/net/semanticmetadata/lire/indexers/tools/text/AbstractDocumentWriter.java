@@ -27,6 +27,7 @@ public abstract class AbstractDocumentWriter implements Runnable{
     protected boolean doHashingBitSampling = false;
     protected boolean doMetricSpaceIndexing = false;
     protected boolean useDocValues = false;
+    protected boolean loadMdsFilesAutomatically = true;
     protected File infile;
 
 
@@ -40,12 +41,12 @@ public abstract class AbstractDocumentWriter implements Runnable{
     /**
      * Called after the last line is read.
      */
-    protected abstract void finish();
+    protected abstract void finishWriting();
 
     /**
      * Called before the first document is read.
      */
-    protected abstract void start();
+    protected abstract void startWriting();
 
     /**
      * Called for each line in the file.
@@ -75,7 +76,7 @@ public abstract class AbstractDocumentWriter implements Runnable{
             if (doHashingBitSampling) {
                 BitSampling.readHashFunctions();
             }
-            else if (doMetricSpaceIndexing) {
+            else if (doMetricSpaceIndexing && loadMdsFilesAutomatically) {
                 // init metric spaces indexing by reading all files with ending .msd from the current directory.
                 Iterator<File> fileIterator = FileUtils.iterateFiles(new File("."), new String[]{"msd"}, false);
                 while (fileIterator.hasNext()) {
@@ -86,7 +87,7 @@ public abstract class AbstractDocumentWriter implements Runnable{
             }
             // reading the rest of the file ...
             System.out.print("Working now ...\n");
-            start();
+            startWriting();
             while (lineIt.hasNext()) {
                 String[] d = lineIt.next().split(";");
                 String fileName = d[0];
@@ -102,7 +103,7 @@ public abstract class AbstractDocumentWriter implements Runnable{
                     System.out.printf("Processed %d images took %s minutes, ~%.2f ms per image.\n", (int) count, StatsUtils.convertTime(sw.getTimeSinceStart()), (double) sw.getTimeSinceStart()/count);
                 }
             }
-            finish();
+            finishWriting();
             sw.stop();
             System.out.printf("\nIt's finished. Processing %d images took %s minutes, ~%.2f ms per image.\n", (int) count, StatsUtils.convertTime(sw.getTime()), (double) sw.getTime()/count);
         } catch (FileNotFoundException e) {

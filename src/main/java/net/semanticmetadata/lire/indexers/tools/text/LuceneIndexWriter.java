@@ -22,7 +22,7 @@ import java.util.Properties;
 /**
  * Reading a file from {@link ParallelExtraction} and writing it to a lucene index.
  */
-public class LuceneIndexWriter extends AbstractDocumentWriter implements Runnable {
+public class LuceneIndexWriter extends AbstractDocumentWriter {
     // -------------< static >------------------------
     private static String helpMessage = "Usage of LuceneIndexWriter\n" +
             "==========================\n" +
@@ -65,7 +65,7 @@ public class LuceneIndexWriter extends AbstractDocumentWriter implements Runnabl
     /**
      * Called after the last line is read.
      */
-    protected void finish() {
+    protected void finishWriting() {
         try {
             iw.commit();
             iw.close();
@@ -75,7 +75,7 @@ public class LuceneIndexWriter extends AbstractDocumentWriter implements Runnabl
     }
 
     @Override
-    protected void start() {
+    protected void startWriting() {
         // do nothing in this case.
     }
 
