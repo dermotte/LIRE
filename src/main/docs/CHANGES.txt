@@ -1,6 +1,16 @@
 CHANGES for LIRE
 ================
 
+2016-12-16
+==========
+  - Fixed the distribution of references points in MetricSpaces.generateHashes().
+  - Updated SimpleApplication and added DocValues as example.
+  - Updated documentation on MetricSpaces indexing and search.
+
+2016-12-16
+==========
+  - Tweaked Extractor and MetricSpaces
+
 2016-12-15
 ==========
   - Finished extraction tool by providing and LuceneIndexWriter for it.

@@ -478,5 +478,15 @@ public class FileUtils {
         return result;
     }
 
+    /**
+     * Used to access a file in the resource folder.
+     * @param resourceName the path to the file, eg. "data/files.lst"
+     * @return
+     */
+    public static InputStream getInputStreamFromResources(String resourceName) {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        return classloader.getResourceAsStream(resourceName);
+    }
+
 
 }

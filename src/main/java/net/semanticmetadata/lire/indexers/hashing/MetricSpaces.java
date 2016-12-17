@@ -7,6 +7,7 @@ import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -161,7 +162,7 @@ public class MetricSpaces {
         // now for the reference points:
         GlobalFeature feature = (GlobalFeature) globalFeatureClass.newInstance();
         // Write the parameters into the file:
-        bw.write("# Created " + Calendar.getInstance().toString() + " by " + MetricSpaces.class.getName() + " \n");
+        bw.write("# Created " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " by " + MetricSpaces.class.getName() + " \n");
         bw.write(feature.getClass().getName() + "\n");
         bw.write(numberOfReferencePoints + "," + lenghtOfPostingList + "\n");
         System.out.print("Indexing ");
@@ -197,7 +198,7 @@ public class MetricSpaces {
     public static Parameters loadReferencePoints(InputStream referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new InputStreamReader(referencePoints));
         String feature = br.readLine().trim();
-        while (feature.startsWith("#"))  feature = br.readLine().trim();
+        while (feature.startsWith("#")) feature = br.readLine().trim();
         Class<?> featureClass = Class.forName(feature);
         String[] params = br.readLine().trim().split(",");
         Parameters p = new MetricSpaces.Parameters();
@@ -249,12 +250,15 @@ public class MetricSpaces {
         }
         TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
         StringBuilder sb = new StringBuilder(lengthOfPostingList * 8);
-        for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
-            Result result = resultIterator.next();
-//            sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
-            for (int i = 0; i < results.size(); i++) {
+        int position = 0;
+        for (Iterator<Result> iterator = results.iterator(); iterator.hasNext(); ) {
+            Result result = iterator.next();
+            // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
+            // adding it to the text field, but depending on the position in the results it's added multiple times.
+            for (int i = 0; i < results.size()-position; i++) {
                 sb.append(String.format("R%06d ", result.index));
             }
+            position++;
         }
         return sb.toString();
     }

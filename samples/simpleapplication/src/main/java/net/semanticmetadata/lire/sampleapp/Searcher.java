@@ -41,10 +41,7 @@ package net.semanticmetadata.lire.sampleapp;
 
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import net.semanticmetadata.lire.searchers.BitSamplingImageSearcher;
-import net.semanticmetadata.lire.searchers.GenericFastImageSearcher;
-import net.semanticmetadata.lire.searchers.ImageSearchHits;
-import net.semanticmetadata.lire.searchers.ImageSearcher;
+import net.semanticmetadata.lire.searchers.*;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.store.FSDirectory;
@@ -84,12 +81,17 @@ public class Searcher {
 
         IndexReader ir = DirectoryReader.open(FSDirectory.open(Paths.get("index")));
         ImageSearcher searcher = new GenericFastImageSearcher(30, CEDD.class);
-//        ImageSearcher searcher = new GenericFastImageSearcher(30, AutoColorCorrelogram.class);
+        // ImageSearcher searcher = new GenericFastImageSearcher(30, AutoColorCorrelogram.class); // for another image descriptor ...
+
+        /*
+            If you used DocValues while Indexing, use the following searcher:
+         */
+        // ImageSearcher searcher = new GenericDocValuesImageSearcher(30, CEDD.class, ir);
 
         // searching with a image file ...
         ImageSearchHits hits = searcher.search(img, ir);
         // searching with a Lucene document instance ...
-//        ImageSearchHits hits = searcher.search(ir.document(0), ir);
+        // ImageSearchHits hits = searcher.search(ir.document(0), ir);
         for (int i = 0; i < hits.length(); i++) {
             String fileName = ir.document(hits.documentID(i)).getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0];
             System.out.println(hits.score(i) + ": \t" + fileName);
