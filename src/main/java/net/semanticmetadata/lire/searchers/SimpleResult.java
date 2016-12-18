@@ -54,7 +54,7 @@ public class SimpleResult implements Comparable<SimpleResult> {
     private int indexNumber = -1;
 
     /**
-     * Constructor for a result. The indexNumer is needed for sorting issues. Problem is that the TreeMap used for
+     * Constructor for a result. The indexNumber is needed for sorting issues. Problem is that the TreeMap used for
      * collecting the results considers equality of objects based on the compareTo function. So if an image is in
      * the index twice, it's only found one time, the second instance -- with the same distance, but a
      * different Lucene document -- is not added to the TreeMap at runtime as their distance between each other
