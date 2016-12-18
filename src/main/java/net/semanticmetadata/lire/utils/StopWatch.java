@@ -16,5 +16,11 @@ public class StopWatch {
         sumTime += System.currentTimeMillis() - startTime;
     }
 
-    public long getTime() { return sumTime;}
+    public long getTimeSinceStart() {
+        return  System.currentTimeMillis() - startTime;
+    }
+
+    public long getTime() {
+        return sumTime;
+    }
 }

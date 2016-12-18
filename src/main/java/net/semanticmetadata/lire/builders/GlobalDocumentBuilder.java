@@ -77,6 +77,12 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         if (hashingEnabled) testHashes();
     }
 
+    public GlobalDocumentBuilder(boolean hashing, boolean useDocValues) {
+        this.hashingEnabled = hashing;
+        if (hashingEnabled) testHashes();
+        this.useDocValues = useDocValues;
+    }
+
     /**
      * Creates a GlobalDocumentBuilder with the specific hashing mode. Please note that you have to take care of the
      * initilization of the hashing subsystem yourself.
@@ -89,6 +95,7 @@ public class GlobalDocumentBuilder implements DocumentBuilder {
         this.hashingMode = hashingMode;
         if (hashingEnabled) testHashes();
     }
+
 
     /**
      * Creates a GlobalDocumentBuilder with the specific hashing mode. Please note that you have to take care of the

@@ -390,6 +390,28 @@ public class ParallelIndexer implements Runnable {
      *
      * @param numOfThreads number of threads used for processing.
      * @param indexPath    the directory the index witll be written to.
+     * @param imageDirectory    the directory where the images are to be found.
+     * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
+     * @param useDocValues set to true if you want to use DocValues instead of Fields.
+     */
+    public ParallelIndexer(int numOfThreads, String indexPath, String imageDirectory, GlobalDocumentBuilder.HashingMode hashingMode, boolean useDocValues) {
+        this.numOfThreads = numOfThreads;
+        this.indexPath = indexPath;
+        this.imageDirectory = imageDirectory;
+        if (hashingMode != GlobalDocumentBuilder.HashingMode.None) {
+            this.globalHashing = true;
+        } else {
+            this.globalHashing = false;
+        }
+        this.globalHashingMode = hashingMode;
+        this.useDocValues = useDocValues;
+    }
+
+    /**
+     * Constructor for use with hashing and optional storage in DocValues instead of Lucene fields.
+     *
+     * @param numOfThreads number of threads used for processing.
+     * @param indexPath    the directory the index witll be written to.
      * @param imageList    the list of images, one path per line.
      * @param hashingMode  the mode used for Hashing, use HashingMode.None if you don't want hashing.
      * @param useDocValues set to true if you want to use DocValues instead of Fields.
@@ -1212,7 +1234,7 @@ public class ParallelIndexer implements Runnable {
         }
 
         public void run() {
-            WorkItem tmp;
+            WorkItem tmp = null;
             Document doc;
             Field[] fields;
             BufferedImage image;
@@ -1246,9 +1268,9 @@ public class ParallelIndexer implements Runnable {
                         writer.addDocument(doc);
                     }
                 } catch (InterruptedException | IOException e) {
-                    log.severe(e.getMessage());
+                    log.severe(e.getMessage() + ": " + tmp!=null?tmp.getFileName():"");
                 } catch (Exception e) {
-                    log.severe(e.getMessage());
+                    log.severe(e.getMessage() + ": " + tmp!=null?tmp.getFileName():"");
                 }
             }
         }

@@ -83,10 +83,20 @@ public class Indexer {
         ArrayList<String> images = FileUtils.getAllImages(new File(args[0]), true);
 
         // Creating a CEDD document builder and indexing all files.
-        GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(CEDD.class);
-        // and here we add those features we want to extract in a single run:
+        GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(false, false);
+        /*
+            If you want to use DocValues, which makes linear search much faster, then use.
+            However, you then have to use a specific searcher!
+         */
+        // GlobalDocumentBuilder globalDocumentBuilder = new GlobalDocumentBuilder(false, true);
+
+        /*
+            Then add those features we want to extract in a single run:
+         */
+        globalDocumentBuilder.addExtractor(CEDD.class);
         globalDocumentBuilder.addExtractor(FCTH.class);
         globalDocumentBuilder.addExtractor(AutoColorCorrelogram.class);
+
         // Creating an Lucene IndexWriter
         IndexWriterConfig conf = new IndexWriterConfig(new WhitespaceAnalyzer());
         IndexWriter iw = new IndexWriter(FSDirectory.open(Paths.get("index")), conf);

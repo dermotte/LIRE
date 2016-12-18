@@ -48,6 +48,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.TopDocs;
 
@@ -58,6 +59,7 @@ import java.io.*;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
@@ -73,9 +75,13 @@ import java.util.zip.ZipOutputStream;
  * @author Nektarios Anagnostopoulos, nek.anag@gmail.com
  */
 public class FileUtils {
-    enum FileTypes {JPG, GIF, TIF, PNG, PDF, UNKNOWN};
+    enum FileTypes {JPG, GIF, TIF, PNG, PDF, UNKNOWN}
 
-    /** basic image file filter. */
+    ;
+
+    /**
+     * basic image file filter.
+     */
     public static final SuffixFileFilter fileFilter = new SuffixFileFilter(new String[]{".jpg", ".jpeg", ".png", ".gif"}, IOCase.INSENSITIVE);
 
     /**
@@ -448,6 +454,38 @@ public class FileUtils {
         while (i < length)
             result[i] = in.get(i++);
         return result;
+    }
+
+    /**
+     * Creates a text file containing all full paths to the images in the directory and its subdirectories.
+     *
+     * @param imageDirectory the directories where the images can be found.
+     * @param outputFile     the text file to be written (to)
+     * @param append         set to false to overwrite.
+     * @return the number of images found / lines written the output file.
+     * @throws IOException
+     */
+    public static int createImagefileList(File imageDirectory, File outputFile, boolean append) throws IOException {
+        if (!imageDirectory.isDirectory()) return -1;
+        int result = 0;
+        Collection<File> files = org.apache.commons.io.FileUtils.listFiles(imageDirectory, new String[]{"jpg", "png", "PNG", "JPG"}, true);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile, append));
+        for (File f : files) {
+            bw.write(f.getAbsolutePath() + "\n");
+            result++;
+        }
+        bw.close();
+        return result;
+    }
+
+    /**
+     * Used to access a file in the resource folder.
+     * @param resourceName the path to the file, eg. "data/files.lst"
+     * @return
+     */
+    public static InputStream getInputStreamFromResources(String resourceName) {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        return classloader.getResourceAsStream(resourceName);
     }
 
 

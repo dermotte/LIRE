@@ -1,6 +1,39 @@
 CHANGES for LIRE
 ================
 
+2016-12-16
+==========
+  - Fixed the distribution of references points in MetricSpaces.generateHashes().
+  - Updated SimpleApplication and added DocValues as example.
+  - Updated documentation on MetricSpaces indexing and search.
+  - Fixed naming problem in AbstractDocumentWriter
+
+2016-12-16
+==========
+  - Tweaked Extractor and MetricSpaces
+
+2016-12-15
+==========
+  - Finished extraction tool by providing and LuceneIndexWriter for it.
+  - Added CommandLineUtils for common tasks.
+
+2016-12-14
+==========
+  - Re-visited metric spaces indexing for QA
+  - Implemented DocValues based search for MetricSpacesImageSearcher
+  - Added TwelveMonkeys ImageIO libs to runtime in gradle.build, it's optional, but rather helpful
+  - Added an extraction to base64 tool
+
+2016-12-12
+==========
+  - Changed ACCID quantization (double -> short) and serialization (8 -> 2 bytes).
+
+2016-12-12
+==========
+  - Added ACCID feature to LIRE and LireDemo (Thanks go to Chrysa and Nektarios)
+  - Re-added some of the test cases in Gradle build file
+  - removed photos with unclear licenses and added 10 with (CC) for testing
+
 2016-12-07
 ==========
   - Fixed WorkItem to work with LireSolr

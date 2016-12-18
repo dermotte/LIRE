@@ -8,4 +8,4 @@ Lire supports global features as well as local features. There are proper interf
 Global features, like `CEDD` or `AutoColorCorrelogram`, should implement the `GlobalFeature` interface. That interface extends both `LireFeature` and `Extractor` interfaces. This means that a global features holds both the feature and the `extract()` method.
 
 ### Local Features
-On the other hand, due to the fact that local feature extractors create a lot of local features, there are two interfaces that should be used in that case. The `LocalFeatureExtractor`, which extends the `Extractor` interface and contains the `extract()` method, and the `LocalFeature`, which extends the `LireFeature` interface.
+On the other hand, due to the fact that local feature extractors create a lot of local features, there are two interfaces that should be used in that case. The `LocalFeatureExtractor`, which extends the `Extractor` interface and contains the `extract()` method, and the `LocalFeature`, which extends the `LireFeature` interface. For local features you have to make sure the Java OpenCV wrapper is set up and working. There is a [HowTo for Ubuntu available](opencv-ubuntu.md).

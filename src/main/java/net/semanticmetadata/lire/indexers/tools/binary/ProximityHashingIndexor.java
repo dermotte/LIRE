@@ -39,7 +39,7 @@
  * Updated: 26.08.14 13:17
  */
 
-package net.semanticmetadata.lire.indexers.tools;
+package net.semanticmetadata.lire.indexers.tools.binary;
 
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;

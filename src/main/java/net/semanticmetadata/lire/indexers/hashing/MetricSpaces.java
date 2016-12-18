@@ -2,13 +2,12 @@ package net.semanticmetadata.lire.indexers.hashing;
 
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import net.semanticmetadata.lire.searchers.SimpleResult;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.math3.random.RandomDataGenerator;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -23,12 +22,13 @@ import java.util.*;
  * @author Mathias Lux, mathias@juggle.at, 24.08.2015.
  */
 public class MetricSpaces {
-//    public static int numberOfReferencePoints = 500;
-//    public static int lenghtOfPostingList = 10;
+//    public static int getNumberOfReferencePoints = 500;
+//    public static int lengthOfPostingList = 10;
 
     // for actual runtime in indexing and search we need per feature index structures:
     static HashMap<String, ArrayList<GlobalFeature>> referencePoints = new HashMap<>();
     static HashMap<String, Parameters> parameters = new HashMap<>();
+    private static Class<? extends GlobalFeature> featureClass = CEDD.class;
 
     public static void main(String[] args) {
         int numberOfReferencePoints = 500;
@@ -50,6 +50,23 @@ public class MetricSpaces {
                 } else {
                     printHelp();
                     System.err.println("There is something wrong with your input file. Please check the parameters.");
+                }
+            } else if (arg.startsWith("-c")) { // which class
+                if ((i + 1) < args.length) {
+                    String className = args[i + 1];
+                    if (!className.contains(".")) {
+                        className = "net.semanticmetadata.lire.imageanalysis.features.global." + className;
+                    }
+                    // try loading the class:
+                    try {
+                        featureClass = (Class<? extends GlobalFeature>) Class.forName(className);
+                    } catch (ClassNotFoundException e) {
+                        System.err.printf("Class for feature not found: %s (%s)\n", className, e.getMessage());
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.err.println("There is something wrong with the parameters.");
+                    printHelp();
                 }
             } else if (arg.startsWith("-p")) {
                 // parameters
@@ -84,16 +101,17 @@ public class MetricSpaces {
             printHelp();
             System.exit(1);
         }
-        outFile = new File(FilenameUtils.removeExtension(inFile.getAbsolutePath()) + ".dat");
-        System.out.printf("MetricSpaces operating on file %s with\n%d number of reference points and %d elements in the posting list.\n", inFile.getAbsolutePath(), numberOfReferencePoints, lenghtOfPostingList);
+        outFile = new File(FilenameUtils.removeExtension(inFile.getAbsolutePath()) + "_" + featureClass.getSimpleName() + ".msd");
+        System.out.printf("MetricSpaces operating on file %s with\n%d number of reference points and %d elements in the posting list.\nIndexing using class %s.\n", inFile.getAbsolutePath(), numberOfReferencePoints, lenghtOfPostingList, featureClass.getName());
         if (outFile.exists()) {
             System.out.printf("NOTE: output file %s will be overwritten.\n", outFile.getAbsolutePath());
         } else {
             System.out.printf("Output will be saved in %s\n", outFile.getAbsolutePath());
         }
+        System.out.println("------------------------------------------------------------");
         try {
             try {
-                indexReferencePoints(CEDD.class, numberOfReferencePoints, lenghtOfPostingList, inFile, outFile);
+                indexReferencePoints(featureClass, numberOfReferencePoints, lenghtOfPostingList, inFile, outFile);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (InstantiationException e) {
@@ -106,13 +124,14 @@ public class MetricSpaces {
 
     /**
      * Index reference points for use with a specific feature. A file (infile) containing one image path per line is read and
-     * numberOfReferencePoints are randomly selected to serve for indexing and search. The resulting data points plus
+     * getNumberOfReferencePoints are randomly selected to serve for indexing and search. The resulting data points plus
      * configuration are read written to a file (outfile).
-     * @param globalFeatureClass The feature class to be used, eg. CEDD, PHOG, etc.
+     *
+     * @param globalFeatureClass      The feature class to be used, eg. CEDD, PHOG, etc.
      * @param numberOfReferencePoints the number of reference points, eg. 5000
-     * @param lenghtOfPostingList the length of the posting list, ie. how many reference points per image are stored.
-     * @param inFile the file containing the image data, one image path per line
-     * @param outFile the output of processing.
+     * @param lenghtOfPostingList     the length of the posting list, ie. how many reference points per image are stored.
+     * @param inFile                  the file containing the image data, one image path per line
+     * @param outFile                 the output of processing.
      * @throws IOException
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -138,11 +157,12 @@ public class MetricSpaces {
 
         // or using Java Math, creating a sampling permutation:
 //        RandomDataGenerator randomDataGenerator = new RandomDataGenerator();
-//        int[] ints = randomDataGenerator.nextPermutation(lines.size(), numberOfReferencePoints);
+//        int[] ints = randomDataGenerator.nextPermutation(lines.size(), getNumberOfReferencePoints);
 
         // now for the reference points:
         GlobalFeature feature = (GlobalFeature) globalFeatureClass.newInstance();
         // Write the parameters into the file:
+        bw.write("# Created " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " by " + MetricSpaces.class.getName() + " \n");
         bw.write(feature.getClass().getName() + "\n");
         bw.write(numberOfReferencePoints + "," + lenghtOfPostingList + "\n");
         System.out.print("Indexing ");
@@ -155,7 +175,9 @@ public class MetricSpaces {
                 fis.close(); // and closing it again .. just to leave no open file pointers.
                 bw.write(Base64.encodeBase64String(feature.getByteArrayRepresentation()) + "\n");
                 i++;
-                if (i % 100 == 0) System.out.print('.');
+                if (i % (numberOfReferencePoints >> 5) == 0) {
+                    System.out.print('.');
+                }
             } catch (Exception e) {
                 System.out.printf("Having problem \"%s\" with file %s\n", e.getMessage(), file);
                 // e.printStackTrace();
@@ -173,14 +195,15 @@ public class MetricSpaces {
      * @param referencePoints is the outFile from the method {@link MetricSpaces#indexReferencePoints(Class, int, int, File, File)}
      * @throws IOException
      */
-    public static Parameters loadReferencePoints(File referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        BufferedReader br = new BufferedReader(new FileReader(referencePoints));
+    public static Parameters loadReferencePoints(InputStream referencePoints) throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(referencePoints));
         String feature = br.readLine().trim();
+        while (feature.startsWith("#")) feature = br.readLine().trim();
         Class<?> featureClass = Class.forName(feature);
         String[] params = br.readLine().trim().split(",");
         Parameters p = new MetricSpaces.Parameters();
         p.numberOfReferencePoints = Integer.parseInt(params[0]);
-        p.lenghtOfPostingList = Integer.parseInt(params[1]);
+        p.lengthOfPostingList = Integer.parseInt(params[1]);
         p.featureClass = featureClass;
         parameters.put(feature, p);
         ArrayList<GlobalFeature> ro = new ArrayList<>(p.numberOfReferencePoints);
@@ -200,100 +223,89 @@ public class MetricSpaces {
     }
 
     public static boolean supportsFeature(GlobalFeature feature) {
-        return referencePoints.get(feature.getClass().getName())!=null;
+        return referencePoints.get(feature.getClass().getName()) != null;
     }
 
     /**
      * Convenience method for {@link #generateHashString(GlobalFeature, int)}.
+     *
      * @param feature feature the feature instance the string is generated for.
      * @return the text for the Lucene index.
      */
     public static String generateHashString(GlobalFeature feature) {
-        return generateHashString(feature, parameters.get(feature.getClass().getName()).lenghtOfPostingList);
+        return generateHashString(feature, parameters.get(feature.getClass().getName()).lengthOfPostingList);
     }
 
     /**
      * Creates a text String to be used for indexing and search based on the reference points.
-     * @param feature the feature instance the string is generated for.
+     *
+     * @param feature     the feature instance the string is generated for.
      * @param queryLength the length of the posting list. If 0, then it's set to the preset.
      * @return the text for the Lucene index.
      */
     public static String generateHashString(GlobalFeature feature, int queryLength) {
-        ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
-        // break up if the feature is not indexed ...
-        if (l == null) return null;
-        int lenghtOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lenghtOfPostingList);
-        if (lenghtOfPostingList<1) {
-            lenghtOfPostingList = parameters.get(feature.getClass().getName()).lenghtOfPostingList;
+        int lengthOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lengthOfPostingList);
+        if (lengthOfPostingList < 1) {
+            lengthOfPostingList = parameters.get(feature.getClass().getName()).lengthOfPostingList;
         }
-        TreeSet<Result> results = new TreeSet<>();
-        double maxDistance = Double.MAX_VALUE;
-        double distance;
-        int count = 0;
-        for (GlobalFeature f : l) {
-            distance = f.getDistance(feature);
-            if (results.size() < lenghtOfPostingList) {
-                results.add(new Result(distance, count));
-                maxDistance = l.get(results.last().index).getDistance(feature);
-            } else if (distance < maxDistance) {
-                results.add(new Result(distance, count));
-                maxDistance = distance;
-                if (results.size() > lenghtOfPostingList) {
-                    results.pollLast();
-                }
+        TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
+        StringBuilder sb = new StringBuilder(lengthOfPostingList * 8);
+        int position = 0;
+        for (Iterator<Result> iterator = results.iterator(); iterator.hasNext(); ) {
+            Result result = iterator.next();
+            // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
+            // adding it to the text field, but depending on the position in the results it's added multiple times.
+            for (int i = 0; i < results.size()-position; i++) {
+                sb.append(String.format("R%06d ", result.index));
             }
-            count++;
-        }
-        StringBuilder sb = new StringBuilder(lenghtOfPostingList * lenghtOfPostingList);
-        for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
-            Result result = resultIterator.next();
-//            sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
-            for (int i = 0; i<lenghtOfPostingList; i++) {
-                sb.append(String.format("R%05d ", result.index));
-            }
-            lenghtOfPostingList--;
+            position++;
         }
         return sb.toString();
     }
 
+    private static TreeSet<Result> getResults(GlobalFeature feature, int queryLength, int lengthOfPostingList) {
+        ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
+        // break if the feature is not indexed ...
+        if (l == null) return null;
+        TreeSet<Result> results = new TreeSet<>();
+        double maxDistance = Double.MAX_VALUE;
+        double distance;
+        for (int i = 0; i < l.size(); i++) {
+            GlobalFeature f = l.get(i);
+            distance = f.getDistance(feature);
+            if (results.size() < lengthOfPostingList) {
+                results.add(new Result(distance, i));
+                maxDistance = l.get(results.last().index).getDistance(feature);
+            } else if (distance < maxDistance) {
+                results.add(new Result(distance, i));
+                maxDistance = distance;
+                if (results.size() > lengthOfPostingList) {
+                    results.pollLast();
+                }
+            }
+        }
+        return results;
+    }
+
     /**
      * Creates a text String to be used for search based on the reference points using term boosting instead of repetition.
-     * @param feature the feature instance the string is generated for.
+     *
+     * @param feature     the feature instance the string is generated for.
      * @param queryLength the length of the posting list. If 0, then it's set to the preset.
      * @return the text for the Lucene index.
      */
     public static String generateBoostedQuery(GlobalFeature feature, int queryLength) {
-        ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
-        // break up if the feature is not indexed ...
-        if (l == null) return null;
-        int lenghtOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lenghtOfPostingList);
-        if (lenghtOfPostingList<1) {
-            lenghtOfPostingList = parameters.get(feature.getClass().getName()).lenghtOfPostingList;
+        int lengthOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lengthOfPostingList);
+        if (lengthOfPostingList < 1) {
+            lengthOfPostingList = parameters.get(feature.getClass().getName()).lengthOfPostingList;
         }
-        TreeSet<Result> results = new TreeSet<>();
-        double maxDistance = Double.MAX_VALUE;
-        double distance;
-        int count = 0;
-        for (GlobalFeature f : l) {
-            distance = f.getDistance(feature);
-            if (results.size() < lenghtOfPostingList) {
-                results.add(new Result(distance, count));
-                maxDistance = l.get(results.last().index).getDistance(feature);
-            } else if (distance < maxDistance) {
-                results.add(new Result(distance, count));
-                maxDistance = distance;
-                if (results.size() > lenghtOfPostingList) {
-                    results.pollLast();
-                }
-            }
-            count++;
-        }
-        StringBuilder sb = new StringBuilder(lenghtOfPostingList * 11);
-        double max = lenghtOfPostingList;
+        TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
+        StringBuilder sb = new StringBuilder(results.size() * 12);
+        double max = results.size();
         for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
             Result result = resultIterator.next();
-            sb.append(String.format("R%05d^%1.2f ", result.index, (double) lenghtOfPostingList / max));
-            lenghtOfPostingList--;
+            sb.append(String.format("R%06d^%1.2f ", result.index, (double) results.size() / max));
+            lengthOfPostingList--;
         }
         return sb.toString();
     }
@@ -305,18 +317,20 @@ public class MetricSpaces {
         System.out.println("Help for the MetricSpaces class\n" +
                 "===============================\n" +
                 "\n" +
-                "Run the main method to create a compatible file to be used \n" +
-                "for indexing and hashing. This text is shown with the \n" +
+                "Run the main method to create a compatible file to be used\n" +
+                "for indexing and hashing. This text is shown with the\n" +
                 "-h option.\n" +
                 "\n" +
-                "$> MetricSpaces -i <input-file> -p <parameters>\n" +
+                "$> MetricSpaces -i <input-file> -p <parameters> [-c <class>]\n" +
                 "\n" +
-                "<input-file> ... gives the image data set to sample from, \n" +
-                "                 one per line, lines starting with # are \n" +
-                "\t\t\t\t ignored.\n" +
-                "<parameters> ... number of reference points and length of \n" +
-                "\t\t\t\t the posting list, eg. \"-p 1000,50\"\n" +
-                "\t\t\t\t \n" +
+                "<input-file>    ... gives the image data set to sample from,\n" +
+                "                    one per line, lines starting with # are\n" +
+                "                    ignored.\n" +
+                "<parameters>    ... number of reference points and length of\n" +
+                "\t\t\t\t    the posting list, eg. \"-p 1000,50\"\n" +
+                "<class>         ... which class to use for indexing, default\n" +
+                "                    is CEDD.\n" +
+                "\n" +
                 "\n" +
                 "Example usage:\n" +
                 "--------------\n" +
@@ -330,7 +344,7 @@ public class MetricSpaces {
      */
     public static class Parameters {
         public int numberOfReferencePoints;
-        public int lenghtOfPostingList;
+        public int lengthOfPostingList;
         public Class featureClass;
     }
 
@@ -360,13 +374,15 @@ Run the main method to create a compatible file to be used
 for indexing and hashing. This text is shown with the
 -h option.
 
-$> MetricSpaces -i <input-file> -p <parameters>
+$> MetricSpaces -i <input-file> -p <parameters> [-c <class>]
 
-<input-file> ... gives the image data set to sample from,
-                 one per line, lines starting with # are
-				 ignored.
-<parameters> ... number of reference points and length of
-				 the posting list, eg. "-p 1000,50"
+<input-file>    ... gives the image data set to sample from,
+                    one per line, lines starting with # are
+                    ignored.
+<parameters>    ... number of reference points and length of
+				    the posting list, eg. "-p 1000,50"
+<class>         ... which class to use for indexing, default
+                    is CEDD.
 
 
 Example usage:
