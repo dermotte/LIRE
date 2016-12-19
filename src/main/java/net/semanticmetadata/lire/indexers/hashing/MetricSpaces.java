@@ -228,7 +228,7 @@ public class MetricSpaces {
 
     public static int getPostingListLength(GlobalFeature feature) {
         if (supportsFeature(feature))
-            return parameters.get(feature).lengthOfPostingList;
+            return parameters.get(feature.getClass().getName()).lengthOfPostingList;
         else return -1;
     }
 
