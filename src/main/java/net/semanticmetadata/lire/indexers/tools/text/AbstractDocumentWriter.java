@@ -102,6 +102,7 @@ public abstract class AbstractDocumentWriter implements Runnable{
                 if (count%1000==0) {
                     System.out.printf("Processed %d images took %s minutes, ~%.2f ms per image.\n", (int) count, StatsUtils.convertTime(sw.getTimeSinceStart()), (double) sw.getTimeSinceStart()/count);
                 }
+                // if (count > 10000) break; // for debugging, just index the first 10000
             }
             finishWriting();
             sw.stop();

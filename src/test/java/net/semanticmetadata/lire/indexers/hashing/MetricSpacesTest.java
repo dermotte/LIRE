@@ -5,9 +5,7 @@ import net.semanticmetadata.lire.builders.GlobalDocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
-import net.semanticmetadata.lire.searchers.GenericDocValuesImageSearcher;
-import net.semanticmetadata.lire.searchers.ImageSearchHits;
-import net.semanticmetadata.lire.searchers.MetricSpacesImageSearcher;
+import net.semanticmetadata.lire.searchers.*;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.StopWatch;
 import org.apache.lucene.document.Document;
@@ -101,7 +99,7 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testSearchAccuracy() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("/home/mlux/tmp/index")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("idx-test")));
 //        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexName+"-docValues")));
         int maxResults = 100;
         int intersectSum = 0;

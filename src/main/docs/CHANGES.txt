@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2016-12-19
+==========
+  - Added getters to MetricSpaces
+  - Parallelized LuceneIndexWriter
+
 2016-12-16
 ==========
   - Fixed the distribution of references points in MetricSpaces.generateHashes().

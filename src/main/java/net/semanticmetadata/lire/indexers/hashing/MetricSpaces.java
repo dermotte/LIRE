@@ -138,7 +138,7 @@ public class MetricSpaces {
      */
     public static void indexReferencePoints(Class globalFeatureClass, int numberOfReferencePoints, int lenghtOfPostingList, File inFile, File outFile) throws IOException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new FileReader(inFile));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile), 1024*1024*25); // 25 M chars as a buffer
         String line;
         LinkedList<String> lines = new LinkedList<>();
         // read all the file paths.
@@ -224,6 +224,14 @@ public class MetricSpaces {
 
     public static boolean supportsFeature(GlobalFeature feature) {
         return referencePoints.get(feature.getClass().getName()) != null;
+    }
+
+    public static int getPostingListLength(GlobalFeature feature) {
+        return parameters.get(feature).lengthOfPostingList;
+    }
+
+    public static int getNumberOfReferencePoints(GlobalFeature feature) {
+        return parameters.get(feature).numberOfReferencePoints;
     }
 
     /**

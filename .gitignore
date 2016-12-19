@@ -37,6 +37,11 @@ docs/*
 *.iml
 *.iws
 
+# gradle
+build/
+classes/
+.gradle/
+
 # Maven noise
 target/*
 

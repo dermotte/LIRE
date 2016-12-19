@@ -20,7 +20,6 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class ParallelExtraction implements Runnable {
     private static String helpMessage = "Use with -i <infile> -o <outfile> -c CEDD,FCTH,PHOG";
-    ;
     private File imageList;
     private File outFile;
     private ArrayList<GlobalFeature> listOfFeatures = new ArrayList<>();
