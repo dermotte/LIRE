@@ -22,10 +22,10 @@ We further highly recommend the book titled “Visual Information Retrieval usin
 
 [![](http://ecx.images-amazon.com/images/I/41Rot9eQLKL._SS400_.jpg)](http://www.amazon.de/gp/product/B00CDGMPR0/ref=as_li_tl?ie=UTF8&camp=1638&creative=6742&creativeASIN=B00CDGMPR0&linkCode=as2&tag=liluimre-21)
 
-Sometimes you’re stuck with the integration of LIRE in your product, or you don’t exactly know which parameters to choose. In this case (i) we are either happy to help on the mailing list so all LIRE users can benefit, or to (ii) offer our services for implementation, benchmarking and consulting if there is need for private conversation on LIRE. In the latter case please contact Mathias Lux.
+Sometimes you’re stuck with the integration of LIRE in your product, or you don’t exactly know which parameters to choose. In this case (i) we are either happy to help on the [mailing list](https://groups.google.com/forum/#!forum/lire-dev) so all LIRE users can benefit, or to (ii) offer our services for implementation, benchmarking and consulting if there is need for private conversation on LIRE. In the latter case please contact Mathias Lux.
 
 ## LIRE and Solr ##
-If you are searching for the Solr plugin of LIRE ... there is one and it seems to be working. Several global features are working fine and it's based on Solr 6.3.0. It can be found at [https://github.com/dermotte/liresolr](https://github.com/dermotte/liresolr)
+If you are searching for the Solr plugin of LIRE ... there is one and it seems to be working. Several global features are working fine and it's based on Solr 6.3.0. It can be found at [https://github.com/dermotte/liresolr](https://github.com/dermotte/liresolr). For questions please use the [LIRE dev mailing list](https://groups.google.com/forum/#!forum/lire-dev).
 
 ## Citation ##
 
