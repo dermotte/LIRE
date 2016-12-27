@@ -1,6 +1,10 @@
 CHANGES for LIRE
 ================
 
+2016-12-27
+==========
+  - Added two new methods to MetricSpaces
+
 2016-12-19
 ==========
   - Added getters to MetricSpaces

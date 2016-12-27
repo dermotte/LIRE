@@ -273,6 +273,43 @@ public class MetricSpaces {
         return sb.toString();
     }
 
+    /**
+     * Creates a text String to be used for indexing and search based on the reference points.
+     *
+     * @param feature     the feature instance the string is generated for.
+     * @param queryLength the length of the posting list. If 0, then it's set to the preset.
+     * @return the list of hashes for the Lucene index, ordered by their importance for the doc.
+     */
+    public static List<String> generateHashList(GlobalFeature feature, int queryLength) {
+        LinkedList<String> resultList = new LinkedList<>();
+        int lengthOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lengthOfPostingList);
+        if (lengthOfPostingList < 1) {
+            lengthOfPostingList = parameters.get(feature.getClass().getName()).lengthOfPostingList;
+        }
+        TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
+        int position = 0;
+        for (Iterator<Result> iterator = results.iterator(); iterator.hasNext(); ) {
+            Result result = iterator.next();
+            // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
+            // adding it to the text field, but depending on the position in the results it's added multiple times.
+            for (int i = 0; i < results.size()-position; i++) {
+                resultList.add(String.format("R%06d", result.index));
+            }
+            position++;
+        }
+        return resultList;
+    }
+
+    /**
+     * Creates a text String to be used for indexing and search based on the reference points.
+     *
+     * @param feature     the feature instance the string is generated for.
+     * @return the list of hashes for the Lucene index, ordered by their importance for the doc.
+     */
+    public static List<String> generateHashList(GlobalFeature feature) {
+        return generateHashList(feature, parameters.get(feature.getClass().getName()).lengthOfPostingList);
+    }
+
     private static TreeSet<Result> getResults(GlobalFeature feature, int queryLength, int lengthOfPostingList) {
         ArrayList<GlobalFeature> l = referencePoints.get(feature.getClass().getName());
         // break if the feature is not indexed ...
