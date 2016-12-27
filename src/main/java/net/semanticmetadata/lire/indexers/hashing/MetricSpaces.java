@@ -138,7 +138,7 @@ public class MetricSpaces {
      */
     public static void indexReferencePoints(Class globalFeatureClass, int numberOfReferencePoints, int lenghtOfPostingList, File inFile, File outFile) throws IOException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new FileReader(inFile));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile), 1024*1024*25); // 25 M chars as a buffer
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile), 1024 * 1024 * 25); // 25 M chars as a buffer
         String line;
         LinkedList<String> lines = new LinkedList<>();
         // read all the file paths.
@@ -265,7 +265,7 @@ public class MetricSpaces {
             Result result = iterator.next();
             // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
             // adding it to the text field, but depending on the position in the results it's added multiple times.
-            for (int i = 0; i < results.size()-position; i++) {
+            for (int i = 0; i < results.size() - position; i++) {
                 sb.append(String.format("R%06d ", result.index));
             }
             position++;
@@ -291,10 +291,7 @@ public class MetricSpaces {
         for (Iterator<Result> iterator = results.iterator(); iterator.hasNext(); ) {
             Result result = iterator.next();
             // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
-            // adding it to the text field, but depending on the position in the results it's added multiple times.
-            for (int i = 0; i < results.size()-position; i++) {
-                resultList.add(String.format("R%06d", result.index));
-            }
+            resultList.add(String.format("R%06d", result.index));
             position++;
         }
         return resultList;
@@ -303,7 +300,7 @@ public class MetricSpaces {
     /**
      * Creates a text String to be used for indexing and search based on the reference points.
      *
-     * @param feature     the feature instance the string is generated for.
+     * @param feature the feature instance the string is generated for.
      * @return the list of hashes for the Lucene index, ordered by their importance for the doc.
      */
     public static List<String> generateHashList(GlobalFeature feature) {
@@ -351,7 +348,7 @@ public class MetricSpaces {
         double max = results.size();
         for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
             Result result = resultIterator.next();
-            sb.append(String.format("R%06d^%1.2f ", result.index, (double) results.size() / max));
+            sb.append(String.format("R%06d^%1.2f ", result.index, (double) results.size() / max)); // todo: check if there's something wrong ...
             lengthOfPostingList--;
         }
         return sb.toString();
