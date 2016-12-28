@@ -346,10 +346,11 @@ public class MetricSpaces {
         TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
         StringBuilder sb = new StringBuilder(results.size() * 12);
         double max = results.size();
+        double pos = results.size();
         for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
             Result result = resultIterator.next();
-            sb.append(String.format("R%06d^%1.2f ", result.index, (double) results.size() / max)); // todo: check if there's something wrong ...
-            lengthOfPostingList--;
+            sb.append(String.format("R%06d^%1.2f ", result.index, pos / max));
+            pos--;
         }
         return sb.toString();
     }
