@@ -2,7 +2,6 @@ package net.semanticmetadata.lire.indexers.hashing;
 
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
@@ -173,7 +172,7 @@ public class MetricSpaces {
                 FileInputStream fis = new FileInputStream(file);
                 feature.extract(ImageIO.read(fis));
                 fis.close(); // and closing it again .. just to leave no open file pointers.
-                bw.write(Base64.encodeBase64String(feature.getByteArrayRepresentation()) + "\n");
+                bw.write(Base64.getEncoder().encodeToString(feature.getByteArrayRepresentation()) + "\n");
                 i++;
                 if (i % (numberOfReferencePoints >> 5) == 0) {
                     System.out.print('.');
@@ -212,7 +211,7 @@ public class MetricSpaces {
             if (!line.startsWith("#")) { // check for comments.
                 if (line.length() > 1) { // check for empty ones.
                     GlobalFeature f = (GlobalFeature) featureClass.newInstance();
-                    f.setByteArrayRepresentation(Base64.decodeBase64(line));
+                    f.setByteArrayRepresentation(Base64.getDecoder().decode(line));
                     ro.add(f);
                 }
             }
