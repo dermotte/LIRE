@@ -27,3 +27,12 @@ task runDemo(type: JavaExec) {
 
     main = 'liredemo.LireDemoFrame'
 }
+
+task distributionJar(type: Jar) {
+    manifest {
+        attributes "Main-Class": "liredemo.LireDemoFrame"
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
