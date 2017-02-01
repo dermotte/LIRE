@@ -2,7 +2,6 @@ package net.semanticmetadata.lire.indexers.hashing;
 
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.imageio.ImageIO;
@@ -138,7 +137,7 @@ public class MetricSpaces {
      */
     public static void indexReferencePoints(Class globalFeatureClass, int numberOfReferencePoints, int lenghtOfPostingList, File inFile, File outFile) throws IOException, IllegalAccessException, InstantiationException {
         BufferedReader br = new BufferedReader(new FileReader(inFile));
-        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile), 1024*1024*25); // 25 M chars as a buffer
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outFile), 1024 * 1024 * 25); // 25 M chars as a buffer
         String line;
         LinkedList<String> lines = new LinkedList<>();
         // read all the file paths.
@@ -173,7 +172,7 @@ public class MetricSpaces {
                 FileInputStream fis = new FileInputStream(file);
                 feature.extract(ImageIO.read(fis));
                 fis.close(); // and closing it again .. just to leave no open file pointers.
-                bw.write(Base64.encodeBase64String(feature.getByteArrayRepresentation()) + "\n");
+                bw.write(Base64.getEncoder().encodeToString(feature.getByteArrayRepresentation()) + "\n");
                 i++;
                 if (i % (numberOfReferencePoints >> 5) == 0) {
                     System.out.print('.');
@@ -212,7 +211,7 @@ public class MetricSpaces {
             if (!line.startsWith("#")) { // check for comments.
                 if (line.length() > 1) { // check for empty ones.
                     GlobalFeature f = (GlobalFeature) featureClass.newInstance();
-                    f.setByteArrayRepresentation(Base64.decodeBase64(line));
+                    f.setByteArrayRepresentation(Base64.getDecoder().decode(line));
                     ro.add(f);
                 }
             }
@@ -265,12 +264,46 @@ public class MetricSpaces {
             Result result = iterator.next();
             // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
             // adding it to the text field, but depending on the position in the results it's added multiple times.
-            for (int i = 0; i < results.size()-position; i++) {
+            for (int i = 0; i < results.size() - position; i++) {
                 sb.append(String.format("R%06d ", result.index));
             }
             position++;
         }
         return sb.toString();
+    }
+
+    /**
+     * Creates a text String to be used for indexing and search based on the reference points.
+     *
+     * @param feature     the feature instance the string is generated for.
+     * @param queryLength the length of the posting list. If 0, then it's set to the preset.
+     * @return the list of hashes for the Lucene index, ordered by their importance for the doc.
+     */
+    public static List<String> generateHashList(GlobalFeature feature, int queryLength) {
+        LinkedList<String> resultList = new LinkedList<>();
+        int lengthOfPostingList = Math.min(queryLength, parameters.get(feature.getClass().getName()).lengthOfPostingList);
+        if (lengthOfPostingList < 1) {
+            lengthOfPostingList = parameters.get(feature.getClass().getName()).lengthOfPostingList;
+        }
+        TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
+        int position = 0;
+        for (Iterator<Result> iterator = results.iterator(); iterator.hasNext(); ) {
+            Result result = iterator.next();
+            // sb.append(String.format("%d (%2.2f) ", result.index, result.distance)); // debug.
+            resultList.add(String.format("R%06d", result.index));
+            position++;
+        }
+        return resultList;
+    }
+
+    /**
+     * Creates a text String to be used for indexing and search based on the reference points.
+     *
+     * @param feature the feature instance the string is generated for.
+     * @return the list of hashes for the Lucene index, ordered by their importance for the doc.
+     */
+    public static List<String> generateHashList(GlobalFeature feature) {
+        return generateHashList(feature, parameters.get(feature.getClass().getName()).lengthOfPostingList);
     }
 
     private static TreeSet<Result> getResults(GlobalFeature feature, int queryLength, int lengthOfPostingList) {
@@ -312,10 +345,11 @@ public class MetricSpaces {
         TreeSet<Result> results = getResults(feature, queryLength, lengthOfPostingList);
         StringBuilder sb = new StringBuilder(results.size() * 12);
         double max = results.size();
+        double pos = results.size();
         for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
             Result result = resultIterator.next();
-            sb.append(String.format("R%06d^%1.2f ", result.index, (double) results.size() / max));
-            lengthOfPostingList--;
+            sb.append(String.format("R%06d^%1.2f ", result.index, pos / max));
+            pos--;
         }
         return sb.toString();
     }

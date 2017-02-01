@@ -76,7 +76,7 @@ public class MetricSpacesTest extends TestCase {
 
         // running the index with metric spaces & docvals
 //        p = new ParallelIndexer(8, indexName+"-docValues", imageDirectory, GlobalDocumentBuilder.HashingMode.MetricSpaces, true);
-        p = new ParallelIndexer(8, indexName+"-docValues", new File("D:\\DataSets\\Flickrphotos\\dir01.txt"), GlobalDocumentBuilder.HashingMode.MetricSpaces, true);
+        p = new ParallelIndexer(8, indexName+"-docValues", new File("images01.lst"), GlobalDocumentBuilder.HashingMode.MetricSpaces, true);
         p.addExtractor(CEDD.class);
         p.addExtractor(PHOG.class);
         p.run();
@@ -99,14 +99,15 @@ public class MetricSpacesTest extends TestCase {
     }
 
     public void testSearchAccuracy() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("idx-test")));
-//        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexName+"-docValues")));
+//        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get("idx-test")));
+        IndexReader reader = DirectoryReader.open(FSDirectory.open(Paths.get(indexName+"-docValues")));
         int maxResults = 100;
         int intersectSum = 0;
         System.out.println("CEDD with BaseSimilarity");
-        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults, new FileInputStream("images_CEDD.msd"), 10000, true, reader);
+        MetricSpacesImageSearcher mis = new MetricSpacesImageSearcher(maxResults,
+                new GZIPInputStream(new FileInputStream("src/test/resources/metricspaces/refPoints_CEDD.dat.gz")), 2500, true, reader);
         System.out.printf("MetricSpacesSearcher with %d posting list entries and %d reference points.\n", mis.getLengthOfPostingList(), mis.getNumberOfReferencePoints());
-        mis.setNumHashesUsedForQuery(10);
+        mis.setNumHashesUsedForQuery(5);
         GenericDocValuesImageSearcher fis = new GenericDocValuesImageSearcher(maxResults, CEDD.class, reader);
         StopWatch sm = new StopWatch();
         StopWatch sf = new StopWatch();
