@@ -16,7 +16,7 @@ public class CommandLineUtils {
      * Parses command line arguments and puts them into a Properties object.
      * @param arguments the arguments passed to the main method
      * @param helpMessage an optional help string, printed on input of "-help"
-     * @param mandatoryArguments a list of mandatory arguments, checked for being there.
+     * @param mandatoryArguments a list of mandatory arguments, checked for being there. E.g. {"-i", "-o"}
      * @return
      */
     public static Properties getProperties(String[] arguments, String helpMessage, String[] mandatoryArguments) {
