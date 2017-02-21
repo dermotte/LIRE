@@ -68,10 +68,10 @@
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 		<build.number/>
 
-		<lucene-core.version>6.2.0</lucene-core.version>
-		<commons-math3.version>3.5</commons-math3.version>
+		<lucene-core.version>6.4.0</lucene-core.version>
+		<commons-math3.version>3.6.1</commons-math3.version>
 		<commons-codec.version>1.10</commons-codec.version>
-		<commons-io.version>2.4</commons-io.version>
+		<commons-io.version>2.5</commons-io.version>
 		<jopensurf.version>1.0.0</jopensurf.version>
 		<opencv.version>2.4.9-7</opencv.version>
 
