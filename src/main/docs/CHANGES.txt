@@ -1,6 +1,11 @@
 CHANGES for LIRE
 ================
 
+2016-02-27
+==========
+  - Added new feature COMO from Savvas Chatzichristofis and Nektarios Anagnostopoulos
+  - Added unit test for COMO
+
 2016-12-27
 ==========
   - Added two new methods to MetricSpaces

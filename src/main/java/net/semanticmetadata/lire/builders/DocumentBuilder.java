@@ -94,6 +94,7 @@ public interface DocumentBuilder {
     String FIELD_NAME_AUTOCOLORCORRELOGRAM = "ACC";
     String FIELD_NAME_BINARY_PATTERNS_PYRAMID ="BPP";
     String FIELD_NAME_CEDD = "CEDD";
+    String FIELD_NAME_COMO = "COMO";
     String FIELD_NAME_COLORHISTOGRAM = "ColorHist";
     String FIELD_NAME_COLORLAYOUT = "CLD";
     String FIELD_NAME_EDGEHISTOGRAM = "EHD";
