@@ -882,7 +882,7 @@ public class LireDemoFrame extends javax.swing.JFrame {
 
         jLabel1.setText("Type of IndexSearcher:");
 
-        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG", "ACCID"}));
+        selectboxDocumentBuilder.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Color Layout (MPEG-7)", "Scalable Color (MPEG-7)", "Edge Histogram (MPEG-7)", "Auto Color Correlogram", "CEDD", "FCTH", "JCD", "RGB Color Histogram", "Tamura Texture Features", "GaborTexture Features", "JPEG Coefficients Histogram", "SURF BoVW", "Joint Histogram", "Opponent Histogram", "Luminance Layout", "PHOG", "ACCID", "COMO"}));
         selectboxDocumentBuilder.setToolTipText(bundle.getString("options.tooltip.documentbuilderselection")); // NOI18N
         selectboxDocumentBuilder.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2002,8 +2002,10 @@ public class LireDemoFrame extends javax.swing.JFrame {
             searcher = new GenericFastImageSearcher(numResults, LuminanceLayout.class);
         } else if (selectboxDocumentBuilder.getSelectedIndex() == 15) {
             searcher = new GenericFastImageSearcher(numResults, PHOG.class);
-        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 16) {
+        } else if (selectboxDocumentBuilder.getSelectedIndex() == 16) {
             searcher = new GenericFastImageSearcher(numResults, ACCID.class);
+        } else if (selectboxDocumentBuilder.getSelectedIndex() >= 17) {
+            searcher = new GenericFastImageSearcher(numResults, COMO.class);
         }
         return searcher;
     }
