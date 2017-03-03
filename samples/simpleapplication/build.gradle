@@ -14,6 +14,10 @@ dependencies {
     compile group: 'com.sangupta', name: 'jopensurf', version: '1.0.0'
     // https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/opencv
     // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '2.4.11-0.11'
+    // ---< Helper files, optional >---
+    // https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-jpeg
+    runtime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.3.1'
+
     compile fileTree(dir: 'lib', include: '*.jar')
     // runtime fileTree(dir: 'lib', include: '*.jar')
 }
