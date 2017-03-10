@@ -41,12 +41,18 @@
 
 package net.semanticmetadata.lire.utils;
 
+import net.semanticmetadata.lire.builders.DocumentBuilder;
+import net.semanticmetadata.lire.imageanalysis.features.GenericDoubleLireFeature;
 import net.semanticmetadata.lire.indexers.LireCustomCodec;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.core.SimpleAnalyzer;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -59,7 +65,10 @@ import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Paths;
 
 /**
@@ -164,6 +173,7 @@ public class LuceneUtils {
 
     /**
      * Optimizes an index.
+     *
      * @param iw
      * @throws IOException
      */
@@ -178,8 +188,6 @@ public class LuceneUtils {
     public static void closeWriter(IndexWriter iw) throws IOException {
         iw.close();
     }
-
-
 
 
     public static IndexReader openIndexReader(String indexPath) throws IOException {
@@ -210,13 +218,35 @@ public class LuceneUtils {
     }
 
 
-    public static IndexSearcher openIndexSearcher(IndexReader reader){
+    public static IndexSearcher openIndexSearcher(IndexReader reader) {
         return new IndexSearcher(reader);
     }
 
 
-
-
+    public static int writeFeaturesToIndex(InputStream in, IndexWriter iw) throws IOException {
+        int count = 0;
+        GenericDoubleLireFeature f = new GenericDoubleLireFeature();
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        String line;
+        while ((line = br.readLine()) != null) {
+            Document d = new Document();
+            if (line.startsWith("#"))
+                continue;
+            String[] split = line.split("\\s"); // split at white space ...
+            String filename = split[0];
+            double[] data = new double[split.length-1];
+            for (int i = 1; i < split.length; i++) {
+                data[i-1] = Double.parseDouble(split[i]);
+            }
+            f.setData(data);
+            d.add(new StoredField(f.getFieldName(), new BytesRef(f.getByteArrayRepresentation())));
+            d.add(new StringField(DocumentBuilder.FIELD_NAME_IDENTIFIER, filename, Field.Store.YES));
+            iw.addDocument(d);
+            count++;
+        }
+        iw.close();
+        return count;
+    }
 
 
     /**

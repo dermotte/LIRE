@@ -3,12 +3,14 @@ package net.semanticmetadata.lire.sampleapp;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
 import net.semanticmetadata.lire.utils.CommandLineUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.MetricsUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -88,9 +90,10 @@ public class ExtractMultipleFeatures {
                 // file name
                 sb.append(next.getAbsolutePath() + '\t');
                 // each feature
+                BufferedImage read = ImageUtils.createWorkingCopy(ImageIO.read(next));
                 for (Iterator<GlobalFeature> iterator = f.iterator(); iterator.hasNext(); ) {
                     GlobalFeature gf = iterator.next();
-                    gf.extract(ImageIO.read(next));
+                    gf.extract(read);
                     double[] hist = gf.getFeatureVector();
                     if (maxNorm) hist = MetricsUtils.normalizeMax(hist);
                     for (int i = 0; i < hist.length; i++) {
@@ -109,9 +112,10 @@ public class ExtractMultipleFeatures {
         // print header
         StringBuilder sb = new StringBuilder();
         sb.append("# filename\t");
+        BufferedImage read = ImageUtils.createWorkingCopy(ImageIO.read(image));
         for (Iterator<GlobalFeature> iterator = f.iterator(); iterator.hasNext(); ) {
             GlobalFeature gf = iterator.next();
-            gf.extract(ImageIO.read(image));
+            gf.extract(read);
             for (int i = 0; i < gf.getFeatureVector().length; i++) {
                 double v = gf.getFeatureVector()[i];
                 sb.append(gf.getFeatureName().replaceAll("\\s+", "_") + i + "\t");

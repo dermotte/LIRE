@@ -49,6 +49,7 @@ import net.semanticmetadata.lire.imageanalysis.features.global.FCTH;
 import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.utils.FileUtils;
+import net.semanticmetadata.lire.utils.ImageUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -1249,6 +1250,7 @@ public class ParallelIndexer implements Runnable {
                     else overallCount++;
                     if (!locallyEnded) {    //&& tmp != null
                         image = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
+//                        image = ImageUtils.createWorkingCopy(ImageIO.read(new ByteArrayInputStream(tmp.getBuffer())));
                         if(imagePreprocessor != null){
                             image = imagePreprocessor.process(image);
                         }
