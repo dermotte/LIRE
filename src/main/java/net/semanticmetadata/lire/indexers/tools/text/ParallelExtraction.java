@@ -13,12 +13,13 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * Simple command line tool for extraction of image
- * feature from image files given by a list.
+ * Simple command line tool for extraction of image feature from image files
+ * given by a list.
  *
  * @autor Mathias Lux
  */
 public class ParallelExtraction implements Runnable {
+
     private static String helpMessage = "Use with -i <infile> -o <outfile> -c CEDD,FCTH,PHOG";
     private File imageList;
     private File outFile;
@@ -88,7 +89,7 @@ public class ParallelExtraction implements Runnable {
         try {
             dos = new BufferedOutputStream(new FileOutputStream(outFile, false), 1024 * 1024 * 100);
             StringBuilder sb = new StringBuilder("file;");
-            for (Iterator<GlobalFeature> iterator = listOfFeatures.iterator(); iterator.hasNext(); ) {
+            for (Iterator<GlobalFeature> iterator = listOfFeatures.iterator(); iterator.hasNext();) {
                 sb.append(iterator.next().getClass().getName() + ";");
             }
             sb.append("\n");
@@ -109,7 +110,7 @@ public class ParallelExtraction implements Runnable {
                 cThread.start();
             }
             pThread.join();
-            for (Iterator<Thread> iterator = consumerThreads.iterator(); iterator.hasNext(); ) {
+            for (Iterator<Thread> iterator = consumerThreads.iterator(); iterator.hasNext();) {
                 iterator.next().join();
             }
             System.out.printf("Analyzed %d files\n", overallCount);
@@ -126,7 +127,7 @@ public class ParallelExtraction implements Runnable {
     }
 
     private void addFeatures(List features) {
-        for (Iterator<GlobalFeature> iterator = listOfFeatures.iterator(); iterator.hasNext(); ) {
+        for (Iterator<GlobalFeature> iterator = listOfFeatures.iterator(); iterator.hasNext();) {
             GlobalFeature next = iterator.next();
             try {
                 features.add(next.getClass().newInstance());
@@ -137,6 +138,7 @@ public class ParallelExtraction implements Runnable {
     }
 
     class Producer implements Runnable {
+
         private Iterator<String> imageFiles;
 
         public Producer(Iterator<String> imageFiles) {
@@ -152,7 +154,8 @@ public class ParallelExtraction implements Runnable {
                 path = imageFiles.next();
                 next = new File(path);
                 try {
-                    byte[] buffer = IOUtils.readFully(new FileInputStream(next), (int) next.length());
+                    byte[] buffer = new byte[(int) next.length()];
+                    IOUtils.readFully(new FileInputStream(next), buffer);
                     queue.put(new WorkItem(path, buffer));
                 } catch (Exception e) {
                     System.err.println("Could not open " + path + ". " + e.getMessage());
@@ -171,6 +174,7 @@ public class ParallelExtraction implements Runnable {
     }
 
     class Monitoring implements Runnable {
+
         private boolean isRunning;
 
         public Monitoring() {
@@ -203,6 +207,7 @@ public class ParallelExtraction implements Runnable {
     }
 
     class Consumer implements Runnable {
+
         WorkItem tmp = null;
         LinkedList<GlobalFeature> features = new LinkedList<GlobalFeature>();
         int count = 0;
@@ -215,7 +220,9 @@ public class ParallelExtraction implements Runnable {
         public void run() {
             while (!locallyEnded) {
                 try {
-                    if (queue.size() == 0) Thread.sleep(75);
+                    if (queue.size() == 0) {
+                        Thread.sleep(75);
+                    }
                     tmp = queue.take();
                     if (tmp.getBuffer() == null) {
                         locallyEnded = true;
@@ -224,7 +231,7 @@ public class ParallelExtraction implements Runnable {
                             StringBuilder sb = new StringBuilder(256);
                             BufferedImage img = ImageIO.read(new ByteArrayInputStream(tmp.getBuffer()));
                             sb.append(tmp.getFileName() + ";");
-                            for (Iterator<GlobalFeature> iterator = features.iterator(); iterator.hasNext(); ) {
+                            for (Iterator<GlobalFeature> iterator = features.iterator(); iterator.hasNext();) {
                                 GlobalFeature next = iterator.next();
                                 next.extract(img);
                                 sb.append(org.apache.commons.codec.binary.Base64.encodeBase64String(next.getByteArrayRepresentation()) + ";");
