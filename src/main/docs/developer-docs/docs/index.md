@@ -27,7 +27,7 @@ If you plan to extend LIRE, it's also a good idea to work on the current Git ver
 
 Note at this point that the LIRE library also comes with Apache Ant build files, named **build.xml**. You can use the tasks to create the jar from the source code as soon as you have Ant installed, or you are using an IDE prepared for that, like IDEA, Eclipse or NetBeans. Apache Ant can be found at the [Apache Ant Project Page](https://ant.apache.org/)
 
-If you are searching for the Solr plugin of LIRE ... it's still under construction. Some global features are working fine and its based on Solr 4.10.2. It can be found at [BitBucket](https://bitbucket.org/dermotte/liresolr). It has been reported working on distributed installations.
+If you are searching for the Solr plugin of LIRE ... there is one and it seems to be working. Several global features are working fine and it's based on Solr 6.4.0. It can be found at [https://github.com/dermotte/liresolr](https://github.com/dermotte/liresolr). For questions please use the [LIRE dev mailing list](https://groups.google.com/forum/#!forum/lire-dev).
 
 ## Making more of LIRE
 If you need **more performance** out of LIRE you can consider using approximate indexing. One option is hashing, ie. [BitSampling](hashing.md), the other is to use the [approximate indexing based on metric spaces](metricindexing.md) based on the work of [G. Amato](http://www.nmis.isti.cnr.it/amato/).
