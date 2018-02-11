@@ -42,6 +42,7 @@ import net.semanticmetadata.lire.utils.StatsUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.Set;
 
 /**
@@ -64,14 +65,18 @@ public class KMeans {
     }
 
     public void addFeature(double[] feature) {
-        if (!hasNaNs(feature)){
+        if (!hasNaNs(feature)) {
             features.add(feature);
             countAllFeatures++;
         }
     }
 
-    public void init() {
-        if (features.size() < numClusters *2) {
+    public void init(){
+        this.init(false);
+    }
+
+    public void init(boolean kmeansPlusPlus) {
+        if (features.size() < numClusters * 2) {
             System.err.println("WARNING: Please note that the number of local features, in this case " + features.size() + ", is" +
                     "smaller than the recommended minimum number, which is two times the number of visual words, in your case 2*" + numClusters +
                     ". Please adapt your data and either use images with more local features or more images for creating the visual vocabulary.");
@@ -85,20 +90,73 @@ public class KMeans {
         }
         // find first clusters:
         clusters = new Cluster[numClusters];
-        Set<Integer> medians = selectInitialMedians(numClusters);
-        assert(medians.size() == numClusters); // this has to be the same ...
-        Iterator<Integer> mediansIterator = medians.iterator();
-        double[] descriptor;
-        for (int i = 0; i < clusters.length; i++) {
-            descriptor = features.get(mediansIterator.next());
-            clusters[i] = new Cluster(new double[descriptor.length]);
-            System.arraycopy(descriptor, 0, clusters[i].mean, 0, descriptor.length);
+        if (kmeansPlusPlus) {
+            double[] descriptor;
+            int choose;
+            Random random = new Random();
+            double[] distToClosestCentroid = new double[features.size()];
+            for (int i = 0; i < clusters.length; i++) {
+                choose = selectNextMedian(features,i,random,distToClosestCentroid);
+                descriptor = features.get(choose);
+                clusters[i] = new Cluster(new double[descriptor.length]);
+                System.arraycopy(descriptor, 0, clusters[i].mean, 0, descriptor.length);
+            }
+            length = features.get(0).length;
+        } else {
+            Set<Integer> medians = selectInitialMedians(numClusters);
+            assert (medians.size() == numClusters); // this has to be the same ...
+            Iterator<Integer> mediansIterator = medians.iterator();
+            double[] descriptor;
+            for (int i = 0; i < clusters.length; i++) {
+                descriptor = features.get(mediansIterator.next());
+                clusters[i] = new Cluster(new double[descriptor.length]);
+                System.arraycopy(descriptor, 0, clusters[i].mean, 0, descriptor.length);
+            }
+            length = features.get(0).length;
         }
-        length = features.get(0).length;
     }
 
     protected Set<Integer> selectInitialMedians(int numClusters) {
         return StatsUtils.drawSample(numClusters, features.size());
+    }
+
+    /**
+     * For each data point x, compute D(x), the distance between x and the nearest center that has already been chosen.
+     * Choose one new data point at random as a new center, using a weighted probability distribution where a point x
+     * is chosen with probability proportional to the square of D(x).
+     *
+     * @return
+     */
+    protected Integer selectNextMedian(ArrayList<double[]> features,int cluster_i,Random random,double[] distToClosestCentroid){
+        double[] weightedDistribution = new double[features.size()];  // cumulative sum of squared distances
+        int choose = random.nextInt(features.size());;
+        if (cluster_i ==0) // first centroid: choose any feature
+            return choose;
+        for (int i = 0; i < features.size(); i++) {
+            // gives chosen points 0 probability of being chosen again -> sampling without replacement
+            double tempDistance = clusters[cluster_i - 1].getDistance(features.get(i));
+            // base case: if we have only chosen one centroid so far, nothing to compare to
+            if (cluster_i == 1)
+                distToClosestCentroid[i] = tempDistance;
+            else {
+                if (tempDistance < distToClosestCentroid[i])
+                    distToClosestCentroid[i] = tempDistance;
+            }
+            if (i == 0)
+                weightedDistribution[0] = distToClosestCentroid[0];
+            else weightedDistribution[i] = weightedDistribution[i - 1] + distToClosestCentroid[i];
+        }
+        // choose the next centroid
+        double rand = random.nextDouble();
+        for (int j = features.size() - 1; j > 0; j--) {
+            // starts at the largest bin. EDIT: not actually the largest
+            if (rand > weightedDistribution[j - 1] / weightedDistribution[features.size() - 1]) {
+                choose = j; // one bigger than the one above
+                break;
+            } else
+                choose = 0;
+        }
+        return  choose;
     }
 
     /**
@@ -171,7 +229,7 @@ public class KMeans {
             } else if (cluster.getSize() < 1) {
                 System.err.println("** There is NO member in cluster " + i);
                 // fill it with a random member?!?
-                int index = (int) Math.floor(Math.random()*features.size());
+                int index = (int) Math.floor(Math.random() * features.size());
                 clusters[i].assignMember(features.get(index));
             }
             cluster.move();
@@ -186,7 +244,7 @@ public class KMeans {
     protected double overallStress() {
         double v = 0;
         for (Cluster cluster : clusters) {
-            v+=cluster.getStress();
+            v += cluster.getStress();
         }
 
         return v;
