@@ -19,13 +19,13 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.apache.lucene', name: 'lucene-core', version: '6.4.0'
-    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '6.4.0'
-    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '6.4.0'
-    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile group: 'org.apache.lucene', name: 'lucene-core', version: '7.4.0'
+    compile group: 'org.apache.lucene', name: 'lucene-analyzers-common', version: '7.4.0'
+    compile group: 'org.apache.lucene', name: 'lucene-queryparser', version: '7.4.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.11'
     // https://mvnrepository.com/artifact/com.sangupta/jopensurf
     compile group: 'com.sangupta', name: 'jopensurf', version: '1.0.0'
     // https://mvnrepository.com/artifact/org.bytedeco.javacpp-presets/opencv
@@ -35,8 +35,8 @@ dependencies {
 
     // ---< Helper files, optional >---
     // https://mvnrepository.com/artifact/com.twelvemonkeys.imageio/imageio-jpeg
-    runtime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.3.1'
-    testRuntime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.3.1'
+    runtime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.4.1'
+    testRuntime group: 'com.twelvemonkeys.imageio', name: 'imageio-jpeg', version: '3.4.1'
 
     // https://mvnrepository.com/artifact/junit/junit
     testCompile group: 'junit', name: 'junit', version: '4.12'

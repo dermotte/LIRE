@@ -126,21 +126,6 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
     @SuppressWarnings("unused")
     private static class MySimilarity extends ClassicSimilarity {
         @Override
-        public float coord(int overlap, int maxOverlap) {
-            return super.coord(overlap, maxOverlap);
-        }
-
-        @Override
-        public float queryNorm(float sumOfSquaredWeights) {
-            return super.queryNorm(sumOfSquaredWeights);
-        }
-
-        @Override
-        public float lengthNorm(FieldInvertState state) {
-            return super.lengthNorm(state);
-        }
-
-        @Override
         public float tf(float freq) {
             return super.tf(freq);
         }

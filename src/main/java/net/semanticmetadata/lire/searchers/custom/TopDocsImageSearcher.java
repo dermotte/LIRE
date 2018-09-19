@@ -120,7 +120,7 @@ public class TopDocsImageSearcher {
         // Needed for check whether the document is deleted.
         Bits liveDocs = MultiFields.getLiveDocs(reader);
 
-        int docs = results.totalHits;
+        long docs = results.totalHits;
         for (int i = 0; i < docs; i++) {
             if (reader.hasDeletions() && !liveDocs.get(i)) continue; // if it is deleted, just ignore it.
 
