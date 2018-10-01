@@ -346,11 +346,14 @@ public class MetricSpaces {
         StringBuilder sb = new StringBuilder(results.size() * 12);
         double max = results.size();
         double pos = results.size();
+        Locale currentLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
         for (Iterator<Result> resultIterator = results.iterator(); resultIterator.hasNext(); ) {
             Result result = resultIterator.next();
             sb.append(String.format("R%06d^%1.2f ", result.index, pos / max));
             pos--;
         }
+        Locale.setDefault(currentLocale);
         return sb.toString();
     }
 
