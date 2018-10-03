@@ -68,7 +68,7 @@
 		<build.timestamp>${maven.build.timestamp}</build.timestamp>
 		<build.number/>
 
-		<lucene-core.version>6.4.0</lucene-core.version>
+		<lucene-core.version>7.5.0</lucene-core.version>
 		<commons-math3.version>3.6.1</commons-math3.version>
 		<commons-codec.version>1.10</commons-codec.version>
 		<commons-io.version>2.5</commons-io.version>
