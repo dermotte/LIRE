@@ -43,13 +43,13 @@ import net.semanticmetadata.lire.utils.MetricsUtils;
 import net.semanticmetadata.lire.utils.SerializationUtils;
 
 /**
- * Generic byte[] based feature implementation using L1 to compare features. Users have to make sure themselves that all features have the same length and L1 makes sense for them.
+ * Generic short[] based feature implementation using L1 to compare features. Users have to make sure themselves that all features have the same length and L1 makes sense for them.
  * @author Mathias Lux, mathias@juggle.at, 27.09.13 17:00
  */
-public class GenericByteLireFeature implements LireFeature {
-    protected byte[] data = null;
-    private String featureName = "GenericByteFeature";
-    private String fieldName = "featGenericByte";
+public class GenericShortLireFeature implements LireFeature {
+    protected short[] data = null;
+    private String featureName = "GenericShortFeature";
+    private String fieldName = "featGenericShort";
 
     @Override
     public String getFeatureName() {
@@ -61,15 +61,12 @@ public class GenericByteLireFeature implements LireFeature {
         return fieldName;
     }
 
-//    @Override
-//    public void extract(BufferedImage image) {
-//        throw new UnsupportedOperationException("Extraction not supported.");
-//    }
 
     @Override
     public byte[] getByteArrayRepresentation() {
-        if (data == null) throw new UnsupportedOperationException("You need to set the histogram first.");
-        return data;
+        if (data == null)
+            throw new UnsupportedOperationException("You need to set the histogram first.");
+        return SerializationUtils.toByteArray(data);
     }
 
     @Override
@@ -79,8 +76,7 @@ public class GenericByteLireFeature implements LireFeature {
 
     @Override
     public void setByteArrayRepresentation(byte[] featureData, int offset, int length) {
-        data = new byte[length];
-        System.arraycopy(featureData, offset, data, 0, length);
+        data = SerializationUtils.toShortArray(featureData, offset, length);
     }
 
     @Override
@@ -91,29 +87,17 @@ public class GenericByteLireFeature implements LireFeature {
     @Override
     public double getDistance(LireFeature feature) {
         // it is assumed that the histograms are of equal length.
-        if (! (feature instanceof GenericByteLireFeature)) throw new UnsupportedOperationException("This is not a GenericByteLireFeature object.");
-        assert ((GenericByteLireFeature) feature).data.length == data.length;
-        return MetricsUtils.distL1(((GenericByteLireFeature) feature).data, data);
+        if (! (feature instanceof GenericShortLireFeature)) throw new UnsupportedOperationException("This is not a GenericByteLireFeature object.");
+        assert ((GenericShortLireFeature) feature).data.length == data.length;
+        return MetricsUtils.distL1(((GenericShortLireFeature) feature).data, data);
     }
 
-//    @Override
-//    public String getStringRepresentation() {
-//        if (data == null) throw new UnsupportedOperationException("You need to set the histogram first.");
-//        return SerializationUtils.toString(data);
-//    }
-//
-//    @Override
-//    public void setStringRepresentation(String featureVector) {
-//        throw new UnsupportedOperationException("Not implemented.");
-////        data = SerializationUtils.toDoubleArray(featureVector);
-//    }
-
     /**
-     * We assume that it is numbers. Data will be copied to the internal array.
-     * @param data the data using to fill the internal array
+     * We assume that it is numbers ...
+     * @param data
      */
-    public void setData(byte[] data) {
-        this.data = new byte[data.length];
+    public void setData(short[] data) {
+        this.data = new short[data.length];
         System.arraycopy(data, 0, this.data, 0, data.length);
     }
 

@@ -63,6 +63,15 @@ public class MetricsUtils {
         return sum / h1.length;
     }
 
+    public static double distL1(short[] h1, short[] h2) {
+        assert (h1.length == h2.length);
+        double sum = 0d;
+        for (int i = 0; i < h1.length; i++) {
+            sum += Math.abs(h1[i] - h2[i]);
+        }
+        return sum / h1.length;
+    }
+
     public static double distL1(double[] h1, double[] h2) {
         assert (h1.length == h2.length);
         double sum = 0d;
