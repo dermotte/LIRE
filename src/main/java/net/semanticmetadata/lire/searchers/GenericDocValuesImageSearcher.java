@@ -164,7 +164,12 @@ public class GenericDocValuesImageSearcher extends AbstractImageSearcher {
         LireFeature lireFeature = extractorItem.getFeatureInstance();
 //        BinaryDocValues binaryValues = MultiDocValues.getBinaryValues(reader, lireFeature.getFieldName());
         docValues = MultiDocValues.getBinaryValues(reader, cachedInstance.getFieldName());
-        if (!docValues.advanceExact(doc)) System.err.println("Could not advance to document, meaning document id is not in the index ?!?");
+        if (!docValues.advanceExact(doc)) {
+            // Lucene expects the doc id's to be accessed in the right order, if this is not done, we've got a problem here.
+            // LireSolr has an elegant solution on this by resetting the state on-the-fly, but worst case the DocValues are too often.
+            // see RandomAccessBinaryDocValues in LireSolr.
+            System.err.println("Could not advance to document, meaning document id is not in the index or the documents are not accessed in the right order.");
+        }
         lireFeature.setByteArrayRepresentation(docValues.binaryValue().bytes, docValues.binaryValue().offset, docValues.binaryValue().length);
         double maxDistance = findSimilar(lireFeature);
 
