@@ -337,8 +337,12 @@ public class MetricsUtils {
             tmp2 += hist2[i] * hist2[i];
         }
         if (tmp1 * tmp2 > 0) {
-            return Math.max(0, (1d - distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2))));
+            return distance / (Math.sqrt(tmp1) * Math.sqrt(tmp2));
         } else return 1d;
+    }
+
+    public static double cosineDistance(double[] hist1, double[] hist2) {
+        return 1d-cosineCoefficient(hist1, hist2);
     }
 
     public static double distL1(float[] h1, float[] h2) {
