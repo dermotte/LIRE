@@ -186,7 +186,7 @@ public class GenericDocValuesImageSearcher extends AbstractImageSearcher {
         IndexSearcher is = new IndexSearcher(reader);
         TermQuery tq = new TermQuery(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, doc.getValues(DocumentBuilder.FIELD_NAME_IDENTIFIER)[0]));
         TopDocs topDocs = is.search(tq, 1);
-        if (topDocs.totalHits > 0) {
+        if (topDocs.totalHits.value > 0) {
             return search(topDocs.scoreDocs[0].doc);
         } else return null;
     }
