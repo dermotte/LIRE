@@ -121,7 +121,7 @@ public class GenericDocValuesImageSearcher extends AbstractImageSearcher {
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        Bits liveDocs = MultiBits.getLiveDocs(reader);
         Document d;
         double tmpDistance;
         boolean docValueIsThere = true;

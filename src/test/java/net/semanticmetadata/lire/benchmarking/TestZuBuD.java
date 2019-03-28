@@ -60,6 +60,7 @@ import net.semanticmetadata.lire.searchers.ImageSearcherUsingWSs;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiBits;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
@@ -329,7 +330,7 @@ public class TestZuBuD extends TestCase {
         double p10 = 0;
         int errorCount=0;
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(readerQueries);
+        Bits liveDocs = MultiBits.getLiveDocs(readerQueries);
         PrintWriter fw;
         if (searcher.toString().contains("ImageSearcherUsingWSs")) {
             (new File("eval/" + db + "/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();

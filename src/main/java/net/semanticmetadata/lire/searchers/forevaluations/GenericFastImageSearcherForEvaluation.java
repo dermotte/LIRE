@@ -56,6 +56,7 @@ import net.semanticmetadata.lire.searchers.ImageDuplicates;
 import net.semanticmetadata.lire.searchers.SimpleImageDuplicates;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiBits;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.util.Bits;
 
@@ -254,7 +255,7 @@ public class GenericFastImageSearcherForEvaluation extends AbstractImageSearcher
     protected void init() {
         // put all respective features into an in-memory cache ...
         if (isCaching && reader != null) {
-            Bits liveDocs = MultiFields.getLiveDocs(reader);
+            Bits liveDocs = MultiBits.getLiveDocs(reader);
             int docs = reader.numDocs();
             featureCache = new LinkedHashMap<Integer, SearchItemForEvaluation>(docs);
             try {
@@ -285,7 +286,7 @@ public class GenericFastImageSearcherForEvaluation extends AbstractImageSearcher
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        Bits liveDocs = MultiBits.getLiveDocs(reader);
         Document d;
         double tmpDistance;
         int docs = reader.numDocs();
@@ -538,7 +539,7 @@ public class GenericFastImageSearcherForEvaluation extends AbstractImageSearcher
         HashMap<Double, List<String>> duplicates = new HashMap<Double, List<String>>();
 
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        Bits liveDocs = MultiBits.getLiveDocs(reader);
 
         int docs = reader.numDocs();
         int numDuplicates = 0;

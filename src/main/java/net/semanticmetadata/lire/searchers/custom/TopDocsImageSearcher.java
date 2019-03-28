@@ -46,6 +46,7 @@ import net.semanticmetadata.lire.searchers.SimpleResult;
 import net.semanticmetadata.lire.utils.ImageUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiBits;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.util.Bits;
@@ -118,7 +119,7 @@ public class TopDocsImageSearcher {
         // clear result set ...
         docs.clear();
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        Bits liveDocs = MultiBits.getLiveDocs(reader);
 
         long docs = results.totalHits;
         for (int i = 0; i < docs; i++) {
