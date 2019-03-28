@@ -176,11 +176,6 @@ public class LshImageSearcher extends AbstractImageSearcher {
             public float idf(long docFreq, long numDocs) {
                 return 1;
             }
-
-            @Override
-            public float sloppyFreq(int distance) {
-                return 1;
-            }
         });
         BooleanQuery.Builder queryBuilder = new BooleanQuery.Builder();
         for (int i = 0; i < hashes.length; i++) {
