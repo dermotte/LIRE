@@ -65,10 +65,7 @@ import net.semanticmetadata.lire.searchers.ImageSearcherUsingWSs;
 import net.semanticmetadata.lire.utils.FileUtils;
 import net.semanticmetadata.lire.utils.LuceneUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.MultiFields;
+import org.apache.lucene.index.*;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.IOContext;
 import org.apache.lucene.store.RAMDirectory;
@@ -359,7 +356,7 @@ public class TestUniversal extends TestCase {
         double p10 = 0;
         int errorCount=0;
         // Needed for check whether the document is deleted.
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        Bits liveDocs = MultiBits.getLiveDocs(reader);
         PrintWriter fw;
         if (searcher.toString().contains("ImageSearcherUsingWSs")) {
             (new File("eval/" + db + "/" + prefix.replace(' ', '_') + "/" + clusters + "/")).mkdirs();
@@ -491,7 +488,7 @@ public class TestUniversal extends TestCase {
         parallelIndexer.addExtractor(featureClass);
         parallelIndexer.run();
         IndexReader reader = DirectoryReader.open(new RAMDirectory(FSDirectory.open(Paths.get(indexPath)), IOContext.READONCE));
-        Bits liveDocs = MultiFields.getLiveDocs(reader);
+        Bits liveDocs = MultiBits.getLiveDocs(reader);
         double queryCount = 0d;
         ImageSearcher searcher = new GenericFastImageSearcher(100, featureClass);
         long ms = System.currentTimeMillis();

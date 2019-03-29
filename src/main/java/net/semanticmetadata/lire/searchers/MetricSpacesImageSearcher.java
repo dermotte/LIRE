@@ -212,7 +212,7 @@ public class MetricSpacesImageSearcher extends AbstractImageSearcher {
             docValues = MultiDocValues.getBinaryValues(reader, featureFieldName);
             // find the id of the document in the reader, then do search ... TODO: find another way instead of calling the searcher every time.
             TopDocs topDocs = searcher.search(new TermQuery(new Term(DocumentBuilder.FIELD_NAME_IDENTIFIER, doc.get(DocumentBuilder.FIELD_NAME_IDENTIFIER))), 1);
-            if (topDocs.totalHits > 0) {
+            if (topDocs.totalHits.value > 0) {
                 int docID = topDocs.scoreDocs[0].doc;
                 docValues.advanceExact(docID);
                 queryFeature.setByteArrayRepresentation(docValues.binaryValue().bytes, docValues.binaryValue().offset, docValues.binaryValue().length);

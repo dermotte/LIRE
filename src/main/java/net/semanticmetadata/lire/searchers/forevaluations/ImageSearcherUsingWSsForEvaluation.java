@@ -8,6 +8,7 @@ import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.MultiBits;
 import org.apache.lucene.index.MultiFields;
 import org.apache.lucene.util.Bits;
 
@@ -162,7 +163,7 @@ public class ImageSearcherUsingWSsForEvaluation extends GenericFastImageSearcher
     protected void init() {
         // put all respective features into an in-memory cache ...
         if (reader != null && reader.numDocs() > 0) {
-            Bits liveDocs = MultiFields.getLiveDocs(reader);
+            Bits liveDocs = MultiBits.getLiveDocs(reader);
             int docs = reader.numDocs();
             featureCache = new LinkedHashMap<Integer, SearchItemForEvaluation>(docs);
             try {

@@ -177,7 +177,7 @@ public class LshImageSearcher extends AbstractImageSearcher {
                 return 1;
             }
 
-            @Override
+            // @Override
             public float sloppyFreq(int distance) {
                 return 1;
             }

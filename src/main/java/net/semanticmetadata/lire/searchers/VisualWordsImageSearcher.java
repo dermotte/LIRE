@@ -130,14 +130,16 @@ public class VisualWordsImageSearcher extends AbstractImageSearcher {
             return super.tf(freq);
         }
 
-        @Override
+        // @Override
         public float sloppyFreq(int distance) {
-            return super.sloppyFreq(distance);
+
+            // return super.sloppyFreq(distance);
+            return -1f;
         }
 
-        @Override
+        // @Override
         public float scorePayload(int doc, int start, int end, BytesRef payload) {
-            return super.scorePayload(doc, start, end, payload);
+            return -1f; //super.scorePayload(doc, start, end, payload);
         }
 
         @Override
