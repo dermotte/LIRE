@@ -160,9 +160,10 @@ public class TestUniversal extends TestCase {
 //        ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive);
 
         //GLOBALS
-        parallelIndexer.addExtractor(ACCID.class);
+        parallelIndexer.addExtractor(SaCoCo.class);
         parallelIndexer.addExtractor(CEDD.class);
         parallelIndexer.addExtractor(COMO.class);
+//        parallelIndexer.addExtractor(ACCID.class);
 //        parallelIndexer.addExtractor(FCTH.class);
 //        parallelIndexer.addExtractor(JCD.class);
         parallelIndexer.addExtractor(AutoColorCorrelogram.class);
@@ -226,10 +227,11 @@ public class TestUniversal extends TestCase {
 //
         long start = System.currentTimeMillis();
 //
-        computeMAP(new GenericFastImageSearcher(1000, ACCID.class, true, reader), "ACCID", reader);
+        computeMAP(new GenericFastImageSearcher(1000, SaCoCo.class, true, reader), "SaCoCo", reader);
          computeMAP(new GenericFastImageSearcher(1000, CEDD.class, true, reader), "CEDD", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, GenericGlobalDoubleFeature.class, true, r2), "RES_4", r2); // -----> READ FROM FILE
         computeMAP(new GenericFastImageSearcher(1000, COMO.class, true, reader), "COMO", reader);
+//        computeMAP(new GenericFastImageSearcher(1000, ACCID.class, true, reader), "ACCID", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, reader), "FCTH", reader);
 //        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, reader), "JCD", reader);
         computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, reader), "AutoColorCorrelogram", reader);
