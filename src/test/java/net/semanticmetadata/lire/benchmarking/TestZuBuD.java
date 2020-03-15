@@ -48,8 +48,7 @@ import net.semanticmetadata.lire.aggregators.BOVW;
 import net.semanticmetadata.lire.builders.DocumentBuilder;
 import net.semanticmetadata.lire.imageanalysis.features.GlobalFeature;
 import net.semanticmetadata.lire.imageanalysis.features.LocalFeatureExtractor;
-import net.semanticmetadata.lire.imageanalysis.features.global.CEDD;
-import net.semanticmetadata.lire.imageanalysis.features.global.JCD;
+import net.semanticmetadata.lire.imageanalysis.features.global.*;
 import net.semanticmetadata.lire.imageanalysis.features.local.opencvfeatures.CvSurfExtractor;
 import net.semanticmetadata.lire.imageanalysis.features.local.simple.SimpleExtractor;
 import net.semanticmetadata.lire.indexers.parallel.ParallelIndexer;
@@ -138,8 +137,10 @@ public class TestZuBuD extends TestCase {
         ParallelIndexer parallelIndexer = new ParallelIndexer(DocumentBuilder.NUM_OF_THREADS, indexPath, testExtensive, numOfClusters, numOfDocsForVocabulary, aggregator);
 
         //GLOBALS
-//        parallelIndexer.addExtractor(ACCID.class);
+        parallelIndexer.addExtractor(SaCoCo.class);
         parallelIndexer.addExtractor(CEDD.class);
+        parallelIndexer.addExtractor(COMO.class);
+        parallelIndexer.addExtractor(ACCID.class);
 //        parallelIndexer.addExtractor(FCTH.class);
 //        parallelIndexer.addExtractor(JCD.class);
 //        parallelIndexer.addExtractor(AutoColorCorrelogram.class);
@@ -203,8 +204,10 @@ public class TestZuBuD extends TestCase {
 
         long start = System.currentTimeMillis();
 //
-//        computeMAP(new GenericFastImageSearcher(1000, ACCID.class, true, readerIndex), "ACCID", readerIndex, readerQueries);
+        computeMAP(new GenericFastImageSearcher(1000, SaCoCo.class, true, readerIndex), "SaCoCo", readerIndex, readerQueries);
         computeMAP(new GenericFastImageSearcher(1000, CEDD.class, true, readerIndex), "CEDD", readerIndex, readerQueries);
+        computeMAP(new GenericFastImageSearcher(1000, COMO.class, true, readerIndex), "COMO", readerIndex, readerQueries);
+        computeMAP(new GenericFastImageSearcher(1000, ACCID.class, true, readerIndex), "ACCID", readerIndex, readerQueries);
 //        computeMAP(new GenericFastImageSearcher(1000, FCTH.class, true, readerIndex), "FCTH", readerIndex, readerQueries);
 //        computeMAP(new GenericFastImageSearcher(1000, JCD.class, true, readerIndex), "JCD", readerIndex, readerQueries);
 //        computeMAP(new GenericFastImageSearcher(1000, AutoColorCorrelogram.class, true, readerIndex), "AutoColorCorrelogram", readerIndex, readerQueries);
