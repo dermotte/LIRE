@@ -113,6 +113,7 @@ public interface DocumentBuilder {
     String FIELD_NAME_SCALABLECOLOR = "SCD";
     String FIELD_NAME_TAMURA = "TAMURA";
     String FIELD_NAME_ACCID = "ACCID";
+    String FIELD_NAME_SaCoCo = "SaCoCo";
 
 
     //    public static final String FIELD_NAME_MSER = "MSER";
