@@ -1,3 +1,6 @@
+# End of Life reached for LIRE
+This project is no longer maintained. I want to thank all those who helped, found kind words of support, and cited LIRE in their academic work. 
+
 # LIRE - Lucene Image Retrieval
 LIRE (Lucene Image Retrieval) is an open source library for content based image retrieval, which means you can use LIRE to implement applications that search for images that look similar. Besides providing multiple common and state of the art retrieval mechanisms LIRE allows for easy use on multiple platforms. LIRE is actively used for research, teaching and commercial applications. Due to its modular nature it can be used on process level (e.g. index images and search) as well as on image feature level. Developers and researchers can easily extend and modify LIRE to adapt it to their needs.
 
